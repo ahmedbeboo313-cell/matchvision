@@ -249,7 +249,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
-      <button id="notifPermBtn" class="btn-ghost" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)">🔔 تفعيل إشعارات المتصفح</button>
+      <button id="notifPermBtn" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)">🔔 تفعيل إشعارات المتصفح</button>
       <div class="setting-row"><span>مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
       <div class="setting-row"><span>لون التطبيق</span>
         <div class="themes">
@@ -259,7 +259,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
         </div></div>
       <b style="display:block;margin:10px 0 6px;font-size:13px">أسواق التوقعات:</b>
       <div class="mk-grid">
-        <label class="mk"><input id="mkGoals" type="checkbox" checked> أهداف 2.5</label>
+        <label class="mk"><input id="mkGoals" type="checkbox" checked> أهداف 2</label>
         <label class="mk"><input id="mkSafe" type="checkbox" checked> 🛡️ أهداف 1.5 (آمن)</label>
         <label class="mk"><input id="mkCorners" type="checkbox" checked> ركنيات 9.5</label>
         <label class="mk"><input id="mkBtts" type="checkbox" checked> كلا الفريقين يسجل</label>
@@ -283,31 +283,31 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 <script>
 'use strict';
 const LEAGUES=[
- {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',avgG:2.85,home:1.58,away:1.27},
- {slug:'esp.1',name:'الدوري الإسباني',em:'👑',avgG:2.65,home:1.52,away:1.13},
- {slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',avgG:2.75,home:1.55,away:1.20},
- {slug:'ger.1',name:'الدوري الألماني',em:'🦅',avgG:3.15,home:1.72,away:1.43},
- {slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',avgG:2.70,home:1.50,away:1.20},
- {slug:'ned.1',name:'الدوري الهولندي',em:'🌷',avgG:3.05,home:1.68,away:1.37},
- {slug:'por.1',name:'الدوري البرتغالي',em:'⛵',avgG:2.60,home:1.48,away:1.12},
- {slug:'tur.1',name:'الدوري التركي',em:'🌙',avgG:2.75,home:1.55,away:1.20},
- {slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',avgG:2.80,home:1.55,away:1.25},
- {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',avgG:2.85,home:1.58,away:1.27},
- {slug:'bra.1',name:'الدوري البرازيلي',em:'💛',avgG:2.45,home:1.40,away:1.05},
- {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',avgG:2.40,home:1.38,away:1.02},
- {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',avgG:2.60,home:1.48,away:1.12},
- {slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',avgG:2.95,home:1.60,away:1.35},
- {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',avgG:3.05,home:1.65,away:1.40},
- {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',avgG:2.80,home:1.55,away:1.25},
- {slug:'uefa.europa.conf',name:'دوري المؤتمر الأوروبي',em:'🎖️',avgG:2.90,home:1.58,away:1.32},
- {slug:'fifa.world',name:'تصفيات/كأس العالم',em:'🌍',avgG:2.50,home:1.45,away:1.05},
- {slug:'egy.1',name:'الدوري المصري',em:'🦅',avgG:2.30,home:1.35,away:0.95},
- {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',avgG:2.75,home:1.55,away:1.20}
+ {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
+ {slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},
+ {slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},
+ {slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},
+ {slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},
+ {slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},
+ {slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},
+ {slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},
+ {slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},
+ {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
+ {slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},
+ {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},
+ {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
+ {slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},
+ {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
+ {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
+ {slug:'uefa.europa.conf',name:'دوري المؤتمر الأوروبي',em:'🎖️',home:1.58,away:1.32},
+ {slug:'fifa.world',name:'تصفيات/كأس العالم',em:'🌍',home:1.45,away:1.05},
+ {slug:'egy.1',name:'الدوري المصري',em:'🦅',home:1.35,away:0.95},
+ {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20}
 ];
 const CORE_SLUGS=['eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','egy.1','ksa.1'];
 const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي',
  '4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
-const DEF_LEAGUE={avgG:2.70,home:1.50,away:1.20};
+const DEF_LEAGUE={home:1.50,away:1.20};
 const $=s=>document.querySelector(s);
 const splash=$('#splash'),appShell=$('#appShell');
 const homeContent=$('#homeContent'),homeEmpty=$('#homeEmpty'),favContent=$('#favContent'),favEmpty=$('#favEmpty');
@@ -335,7 +335,6 @@ function tick(){
   const need=state.matches.some(m=>m.live)?30000:120000;
   if(Date.now()-lastLoadTs>=need)loadMatches();
 }
-
 function bindEvents(){
   $('#refreshBtn').onclick=()=>loadMatches();
   $('#bellBtn').onclick=()=>showView('notifications');
@@ -399,20 +398,17 @@ async function fetchFinishedSet(){
   const items=await fetchSet(reqs);state.finCache={day:today,league:state.league,list:items};return items;
 }
 function activeLeagues(){return state.league==='all'?LEAGUES:LEAGUES.filter(l=>l.slug===state.league);}
-
 async function fetchESPN(l,ds){const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l.slug}/scoreboard?dates=${ds}`,{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseESPN(e,l));}
 function parseESPN(e,l){const c=e.competitions?.[0]||{},cs=c.competitors||[];const h=cs.find(x=>x.homeAway==='home')||cs[0]||{},a=cs.find(x=>x.homeAway==='away')||cs[1]||{};const live=e.status?.type?.state==='in';
   return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:e.status?.type?.state||'pre',statusCompleted:!!e.status?.type?.completed,live,minute:live?(e.status?.type?.detail||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',
    home:{name:h.team?.displayName||'فريق',abbr:h.team?.abbreviation||'',logo:h.team?.logo||h.team?.logos?.[0]?.href||'',record:getRec(h)},away:{name:a.team?.displayName||'فريق',abbr:a.team?.abbreviation||'',logo:a.team?.logo||a.team?.logos?.[0]?.href||'',record:getRec(a)},venue:c.venue?.fullName||''};}
 function getRec(c){const r=c.records||[];if(!r.length)return'';const t=r.find(x=>x.type==='total'||x.name==='overall');return(t||r[0])?.summary||'';}
-
 async function fetchTSDB(ds){const r=await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`,{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,false));}
 async function fetchTSDBLive(){const r=await fetch(`https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer`,{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,true));}
 function parseTSDB(e,isLive){let dt=new Date();if(e.strDate){const p=new Date(`${e.strDate}T${e.strTime||'00:00:00'}Z`);if(!isNaN(p))dt=p;}const fin=!isLive&&e.strStatus==='Match Finished'&&e.intHomeScore!=null;
   return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري',leagueSlug:'tsdb-'+(e.idLeague||'x'),statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||''):'',
    scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',
    home:{name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?`https://www.thesportsdb.com/images/media/team/badge/${e.idHomeTeam}.png`:'',record:''},away:{name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?`https://www.thesportsdb.com/images/media/team/badge/${e.idAwayTeam}.png`:'',record:''},venue:e.strVenue||''};}
-
 function demoMatches(){
   const fx=[['الدوري الإنجليزي','eng.1','مانشستر سيتي','4-1-1','ليفربول','4-2-0','ملعب الاتحاد','19:00'],['الدوري الإسباني','esp.1','ريال مدريد','5-0-1','برشلونة','4-1-1','سانتياغو برنابيو','21:00'],['الدوري الإيطالي','ita.1','إنتر ميلان','4-2-0','يوفنتوس','3-3-0','سان سيرو','20:45'],['دوري روشن السعودي','ksa.1','الهلال','5-1-0','النصر','4-1-1','المملكة أرينا','21:30'],['الدوري المصري','egy.1','الأهلي','4-2-0','الزمالك','3-2-1','استاد القاهرة','20:00']];
   return fx.map((f,i)=>{let d=new Date(`${state.date}T${f[7]}:00`);if(isNaN(d))d=addDays(new Date(),1);if(d<=new Date())d.setDate(d.getDate()+1);
@@ -424,13 +420,13 @@ function isFinished(m){return m.statusCompleted||m.statusState==='post';}
 
 /* ========== TRACKING ========== */
 function trackFinished(list){
-  const t=lsGet('mv_track')||{ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0},cards55:{h:0,n:0}};let ch=false;
+  const t=lsGet('mv_track')||{ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0}};let ch=false;
   list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
     const p=getPrediction(m),sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
-    const gH=(p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=2);
+    if(tot!==2){const gH=(p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1);t.goals.n++;if(gH)t.goals.h++;}
     const g15H=(p.g15.text.startsWith('أكثر')&&tot>=2)||(!p.g15.text.startsWith('أكثر')&&tot<=1);
     const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
-    t.goals.n++;if(gH)t.goals.h++;t.g15.n++;if(g15H)t.g15.h++;t.btts.n++;if(bH)t.btts.h++;
+    t.g15.n++;if(g15H)t.g15.h++;t.btts.n++;if(bH)t.btts.h++;
     t.ids.push(m.id);if(t.ids.length>600)t.ids.shift();ch=true;});
   if(ch)lsSet('mv_track',t);}
 
@@ -446,46 +442,53 @@ function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||windo
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
-function recToStrength(rec){if(!rec)return null;const p=rec.split('-').map(Number);if(p.length<3||p.some(isNaN))return null;const g=p[0]+p[1]+p[2];return g?{pts:(p[0]*3+p[1])/(g*3),w:p[0],d:p[1],l:p[2],g}:null;}
+function recToStrength(rec){if(!rec)return null;const p=rec.split('-').map(Number);if(p.length<3||p.some(isNaN))return null;const g=p[0]+p[1]+p[2];return g?{pts:(p[0]*3+p[1])/(g*3),g}:null;}
 
 function getPrediction(m){if(predCache.has(m.id))return predCache.get(m.id);const p=calc(m);predCache.set(m.id,p);return p;}
 function calc(m){
   const ld=leagueData(m.leagueSlug), rng=mulberry32(hashCode(`${m.id}|${m.home.name}|${m.away.name}`));
   const hS=recToStrength(m.home.record), aS=recToStrength(m.away.record);
-  let lh,la;
+  let lh,la,hasData=false;
   if(hS&&aS&&hS.g>=3&&aS.g>=3){
+    hasData=true;
     const avgPts=(hS.pts+aS.pts)/2||0.45;
     const hAtt=clamp(hS.pts/avgPts,0.6,1.6), aDef=clamp(aS.pts/avgPts,0.6,1.6);
     const aAtt=clamp(aS.pts/avgPts,0.6,1.6), hDef=clamp(hS.pts/avgPts,0.6,1.6);
     lh=clamp(ld.home*hAtt*(2-aDef),0.4,3.5);
     la=clamp(ld.away*aAtt*(2-hDef),0.3,3.0);
   } else {
-    const r1=rng(),r2=rng();
-    lh=clamp(ld.home*(0.88+r1*0.28),0.4,3.2);
-    la=clamp(ld.away*(0.85+r2*0.32),0.3,2.8);
+    lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2);
+    la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8);
   }
   const lcorn=clamp(9.0+(lh+la-2.5)*0.8+rng()*1.2,6,13);
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
-  return buildPred(lh,la,lcorn,lcard);
+  const r=buildPred(lh,la,lcorn,lcard);
+  r.hasData=hasData;
+  return r;
 }
 function buildPred(lh,la,lcorn,lcard){
   const maxG=7,ph=[],pa=[];
   for(let i=0;i<=maxG;i++){ph[i]=poissonPmf(i,lh);pa[i]=poissonPmf(i,la);}
   let t0=0,t1=0,t2=0;
   for(let i=0;i<=maxG;i++)for(let j=0;j<=maxG;j++){const p=ph[i]*pa[j],t=i+j;if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;}
-  const o15=1-(t0+t1),o25=1-(t0+t1+t2);
+  const o15=1-(t0+t1);
+  const o2=1-(t0+t1+t2), u2=t0+t1, push2=t2;
   const bttsY=(1-Math.exp(-lh))*(1-Math.exp(-la));
   const o95=1-poissonCdf(9,lcorn);
-  const o45=1-poissonCdf(4,lcard),u55=poissonCdf(5,lcard);
+  const o45=1-poissonCdf(4,lcard), u55=poissonCdf(5,lcard);
   const mk=(op,ot,ut,to,tu)=>op>=0.5?{text:ot,prob:Math.round(op*100),tone:to}:{text:ut,prob:Math.round((1-op)*100),tone:tu};
+  const goals = o2>=u2
+    ? {text:'أكثر من 2',prob:Math.round(o2/(o2+u2)*100),tone:'good'}
+    : {text:'أقل من 2',prob:Math.round(u2/(o2+u2)*100),tone:'warn'};
+  goals.note='إرجاع لو 2 بالضبط';
   const r={
-    goals:mk(o25,'أكثر من 2.5','أقل من 2.5','good','warn'),
+    goals,
     g15:mk(o15,'أكثر من 1.5','أقل من 1.5','good','warn'),
     btts:bttsY>=0.5?{text:'نعم',prob:Math.round(bttsY*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsY)*100),tone:'warn'},
     corners:mk(o95,'أكثر من 9.5 ركنية','أقل من 9.5 ركنية','info','warn'),
     cards:mk(o45,'أكثر من 4.5 بطاقات','أقل من 4.5 بطاقات','hot','good'),
     cards55u:u55>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55)*100),tone:'hot'},
-    lh,la,lcorn,lcard
+    lh,la,lcorn,lcard,push2
   };
   r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.cards.prob)/4);
   return r;
@@ -503,7 +506,7 @@ function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favori
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track');let acc=87,label='تقديري — بيتحول لحقيقي بعد 10 نتائج',rows='';
   if(t){const row=(n,o)=>o&&o.n?`<div class="stat-row"><span>${n}</span><b>${Math.round(o.h/o.n*100)}% (${o.n} توقع)</b></div>`:'';
-    rows=(row('أهداف 2.5',t.goals)+row('أهداف 1.5',t.g15)+row('كلا الفريقين يسجل',t.btts))||'';
+    rows=(row('أهداف 2',t.goals)+row('أهداف 1.5',t.g15)+row('كلا الفريقين يسجل',t.btts))||'';
     const tn=(t.goals?.n||0)+(t.g15?.n||0)+(t.btts?.n||0),th=(t.goals?.h||0)+(t.g15?.h||0)+(t.btts?.h||0);
     if(tn>=10){acc=Math.round(th/tn*100);label='دقة حقيقية مقاسة ✔';}}
   if(!rows)rows='<div class="stat-row"><span>لسه مفيش نتائج متسجلة</span><b>-</b></div>';
@@ -521,20 +524,27 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
 
-function tiles(p){const en=[];
-  if(state.markets.goals)en.push({ic:'⚽',ti:'أهداف 2.5',p:p.goals});
-  if(state.markets.safe)en.push({ic:'🛡️',ti:'أهداف 1.5 (آمن)',p:p.g15});
-  if(state.markets.corners)en.push({ic:'🚩',ti:'ركنيات 9.5',p:p.corners});
-  if(state.markets.btts)en.push({ic:'🥅',ti:'كلا الفريقين يسجل',p:p.btts});
-  if(state.markets.cards)en.push({ic:'🟨',ti:'بطاقات 4.5',p:p.cards});
-  if(state.markets.safeCards)en.push({ic:'🛡️',ti:'بطاقات 5.5 (آمن)',p:p.cards55u});
+/* شارة ثقة كبيرة = أعلى درجة ملاءمة (احتمال × وزن السوق + توفر بيانات) */
+function tiles(p){
+  const W={goals:1.0,g15:1.12,corners:0.93,btts:0.97,cards:0.93,cards55u:1.08};
+  const en=[];
+  if(state.markets.goals)en.push({k:'goals',ic:'⚽',ti:'أهداف 2',p:p.goals});
+  if(state.markets.safe)en.push({k:'g15',ic:'🛡️',ti:'أهداف 1.5 (آمن)',p:p.g15});
+  if(state.markets.corners)en.push({k:'corners',ic:'🚩',ti:'ركنيات 9.5',p:p.corners});
+  if(state.markets.btts)en.push({k:'btts',ic:'🥅',ti:'كلا الفريقين يسجل',p:p.btts});
+  if(state.markets.cards)en.push({k:'cards',ic:'🟨',ti:'بطاقات 4.5',p:p.cards});
+  if(state.markets.safeCards)en.push({k:'cards55u',ic:'🛡️',ti:'بطاقات 5.5 (آمن)',p:p.cards55u});
   if(!en.length)return'<div class="empty" style="grid-column:1/-1">فعّل سوقاً واحداً.</div>';
-  return en.map(x=>tile(x.ic,x.ti,x.p,x.p.prob>=75)).join('');}
-function tile(ic,ti,p,sure){return`<div class="pred ${sure?'sure-tile':''}"><div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div><div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div><div class="prob">نسبة الثقة ${p.prob}%</div></div>`;}
+  const score=x=>x.p.prob*(W[x.k]||1)+(p.hasData?3:0);
+  let best=en[0];en.forEach(x=>{if(score(x)>score(best))best=x;});
+  return en.map(x=>tile(x.ic,x.ti,x.p,x===best)).join('');}
+function tile(ic,ti,p,sure){return`<div class="pred ${sure?'sure-tile':''}"><div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div><div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div><div class="prob">نسبة الثقة ${p.prob}%${p.note?' • '+p.note:''}</div></div>`;}
 function resultTiles(m,p){const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
-  const gH=(p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=2);
+  const gRes = tot===2 ? {t:p.goals.text+' ↩',c:'warn',s:'إرجاع: 2 بالضبط'}
+    : ((p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1)) ? {t:p.goals.text+' ✔',c:'good',s:`الفعلي: ${tot} أهداف`}
+    : {t:p.goals.text+' ✘',c:'hot',s:`الفعلي: ${tot} أهداف`};
   const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
-  return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2.5</span></div><div class="pred-value ${gH?'good':'hot'}">${p.goals.text} ${gH?'✔':'✘'}</div><div class="prob">الفعلي: ${tot} أهداف</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
+  return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');}
