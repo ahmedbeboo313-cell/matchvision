@@ -337,7 +337,7 @@ function tick(){
 }
 function bindEvents(){
   $('#refreshBtn').onclick=()=>loadMatches();
-$('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
+  $('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
   $('#backBtn').onclick=()=>showView(state.prevView||'home');
   datePicker.onchange=()=>{state.date=datePicker.value||fmtDate(new Date());setDateChipsActive();loadMatches();};
   document.querySelectorAll('.date-chip').forEach(c=>c.onclick=()=>{state.date=fmtDate(addDays(new Date(),+c.dataset.offset));datePicker.value=state.date;setDateChipsActive();loadMatches();});
@@ -387,8 +387,8 @@ async function fetchSet(reqs){const r=await Promise.allSettled(reqs);let i=[];r.
 function buildRequests(){
   const today=fmtDate(new Date()),reqs=[];
   if(state.mode==='live'){LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));reqs.push(fetchTSDBLive());}
-  else{const sel=activeLeagues();sel.forEach(l=>reqs.push(fetchESPN(l,state.date.replace(/-/g,''))));reqs.push(fetchTSDB(state.date));
-    if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));reqs.push(fetchTSDBLive());}}
+  else{const sel=activeLeagues();sel.forEach(l=>reqs.push(fetchESPN(l,state.date.replace(/-/g,''))));reqs.push(fetchTSDB(state.date));reqs.push(fetchTSDBLive());
+    if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));}}
   return reqs;
 }
 async function fetchFinishedSet(){
@@ -472,7 +472,7 @@ function buildPred(lh,la,lcorn,lcard){
   let t0=0,t1=0,t2=0;
   for(let i=0;i<=maxG;i++)for(let j=0;j<=maxG;j++){const p=ph[i]*pa[j],t=i+j;if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;}
   const o15=1-(t0+t1);
-  const o2=1-(t0+t1+t2), u2=t0+t1, push2=t2;
+  const o2=1-(t0+t1+t2), u2=t0+t1;
   const bttsY=(1-Math.exp(-lh))*(1-Math.exp(-la));
   const o95=1-poissonCdf(9,lcorn);
   const o45=1-poissonCdf(4,lcard), u55=poissonCdf(5,lcard);
@@ -488,7 +488,7 @@ function buildPred(lh,la,lcorn,lcard){
     corners:mk(o95,'أكثر من 9.5 ركنية','أقل من 9.5 ركنية','info','warn'),
     cards:mk(o45,'أكثر من 4.5 بطاقات','أقل من 4.5 بطاقات','hot','good'),
     cards55u:u55>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55)*100),tone:'hot'},
-    lh,la,lcorn,lcard,push2
+    lh,la,lcorn,lcard
   };
   r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.cards.prob)/4);
   return r;
@@ -516,7 +516,8 @@ function renderNotifs(){loading.hidden=true;const now=Date.now(),items=[];
   [...favorites].slice(0,3).forEach(id=>{const m=state.matches.find(x=>x.id===id);if(m)items.push({ic:'⭐',t:'في المفضلة',s:`${m.home.name} × ${m.away.name}`});});
   if(!state.notifEnabled){notifContent.innerHTML='<div class="empty">التنبيهات متوقفة.</div>';return;}
   notifContent.innerHTML=items.map(n=>`<div class="notif"><span class="ic">${n.ic}</span><div><b>${esc(n.t)}</b><small>${esc(n.s)}</small></div></div>`).join('')||'<div class="empty">لا توجد إشعارات.</div>';updateBell();}
-function updateBell(){const n=state.notifEnabled?state.matches.filter(m=>m.live||(new Date(m.date)-Date.now())/36e5<=24).length:0;bellBadge.textContent=n;bellBadge.classList.toggle('hidden',!n);}
+function bellCount(){return state.notifEnabled?state.matches.filter(m=>m.live||(new Date(m.date)-Date.now())/36e5<=24).length:0;}
+function updateBell(){const n=bellCount();const read=lsGet('mv_bell_read');const show=n>0&&n!==read;bellBadge.textContent=n;bellBadge.classList.toggle('hidden',!show);}
 
 /* ========== CARDS ========== */
 function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
