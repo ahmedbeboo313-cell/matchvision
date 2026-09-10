@@ -25,6 +25,33 @@ button,input,select{font:inherit;color:inherit}
  width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;
  padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;
  box-shadow:0 10px 30px rgba(239,68,68,.45)}
+
+/* ===== Guide Modal ===== */
+.gmodal{position:fixed;inset:0;z-index:300;display:grid;place-items:center;
+ background:rgba(3,6,12,.72);backdrop-filter:blur(8px);padding:18px}
+.gcard{width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);
+ border:1px solid rgba(251,191,36,.35);border-radius:26px;padding:22px 18px;
+ box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(251,191,36,.10);
+ text-align:center;animation:gpop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes gpop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.gcard svg{width:62px;height:62px}
+.gcard h2{font-size:19px;margin:8px 0 12px;font-weight:800}
+.gcard h2 span{color:#fbbf24}
+.gsteps{display:grid;gap:9px;text-align:right;margin-bottom:12px}
+.gstep{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.05);
+ border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-size:12.5px;line-height:1.9;color:var(--text)}
+.gstep span{flex:none;width:24px;height:24px;border-radius:50%;
+ background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;font-weight:800;
+ display:grid;place-items:center;font-size:13px;margin-top:3px}
+.suremini{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;
+ padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;white-space:nowrap}
+.gwarn{color:#fcd34d;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
+ border-radius:14px;padding:9px 12px;font-size:11.5px;line-height:1.9;margin-bottom:12px}
+.gbtn{width:100%;border:0;border-radius:16px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;
+ background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a}
+.gcredit{margin-top:10px;color:var(--muted);font-size:11.5px}
+.gcredit b{color:#fbbf24}
+
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;
  background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
 .splash.fade{opacity:0;pointer-events:none}
@@ -168,6 +195,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .notif .ic{font-size:20px;flex:none}
 .notif small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
 .disclaimer{color:#8ea0bf;font-size:11px;text-align:center;line-height:1.8;margin-top:4px}
+.disclaimer b{color:#fbbf24}
 .bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;
  width:min(580px,calc(100% - 20px));display:flex;gap:5px;padding:8px;background:rgba(5,8,16,.9);
  border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(18px);z-index:30;box-shadow:var(--shadow)}
@@ -182,6 +210,23 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 </head>
 <body>
 <div id="kickBanner" class="kick hidden"></div>
+
+<!-- ===== Guide Modal ===== -->
+<div id="guideModal" class="gmodal hidden">
+  <div class="gcard">
+    <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
+    <h2>إزاي تاخد <span>التوقع الصح</span>؟</h2>
+    <div class="gsteps">
+      <div class="gstep"><span>1</span><p>دوّر في كارت المباراة على شارة <b class="suremini">ثقة كبيرة 🔥</b> — دي أقوى توقع في المباراة كلها، والرهان بيكون عليها أولاً.</p></div>
+      <div class="gstep"><span>2</span><p>لو الشارة مش موجودة في مباراة، اختار التوقع صاحب <b>أعلى نسبة ثقة</b> من بين الباقي — ده تاني أفضل اختيار.</p></div>
+      <div class="gstep"><span>3</span><p>الأسواق الآمنة <b>🛡️ أهداف 1.5 / بطاقات 5.5</b> نسب إصابتها أعلى بطبيعتها — مناسبه لو بتدور على استقرار أكتر.</p></div>
+    </div>
+    <p class="gwarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
+    <button id="guideOk" class="gbtn">يلا نبدأ ⚽</button>
+    <div class="gcredit">تصميم وتطوير: <b>Ahmed Bebo</b></div>
+  </div>
+</div>
+
 <div id="splash" class="splash">
   <div class="splash-box">
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgA)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/></svg>
@@ -270,7 +315,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
     </section>
     <section id="view-notifications" class="view hidden"><div id="notifContent"></div></section>
   </main>
-  <footer class="disclaimer">التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — نسبة الإصابة عالية لكن لا يوجد ضمان مطلق.</footer>
+  <footer class="disclaimer">التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — نسبة الإصابة عالية لكن لا يوجد ضمان مطلق.<br>تصميم وتطوير: <b>Ahmed Bebo</b></footer>
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small>الرئيسية</small></button>
     <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small>المفضلة</small></button>
@@ -328,18 +373,22 @@ function init(){
   const th=lsGet('mv_theme'); if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
   populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
   setTimeout(()=>{splash.classList.add('fade');
-    setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');},500);
+    setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
   },1600);
   setInterval(tick,15000);
   setInterval(fastTick,5000);
   setInterval(secTick,1000);
+}
+function maybeShowGuide(){
+  const today=fmtDate(new Date());
+  if(lsGet('mv_guide_day')===today)return;   /* امسح السطر ده لو عايزها تظهر في كل فتحه */
+  $('#guideModal').classList.remove('hidden');
 }
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
   const need=state.matches.some(m=>m.live)?30000:120000;
   if(Date.now()-lastLoadTs>=need)loadMatches();
 }
-/* ===== Fast live poll: كل 10 ثواني للدوريات اللي فيها لايف بس ===== */
 function fastTick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
   if(!state.matches.some(m=>m.live))return;
@@ -380,6 +429,7 @@ function secTick(){
   lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`;
 }
 function bindEvents(){
+  $('#guideOk').onclick=()=>{$('#guideModal').classList.add('hidden');lsSet('mv_guide_day',fmtDate(new Date()));};
   $('#refreshBtn').onclick=()=>loadMatches();
   $('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
   $('#backBtn').onclick=()=>showView(state.prevView||'home');
@@ -579,7 +629,6 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
 
-/* شارة ثقة كبيرة = أعلى درجة ملاءمة */
 function tiles(p){
   const W={goals:1.0,g15:1.12,corners:0.93,btts:0.97,cards:0.93,cards55u:1.08};
   const en=[];
