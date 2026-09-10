@@ -305,6 +305,7 @@ const LEAGUES=[
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20}
 ];
 const CORE_SLUGS=['eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','egy.1','ksa.1'];
+const AMER_SLUGS=['usa.1','mex.1','bra.1','arg.1'];
 const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي',
  '4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
 const DEF_LEAGUE={home:1.50,away:1.20};
@@ -385,10 +386,21 @@ async function loadMatches(){
 }
 async function fetchSet(reqs){const r=await Promise.allSettled(reqs);let i=[];r.forEach(x=>{if(x.status==='fulfilled'&&x.value&&x.value.length)i=i.concat(x.value);});return i;}
 function buildRequests(){
-  const today=fmtDate(new Date()),reqs=[];
-  if(state.mode==='live'){LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));reqs.push(fetchTSDBLive());}
-  else{const sel=activeLeagues();sel.forEach(l=>reqs.push(fetchESPN(l,state.date.replace(/-/g,''))));reqs.push(fetchTSDB(state.date));reqs.push(fetchTSDBLive());
-    if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));}}
+  const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
+  const amer=state.league==='all'?AMER_SLUGS:AMER_SLUGS.filter(s=>s===state.league);
+  const addAmer=()=>amer.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(l)reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
+  if(state.mode==='live'){
+    LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));
+    addAmer();
+    reqs.push(fetchTSDBLive());
+  } else {
+    const sel=activeLeagues();
+    sel.forEach(l=>reqs.push(fetchESPN(l,state.date.replace(/-/g,''))));
+    reqs.push(fetchTSDB(state.date));
+    reqs.push(fetchTSDBLive());
+    addAmer();
+    if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));}
+  }
   return reqs;
 }
 async function fetchFinishedSet(){
