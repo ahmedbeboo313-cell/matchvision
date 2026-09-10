@@ -22,7 +22,12 @@ body{font-family:'Cairo',system-ui,sans-serif;color:var(--text);
 button,input,select{font:inherit;color:inherit}
 .hidden{display:none!important}
 
-/* ===== Splash ===== */
+.kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;
+ width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;
+ padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;
+ box-shadow:0 10px 30px rgba(239,68,68,.45)}
+
+/* Splash */
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;
  background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
 .splash.fade{opacity:0;pointer-events:none}
@@ -37,7 +42,7 @@ button,input,select{font:inherit;color:inherit}
  background:linear-gradient(90deg,var(--accent2),var(--accent));animation:load 1.4s infinite}
 @keyframes load{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
 
-/* ===== Auth ===== */
+/* Auth */
 .auth{min-height:100vh;display:grid;place-items:center;padding:18px}
 .auth-card{width:min(420px,100%);background:rgba(255,255,255,.05);border:1px solid var(--line);
  border-radius:28px;padding:26px 20px;display:grid;gap:12px;justify-items:center;text-align:center;box-shadow:var(--shadow)}
@@ -51,7 +56,7 @@ button,input,select{font:inherit;color:inherit}
 .btn-ghost{width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;
  padding:12px;font-weight:700;cursor:pointer;color:var(--muted)}
 
-/* ===== App shell ===== */
+/* App shell */
 .app{width:min(580px,100%);margin:0 auto;padding:14px 14px 100px;max-width:100%}
 .topbar{position:sticky;top:10px;z-index:20;display:flex;flex-wrap:wrap;justify-content:space-between;
  gap:10px;padding:12px 14px;background:rgba(5,8,16,.78);border:1px solid var(--line);border-radius:26px;
@@ -77,6 +82,7 @@ button,input,select{font:inherit;color:inherit}
  padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
 .chip.active{background:linear-gradient(135deg,rgba(34,197,94,.24),rgba(56,189,248,.22));border-color:var(--accent)}
 .mode-chip[data-mode="live"].active{background:linear-gradient(135deg,rgba(239,68,68,.28),rgba(245,158,11,.2));border-color:#ef4444;color:#fecaca}
+.mode-chip[data-mode="finished"].active{background:rgba(148,163,184,.2);border-color:#94a3b8;color:#e2e8f0}
 input[type=date],input[type=search],select{border:1px solid var(--line);background:rgba(255,255,255,.05);
  border-radius:15px;padding:10px 12px;outline:none;min-width:0;max-width:100%}
 select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-width:130px;flex:none}
@@ -92,6 +98,8 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
 .live-pill{color:#fca5a5;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);
  padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite}
+.done-pill{color:#cbd5e1;background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.3);
+ padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800}
 .fav-btn{border:0;background:rgba(255,255,255,.06);width:34px;height:34px;flex:none;border-radius:12px;font-size:17px;cursor:pointer}
 .fav-btn.active{color:#facc15}
 .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:13px}
@@ -105,8 +113,10 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
  background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .vs span{font-size:11px;color:var(--accent);font-weight:800}
 .vs span.liveTxt{color:#fca5a5}
+.vs span.doneTxt{color:#cbd5e1}
 .vs strong{font-size:13px}
 .vs strong.score{font-size:17px;color:#fca5a5}
+.vs strong.scoreDone{font-size:17px;color:#e2e8f0}
 .pred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pred{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:10px;min-width:0}
 .pred.sure-tile{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
@@ -132,7 +142,6 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
 .league-card small{color:var(--muted);font-weight:600}
 .league-card.active{border-color:var(--accent);background:rgba(34,197,94,.12)}
 
-/* Details */
 .back-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .tabs{display:flex;gap:6px;margin:12px 0}
 .tab{flex:1;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;
@@ -148,7 +157,6 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
  border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);margin-bottom:8px;font-size:12px;flex-wrap:wrap}
 .h2h-row b{font-size:13px}
 
-/* Stats & settings */
 .ring-card{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);
  border-radius:24px;background:rgba(255,255,255,.05);margin-bottom:12px}
 .ring{position:relative;width:86px;height:86px;flex:none}
@@ -177,10 +185,12 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
 .mk{display:flex;gap:8px;align-items:center;padding:11px;border:1px solid var(--line);
  border-radius:14px;background:rgba(255,255,255,.045);font-size:12px;font-weight:700;cursor:pointer}
 .mk input{accent-color:var(--accent);width:17px;height:17px;flex:none}
+.key-box{margin-bottom:9px}
+.key-box label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;font-weight:700}
+.key-box input{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;padding:10px;outline:none}
 .danger{width:100%;border:0;background:rgba(244,63,94,.14);color:#fecdd3;padding:12px;
  border-radius:16px;font-weight:800;cursor:pointer;margin-top:6px}
 
-/* Notifications */
 .notif{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px solid var(--line);
  border-radius:18px;background:rgba(255,255,255,.045);margin-bottom:9px;font-size:13px}
 .notif .ic{font-size:20px;flex:none}
@@ -199,12 +209,14 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
 </head>
 <body>
 
+<div id="kickBanner" class="kick hidden"></div>
+
 <!-- SPLASH -->
 <div id="splash" class="splash">
   <div class="splash-box">
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22c55e"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><path d="M32 4 56 12v20c0 14-10 24-24 28C18 56 8 46 8 32V12Z" fill="url(#lg1)"/><circle cx="32" cy="30" r="11" fill="#050810"/><path d="M32 22l3.5 6-3.5 6-3.5-6Z" fill="#fff"/><circle cx="32" cy="30" r="11" fill="none" stroke="#fff" stroke-width="1.6"/></svg>
     <h1>MatchVision <span>Pro</span></h1>
-    <p>توقعات ذكية للمباريات القادمة واللايف</p>
+    <p>توقعات ذكية • لايف • نتائج • مصادر متعددة</p>
     <div class="splash-bar"><span></span></div>
   </div>
 </div>
@@ -230,7 +242,7 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
       <svg viewBox="0 0 64 64"><path d="M32 4 56 12v20c0 14-10 24-24 28C18 56 8 46 8 32V12Z" fill="url(#lg1)"/><circle cx="32" cy="30" r="11" fill="#050810"/><circle cx="32" cy="30" r="11" fill="none" stroke="#fff" stroke-width="1.6"/></svg>
       <div>
         <div class="brand">MatchVision <span>Pro</span></div>
-        <div class="sub">توقعات القادمة + اللايف</div>
+        <div class="sub">قادمة • لايف • منتهية</div>
       </div>
     </div>
     <div class="top-actions">
@@ -242,8 +254,9 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
 
   <section class="controls">
     <div class="mode-row">
-      <button class="chip mode-chip active" data-mode="upcoming">⏳ القادمة</button>
-      <button class="chip mode-chip" data-mode="live">🔴 لايف الآن</button>
+      <button class="chip mode-chip active" data-mode="all">🌐 الكل</button>
+      <button class="chip mode-chip" data-mode="live">🔴 لايف</button>
+      <button class="chip mode-chip" data-mode="finished">⚪ انتهت</button>
     </div>
     <div class="date-row" id="dateRow">
       <button class="chip date-chip" data-offset="0">اليوم</button>
@@ -258,66 +271,59 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
   </section>
 
   <section class="statsbar">
-    <div><span id="matchCount">0</span> <span id="countLabel">مباراة قادمة</span></div>
+    <div><span id="matchCount">0</span> <span id="countLabel">مباراة (لايف + قادمة)</span></div>
     <div>متوسط الثقة: <span id="avgConfidence">-</span></div>
     <div id="lastUpdated">لم يتم التحديث بعد</div>
   </section>
 
   <main>
     <div id="loading" hidden></div>
-
     <section id="view-home" class="view">
       <div id="homeContent"></div>
       <div id="homeEmpty" class="empty" hidden></div>
     </section>
-
     <section id="view-details" class="view hidden">
-      <div class="back-row">
-        <button id="backBtn" class="icon-btn">→</button>
-        <b id="detailsTitle">تفاصيل المباراة</b>
-      </div>
+      <div class="back-row"><button id="backBtn" class="icon-btn">→</button><b id="detailsTitle">تفاصيل المباراة</b></div>
       <div id="detailsContent"></div>
     </section>
-
     <section id="view-favorites" class="view hidden">
       <div id="favContent"></div>
       <div id="favEmpty" class="empty" hidden>⭐ لا توجد مباريات مفضلة بعد.<br>اضغط النجمة في أي مباراة لحفظها هنا.</div>
     </section>
-
     <section id="view-leagues" class="view hidden">
       <div id="leaguesContent" class="leagues-grid"></div>
     </section>
-
     <section id="view-stats" class="view hidden">
       <div class="ring-card">
         <div class="ring">
           <svg width="86" height="86"><circle class="bgc" cx="43" cy="43" r="34"/><circle id="ringFg" class="fgc" cx="43" cy="43" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
           <b id="ringText">0%</b>
         </div>
-        <div>
-          <div style="font-weight:800">دقة التوقعات</div>
-          <small style="color:var(--muted)">الموسم الحالي • تحديث مستمر</small>
-        </div>
+        <div><div style="font-weight:800">دقة التوقعات</div>
+          <small style="color:var(--muted)">الموسم الحالي • تحديث مستمر</small></div>
       </div>
       <div class="mini-grid">
         <div class="mini">مباريات تم تحليلها<b id="statAnalyzed">0</b></div>
         <div class="mini">سلسلة النجاح الحالية<b>3 مباريات ✔</b></div>
         <div class="mini">دقة هذا الأسبوع<b>83%</b></div>
-        <div class="mini">مباريات اليوم القادمة<b id="statToday">0</b></div>
+        <div class="mini">مباريات مباشرة الآن<b id="statToday">0</b></div>
       </div>
-
-      <div class="setting-row"><span>تحديث تلقائي كل دقيقتين</span>
+      <div class="setting-row"><span>تحديث تلقائي ذكي (30ث لايف / 2د عادي)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
-      <div class="setting-row"><span>تنبيهات قبل المباريات</span>
+      <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
-      <div class="setting-row"><span>مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
+      <button id="notifPermBtn" class="btn-ghost" style="margin-bottom:9px">🔔 تفعيل إشعارات المتصفح</button>
+      <div class="setting-row"><span>مصادر البيانات الأساسية</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
+      <div class="key-box"><label>مفتاح API-Football (اختياري — يضيف الدوريات العربية)</label>
+        <input id="apiKeyInput" placeholder="الصق المفتاح هنا أو سيبه فاضي"/></div>
+      <div class="key-box"><label>مفتاح football-data.org (اختياري)</label>
+        <input id="fdKeyInput" placeholder="الصق المفتاح هنا أو سيبه فاضي"/></div>
       <div class="setting-row"><span>لون التطبيق</span>
         <div class="themes">
           <button class="theme-btn g" data-theme-set="green"></button>
           <button class="theme-btn b" data-theme-set="blue"></button>
           <button class="theme-btn p" data-theme-set="purple"></button>
         </div></div>
-
       <b style="display:block;margin:10px 0 6px;font-size:13px">أسواق التوقعات المعروضة:</b>
       <div class="mk-grid">
         <label class="mk"><input id="mkGoals" type="checkbox" checked> أهداف أكثر/أقل 2.5</label>
@@ -325,11 +331,9 @@ select{flex:1 1 150px} input[type=search]{flex:2 1 170px} input[type=date]{min-w
         <label class="mk"><input id="mkBtts" type="checkbox" checked> كلا الفريقين يسجل (BTTS)</label>
         <label class="mk"><input id="mkCards" type="checkbox" checked> بطاقات أكثر/أقل 4.5</label>
       </div>
-
       <button id="clearFavBtn" class="danger">مسح كل المفضلة</button>
       <button id="logoutBtn" class="danger">تسجيل الخروج</button>
     </section>
-
     <section id="view-notifications" class="view hidden">
       <div id="notifContent"></div>
     </section>
@@ -354,11 +358,23 @@ const LEAGUES=[
  {slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️'},
  {slug:'ger.1',name:'الدوري الألماني',em:'🦅'},
  {slug:'fra.1',name:'الدوري الفرنسي',em:'🗼'},
+ {slug:'ned.1',name:'الدوري الهولندي',em:'🌷'},
+ {slug:'por.1',name:'الدوري البرتغالي',em:'⛵'},
+ {slug:'tur.1',name:'الدوري التركي',em:'🌙'},
+ {slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴'},
+ {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫'},
+ {slug:'bra.1',name:'الدوري البرازيلي',em:'💛'},
+ {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵'},
+ {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮'},
+ {slug:'usa.1',name:'الدوري الأمريكي',em:'🗽'},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐'},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆'},
+ {slug:'uefa.europa.conf',name:'دوري المؤتمر الأوروبي',em:'🎖️'},
+ {slug:'fifa.world',name:'تصفيات/كأس العالم',em:'🌍'},
  {slug:'egy.1',name:'الدوري المصري',em:'🦅'},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴'}
 ];
+const CORE_SLUGS=['eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','egy.1','ksa.1'];
 const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي',
  '4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
 const $=s=>document.querySelector(s);
@@ -367,10 +383,11 @@ const homeContent=$('#homeContent'),homeEmpty=$('#homeEmpty'),favContent=$('#fav
 const leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),notifContent=$('#notifContent');
 const loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCount'),avgConfidence=$('#avgConfidence');
 const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search');
-const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),countLabel=$('#countLabel');
-let favorites=loadFavs(),predCache=new Map(),isLoading=false;
+const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
+let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0;
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
- mode:'upcoming',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
+ mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
+ prevLive:null,finCache:null,keys:lsGet('mv_keys')||{api:'',fd:''},
  markets:{goals:true,corners:true,btts:true,cards:true}};
 
 init();
@@ -378,13 +395,20 @@ init();
 function init(){
   const th=lsGet('mv_theme');
   if(th && th!=='green') document.documentElement.setAttribute('data-theme',th);
-  populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
+  populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive();
+  $('#apiKeyInput').value=state.keys.api||''; $('#fdKeyInput').value=state.keys.fd||'';
+  bindEvents();
   setTimeout(()=>{ splash.classList.add('fade');
     setTimeout(()=>{ splash.classList.add('hidden');
       const u=lsGet('mv_user'); if(u){enterApp();} else {viewLogin.classList.remove('hidden');}
     },500);
   },1600);
-  setInterval(()=>{ if(state.autoRefresh&&!document.hidden&&appShell&&!appShell.classList.contains('hidden')) loadMatches(); },120000);
+  setInterval(tick,15000);
+}
+function tick(){
+  if(!state.autoRefresh||document.hidden||!appShell||appShell.classList.contains('hidden'))return;
+  const need=state.matches.some(m=>m.live)?30000:120000;
+  if(Date.now()-lastLoadTs>=need) loadMatches();
 }
 function enterApp(){ viewLogin.classList.add('hidden'); appShell.classList.remove('hidden'); loadMatches(); showView('home'); }
 
@@ -402,15 +426,15 @@ function bindEvents(){
   document.querySelectorAll('.mode-chip').forEach(c=>c.onclick=()=>{
     state.mode=c.dataset.mode;
     document.querySelectorAll('.mode-chip').forEach(x=>x.classList.toggle('active',x===c));
-    dateRow.style.display = state.mode==='live' ? 'none' : 'flex';
-    countLabel.textContent = state.mode==='live' ? 'مباراة مباشرة' : 'مباراة قادمة';
+    dateRow.style.display = state.mode==='all' ? 'flex' : 'none';
+    countLabel.textContent = state.mode==='live' ? 'مباراة مباشرة' : state.mode==='finished' ? 'مباراة منتهية' : 'مباراة (لايف + قادمة)';
     loadMatches(); });
-  leagueSelect.onchange=()=>{ state.league=leagueSelect.value; loadMatches(); };
+  leagueSelect.onchange=()=>{ state.league=leagueSelect.value; state.finCache=null; loadMatches(); };
   search.oninput=()=>{ state.query=search.value; renderCurrent(); };
   document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>showView(b.dataset.view));
   document.addEventListener('click',e=>{
     const fav=e.target.closest('[data-fav]'); if(fav){e.stopPropagation();toggleFav(fav.dataset.fav);return;}
-    const lg=e.target.closest('[data-league]'); if(lg){state.league=lg.dataset.league;leagueSelect.value=state.league;showView('home');loadMatches();return;}
+    const lg=e.target.closest('[data-league]'); if(lg){state.league=lg.dataset.league;leagueSelect.value=state.league;state.finCache=null;showView('home');loadMatches();return;}
     const mc=e.target.closest('[data-match]'); if(mc){openDetails(mc.dataset.match);return;}
     const tb=e.target.closest('[data-theme-set]'); if(tb){const t=tb.dataset.themeSet;
       if(t==='green')document.documentElement.removeAttribute('data-theme');
@@ -420,34 +444,79 @@ function bindEvents(){
   });
   $('#tgAuto').onchange=e=>state.autoRefresh=e.target.checked;
   $('#tgNotif').onchange=e=>{state.notifEnabled=e.target.checked; updateBell();};
+  $('#notifPermBtn').onclick=()=>{ try{
+    if(!('Notification' in window)){alert('المتصفح لا يدعم الإشعارات');return;}
+    Notification.requestPermission().then(p=>alert(p==='granted'?'تم تفعيل الإشعارات ✅':'الإذن مرفوض ❌'));
+  }catch(e){alert('غير مدعوم هنا');} };
+  $('#apiKeyInput').onchange=e=>{ state.keys.api=e.target.value.trim(); lsSet('mv_keys',state.keys); state.finCache=null; loadMatches(); };
+  $('#fdKeyInput').onchange=e=>{ state.keys.fd=e.target.value.trim(); lsSet('mv_keys',state.keys); state.finCache=null; loadMatches(); };
   ['mkGoals','mkCorners','mkBtts','mkCards'].forEach(id=>{ $('#'+id).onchange=e=>{
     state.markets={goals:$('#mkGoals').checked,corners:$('#mkCorners').checked,btts:$('#mkBtts').checked,cards:$('#mkCards').checked};
     renderCurrent(); };});
   $('#clearFavBtn').onclick=()=>{ favorites.clear(); saveFavs(); renderCurrent(); };
 }
 
-/* ---------- Data: multi-source ---------- */
+/* ---------- Data ---------- */
 async function loadMatches(){
   if(isLoading)return; isLoading=true; state.source='loading'; state.sourcesOk=[]; updateSource(); showLoading();
   try{
-    const ds = state.mode==='live' ? fmtDate(new Date()) : state.date;
-    const dstr = ds.replace(/-/g,'');
-    const espnReqs = activeLeagues().map(l=>fetchESPN(l,dstr));
-    const tsdbReq = state.mode==='live' ? fetchTSDBLive() : fetchTSDB(ds);
-    const results = await Promise.allSettled(espnReqs.concat([tsdbReq]));
-    let items=[]; const okSources=new Set();
-    results.forEach(r=>{ if(r.status==='fulfilled' && r.value.length){
-      items=items.concat(r.value); okSources.add(r.value[0].sourceName); } });
-    state.sourcesOk=[...okSources];
-    if(!items.length){ items=demoMatches(); state.source='demo'; }
+    let items=[];
+    if(state.mode==='finished'){ items=await fetchFinishedSet(); }
+    else { items=await fetchSet(buildRequests()); }
+    const okSources=new Set(items.map(i=>i.sourceName)); state.sourcesOk=[...okSources];
+    if(!items.length){ items=demoMatches(); state.source='demo'; state.sourcesOk=['تجريبي']; }
     else state.source='live';
-    state.matches = dedupe(items)
-      .filter(m=> state.mode==='live' ? m.live : isUpcoming(m))
-      .sort((a,b)=>new Date(a.date)-new Date(b.date));
-  }catch(e){ state.matches=demoMatches(); state.source='demo'; }
-  finally{ predCache.clear(); isLoading=false;
+    let list=dedupe(items);
+    if(state.mode==='live') list=list.filter(m=>m.live);
+    else if(state.mode==='finished') list=list.filter(m=>m.statusCompleted||m.statusState==='post');
+    else list=list.filter(m=>m.live||isUpcoming(m));
+    list.sort((a,b)=>{
+      if(state.mode==='finished') return new Date(b.date)-new Date(a.date);
+      if(a.live!==b.live) return a.live?-1:1;
+      return new Date(a.date)-new Date(b.date); });
+    state.matches=list;
+    detectKickoffs();
+  }catch(e){ state.matches=demoMatches(); state.source='demo'; state.sourcesOk=['تجريبي']; }
+  finally{ predCache.clear(); isLoading=false; lastLoadTs=Date.now();
     lastUpdated.textContent='آخر تحديث: '+new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit'}).format(new Date());
     loading.hidden=true; renderCurrent(); updateBell(); }
+}
+async function fetchSet(reqs){
+  const results=await Promise.allSettled(reqs); let items=[];
+  results.forEach(r=>{ if(r.status==='fulfilled'&&r.value&&r.value.length) items=items.concat(r.value); });
+  return items;
+}
+function buildRequests(){
+  const today=fmtDate(new Date()); const reqs=[];
+  const addESPN=(l,ds)=>reqs.push(fetchESPN(l,ds.replace(/-/g,'')));
+  if(state.mode==='live'){
+    LEAGUES.forEach(l=>addESPN(l,today)); reqs.push(fetchTSDBLive());
+    if(state.keys.api)reqs.push(fetchApiFootball(null,true));
+    if(state.keys.fd)reqs.push(fetchFD(null,true));
+  } else {
+    const sel=activeLeagues();
+    sel.forEach(l=>addESPN(l,state.date)); reqs.push(fetchTSDB(state.date));
+    if(state.date!==today){
+      const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;
+      core.forEach(l=>addESPN(l,today)); reqs.push(fetchTSDBLive());
+    }
+    if(state.keys.api){ reqs.push(fetchApiFootball(state.date,false)); if(state.date!==today)reqs.push(fetchApiFootball(today,false)); }
+    if(state.keys.fd){ reqs.push(fetchFD(state.date,false)); if(state.date!==today)reqs.push(fetchFD(today,false)); }
+  }
+  return reqs;
+}
+async function fetchFinishedSet(){
+  const today=fmtDate(new Date()), yest=fmtDate(addDays(new Date(),-1));
+  if(state.finCache && state.finCache.day===today && state.finCache.league===state.league) return state.finCache.list;
+  const reqs=[];
+  [today,yest].forEach(ds=>{ const dstr=ds.replace(/-/g,'');
+    activeLeagues().forEach(l=>reqs.push(fetchESPN(l,dstr)));
+    reqs.push(fetchTSDB(ds)); });
+  if(state.keys.api)reqs.push(fetchApiFootballRange(yest,today));
+  if(state.keys.fd)reqs.push(fetchFDRange(yest,today));
+  const items=await fetchSet(reqs);
+  state.finCache={day:today,league:state.league,list:items};
+  return items;
 }
 function activeLeagues(){ return state.league==='all'?LEAGUES:LEAGUES.filter(l=>l.slug===state.league); }
 
@@ -460,11 +529,11 @@ async function fetchESPN(l,ds){
 function parseESPN(e,l){
   const c=e.competitions?.[0]||{},cs=c.competitors||[];
   const h=cs.find(x=>x.homeAway==='home')||cs[0]||{}, a=cs.find(x=>x.homeAway==='away')||cs[1]||{};
-  const live = e.status?.type?.state==='in';
+  const live=e.status?.type?.state==='in';
   return {id:e.id||`${e.date}-${h.team?.id}-${a.team?.id}`,date:e.date,leagueName:l.name,leagueSlug:l.slug,
    statusState:e.status?.type?.state||'pre',statusCompleted:!!e.status?.type?.completed,
-   live, minute: live?(e.status?.type?.detail||e.status?.displayClock||''):'' ,
-   scoreHome: h.score!=null?Number(h.score):null, scoreAway: a.score!=null?Number(a.score):null,
+   live,minute:live?(e.status?.type?.detail||e.status?.displayClock||''):'',
+   scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,
    sourceName:'ESPN',
    home:{name:h.team?.displayName||'فريق',abbr:h.team?.abbreviation||'',logo:h.team?.logo||h.team?.logos?.[0]?.href||'',record:getRecord(h)},
    away:{name:a.team?.displayName||'فريق',abbr:a.team?.abbreviation||'',logo:a.team?.logo||a.team?.logos?.[0]?.href||'',record:getRecord(a)},
@@ -487,15 +556,65 @@ async function fetchTSDBLive(){
 function parseTSDB(e,isLive){
   let dt=new Date();
   if(e.strDate){ const t=e.strTime||'00:00:00'; const p=new Date(`${e.strDate}T${t}Z`); if(!isNaN(p))dt=p; }
+  const finished=!isLive && (e.intHomeScore!=null && e.intAwayScore!=null && e.strStatus==='Match Finished');
   return {id:'tsdb-'+e.idEvent,date:dt.toISOString(),
    leagueName:TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري',leagueSlug:'tsdb-'+(e.idLeague||'x'),
-   statusState:isLive?'in':'pre',statusCompleted:false,live:isLive,
-   minute:isLive?(e.strProgress||e.strStatus||''):'' ,
-   scoreHome:isLive?Number(e.intHomeScore||0):null, scoreAway:isLive?Number(e.intAwayScore||0):null,
+   statusState:isLive?'in':(finished?'post':'pre'),statusCompleted:finished,live:isLive,
+   minute:isLive?(e.strProgress||e.strStatus||''):'',
+   scoreHome:(isLive||finished)?Number(e.intHomeScore||0):null,scoreAway:(isLive||finished)?Number(e.intAwayScore||0):null,
    sourceName:'TheSportsDB',
    home:{name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?`https://www.thesportsdb.com/images/media/team/badge/${e.idHomeTeam}.png`:'',record:''},
    away:{name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?`https://www.thesportsdb.com/images/media/team/badge/${e.idAwayTeam}.png`:'',record:''},
    venue:e.strVenue||''};
+}
+
+/* Source 3 (optional): API-Football */
+async function fetchApiFootball(dateStr,liveOnly){
+  const url=liveOnly?'https://v3.football.api-sports.io/fixtures?live=all'
+    :`https://v3.football.api-sports.io/fixtures?date=${dateStr}`;
+  const r=await fetch(url,{cache:'no-store',headers:{'x-apisports-key':state.keys.api}});
+  if(!r.ok)throw new Error(r.status);
+  const d=await r.json(); return (d.response||[]).map(parseApiFootball);
+}
+async function fetchApiFootballRange(a,b){
+  const r=await fetch(`https://v3.football.api-sports.io/fixtures?from=${a}&to=${b}`,{cache:'no-store',headers:{'x-apisports-key':state.keys.api}});
+  if(!r.ok)throw new Error(r.status);
+  const d=await r.json(); return (d.response||[]).map(parseApiFootball);
+}
+function parseApiFootball(f){
+  const st=f.fixture?.status?.short||'NS';
+  const liveSt=['1H','2H','HT','ET','BT','P']; const finSt=['FT','AFT','PEN','WO'];
+  const live=liveSt.includes(st), fin=finSt.includes(st);
+  return {id:'apify-'+f.fixture?.id,date:f.fixture?.date||new Date().toISOString(),
+   leagueName:f.league?.name||'دوري',leagueSlug:'apify-'+(f.league?.id||'x'),
+   statusState:live?'in':(fin?'post':'pre'),statusCompleted:fin,live,
+   minute:live?String(f.fixture?.status?.elapsed||''):'',
+   scoreHome:f.goals?.home??null,scoreAway:f.goals?.away??null,sourceName:'API-Football',
+   home:{name:f.teams?.home?.name||'فريق',abbr:'',logo:f.teams?.home?.logo||'',record:''},
+   away:{name:f.teams?.away?.name||'فريق',abbr:'',logo:f.teams?.away?.logo||'',record:''},
+   venue:f.fixture?.venue?.name||''};
+}
+
+/* Source 4 (optional): football-data.org */
+async function fetchFD(dateStr,liveOnly){
+  const r=await fetch(`https://api.football-data.org/v4/matches?dateFrom=${dateStr}&dateTo=${dateStr}`,{cache:'no-store',headers:{'X-Auth-Token':state.keys.fd}});
+  if(!r.ok)throw new Error(r.status);
+  const d=await r.json(); return (d.matches||[]).map(parseFD);
+}
+async function fetchFDRange(a,b){
+  const r=await fetch(`https://api.football-data.org/v4/matches?dateFrom=${a}&dateTo=${b}`,{cache:'no-store',headers:{'X-Auth-Token':state.keys.fd}});
+  if(!r.ok)throw new Error(r.status);
+  const d=await r.json(); return (d.matches||[]).map(parseFD);
+}
+function parseFD(m){
+  const live=['IN_PLAY','PAUSED'].includes(m.status); const fin=m.status==='FINISHED';
+  return {id:'fd-'+m.id,date:m.utcDate||new Date().toISOString(),
+   leagueName:m.competition?.name||'دوري',leagueSlug:'fd-'+(m.competition?.id||'x'),
+   statusState:live?'in':(fin?'post':'pre'),statusCompleted:fin,live,minute:live?'مباشر':'',
+   scoreHome:m.score?.fullTime?.home??null,scoreAway:m.score?.fullTime?.away??null,sourceName:'football-data',
+   home:{name:m.homeTeam?.name||'فريق',abbr:m.homeTeam?.shortName||'',logo:'',record:''},
+   away:{name:m.awayTeam?.name||'فريق',abbr:m.awayTeam?.shortName||'',logo:'',record:''},
+   venue:m.venue||''};
 }
 
 function demoMatches(){
@@ -516,6 +635,34 @@ function matchKey(m){ return (m.home.name+'|'+m.away.name).toLowerCase().replace
 function dedupe(a){ const m=new Map(); a.forEach(x=>{ const k=matchKey(x); if(!m.has(k))m.set(k,x); }); return [...m.values()]; }
 function isUpcoming(m){ const d=new Date(m.date); if(isNaN(d))return false; const n=new Date();
   return d>n && !m.live && m.statusState!=='post' && !m.statusCompleted; }
+
+/* Kickoff alerts */
+function detectKickoffs(){
+  const liveNow=state.matches.filter(m=>m.live);
+  const ids=new Set(liveNow.map(m=>m.id));
+  if(state.prevLive && state.notifEnabled){
+    liveNow.forEach(m=>{ if(!state.prevLive.has(m.id)&&favorites.has(m.id)) kickNotify(m); });
+  }
+  state.prevLive=ids;
+}
+function kickNotify(m){
+  try{ navigator.vibrate&&navigator.vibrate([300,100,300]); }catch(e){}
+  beep();
+  kickBanner.innerHTML=`🔴 <b>بدأت الآن:</b> ${esc(m.home.name)} × ${esc(m.away.name)}`;
+  kickBanner.classList.remove('hidden');
+  setTimeout(()=>kickBanner.classList.add('hidden'),8000);
+  try{ if('Notification' in window&&Notification.permission==='granted')
+    new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`}); }catch(e){}
+}
+function beep(){ try{
+  const ctx=beep.ctx||(beep.ctx=new (window.AudioContext||window.webkitAudioContext)());
+  [0,0.2].forEach(t=>{ const o=ctx.createOscillator(),g=ctx.createGain();
+   o.frequency.value=880; o.connect(g); g.connect(ctx.destination);
+   g.gain.setValueAtTime(0.0001,ctx.currentTime+t);
+   g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);
+   g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);
+   o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.16); });
+ }catch(e){} }
 
 /* ---------- Predictions ---------- */
 function getPrediction(m){ if(predCache.has(m.id))return predCache.get(m.id);
@@ -569,9 +716,9 @@ function filtered(){ let l=[...state.matches];
   return l; }
 function renderHome(){ loading.hidden=true; const list=filtered(); updateStats(list);
   if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;
-    homeEmpty.innerHTML= state.mode==='live'
-      ? '🔴 لا توجد مباريات مباشرة الآن.<br>ارجع لتبويب "القادمة" أو حدّث بعد شوية.'
-      : 'لا توجد مباريات قادمة في هذا التاريخ أو الدوري.<br>جرّب تغيير التاريخ أو اختيار كل الدوريات.';
+    homeEmpty.innerHTML= state.mode==='live' ? '🔴 لا توجد مباريات مباشرة الآن.<br>ارجع لتبويب "الكل" أو حدّث بعد شوية.'
+     : state.mode==='finished' ? '⚪ لا توجد مباريات منتهية في اليومين الأخيرين.'
+     : 'لا توجد مباريات قادمة في هذا التاريخ أو الدوري.<br>جرّب تغيير التاريخ أو اختيار كل الدوريات.';
     return;}
   homeEmpty.hidden=true; homeContent.innerHTML=list.map(m=>matchCard(m)).join(''); }
 function renderFavs(){ loading.hidden=true; const list=filtered().filter(m=>favorites.has(m.id)); updateStats(list);
@@ -584,10 +731,10 @@ function renderLeagues(){ loading.hidden=true;
 function renderStats(){ loading.hidden=true;
   const acc=87, C=213.6; $('#ringFg').style.strokeDashoffset=C*(1-acc/100); $('#ringText').textContent=acc+'%';
   $('#statAnalyzed').textContent=state.matches.length;
-  $('#statToday').textContent=state.matches.filter(m=>new Date(m.date).toDateString()===new Date().toDateString()).length; }
+  $('#statToday').textContent=state.matches.filter(m=>m.live).length; }
 function renderNotifs(){ loading.hidden=true;
   const now=Date.now(), items=[];
-  state.matches.forEach(m=>{ if(m.live){ items.push({ic:'🔴',t:`مباراة مباشرة الآن`,s:`${m.home.name} × ${m.away.name} — ${m.scoreHome}-${m.scoreAway}`}); return; }
+  state.matches.forEach(m=>{ if(m.live){ items.push({ic:'🔴',t:'مباراة مباشرة الآن',s:`${m.home.name} × ${m.away.name} — ${m.scoreHome??0}-${m.scoreAway??0}`}); return; }
     const h=(new Date(m.date)-now)/36e5;
     if(h>0&&h<=36) items.push({ic:'⏰',t:`${m.home.name} × ${m.away.name}`,s:`تبدأ بعد ${h<1?'أقل من ساعة':Math.round(h)+' ساعة'} — ${fmtDT(m.date)}`}); });
   [...favorites].slice(0,3).forEach(id=>{ const m=state.matches.find(x=>x.id===id);
@@ -598,13 +745,17 @@ function renderNotifs(){ loading.hidden=true;
 function updateBell(){ const n=state.notifEnabled?state.matches.filter(m=>m.live||(new Date(m.date)-Date.now())/36e5<=24).length:0;
   bellBadge.textContent=n; bellBadge.classList.toggle('hidden',!n); }
 
-/* ---------- Cards & details ---------- */
+/* ---------- Cards ---------- */
+function isFinished(m){ return m.statusCompleted||m.statusState==='post'; }
 function matchCard(m){ const p=getPrediction(m), fav=favorites.has(m.id);
+  const fin=isFinished(m)&&m.scoreHome!=null;
   const headRight = m.live
     ? `<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`
+    : fin ? `<span class="done-pill">انتهت</span>`
     : `<span class="date-text">${fmtDT(m.date)}</span>`;
   const vsBox = m.live
     ? `<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`
+    : fin ? `<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`
     : `<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return `<article class="card" data-match="${esc(m.id)}">
    <div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>
@@ -615,8 +766,8 @@ function matchCard(m){ const p=getPrediction(m), fav=favorites.has(m.id);
     ${vsBox}
     <div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div>
    </div>
-   <div class="pred-grid">${tiles(p)}</div>
-   <div class="match-foot"><span>الثقة العامة: ${p.confidence}%</span><span>${esc(m.venue||'')} ${m.venue?'•':''} المصدر: ${esc(m.sourceName||'')}</span></div></article>`; }
+   <div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div>
+   <div class="match-foot"><span>${fin?'':'الثقة العامة: '+p.confidence+'%'}</span><span>${esc(m.venue||'')} ${m.venue?'•':''} المصدر: ${esc(m.sourceName||'')}</span></div></article>`; }
 function tiles(p){ const en=[];
   if(state.markets.goals)en.push({ic:'⚽',ti:'أهداف 2.5',p:p.goals});
   if(state.markets.corners)en.push({ic:'🚩',ti:'ركنيات 9.5',p:p.corners});
@@ -629,15 +780,27 @@ function tile(ic,ti,p,sure){ return `<div class="pred ${sure?'sure-tile':''}">
   <div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div>
   <div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div>
   <div class="prob">نسبة الثقة ${p.prob}%</div></div>`; }
+function resultTiles(m,p){
+  const sh=m.scoreHome??0, sa=m.scoreAway??0, tot=sh+sa;
+  const gHit=(p.goals.text.startsWith('أكثر')&&tot>2.5)||(!p.goals.text.startsWith('أكثر')&&tot<2.5);
+  const bHit=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
+  return `<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2.5</span></div>
+    <div class="pred-value ${gHit?'good':'hot'}">${p.goals.text} ${gHit?'✔':'✘'}</div>
+    <div class="prob">الإجمالي الفعلي: ${tot} أهداف</div></div>
+   <div class="pred"><div class="pred-top"><span>🥅</span><span>كلا الفريقين يسجل</span></div>
+    <div class="pred-value ${bHit?'good':'hot'}">${p.btts.text} ${bHit?'✔':'✘'}</div>
+    <div class="prob">النتيجة: ${sh} - ${sa}</div></div>`; }
 function teamVis(t){ if(t.logo)return `<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
   return `<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`; }
 
 function openDetails(id){ const m=state.matches.find(x=>x.id===id); if(!m)return;
   state.prevView=state.view; state.detailsId=id; showView('details'); }
 function renderDetails(){ const m=state.matches.find(x=>x.id===state.detailsId); if(!m){showView('home');return;}
-  const p=getPrediction(m); $('#detailsTitle').textContent=m.leagueName;
+  const p=getPrediction(m), fin=isFinished(m)&&m.scoreHome!=null;
+  $('#detailsTitle').textContent=m.leagueName;
   const vsBox = m.live
     ? `<div class="vs"><span class="liveTxt">مباشر ${esc(m.minute||'')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`
+    : fin ? `<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`
     : `<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   detailsContent.innerHTML=`
    <div class="card" style="cursor:default">
@@ -648,16 +811,17 @@ function renderDetails(){ const m=state.matches.find(x=>x.id===state.detailsId);
      <div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small>
       <div class="dots">${formDots(m.id+'a')}</div></div>
     </div>
-    <div class="match-foot"><span>${m.live?'مباراة مباشرة':'${fmtDT(m.date)}'}</span><span>${esc(m.venue||'')} المصدر: ${esc(m.sourceName||'')}</span></div>
+    <div class="match-foot"><span>${m.live?'مباراة مباشرة':fmtDT(m.date)}</span><span>${esc(m.venue||'')} المصدر: ${esc(m.sourceName||'')}</span></div>
    </div>
    <div class="tabs">
     <button class="tab active" data-tab="pred">التوقعات</button>
     <button class="tab" data-tab="stats">الإحصائيات</button>
     <button class="tab" data-tab="h2h">المواجهات</button>
    </div>
-   <div id="tab-pred"><div class="pred-grid">${tiles(p)}</div>
-    <div class="match-foot"><span>الثقة العامة: ${p.confidence}%</span></div></div>
+   <div id="tab-pred"><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div>
+    <div class="match-foot"><span>${fin?'مقارنة التوقع بالنتيجة الفعلية':'الثقة العامة: '+p.confidence+'%'}</span></div></div>
    <div id="tab-stats" class="hidden">
+    ${fin?`<div class="stat-row"><span>النتيجة النهائية</span><b>${m.scoreHome} - ${m.scoreAway}</b></div>`:''}
     <div class="stat-row"><span>الأهداف المتوقعة</span><b>${p.expGoals.toFixed(1)}</b></div>
     <div class="stat-row"><span>الركنيات المتوقعة</span><b>${p.expCor.toFixed(1)}</b></div>
     <div class="stat-row"><span>البطاقات المتوقعة</span><b>${p.expCards.toFixed(1)}</b></div>
