@@ -245,7 +245,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
       </div>
       <b style="display:block;margin:4px 0 8px;font-size:13px">📈 دقتك الحقيقية المقاسة:</b>
       <div id="trackRows"></div>
-      <div class="setting-row"><span>تحديث ذكي (30ث لايف / 2د عادي)</span>
+      <div class="setting-row"><span>تحديث ذكي (10ث لايف / 2د عادي)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
@@ -317,6 +317,7 @@ const loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCo
 const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search');
 const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
 let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0;
+let lastFastTs=0,lastFastOkTs=0,pollingFast=false;
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
  mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
  prevLive:null,finCache:null,
@@ -330,11 +331,53 @@ function init(){
     setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');},500);
   },1600);
   setInterval(tick,15000);
+  setInterval(fastTick,5000);
+  setInterval(secTick,1000);
 }
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
   const need=state.matches.some(m=>m.live)?30000:120000;
   if(Date.now()-lastLoadTs>=need)loadMatches();
+}
+/* ===== Fast live poll: كل 10 ثواني للدوريات اللي فيها لايف بس ===== */
+function fastTick(){
+  if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
+  if(!state.matches.some(m=>m.live))return;
+  if(Date.now()-lastFastTs<10000||pollingFast)return;
+  lastFastTs=Date.now();
+  liveFastPoll();
+}
+async function liveFastPoll(){
+  pollingFast=true;
+  try{
+    const slugs=[...new Set(state.matches.filter(m=>m.live&&m.sourceName==='ESPN').map(m=>m.leagueSlug))];
+    if(!slugs.length)return;
+    const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
+    slugs.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(!l)return;
+      reqs.push(fetchESPN(l,today.replace(/-/g,'')));reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
+    const items=await fetchSet(reqs);
+    mergeLive(items.filter(m=>m.live));
+  }catch(e){}
+  finally{pollingFast=false;}
+}
+function mergeLive(liveItems){
+  let changed=false;
+  liveItems.forEach(nm=>{
+    const i=state.matches.findIndex(m=>m.id===nm.id);
+    if(i>=0){const om=state.matches[i];
+      if(om.scoreHome!==nm.scoreHome||om.scoreAway!==nm.scoreAway||om.minute!==nm.minute){state.matches[i]=Object.assign({},om,nm);changed=true;}}
+    else if(!state.matches.some(m=>matchKey(m)===matchKey(nm))){state.matches.unshift(nm);changed=true;}
+  });
+  lastFastOkTs=Date.now();
+  if(changed){
+    state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
+    detectKickoffs();renderCurrent();updateBell();
+  }
+}
+function secTick(){
+  if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;
+  const s=Math.max(0,Math.round((Date.now()-Math.max(lastLoadTs,lastFastOkTs))/1000));
+  lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`;
 }
 function bindEvents(){
   $('#refreshBtn').onclick=()=>loadMatches();
@@ -381,7 +424,6 @@ async function loadMatches(){
     state.matches=list;trackFinished(list);detectKickoffs();
   }catch(e){state.matches=demoMatches();state.source='demo';state.sourcesOk=['تجريبي'];}
   finally{predCache.clear();isLoading=false;lastLoadTs=Date.now();
-    lastUpdated.textContent='آخر تحديث: '+new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit'}).format(new Date());
     loading.hidden=true;renderCurrent();updateBell();}
 }
 async function fetchSet(reqs){const r=await Promise.allSettled(reqs);let i=[];r.forEach(x=>{if(x.status==='fulfilled'&&x.value&&x.value.length)i=i.concat(x.value);});return i;}
@@ -537,7 +579,7 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
 
-/* شارة ثقة كبيرة = أعلى درجة ملاءمة (احتمال × وزن السوق + توفر بيانات) */
+/* شارة ثقة كبيرة = أعلى درجة ملاءمة */
 function tiles(p){
   const W={goals:1.0,g15:1.12,corners:0.93,btts:0.97,cards:0.93,cards55u:1.08};
   const en=[];
