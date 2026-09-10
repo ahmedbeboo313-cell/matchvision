@@ -27,9 +27,9 @@ button,input,select{font:inherit;color:inherit}
  box-shadow:0 10px 30px rgba(239,68,68,.45)}
 
 /* ===== Guide Modal ===== */
-.gmodal{position:fixed;inset:0;z-index:300;display:grid;place-items:center;
+.gmodal{position:fixed;inset:0;z-index:300;display:flex;overflow-y:auto;
  background:rgba(3,6,12,.72);backdrop-filter:blur(8px);padding:18px}
-.gcard{width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);
+.gcard{margin:auto;width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);
  border:1px solid rgba(251,191,36,.35);border-radius:26px;padding:22px 18px;
  box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(251,191,36,.10);
  text-align:center;animation:gpop .45s cubic-bezier(.2,1.4,.4,1)}
@@ -429,7 +429,9 @@ function secTick(){
   lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`;
 }
 function bindEvents(){
-  $('#guideOk').onclick=()=>{$('#guideModal').classList.add('hidden');lsSet('mv_guide_day',fmtDate(new Date()));};
+  const closeGuide=()=>{$('#guideModal').classList.add('hidden');lsSet('mv_guide_day',fmtDate(new Date()));};
+  $('#guideOk').onclick=closeGuide;
+  $('#guideModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeGuide();});
   $('#refreshBtn').onclick=()=>loadMatches();
   $('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
   $('#backBtn').onclick=()=>showView(state.prevView||'home');
