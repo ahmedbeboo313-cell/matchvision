@@ -25,8 +25,6 @@ button,input,select{font:inherit;color:inherit}
  width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;
  padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;
  box-shadow:0 10px 30px rgba(239,68,68,.45)}
-
-/* ===== Guide Modal ===== */
 .gmodal{position:fixed;inset:0;z-index:300;display:flex;overflow-y:auto;
  background:rgba(3,6,12,.72);backdrop-filter:blur(8px);padding:18px}
 .gcard{margin:auto;width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);
@@ -51,7 +49,6 @@ button,input,select{font:inherit;color:inherit}
  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a}
 .gcredit{margin-top:10px;color:var(--muted);font-size:11.5px}
 .gcredit b{color:#fbbf24}
-
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;
  background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
 .splash.fade{opacity:0;pointer-events:none}
@@ -211,7 +208,6 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 <body>
 <div id="kickBanner" class="kick hidden"></div>
 
-<!-- ===== Guide Modal ===== -->
 <div id="guideModal" class="gmodal hidden">
   <div class="gcard">
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
@@ -328,28 +324,68 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 <script>
 'use strict';
 const LEAGUES=[
+ {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
+ {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
+ {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
+ {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
+ {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
+ {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
+ {slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
+ {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
+ {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
+ {slug:'eng.2',name:'تشامبيونشيب إنجلترا',em:'🎩',home:1.45,away:1.15},
  {slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},
+ {slug:'esp.2',name:'الليغا 2 إسبانيا',em:'🥈',home:1.40,away:1.05},
  {slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},
+ {slug:'ita.2',name:'السيري B إيطاليا',em:'🥈',home:1.40,away:1.10},
  {slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},
+ {slug:'ger.2',name:'البوندسليغا 2',em:'🥈',home:1.60,away:1.30},
  {slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},
+ {slug:'fra.2',name:'الليغ 2 فرنسا',em:'🥈',home:1.40,away:1.10},
  {slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},
  {slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},
  {slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},
  {slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
- {slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},
- {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},
- {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
- {slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},
+ {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
+ {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🧜',home:1.55,away:1.25},
+ {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
+ {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
+ {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
+ {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
+ {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
  {slug:'uefa.europa.conf',name:'دوري المؤتمر الأوروبي',em:'🎖️',home:1.58,away:1.32},
- {slug:'fifa.world',name:'تصفيات/كأس العالم',em:'🌍',home:1.45,away:1.05},
- {slug:'egy.1',name:'الدوري المصري',em:'🦅',home:1.35,away:0.95},
- {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20}
+ {slug:'uefa.nations',name:'دوري الأمم الأوروبية',em:'🇪🇺',home:1.45,away:1.15},
+ {slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},
+ {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},
+ {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
+ {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
+ {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},
+ {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
+ {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
+ {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
+ {slug:'conmebol.sudamericana',name:'كوبا سودامريكانا',em:'🌎',home:1.35,away:1.05},
+ {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
+ {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
+ {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
+ {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
+ {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
+ {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
+ {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
 ];
-const CORE_SLUGS=['eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','egy.1','ksa.1'];
+const CORE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa'];
 const AMER_SLUGS=['usa.1','mex.1','bra.1','arg.1'];
 const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي',
  '4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
@@ -386,8 +422,7 @@ function maybeShowGuide(){
 }
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
-  const need=state.matches.some(m=>m.live)?30000:120000;
-  if(Date.now()-lastLoadTs>=need)loadMatches();
+  if(Date.now()-lastLoadTs>=120000)loadMatches();
 }
 function fastTick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
@@ -516,7 +551,7 @@ function parseTSDB(e,isLive){let dt=new Date();if(e.strDate){const p=new Date(`$
    scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',
    home:{name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?`https://www.thesportsdb.com/images/media/team/badge/${e.idHomeTeam}.png`:'',record:''},away:{name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?`https://www.thesportsdb.com/images/media/team/badge/${e.idAwayTeam}.png`:'',record:''},venue:e.strVenue||''};}
 function demoMatches(){
-  const fx=[['الدوري الإنجليزي','eng.1','مانشستر سيتي','4-1-1','ليفربول','4-2-0','ملعب الاتحاد','19:00'],['الدوري الإسباني','esp.1','ريال مدريد','5-0-1','برشلونة','4-1-1','سانتياغو برنابيو','21:00'],['الدوري الإيطالي','ita.1','إنتر ميلان','4-2-0','يوفنتوس','3-3-0','سان سيرو','20:45'],['دوري روشن السعودي','ksa.1','الهلال','5-1-0','النصر','4-1-1','المملكة أرينا','21:30'],['الدوري المصري','egy.1','الأهلي','4-2-0','الزمالك','3-2-1','استاد القاهرة','20:00']];
+  const fx=[['الدوري المصري','egy.1','الأهلي','4-2-0','الزمالك','3-2-1','استاد القاهرة','20:00'],['الدوري الإنجليزي','eng.1','مانشستر سيتي','4-1-1','ليفربول','4-2-0','ملعب الاتحاد','19:00'],['الدوري الإسباني','esp.1','ريال مدريد','5-0-1','برشلونة','4-1-1','سانتياغو برنابيو','21:00'],['دوري روشن السعودي','ksa.1','الهلال','5-1-0','النصر','4-1-1','المملكة أرينا','21:30'],['دوري أبطال أفريقيا','caf.champions','الأهلي','3-1-0','الترجي','2-2-0','استاد القاهرة','21:00']];
   return fx.map((f,i)=>{let d=new Date(`${state.date}T${f[7]}:00`);if(isNaN(d))d=addDays(new Date(),1);if(d<=new Date())d.setDate(d.getDate()+1);
    return{id:`demo-${state.date}-${i}`,date:d.toISOString(),leagueName:f[0],leagueSlug:f[1],statusState:'pre',statusCompleted:false,live:false,minute:'',scoreHome:null,scoreAway:null,sourceName:'تجريبي',home:{name:f[2],abbr:f[2].slice(0,3),logo:'',record:f[3]},away:{name:f[4],abbr:f[4].slice(0,3),logo:'',record:f[5]},venue:f[6]};});}
 function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/\s+/g,'');}
@@ -607,7 +642,7 @@ function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
 function renderCurrent(){updateSource();({home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails})[state.view]?.();}
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
-function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':state.mode==='finished'?'⚪ لا توجد نتائج.':'لا توجد مباريات. جرّب تاريخ أو دوري آخر.';return;}homeEmpty.hidden=true;homeContent.innerHTML=list.map(m=>matchCard(m)).join('');}
+function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':state.mode==='finished'?'⚪ لا توجد نتائج.':'لا توجد مباريات في التاريخ ده للدوري المختار. جرّب تاريخ تاني أو "كل الدوريات".';return;}homeEmpty.hidden=true;homeContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track');let acc=87,label='تقديري — بيتحول لحقيقي بعد 10 نتائج',rows='';
