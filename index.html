@@ -9,72 +9,46 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-:root{
-  --bg:#050810;--line:rgba(255,255,255,.09);--text:#edf2ff;--muted:#9aa8c7;
-  --accent:#22c55e;--accent2:#38bdf8;--radius:24px;--shadow:0 12px 32px rgba(0,0,0,.28);
-}
+:root{--bg:#050810;--line:rgba(255,255,255,.09);--text:#edf2ff;--muted:#9aa8c7;--accent:#22c55e;--accent2:#38bdf8;--radius:24px;--shadow:0 12px 32px rgba(0,0,0,.28)}
 [data-theme="blue"]{--accent:#38bdf8;--accent2:#818cf8}
 [data-theme="purple"]{--accent:#a78bfa;--accent2:#f472b6}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%;overflow-x:hidden}
-body{font-family:'Cairo',system-ui,sans-serif;color:var(--text);
- background:radial-gradient(circle at top left,rgba(56,189,248,.15),transparent 30%),
- radial-gradient(circle at top right,rgba(34,197,94,.13),transparent 26%),
- linear-gradient(180deg,#08101f,#050810 45%);min-height:100vh}
+body{font-family:'Cairo',system-ui,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(56,189,248,.15),transparent 30%),radial-gradient(circle at top right,rgba(34,197,94,.13),transparent 26%),linear-gradient(180deg,#08101f,#050810 45%);min-height:100vh}
 button,input,select,textarea{font:inherit;color:inherit}
 .hidden{display:none!important}
-.kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;
- width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;
- padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;
- box-shadow:0 10px 30px rgba(239,68,68,.45)}
-.banner{margin:0 0 10px;padding:12px 14px;border-radius:18px;
- background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;
- display:flex;justify-content:space-between;align-items:center;gap:8px;
- box-shadow:0 10px 26px rgba(239,68,68,.35);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
+.kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;box-shadow:0 10px 30px rgba(239,68,68,.45)}
+.banner{margin:0 0 10px;padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 10px 26px rgba(239,68,68,.35);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
 .banner button{background:rgba(0,0,0,.25);border:0;color:#fff;padding:5px 10px;border-radius:10px;cursor:pointer;font-weight:800;flex:none}
-.maintenance{position:fixed;inset:0;z-index:500;background:linear-gradient(180deg,#08101f,#050810);
- display:grid;place-items:center;text-align:center;padding:20px}
+.maintenance{position:fixed;inset:0;z-index:500;background:linear-gradient(180deg,#08101f,#050810);display:grid;place-items:center;text-align:center;padding:20px}
 .maintenance h1{font-size:24px;color:#fbbf24;margin-bottom:10px}
 .maintenance p{color:var(--muted);max-width:400px;line-height:1.8}
-.gmodal{position:fixed;inset:0;z-index:300;display:flex;overflow-y:auto;
- background:rgba(3,6,12,.72);backdrop-filter:blur(8px);padding:18px}
-.gcard{margin:auto;width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);
- border:1px solid rgba(251,191,36,.35);border-radius:26px;padding:22px 18px;
- box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(251,191,36,.10);
- text-align:center;animation:gpop .45s cubic-bezier(.2,1.4,.4,1)}
+.gmodal{position:fixed;inset:0;z-index:300;display:flex;overflow-y:auto;background:rgba(3,6,12,.72);backdrop-filter:blur(8px);padding:18px}
+.gcard{margin:auto;width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);border:1px solid rgba(251,191,36,.35);border-radius:26px;padding:22px 18px;box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(251,191,36,.10);text-align:center;animation:gpop .45s cubic-bezier(.2,1.4,.4,1)}
 @keyframes gpop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
 .gcard svg{width:62px;height:62px}
 .gcard h2{font-size:19px;margin:8px 0 12px;font-weight:800}
 .gcard h2 span{color:#fbbf24}
 .gsteps{display:grid;gap:9px;text-align:right;margin-bottom:12px}
-.gstep{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.05);
- border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-size:12.5px;line-height:1.9;color:var(--text)}
-.gstep span{flex:none;width:24px;height:24px;border-radius:50%;
- background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;font-weight:800;
- display:grid;place-items:center;font-size:13px;margin-top:3px}
-.suremini{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;
- padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;white-space:nowrap}
-.gwarn{color:#fcd34d;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
- border-radius:14px;padding:9px 12px;font-size:11.5px;line-height:1.9;margin-bottom:12px}
-.gbtn{width:100%;border:0;border-radius:16px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;
- background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a}
+.gstep{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-size:12.5px;line-height:1.9;color:var(--text)}
+.gstep span{flex:none;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;font-weight:800;display:grid;place-items:center;font-size:13px;margin-top:3px}
+.suremini{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;white-space:nowrap}
+.gwarn{color:#fcd34d;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:14px;padding:9px 12px;font-size:11.5px;line-height:1.9;margin-bottom:12px}
+.gbtn{width:100%;border:0;border-radius:16px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a}
 .gcredit{margin-top:10px;color:var(--muted);font-size:11.5px}
 .gcredit b{color:#fbbf24}
 .sugg-form{text-align:right}
 .sugg-form label{display:block;margin-bottom:4px;color:var(--muted);font-size:12px;font-weight:700}
-.sugg-form input,.sugg-form textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);
- border-radius:12px;padding:10px;margin-bottom:10px;color:var(--text);outline:none;resize:vertical;font-family:inherit}
+.sugg-form input,.sugg-form textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:12px;padding:10px;margin-bottom:10px;color:var(--text);outline:none;resize:vertical;font-family:inherit}
 .sugg-form textarea{min-height:80px}
 .stars{display:flex;justify-content:center;gap:4px;margin:10px 0}
 .star{font-size:32px;cursor:pointer;color:rgba(255,255,255,.2);transition:.15s;user-select:none}
 .star.active{color:#fbbf24;transform:scale(1.1)}
-.sugg-hero{width:100%;margin:0 0 12px;padding:14px 16px;border:1px solid rgba(251,191,36,.45);
- background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(34,197,94,.15));color:#fde68a;
- border-radius:20px;font-size:13.5px;font-weight:700;cursor:pointer;text-align:center;
- box-shadow:0 8px 22px rgba(0,0,0,.28);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
+.sugg-hero{width:100%;margin:0 0 12px;padding:14px 16px;border:1px solid rgba(251,191,36,.45);background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(34,197,94,.15));color:#fde68a;border-radius:20px;font-size:13.5px;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.28);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
 .sugg-hero b{color:#fff}
-.splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;
- background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
+.pin-badge{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.pred.vip-tile{border-color:#fbbf24;box-shadow:0 0 0 1px #fbbf24 inset,0 0 14px rgba(251,191,36,.18)}
+.splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
 .splash.fade{opacity:0;pointer-events:none}
 .splash-box{display:grid;justify-items:center;gap:12px;text-align:center}
 .splash-box svg{width:96px;height:96px;animation:pulse 1.4s infinite}
@@ -83,13 +57,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .splash-box h1 span{color:#fbbf24}
 .splash-box p{color:var(--muted);font-size:13px}
 .splash-bar{width:190px;height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:8px}
-.splash-bar span{display:block;height:100%;width:40%;border-radius:99px;
- background:linear-gradient(90deg,var(--accent2),var(--accent));animation:load 1.4s infinite}
+.splash-bar span{display:block;height:100%;width:40%;border-radius:99px;background:linear-gradient(90deg,var(--accent2),var(--accent));animation:load 1.4s infinite}
 @keyframes load{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
 .app{width:min(580px,100%);margin:0 auto;padding:14px 14px 100px;max-width:100%}
-.topbar{position:sticky;top:10px;z-index:20;display:flex;flex-wrap:wrap;justify-content:space-between;
- gap:10px;padding:12px 14px;background:rgba(5,8,16,.78);border:1px solid var(--line);border-radius:26px;
- backdrop-filter:blur(16px);box-shadow:var(--shadow);max-width:100%}
+.topbar{position:sticky;top:10px;z-index:20;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding:12px 14px;background:rgba(5,8,16,.78);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(16px);box-shadow:var(--shadow);max-width:100%}
 .brandrow{display:flex;align-items:center;gap:10px;min-width:0}
 .brandrow svg{width:40px;height:40px;flex:none}
 .brand{font-size:17px;font-weight:800;line-height:1.2}
@@ -100,34 +71,26 @@ button,input,select,textarea{font:inherit;color:inherit}
 .badge.loading{background:rgba(148,163,184,.12);color:#cbd5e1}
 .badge.live{background:rgba(34,197,94,.13);color:#86efac;border:1px solid rgba(34,197,94,.25)}
 .badge.demo{background:rgba(245,158,11,.13);color:#fcd34d;border:1px solid rgba(245,158,11,.25)}
-.icon-btn{position:relative;width:40px;height:40px;flex:none;border:1px solid var(--line);
- background:rgba(255,255,255,.05);border-radius:14px;font-size:18px;cursor:pointer}
-.icon-btn .count{position:absolute;top:-6px;left:-6px;min-width:18px;height:18px;border-radius:99px;
- background:var(--accent);color:#04120a;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+.icon-btn{position:relative;width:40px;height:40px;flex:none;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;font-size:18px;cursor:pointer}
+.icon-btn .count{position:absolute;top:-6px;left:-6px;min-width:18px;height:18px;border-radius:99px;background:var(--accent);color:#04120a;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
 .controls{display:grid;gap:9px;margin:12px 0}
 .mode-row,.date-row,.filters-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;max-width:100%}
 .mode-row::-webkit-scrollbar,.date-row::-webkit-scrollbar,.filters-row::-webkit-scrollbar{display:none}
-.chip{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;
- padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
+.chip{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
 .chip.active{background:linear-gradient(135deg,rgba(34,197,94,.24),rgba(56,189,248,.22));border-color:var(--accent)}
 .mode-chip[data-mode="live"].active{background:linear-gradient(135deg,rgba(239,68,68,.28),rgba(245,158,11,.2));border-color:#ef4444;color:#fecaca}
 .mode-chip[data-mode="finished"].active{background:rgba(148,163,184,.2);border-color:#94a3b8;color:#e2e8f0}
-input[type=date],input[type=search],select{border:1px solid var(--line);background:rgba(255,255,255,.05);
- border-radius:15px;padding:10px 12px;outline:none;min-width:0;max-width:100%}
+input[type=date],input[type=search],select{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:15px;padding:10px 12px;outline:none;min-width:0;max-width:100%}
 select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-width:130px;flex:none}
 .statsbar{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;padding:0 4px 10px;flex-wrap:wrap}
-.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));
- border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;
- box-shadow:var(--shadow);cursor:pointer;max-width:100%}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;max-width:100%}
+.card.pinned-card{border-color:rgba(251,191,36,.5);box-shadow:0 0 0 1px rgba(251,191,36,.4),0 12px 32px rgba(0,0,0,.35)}
 .match-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.league-pill{font-size:11px;font-weight:800;color:#dbeafe;background:rgba(56,189,248,.12);
- border:1px solid rgba(56,189,248,.2);padding:5px 9px;border-radius:999px}
+.league-pill{font-size:11px;font-weight:800;color:#dbeafe;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.2);padding:5px 9px;border-radius:999px}
 .date-text{color:var(--muted);font-size:12px;font-weight:700}
-.live-pill{color:#fca5a5;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);
- padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
+.live-pill{color:#fca5a5;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite}
-.done-pill{color:#cbd5e1;background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.3);
- padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.done-pill{color:#cbd5e1;background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.3);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800}
 .fav-btn{border:0;background:rgba(255,255,255,.06);width:34px;height:34px;flex:none;border-radius:12px;font-size:17px;cursor:pointer}
 .fav-btn.active{color:#facc15}
 .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:13px}
@@ -136,8 +99,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .team small{color:var(--muted);font-size:11px;min-height:15px}
 .logo{width:44px;height:44px;border-radius:16px;object-fit:contain;background:rgba(255,255,255,.06);padding:4px}
 .placeholder{width:44px;height:44px;border-radius:16px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:800}
-.vs{min-width:70px;display:grid;place-items:center;gap:2px;padding:9px 6px;border-radius:18px;
- background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.vs{min-width:70px;display:grid;place-items:center;gap:2px;padding:9px 6px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .vs span{font-size:11px;color:var(--accent);font-weight:800}
 .vs span.liveTxt{color:#fca5a5}.vs span.doneTxt{color:#cbd5e1}
 .vs strong{font-size:13px}
@@ -147,42 +109,33 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .pred{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:10px;min-width:0}
 .pred.sure-tile{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 0 16px rgba(34,197,94,.15)}
 .pred-top{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:7px;font-weight:700;flex-wrap:wrap}
-.sure{margin-inline-start:auto;background:linear-gradient(135deg,var(--accent),var(--accent2));
- color:#04120a;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.sure{margin-inline-start:auto;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;white-space:nowrap}
 .pred-value{font-weight:800;font-size:14px;margin-bottom:8px}
 .good{color:#86efac}.warn{color:#fcd34d}.hot{color:#fda4af}.info{color:#7dd3fc}
 .meter{height:6px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden}
 .meter span{height:100%;display:block;border-radius:99px;background:linear-gradient(90deg,var(--accent2),var(--accent))}
 .prob{margin-top:6px;color:var(--muted);font-size:11px;font-weight:700}
 .match-foot{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px;margin-top:11px;font-weight:700;flex-wrap:wrap}
-.skeleton-card{height:230px;border-radius:var(--radius);margin-bottom:12px;
- background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.09),rgba(255,255,255,.05));
- background-size:200% 100%;animation:shimmer 1.15s infinite linear}
+.skeleton-card{height:230px;border-radius:var(--radius);margin-bottom:12px;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.09),rgba(255,255,255,.05));background-size:200% 100%;animation:shimmer 1.15s infinite linear}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.empty{padding:36px 18px;text-align:center;color:var(--muted);background:rgba(255,255,255,.04);
- border:1px dashed var(--line);border-radius:26px;line-height:1.9}
+.empty{padding:36px 18px;text-align:center;color:var(--muted);background:rgba(255,255,255,.04);border:1px dashed var(--line);border-radius:26px;line-height:1.9}
 .leagues-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.league-card{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:20px;
- padding:16px 10px;font-weight:800;cursor:pointer;text-align:center;display:grid;gap:6px;justify-items:center}
+.league-card{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:20px;padding:16px 10px;font-weight:800;cursor:pointer;text-align:center;display:grid;gap:6px;justify-items:center}
 .league-card .em{font-size:26px}
 .league-card small{color:var(--muted);font-weight:600}
 .league-card.active{border-color:var(--accent);background:rgba(34,197,94,.12)}
 .back-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .tabs{display:flex;gap:6px;margin:12px 0}
-.tab{flex:1;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;
- padding:10px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
+.tab{flex:1;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;padding:10px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
 .tab.active{background:linear-gradient(135deg,rgba(34,197,94,.22),rgba(56,189,248,.2));color:var(--text);border-color:var(--accent)}
-.stat-row{display:flex;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--line);
- border-radius:16px;background:rgba(255,255,255,.04);margin-bottom:8px;font-size:13px;font-weight:700;flex-wrap:wrap}
+.stat-row{display:flex;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);margin-bottom:8px;font-size:13px;font-weight:700;flex-wrap:wrap}
 .stat-row b{color:var(--accent)}
 .dots{display:flex;gap:5px;justify-content:center;margin-top:6px}
 .dot{width:15px;height:15px;border-radius:50%}
 .dot.w{background:#22c55e}.dot.d{background:#94a3b8}.dot.l{background:#ef4444}
-.h2h-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 12px;
- border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);margin-bottom:8px;font-size:12px;flex-wrap:wrap}
+.h2h-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);margin-bottom:8px;font-size:12px;flex-wrap:wrap}
 .h2h-row b{font-size:13px}
-.ring-card{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);
- border-radius:24px;background:rgba(255,255,255,.05);margin-bottom:12px}
+.ring-card{display:flex;gap:14px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.05);margin-bottom:12px}
 .ring{position:relative;width:86px;height:86px;flex:none}
 .ring svg{transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:9;stroke-linecap:round}
@@ -192,8 +145,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .mini{padding:12px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.045);font-size:12px;color:var(--muted)}
 .mini b{display:block;color:var(--text);font-size:15px;margin-top:4px}
-.setting-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;
- border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.045);margin-bottom:9px;font-size:13px;font-weight:700;flex-wrap:wrap}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.045);margin-bottom:9px;font-size:13px;font-weight:700;flex-wrap:wrap}
 .switch{position:relative;width:46px;height:26px;flex:none}
 .switch input{opacity:0;width:0;height:0}
 .slider{position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.15);transition:.25s;cursor:pointer}
@@ -206,56 +158,49 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .theme-btn.b{background:linear-gradient(135deg,#38bdf8,#818cf8)}
 .theme-btn.p{background:linear-gradient(135deg,#a78bfa,#f472b6)}
 .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 12px}
-.mk{display:flex;gap:8px;align-items:center;padding:11px;border:1px solid var(--line);
- border-radius:14px;background:rgba(255,255,255,.045);font-size:12px;font-weight:700;cursor:pointer}
+.mk{display:flex;gap:8px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.045);font-size:12px;font-weight:700;cursor:pointer}
 .mk input{accent-color:var(--accent);width:17px;height:17px;flex:none}
-.danger{width:100%;border:0;background:rgba(244,63,94,.14);color:#fecdd3;padding:12px;
- border-radius:16px;font-weight:800;cursor:pointer;margin-top:6px}
-.notif{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px solid var(--line);
- border-radius:18px;background:rgba(255,255,255,.045);margin-bottom:9px;font-size:13px}
+.danger{width:100%;border:0;background:rgba(244,63,94,.14);color:#fecdd3;padding:12px;border-radius:16px;font-weight:800;cursor:pointer;margin-top:6px}
+.notif{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.045);margin-bottom:9px;font-size:13px}
 .notif .ic{font-size:20px;flex:none}
 .notif small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
-.sugg-btn{width:100%;border:1px solid var(--accent);background:rgba(34,197,94,.1);color:var(--accent);
- padding:12px;border-radius:16px;font-weight:800;cursor:pointer;margin-top:10px}
+.sugg-btn{width:100%;border:1px solid var(--accent);background:rgba(34,197,94,.1);color:var(--accent);padding:12px;border-radius:16px;font-weight:800;cursor:pointer;margin-top:10px}
 .disclaimer{color:#8ea0bf;font-size:11px;text-align:center;line-height:1.8;margin-top:4px}
 .disclaimer b{color:#fbbf24}
-.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;
- width:min(580px,calc(100% - 20px));display:flex;gap:5px;padding:8px;background:rgba(5,8,16,.9);
- border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(18px);z-index:30;box-shadow:var(--shadow)}
-.nav-item{flex:1;border:0;background:transparent;color:var(--muted);display:grid;justify-items:center;
- gap:3px;padding:8px 2px;border-radius:18px;cursor:pointer;min-width:0}
+.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;width:min(580px,calc(100% - 20px));display:flex;gap:5px;padding:8px;background:rgba(5,8,16,.9);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(18px);z-index:30;box-shadow:var(--shadow)}
+.nav-item{flex:1;border:0;background:transparent;color:var(--muted);display:grid;justify-items:center;gap:3px;padding:8px 2px;border-radius:18px;cursor:pointer;min-width:0}
 .nav-item.active{background:rgba(34,197,94,.12);color:#e8f8ee}
 .nav-item small{font-size:10px;font-weight:800}
 .nic{display:grid;place-items:center;height:20px}
 .nic svg{width:20px;height:20px}
-.success-msg{padding:14px;border-radius:14px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);
- color:#86efac;text-align:center;font-weight:700;margin:10px 0}
+.success-msg{padding:14px;border-radius:14px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;text-align:center;font-weight:700;margin:10px 0}
 @media(max-width:520px){.pred-grid,.mini-grid,.mk-grid{grid-template-columns:1fr}.brand{font-size:16px}}
 </style>
 </head>
 <body>
 <div id="kickBanner" class="kick hidden"></div>
-
-<div id="maintenanceScreen" class="maintenance hidden">
-  <div>
-    <h1>🔧 التطبيق في وضع الصيانة</h1>
-    <p id="maintenanceMsg">نعمل على تحديثات جديدة، هنرجع قريباً.</p>
-    <p style="margin-top:20px;color:#fbbf24">— فريق Egypt Bet</p>
-  </div>
-</div>
+<div id="maintenanceScreen" class="maintenance hidden"><div><h1>🔧 التطبيق في وضع الصيانة</h1><p id="maintenanceMsg">نعمل على تحديثات جديدة، هنرجع قريباً.</p><p style="margin-top:20px;color:#fbbf24">— فريق Egypt Bet</p></div></div>
 
 <div id="guideModal" class="gmodal hidden">
   <div class="gcard">
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
-    <h2>إزاي تاخد <span>التوقع الصح</span>؟</h2>
+    <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
     <div class="gsteps">
-      <div class="gstep"><span>1</span><p>دوّر في كارت المباراة على شارة <b class="suremini">ثقة كبيرة 🔥</b> — دي أقوى توقع في المباراة كلها، والرهان بيكون عليها أولاً.</p></div>
-      <div class="gstep"><span>2</span><p>لو الشارة مش موجودة في مباراة، اختار التوقع صاحب <b>أعلى نسبة ثقة</b> من بين الباقي — ده تاني أفضل اختيار.</p></div>
-      <div class="gstep"><span>3</span><p>الأسواق الآمنة <b>🛡️ أهداف 1.5 / بطاقات 5.5</b> نسب إصابتها أعلى بطبيعتها — مناسبه لو بتدور على استقرار أكتر.</p></div>
+      <div class="gstep"><span>1</span><p id="gS1">دوّر في كارت المباراة على شارة <b class="suremini">ثقة كبيرة 🔥</b> — دي أقوى توقع في المباراة كلها، والرهان بيكون عليها أولاً.</p></div>
+      <div class="gstep"><span>2</span><p id="gS2">لو الشارة مش موجودة في مباراة، اختار التوقع صاحب <b>أعلى نسبة ثقة</b> من بين الباقي — ده تاني أفضل اختيار.</p></div>
+      <div class="gstep"><span>3</span><p id="gS3">الأسواق الآمنة <b>🛡️ أهداف 1.5 / بطاقات 5.5</b> نسب إصابتها أعلى بطبيعتها — مناسبه لو بتدور على استقرار أكتر.</p></div>
     </div>
-    <p class="gwarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
-    <button id="guideOk" class="gbtn">يلا نبدأ ⚽</button>
+    <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
+    <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
     <div class="gcredit">تصميم وتطوير: <b>Ahmed Bebo</b></div>
+  </div>
+</div>
+
+<div id="inboxModal" class="gmodal hidden">
+  <div class="gcard">
+    <h2>📢 <span>رسالة من الإدارة</span></h2>
+    <p id="inboxText" style="color:var(--text);font-size:14px;line-height:2;margin:10px 0 16px;text-align:right"></p>
+    <button id="inboxOk" class="gbtn">تمام ✅</button>
   </div>
 </div>
 
@@ -266,13 +211,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
     <label>الاسم (اختياري)</label>
     <input id="suggName" type="text" placeholder="مجهول" maxlength="50">
     <label>تقييمك للتطبيق</label>
-    <div class="stars" id="suggStars">
-      <span class="star" data-v="1">★</span>
-      <span class="star" data-v="2">★</span>
-      <span class="star" data-v="3">★</span>
-      <span class="star" data-v="4">★</span>
-      <span class="star" data-v="5">★</span>
-    </div>
+    <div class="stars" id="suggStars"><span class="star" data-v="1">★</span><span class="star" data-v="2">★</span><span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span></div>
     <label>رسالتك أو اقتراحك</label>
     <textarea id="suggMsg" placeholder="اكتب رأيك، المشاكل، اللي تحب يتضاف، أو أي تعديل..." maxlength="500"></textarea>
     <button id="suggSend" class="gbtn">إرسال ✉️</button>
@@ -348,6 +287,8 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
       </div>
       <b style="display:block;margin:4px 0 8px;font-size:13px">📈 دقتك الحقيقية المقاسة:</b>
       <div id="trackRows"></div>
+      <div class="setting-row hidden" id="vipRow"><span>👑 وضع VIP (أسواق خاصة)</span>
+        <label class="switch"><input id="tgVip" type="checkbox"><span class="slider"></span></label></div>
       <div class="setting-row"><span>تحديث ذكي (10ث لايف / 2د عادي)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
@@ -355,11 +296,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
       <button id="notifPermBtn" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)">🔔 تفعيل إشعارات المتصفح</button>
       <div class="setting-row"><span>مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
       <div class="setting-row"><span>لون التطبيق</span>
-        <div class="themes">
-          <button class="theme-btn g" data-theme-set="green"></button>
-          <button class="theme-btn b" data-theme-set="blue"></button>
-          <button class="theme-btn p" data-theme-set="purple"></button>
-        </div></div>
+        <div class="themes"><button class="theme-btn g" data-theme-set="green"></button><button class="theme-btn b" data-theme-set="blue"></button><button class="theme-btn p" data-theme-set="purple"></button></div></div>
       <b style="display:block;margin:10px 0 6px;font-size:13px">أسواق التوقعات:</b>
       <div class="mk-grid">
         <label class="mk"><input id="mkGoals" type="checkbox" checked> أهداف 2</label>
@@ -369,6 +306,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
         <label class="mk"><input id="mkCards" type="checkbox" checked> بطاقات 4.5</label>
         <label class="mk"><input id="mkSafeCards" type="checkbox" checked> 🛡️ بطاقات 5.5 (آمن)</label>
       </div>
+      <button id="supportBtn" class="sugg-btn hidden" style="border-color:#fbbf24;background:rgba(251,191,36,.1);color:#fde68a"></button>
       <button id="clearFavBtn" class="danger">مسح كل المفضلة</button>
       <button id="openSuggBtn" class="sugg-btn">📝 ابعتلي اقتراح أو رأي</button>
     </section>
@@ -386,77 +324,101 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 
 <script>
 'use strict';
-/* ========== FIREBASE INIT ========== */
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",
-  authDomain: "egypt-bet-dab93.firebaseapp.com",
-  projectId: "egypt-bet-dab93",
-  storageBucket: "egypt-bet-dab93.firebasestorage.app",
-  messagingSenderId: "851474057927",
-  appId: "1:851474057927:web:8ab164b85be6ab30854ce2",
-  measurementId: "G-VZN5E9C1VQ"
-};
+/* ========== FIREBASE ========== */
+const FIREBASE_CONFIG={apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2",measurementId:"G-VZN5E9C1VQ"};
 firebase.initializeApp(FIREBASE_CONFIG);
-const db = firebase.firestore();
-const FIELD_INC = firebase.firestore.FieldValue.increment(1);
+const db=firebase.firestore();
+const FIELD_INC=firebase.firestore.FieldValue.increment(1);
+const SID=sessionStorage.getItem('eb_sid')||(()=>{const s=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('eb_sid',s);return s;})();
+const tzName=()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'؟'}catch(e){return'؟'}};
+const devName=()=>/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'موبايل':'كمبيوتر';
 
-/* ========== COUNTERS ========== */
+/* ========== COUNTERS & PRESENCE ========== */
 function countVisit(){
   if(sessionStorage.getItem('eb_visit'))return;
-  const d=new Date().toISOString().slice(0,10);
-  db.collection('counters').doc('visits').set({total:FIELD_INC,last:Date.now()}, {merge:true}).catch(()=>{});
-  db.collection('daily').doc(d).set({visits:FIELD_INC}, {merge:true}).catch(()=>{});
   sessionStorage.setItem('eb_visit','1');
+  const d=new Date().toISOString().slice(0,10);
+  db.collection('counters').doc('visits').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});
+  db.collection('daily').doc(d).set({visits:FIELD_INC},{merge:true}).catch(()=>{});
+  const sRef=db.collection('sessions').doc(SID);
+  if(!lsGet('eb_first')){
+    lsSet('eb_first',Date.now());
+    sRef.set({tz:tzName(),dev:devName(),firstSeen:Date.now(),lastSeen:Date.now()}).catch(()=>{});
+    db.collection('daily').doc(d).set({newUsers:FIELD_INC},{merge:true}).catch(()=>{});
+  }else{
+    sRef.set({tz:tzName(),dev:devName(),lastSeen:Date.now()},{merge:true}).catch(()=>{});
+    db.collection('daily').doc(d).set({returning:FIELD_INC},{merge:true}).catch(()=>{});
+  }
+  beat();
 }
+function beat(){ db.collection('presence').doc(SID).set({lastSeen:Date.now(),tz:tzName(),dev:devName()},{merge:true}).catch(()=>{}); }
+setInterval(()=>{ if(!document.hidden)beat(); },30000);
 function countBetView(){
   const d=new Date().toISOString().slice(0,10);
-  db.collection('counters').doc('betViews').set({total:FIELD_INC,last:Date.now()}, {merge:true}).catch(()=>{});
-  db.collection('daily').doc(d).set({betViews:FIELD_INC}, {merge:true}).catch(()=>{});
+  db.collection('counters').doc('betViews').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});
+  db.collection('daily').doc(d).set({betViews:FIELD_INC},{merge:true}).catch(()=>{});
+}
+function countMatchView(m){
+  const k=matchKey(m);
+  db.collection('matchViews').doc(k).set({count:FIELD_INC,title:m.home.name+' × '+m.away.name,league:m.leagueName,ts:Date.now()},{merge:true}).catch(()=>{});
+  db.collection('leagueViews').doc(m.leagueSlug).set({count:FIELD_INC,name:m.leagueName},{merge:true}).catch(()=>{});
+}
+function reportHealth(ok){
+  const now=Date.now();
+  if(now-(+sessionStorage.getItem('eb_healthTs')||0)<300000)return;
+  sessionStorage.setItem('eb_healthTs',String(now));
+  db.collection('counters').doc('sourcesHealth').set({status:ok?'ok':'down',ts:now,ok:state.sourcesOk},{merge:true}).catch(()=>{});
+  if(!ok&&(now-(+sessionStorage.getItem('eb_alertTs')||0))>600000){
+    sessionStorage.setItem('eb_alertTs',String(now));
+    db.collection('alerts').add({type:'sources_down',ts:now,msg:'كل المصادر فشلت — التطبيق دخل الوضع التجريبي'}).catch(()=>{});
+  }
 }
 
-/* ========== CONFIG READ (remote control) ========== */
-let remoteCfg = {maintenance:false,banner:'',disabledMarkets:[],disableGuide:false};
+/* ========== REMOTE CONFIG ========== */
+let remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],guide:{},inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{}};
 function loadRemoteConfig(){
   db.collection('config').doc('settings').get().then(doc=>{
-    if(doc.exists){
-      remoteCfg = Object.assign(remoteCfg, doc.data());
-      applyRemoteConfig();
-    }
+    if(doc.exists){ remoteCfg=Object.assign(remoteCfg,doc.data()); applyRemoteConfig(); }
   }).catch(()=>{});
 }
 function applyRemoteConfig(){
+  window.EB_EXTRAS=remoteCfg.extras||{};   /* ===== EXTENSION SLOT: متغيرات إضافية من اللوحة ===== */
   if(remoteCfg.maintenance){
     $('#maintenanceScreen').classList.remove('hidden');
     if(remoteCfg.maintenanceMsg)$('#maintenanceMsg').textContent=remoteCfg.maintenanceMsg;
-    $('#splash').classList.add('fade');
-    setTimeout(()=>{$('#splash').classList.add('hidden');},500);
+    $('#splash').classList.add('fade'); setTimeout(()=>$('#splash').classList.add('hidden'),500);
     return;
   }
-  if(remoteCfg.banner){
-    $('#bannerText').textContent=remoteCfg.banner;
-    $('#bannerTop').classList.remove('hidden');
+  if(remoteCfg.banner){ $('#bannerText').textContent=remoteCfg.banner; $('#bannerTop').classList.remove('hidden'); }
+  if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){ remoteCfg.disabledMarkets.forEach(k=>{state.markets[k]=false;}); syncMarketCheckboxes(); }
+  const g=remoteCfg.guide||{};
+  if(g.title)$('#gTitle').textContent=g.title;
+  if(g.s1)$('#gS1').textContent=g.s1;
+  if(g.s2)$('#gS2').textContent=g.s2;
+  if(g.s3)$('#gS3').textContent=g.s3;
+  if(g.warn)$('#gWarn').textContent=g.warn;
+  if(g.btn)$('#gBtn').textContent=g.btn;
+  if(remoteCfg.inbox&&remoteCfg.inbox.active&&remoteCfg.inbox.id&&lsGet('eb_inbox_id')!==remoteCfg.inbox.id){
+    $('#inboxText').textContent=remoteCfg.inbox.text||'';
+    $('#inboxModal').classList.remove('hidden');
   }
-  if(remoteCfg.disabledMarkets && remoteCfg.disabledMarkets.length){
-    remoteCfg.disabledMarkets.forEach(k=>{state.markets[k]=false;});
-    syncMarketCheckboxes();
+  if(remoteCfg.vip)$('#vipRow').classList.remove('hidden');
+  if(remoteCfg.support&&remoteCfg.support.enabled){
+    const b=$('#supportBtn'); b.textContent=remoteCfg.support.text||'💚 ادعمنا'; b.classList.remove('hidden');
+    b.onclick=()=>{ try{window.open(remoteCfg.support.link,'_blank');}catch(e){} };
   }
 }
 function syncMarketCheckboxes(){
-  $('#mkGoals').checked=state.markets.goals;
-  $('#mkSafe').checked=state.markets.safe;
-  $('#mkCorners').checked=state.markets.corners;
-  $('#mkBtts').checked=state.markets.btts;
-  $('#mkCards').checked=state.markets.cards;
-  $('#mkSafeCards').checked=state.markets.safeCards;
+  $('#mkGoals').checked=state.markets.goals;$('#mkSafe').checked=state.markets.safe;
+  $('#mkCorners').checked=state.markets.corners;$('#mkBtts').checked=state.markets.btts;
+  $('#mkCards').checked=state.markets.cards;$('#mkSafeCards').checked=state.markets.safeCards;
 }
 
-/* ========== SUGGESTION FORM ========== */
+/* ========== SUGGESTIONS ========== */
 let suggRating=0;
 document.querySelectorAll('#suggStars .star').forEach(s=>{
-  s.addEventListener('click',()=>{
-    suggRating=+s.dataset.v;
-    document.querySelectorAll('#suggStars .star').forEach((x,i)=>x.classList.toggle('active',i<suggRating));
-  });
+  s.addEventListener('click',()=>{ suggRating=+s.dataset.v;
+    document.querySelectorAll('#suggStars .star').forEach((x,i)=>x.classList.toggle('active',i<suggRating)); });
 });
 async function sendSuggestion(){
   const name=($('#suggName').value||'').trim()||'مجهول';
@@ -464,17 +426,11 @@ async function sendSuggestion(){
   if(!msg){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5">اكتب رسالتك الأول!</div>';return;}
   $('#suggSend').disabled=true;$('#suggSend').textContent='جاري الإرسال...';
   try{
-    await db.collection('suggestions').add({
-      name, rating:suggRating||0, message:msg,
-      createdAt:Date.now(), status:'pending', read:false
-    });
+    await db.collection('suggestions').add({name,rating:suggRating||0,message:msg,createdAt:Date.now(),status:'pending',read:false});
     $('#suggResult').innerHTML='<div class="success-msg">✅ وصل! شكراً ليك يا نجم.</div>';
-    setTimeout(()=>{
-      $('#suggModal').classList.add('hidden');
-      $('#suggName').value='';$('#suggMsg').value='';suggRating=0;
+    setTimeout(()=>{ $('#suggModal').classList.add('hidden'); $('#suggName').value='';$('#suggMsg').value='';suggRating=0;
       document.querySelectorAll('#suggStars .star').forEach(x=>x.classList.remove('active'));
-      $('#suggResult').innerHTML='';$('#suggSend').disabled=false;$('#suggSend').textContent='إرسال ✉️';
-    },1800);
+      $('#suggResult').innerHTML='';$('#suggSend').disabled=false;$('#suggSend').textContent='إرسال ✉️'; },1800);
   }catch(e){
     $('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5">فشل الإرسال، حاول تاني.</div>';
     $('#suggSend').disabled=false;$('#suggSend').textContent='إرسال ✉️';
@@ -482,15 +438,15 @@ async function sendSuggestion(){
 }
 
 const LEAGUES=[
- {slug:'egy.1',name:'الدوري المصري',em:'🇪',home:1.35,away:0.95},
+ {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
- {slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},
+ {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
- {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
@@ -510,12 +466,12 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🧜',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
- {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
- {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
- {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
+ {slug:'swe.1',name:'الدوري السويدي',em:'',home:1.55,away:1.25},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
+ {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
@@ -527,26 +483,25 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
- {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},
- {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
+ {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
+ {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
  {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
  {slug:'conmebol.sudamericana',name:'كوبا سودامريكانا',em:'🌎',home:1.35,away:1.05},
  {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
  {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
- {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
+ {slug:'kor.1',name:'الدوري الكوري',em:'🇰',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
 ];
 const CORE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa'];
 const AMER_SLUGS=['usa.1','mex.1','bra.1','arg.1'];
-const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي',
- '4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
+const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي','4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
 const DEF_LEAGUE={home:1.50,away:1.20};
 const $=s=>document.querySelector(s);
 const splash=$('#splash'),appShell=$('#appShell');
@@ -559,21 +514,18 @@ let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0;
 let lastFastTs=0,lastFastOkTs=0,pollingFast=false;
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
  mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
- prevLive:null,finCache:null,
+ prevLive:null,finCache:null,vip:false,
  markets:{goals:true,safe:true,corners:true,btts:true,cards:true,safeCards:true}};
 
 init();
 function init(){
   const th=lsGet('mv_theme'); if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
   populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
-  countVisit();
-  loadRemoteConfig();
+  countVisit(); loadRemoteConfig();
   setTimeout(()=>{splash.classList.add('fade');
     setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
   },1600);
-  setInterval(tick,15000);
-  setInterval(fastTick,5000);
-  setInterval(secTick,1000);
+  setInterval(tick,15000); setInterval(fastTick,5000); setInterval(secTick,1000);
 }
 function maybeShowGuide(){
   if(remoteCfg.disableGuide)return;
@@ -581,17 +533,8 @@ function maybeShowGuide(){
   if(lsGet('mv_guide_day')===today)return;
   $('#guideModal').classList.remove('hidden');
 }
-function tick(){
-  if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
-  if(Date.now()-lastLoadTs>=120000)loadMatches();
-}
-function fastTick(){
-  if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
-  if(!state.matches.some(m=>m.live))return;
-  if(Date.now()-lastFastTs<10000||pollingFast)return;
-  lastFastTs=Date.now();
-  liveFastPoll();
-}
+function tick(){ if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return; if(Date.now()-lastLoadTs>=120000)loadMatches(); }
+function fastTick(){ if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return; if(!state.matches.some(m=>m.live))return; if(Date.now()-lastFastTs<10000||pollingFast)return; lastFastTs=Date.now(); liveFastPoll(); }
 async function liveFastPoll(){
   pollingFast=true;
   try{
@@ -600,10 +543,8 @@ async function liveFastPoll(){
     const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
     slugs.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(!l)return;
       reqs.push(fetchESPN(l,today.replace(/-/g,'')));reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
-    const items=await fetchSet(reqs);
-    mergeLive(items.filter(m=>m.live));
-  }catch(e){}
-  finally{pollingFast=false;}
+    const items=await fetchSet(reqs); mergeLive(items.filter(m=>m.live));
+  }catch(e){} finally{pollingFast=false;}
 }
 function mergeLive(liveItems){
   let changed=false;
@@ -614,26 +555,23 @@ function mergeLive(liveItems){
     else if(!state.matches.some(m=>matchKey(m)===matchKey(nm))){state.matches.unshift(nm);changed=true;}
   });
   lastFastOkTs=Date.now();
-  if(changed){
-    state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
-    detectKickoffs();renderCurrent();updateBell();
-  }
+  if(changed){ state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);}); applyPinned(); detectKickoffs(); renderCurrent(); updateBell(); }
 }
-function secTick(){
-  if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;
+function secTick(){ if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;
   const s=Math.max(0,Math.round((Date.now()-Math.max(lastLoadTs,lastFastOkTs))/1000));
-  lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`;
-}
+  lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`; }
 function bindEvents(){
   const closeGuide=()=>{$('#guideModal').classList.add('hidden');lsSet('mv_guide_day',fmtDate(new Date()));};
   $('#guideOk').onclick=closeGuide;
   $('#guideModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeGuide();});
+  $('#inboxOk').onclick=()=>{$('#inboxModal').classList.add('hidden');if(remoteCfg.inbox)lsSet('eb_inbox_id',remoteCfg.inbox.id);};
+  $('#inboxModal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#inboxOk').click();});
   $('#bannerClose').onclick=()=>$('#bannerTop').classList.add('hidden');
   const openSugg=()=>$('#suggModal').classList.remove('hidden');
-  $('#openSuggBtn').onclick=openSugg;
-  $('#suggHero').onclick=openSugg;
+  $('#openSuggBtn').onclick=openSugg; $('#suggHero').onclick=openSugg;
   $('#suggCancel').onclick=()=>$('#suggModal').classList.add('hidden');
   $('#suggSend').onclick=sendSuggestion;
+  $('#tgVip').onchange=e=>{state.vip=e.target.checked;renderCurrent();};
   $('#refreshBtn').onclick=()=>loadMatches();
   $('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
   $('#backBtn').onclick=()=>showView(state.prevView||'home');
@@ -671,30 +609,33 @@ async function loadMatches(){
     const okS=new Set(items.map(i=>i.sourceName));state.sourcesOk=[...okS];
     if(!items.length){items=demoMatches();state.source='demo';state.sourcesOk=['تجريبي'];}else state.source='live';
     let list=dedupe(items);
+    const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
+    list=list.filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
     if(state.mode==='live')list=list.filter(m=>m.live);
     else if(state.mode==='finished')list=list.filter(m=>m.statusCompleted||m.statusState==='post');
     else list=list.filter(m=>m.live||isUpcoming(m));
     list.sort((a,b)=>{if(state.mode==='finished')return new Date(b.date)-new Date(a.date);if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
-    state.matches=list;trackFinished(list);detectKickoffs();
+    state.matches=list;applyPinned();trackFinished(list);detectKickoffs();
   }catch(e){state.matches=demoMatches();state.source='demo';state.sourcesOk=['تجريبي'];}
   finally{predCache.clear();isLoading=false;lastLoadTs=Date.now();
-    loading.hidden=true;renderCurrent();updateBell();}
+    loading.hidden=true;renderCurrent();updateBell();reportHealth(state.source==='live');}
+}
+function applyPinned(){
+  if(!remoteCfg.pinnedKey)return;
+  const i=state.matches.findIndex(m=>matchKey(m)===remoteCfg.pinnedKey);
+  if(i>0){const [m]=state.matches.splice(i,1);m.pinned=true;state.matches.unshift(m);}
+  else if(i===0){state.matches[0].pinned=true;}
 }
 async function fetchSet(reqs){const r=await Promise.allSettled(reqs);let i=[];r.forEach(x=>{if(x.status==='fulfilled'&&x.value&&x.value.length)i=i.concat(x.value);});return i;}
 function buildRequests(){
   const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
   const amer=state.league==='all'?AMER_SLUGS:AMER_SLUGS.filter(s=>s===state.league);
   const addAmer=()=>amer.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(l)reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
-  if(state.mode==='live'){
-    LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));
-    addAmer();
-    reqs.push(fetchTSDBLive());
-  } else {
+  if(state.mode==='live'){ LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,'')))); addAmer(); reqs.push(fetchTSDBLive()); }
+  else{
     const sel=activeLeagues();
     sel.forEach(l=>reqs.push(fetchESPN(l,state.date.replace(/-/g,''))));
-    reqs.push(fetchTSDB(state.date));
-    reqs.push(fetchTSDBLive());
-    addAmer();
+    reqs.push(fetchTSDB(state.date)); reqs.push(fetchTSDBLive()); addAmer();
     if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));}
   }
   return reqs;
@@ -746,12 +687,11 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON MODEL ========== */
+/* ========== POISSON ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
 function recToStrength(rec){if(!rec)return null;const p=rec.split('-').map(Number);if(p.length<3||p.some(isNaN))return null;const g=p[0]+p[1]+p[2];return g?{pts:(p[0]*3+p[1])/(g*3),g}:null;}
-
 function getPrediction(m){if(predCache.has(m.id))return predCache.get(m.id);const p=calc(m);predCache.set(m.id,p);return p;}
 function calc(m){
   const ld=leagueData(m.leagueSlug), rng=mulberry32(hashCode(`${m.id}|${m.home.name}|${m.away.name}`));
@@ -762,33 +702,30 @@ function calc(m){
     const avgPts=(hS.pts+aS.pts)/2||0.45;
     const hAtt=clamp(hS.pts/avgPts,0.6,1.6), aDef=clamp(aS.pts/avgPts,0.6,1.6);
     const aAtt=clamp(aS.pts/avgPts,0.6,1.6), hDef=clamp(hS.pts/avgPts,0.6,1.6);
-    lh=clamp(ld.home*hAtt*(2-aDef),0.4,3.5);
-    la=clamp(ld.away*aAtt*(2-hDef),0.3,3.0);
-  } else {
-    lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2);
-    la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8);
-  }
+    lh=clamp(ld.home*hAtt*(2-aDef),0.4,3.5); la=clamp(ld.away*aAtt*(2-hDef),0.3,3.0);
+  } else { lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2); la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8); }
   const lcorn=clamp(9.0+(lh+la-2.5)*0.8+rng()*1.2,6,13);
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
-  const r=buildPred(lh,la,lcorn,lcard);
-  r.hasData=hasData;
-  return r;
+  const r=buildPred(lh,la,lcorn,lcard); r.hasData=hasData; return r;
 }
 function buildPred(lh,la,lcorn,lcard){
   const maxG=7,ph=[],pa=[];
   for(let i=0;i<=maxG;i++){ph[i]=poissonPmf(i,lh);pa[i]=poissonPmf(i,la);}
-  let t0=0,t1=0,t2=0;
-  for(let i=0;i<=maxG;i++)for(let j=0;j<=maxG;j++){const p=ph[i]*pa[j],t=i+j;if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;}
-  const o15=1-(t0+t1);
-  const o2=1-(t0+t1+t2), u2=t0+t1;
+  let t0=0,t1=0,t2=0,hw=0,dr=0,aw=0,bi=0,bj=0,bp=-1;
+  for(let i=0;i<=maxG;i++)for(let j=0;j<=maxG;j++){
+    const p=ph[i]*pa[j],t=i+j;
+    if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;
+    if(i>j)hw+=p;else if(i===j)dr+=p;else aw+=p;
+    if(p>bp){bp=p;bi=i;bj=j;}
+  }
+  const o15=1-(t0+t1), o2=1-(t0+t1+t2), u2=t0+t1;
   const bttsY=(1-Math.exp(-lh))*(1-Math.exp(-la));
-  const o95=1-poissonCdf(9,lcorn);
-  const o45=1-poissonCdf(4,lcard), u55=poissonCdf(5,lcard);
+  const o95=1-poissonCdf(9,lcorn), o45=1-poissonCdf(4,lcard), u55=poissonCdf(5,lcard);
   const mk=(op,ot,ut,to,tu)=>op>=0.5?{text:ot,prob:Math.round(op*100),tone:to}:{text:ut,prob:Math.round((1-op)*100),tone:tu};
-  const goals = o2>=u2
-    ? {text:'أكثر من 2',prob:Math.round(o2/(o2+u2)*100),tone:'good'}
-    : {text:'أقل من 2',prob:Math.round(u2/(o2+u2)*100),tone:'warn'};
+  const goals=o2>=u2?{text:'أكثر من 2',prob:Math.round(o2/(o2+u2)*100),tone:'good'}:{text:'أقل من 2',prob:Math.round(u2/(o2+u2)*100),tone:'warn'};
   goals.note='إرجاع لو 2 بالضبط';
+  const dcOpts=[['1X (فوز المضيف أو تعادل)',hw+dr],['X2 (تعادل أو فوز الضيف)',aw+dr],['12 (فوز أي فريق)',hw+aw]];
+  let dcBest=dcOpts[0];dcOpts.forEach(o=>{if(o[1]>dcBest[1])dcBest=o;});
   const r={
     goals,
     g15:mk(o15,'أكثر من 1.5','أقل من 1.5','good','warn'),
@@ -796,6 +733,8 @@ function buildPred(lh,la,lcorn,lcard){
     corners:mk(o95,'أكثر من 9.5 ركنية','أقل من 9.5 ركنية','info','warn'),
     cards:mk(o45,'أكثر من 4.5 بطاقات','أقل من 4.5 بطاقات','hot','good'),
     cards55u:u55>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55)*100),tone:'hot'},
+    exactVip:{text:bi+' - '+bj,prob:Math.round(bp*100),tone:'info',vip:true},
+    dcVip:{text:dcBest[0],prob:Math.round(dcBest[1]*100),tone:'good',vip:true},
     lh,la,lcorn,lcard
   };
   r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.cards.prob)/4);
@@ -830,11 +769,11 @@ function updateBell(){const n=bellCount();const read=lsGet('mv_bell_read');const
 /* ========== CARDS ========== */
 function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
   const headR=m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?`<span class="done-pill">انتهت</span>`:`<span class="date-text">${fmtDT(m.date)}</span>`;
+  const pinB=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
-
+  return`<article class="card ${m.pinned?'pinned-card':''}" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
 function tiles(p){
-  const W={goals:1.0,g15:1.12,corners:0.93,btts:0.97,cards:0.93,cards55u:1.08};
+  const W={goals:1.0,g15:1.12,corners:0.93,btts:0.97,cards:0.93,cards55u:1.08,exact:1.0,dc:1.0};
   const en=[];
   if(state.markets.goals)en.push({k:'goals',ic:'⚽',ti:'أهداف 2',p:p.goals});
   if(state.markets.safe)en.push({k:'g15',ic:'🛡️',ti:'أهداف 1.5 (آمن)',p:p.g15});
@@ -842,20 +781,18 @@ function tiles(p){
   if(state.markets.btts)en.push({k:'btts',ic:'🥅',ti:'كلا الفريقين يسجل',p:p.btts});
   if(state.markets.cards)en.push({k:'cards',ic:'🟨',ti:'بطاقات 4.5',p:p.cards});
   if(state.markets.safeCards)en.push({k:'cards55u',ic:'🛡️',ti:'بطاقات 5.5 (آمن)',p:p.cards55u});
+  if(state.vip&&remoteCfg.vip){en.push({k:'exact',ic:'👑',ti:'النتيجة الدقيقة VIP',p:p.exactVip});en.push({k:'dc',ic:'👑',ti:'فرصة مزدوجة VIP',p:p.dcVip});}
   if(!en.length)return'<div class="empty" style="grid-column:1/-1">فعّل سوقاً واحداً.</div>';
   const score=x=>x.p.prob*(W[x.k]||1)+(p.hasData?3:0);
   let best=en[0];en.forEach(x=>{if(score(x)>score(best))best=x;});
   return en.map(x=>tile(x.ic,x.ti,x.p,x===best)).join('');}
-function tile(ic,ti,p,sure){return`<div class="pred ${sure?'sure-tile':''}"><div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div><div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div><div class="prob">نسبة الثقة ${p.prob}%${p.note?' • '+p.note:''}</div></div>`;}
+function tile(ic,ti,p,sure){return`<div class="pred ${sure?'sure-tile':''} ${p.vip?'vip-tile':''}"><div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div><div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div><div class="prob">نسبة الثقة ${p.prob}%${p.note?' • '+p.note:''}</div></div>`;}
 function resultTiles(m,p){const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
-  const gRes = tot===2 ? {t:p.goals.text+' ↩',c:'warn',s:'إرجاع: 2 بالضبط'}
-    : ((p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1)) ? {t:p.goals.text+' ✔',c:'good',s:`الفعلي: ${tot} أهداف`}
-    : {t:p.goals.text+' ✘',c:'hot',s:`الفعلي: ${tot} أهداف`};
+  const gRes=tot===2?{t:p.goals.text+' ↩',c:'warn',s:'إرجاع: 2 بالضبط'}:((p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1))?{t:p.goals.text+' ✔',c:'good',s:`الفعلي: ${tot} أهداف`}:{t:p.goals.text+' ✘',c:'hot',s:`الفعلي: ${tot} أهداف`};
   const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
   return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
-
-function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();}
+function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
   const p=getPrediction(m),fin=isFinished(m)&&m.scoreHome!=null;$('#detailsTitle').textContent=m.leagueName;
   const vsB=m.live?`<div class="vs"><span class="liveTxt">مباشر ${esc(m.minute||'')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
@@ -884,6 +821,7 @@ function fmtDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(
 function fmtDT(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d);}
 function timeOnly(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit'}).format(d);}
 function esc(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));}
+window.EB={state,db,remoteCfg};  /* ===== EXTENSION SLOT: واجهة برمجية لأي إضافات مستقبلية ===== */
 </script>
 </body>
 </html>
