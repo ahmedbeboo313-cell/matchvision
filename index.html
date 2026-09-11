@@ -382,7 +382,7 @@ function loadRemoteConfig(){
   }).catch(()=>{});
 }
 function applyRemoteConfig(){
-  window.EB_EXTRAS=remoteCfg.extras||{};   /* ===== EXTENSION SLOT: متغيرات إضافية من اللوحة ===== */
+  window.EB_EXTRAS=remoteCfg.extras||{};
   if(remoteCfg.maintenance){
     $('#maintenanceScreen').classList.remove('hidden');
     if(remoteCfg.maintenanceMsg)$('#maintenanceMsg').textContent=remoteCfg.maintenanceMsg;
@@ -392,10 +392,10 @@ function applyRemoteConfig(){
   if(remoteCfg.banner){ $('#bannerText').textContent=remoteCfg.banner; $('#bannerTop').classList.remove('hidden'); }
   if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){ remoteCfg.disabledMarkets.forEach(k=>{state.markets[k]=false;}); syncMarketCheckboxes(); }
   const g=remoteCfg.guide||{};
-  if(g.title)$('#gTitle').textContent=g.title;
-  if(g.s1)$('#gS1').textContent=g.s1;
-  if(g.s2)$('#gS2').textContent=g.s2;
-  if(g.s3)$('#gS3').textContent=g.s3;
+  if(g.title)$('#gTitle').innerHTML='إزاي تاخد <span>'+esc(g.title)+'</span>';
+  if(g.s1)$('#gS1').innerHTML=esc(g.s1);
+  if(g.s2)$('#gS2').innerHTML=esc(g.s2);
+  if(g.s3)$('#gS3').innerHTML=esc(g.s3);
   if(g.warn)$('#gWarn').textContent=g.warn;
   if(g.btn)$('#gBtn').textContent=g.btn;
   if(remoteCfg.inbox&&remoteCfg.inbox.active&&remoteCfg.inbox.id&&lsGet('eb_inbox_id')!==remoteCfg.inbox.id){
@@ -444,9 +444,9 @@ const LEAGUES=[
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
- {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
+ {slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
- {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
@@ -466,12 +466,12 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🧜',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
- {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
- {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
+ {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
@@ -483,8 +483,8 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
- {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
  {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
@@ -494,7 +494,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -621,8 +621,14 @@ async function loadMatches(){
     loading.hidden=true;renderCurrent();updateBell();reportHealth(state.source==='live');}
 }
 function applyPinned(){
-  if(!remoteCfg.pinnedKey)return;
-  const i=state.matches.findIndex(m=>matchKey(m)===remoteCfg.pinnedKey);
+  const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');
+  if(!pk)return;
+  const i=state.matches.findIndex(m=>{
+    const mk=matchKey(m);
+    const mh=(m.home.name||'').toLowerCase();
+    const ma=(m.away.name||'').toLowerCase();
+    return mk===pk || mk.includes(pk) || pk.includes(mk) || (mh.includes(pk.split('|')[0]||'') && ma.includes(pk.split('|')[1]||''));
+  });
   if(i>0){const [m]=state.matches.splice(i,1);m.pinned=true;state.matches.unshift(m);}
   else if(i===0){state.matches[0].pinned=true;}
 }
@@ -821,7 +827,7 @@ function fmtDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(
 function fmtDT(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d);}
 function timeOnly(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit'}).format(d);}
 function esc(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));}
-window.EB={state,db,remoteCfg};  /* ===== EXTENSION SLOT: واجهة برمجية لأي إضافات مستقبلية ===== */
+window.EB={state,db,remoteCfg};
 </script>
 </body>
 </html>
