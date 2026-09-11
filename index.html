@@ -49,6 +49,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .pin-badge{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
 .pred.vip-tile{border-color:#fbbf24;box-shadow:0 0 0 1px #fbbf24 inset,0 0 14px rgba(251,191,36,.18)}
 .att-line{color:#7dd3fc!important}
+.ha{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:3px 10px 3px 4px;border-radius:99px;border:1px solid;margin-bottom:2px}
+.ha .num{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;color:#04120a}
+.ha.home{color:#86efac;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3)}
+.ha.home .num{background:#22c55e}
+.ha.away{color:#93c5fd;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.3)}
+.ha.away .num{background:#38bdf8}
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
 .splash.fade{opacity:0;pointer-events:none}
 .splash-box{display:grid;justify-items:center;gap:12px;text-align:center}
@@ -190,7 +196,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
     <div class="gsteps">
       <div class="gstep"><span>1</span><p id="gS1">دوّر على شارة <b class="suremini">ثقة كبيرة 🔥</b> — بتظهر لما هجوم الفريقين يكون عالي والتوقع نسبته قوية، ودي أقوى إشارة في المباراة.</p></div>
       <div class="gstep"><span>2</span><p id="gS2">لو الشارة مش موجودة في مباراة، اختار التوقع صاحب <b>أعلى نسبة ثقة</b> من بين الباقي — ده تاني أفضل اختيار.</p></div>
-      <div class="gstep"><span>3</span><p id="gS3">بص على سطر <b>⚔️ هجوم</b> تحت كل توقع: لما الرقمين يكونوا فوق 60% معناها مباراة تهديفية مفتوحة.</p></div>
+      <div class="gstep"><span>3</span><p id="gS3">بص على سطر <b>⚔️ هجوم</b> تحت كل توقع: لما الرقمين يكونوا فوق 60% معناها مباراة تهديفية مفتوحة. رقم 1 = المضيف ورقم 2 = الضيف.</p></div>
     </div>
     <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
     <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -440,12 +446,12 @@ async function sendSuggestion(){
 }
 
 const LEAGUES=[
- {slug:'egy.1',name:'الدوري المصري',em:'🇪',home:1.35,away:0.95},
+ {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
- {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
+ {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
@@ -471,10 +477,10 @@ const LEAGUES=[
  {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
  {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
  {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
- {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
+ {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
@@ -485,16 +491,16 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
- {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},
- {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
+ {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
+ {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
  {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
  {slug:'conmebol.sudamericana',name:'كوبا سودامريكانا',em:'🌎',home:1.35,away:1.05},
  {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
  {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰',home:1.45,away:1.15},
- {slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},
+ {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
  {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
@@ -810,7 +816,7 @@ function buildPred(lh,la,lcorn,lcard){
   const goals=o2>=u2?{text:'أكثر من 2',prob:Math.round(o2/(o2+u2)*100),tone:'good'}:{text:'أقل من 2',prob:Math.round(u2/(o2+u2)*100),tone:'warn'};
   goals.note='إرجاع لو 2 بالضبط';
   const btts=bttsRaw>=0.5?{text:'نعم',prob:Math.round(bttsRaw*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsRaw)*100),tone:'warn'};
-  const win=hw>=aw?{text:'فوز المضيف',prob:Math.round(hw/(hw+aw)*100),tone:'good'}:{text:'فوز الضيف',prob:Math.round(aw/(hw+aw)*100),tone:'good'};
+  const win=hw>=aw?{text:'فوز المضيف (1)',prob:Math.round(hw/(hw+aw)*100),tone:'good'}:{text:'فوز الضيف (2)',prob:Math.round(aw/(hw+aw)*100),tone:'good'};
   win.note='التعادل = إرجاع';
   const dcOpts=[['1X (فوز المضيف أو تعادل)',hw+dr],['X2 (تعادل أو فوز الضيف)',aw+dr],['12 (فوز أي فريق)',hw+aw]];
   let dcBest=dcOpts[0];dcOpts.forEach(o=>{if(o[1]>dcBest[1])dcBest=o;});
@@ -869,7 +875,7 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const headR=m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?`<span class="done-pill">انتهت</span>`:`<span class="date-text">${fmtDT(m.date)}</span>`;
   const pinB=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  return`<article class="card ${m.pinned?'pinned-card':''}" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
+  return`<article class="card ${m.pinned?'pinned-card':''}" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
 function tiles(p){
   const W={goals:1.0,g15:1.12,corners:0.93,btts:1.05,cards:0.93,cards55u:1.08,exact:1.0,dc:1.0,win:1.02};
   const en=[];
@@ -886,22 +892,22 @@ function tiles(p){
   let best=en[0];en.forEach(x=>{if(score(x)>score(best))best=x;});
   return en.map(x=>tile(x.ic,x.ti,x.p,isSure(x.k,x.p.prob,p),p)).join('');}
 function tile(ic,ti,p,sure,r){
-  const att=(r&&r.attHp!=null)?`<div class="prob att-line">⚔️ هجوم: ${r.attHp}% × ${r.attAp}%</div>`:'';
+  const att=(r&&r.attHp!=null)?`<div class="prob att-line">⚔️ هجوم: (1) ${r.attHp}% × (2) ${r.attAp}%</div>`:'';
   return`<div class="pred ${sure?'sure-tile':''} ${p.vip?'vip-tile':''}"><div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div><div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div><div class="prob">نسبة الثقة ${p.prob}%${p.note?' • '+p.note:''}</div>${att}</div>`;}
 function resultTiles(m,p){const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
   const gRes=tot===2?{t:p.goals.text+' ↩',c:'warn',s:'إرجاع: 2 بالضبط'}:((p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1))?{t:p.goals.text+' ✔',c:'good',s:`الفعلي: ${tot} أهداف`}:{t:p.goals.text+' ✘',c:'hot',s:`الفعلي: ${tot} أهداف`};
   const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
-  const wH=(p.win.text==='فوز المضيف'&&sh>sa)||(p.win.text==='فوز الضيف'&&sa>sh);
+  const wH=(p.win.text.startsWith('فوز المضيف')&&sh>sa)||(p.win.text.startsWith('فوز الضيف')&&sa>sh);
   return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
   const p=getPrediction(m),fin=isFinished(m)&&m.scoreHome!=null;$('#detailsTitle').textContent=m.leagueName;
   const vsB=m.live?`<div class="vs"><span class="liveTxt">مباشر ${esc(m.minute||'')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  detailsContent.innerHTML=`<div class="card" style="cursor:default"><div class="teams"><div class="team">${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small><div class="dots">${formDots(m.id+'h',m.homeForm)}</div></div>${vsB}<div class="team">${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small><div class="dots">${formDots(m.id+'a',m.awayForm)}</div></div></div><div class="match-foot"><span>${m.live?'مباشر':fmtDT(m.date)}</span><span>${esc(m.venue||'')} ${esc(m.sourceName||'')}</span></div></div>
+  detailsContent.innerHTML=`<div class="card" style="cursor:default"><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small><div class="dots">${formDots(m.id+'h',m.homeForm)}</div></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small><div class="dots">${formDots(m.id+'a',m.awayForm)}</div></div></div><div class="match-foot"><span>${m.live?'مباشر':fmtDT(m.date)}</span><span>${esc(m.venue||'')} ${esc(m.sourceName||'')}</span></div></div>
   <div class="tabs"><button class="tab active" data-tab="pred">التوقعات</button><button class="tab" data-tab="stats">الإحصائيات</button><button class="tab" data-tab="h2h">المواجهات</button></div>
   <div id="tab-pred"><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'مقارنة بالنتيجة الفعلية':'الثقة: '+p.confidence+'%'}</span></div></div>
-  <div id="tab-stats" class="hidden">${fin?`<div class="stat-row"><span>النتيجة</span><b>${m.scoreHome} - ${m.scoreAway}</b></div>`:''}<div class="stat-row"><span>⚔️ قوة الهجوم (المضيف × الضيف)</span><b>${p.attHp}% × ${p.attAp}%</b></div><div class="stat-row"><span>الأهداف المتوقعة (Poisson)</span><b>${(p.lh+p.la).toFixed(1)}</b></div><div class="stat-row"><span>الركنيات المتوقعة</span><b>${p.lcorn.toFixed(1)}</b></div><div class="stat-row"><span>البطاقات المتوقعة</span><b>${p.lcard.toFixed(1)}</b></div><div class="stat-row"><span>سجل الموسم</span><b>${esc(m.home.record||'-')} / ${esc(m.away.record||'-')}</b></div></div>
+  <div id="tab-stats" class="hidden">${fin?`<div class="stat-row"><span>النتيجة</span><b>${m.scoreHome} - ${m.scoreAway}</b></div>`:''}<div class="stat-row"><span>⚔️ قوة الهجوم (1 × 2)</span><b>${p.attHp}% × ${p.attAp}%</b></div><div class="stat-row"><span>الأهداف المتوقعة (Poisson)</span><b>${(p.lh+p.la).toFixed(1)}</b></div><div class="stat-row"><span>الركنيات المتوقعة</span><b>${p.lcorn.toFixed(1)}</b></div><div class="stat-row"><span>البطاقات المتوقعة</span><b>${p.lcard.toFixed(1)}</b></div><div class="stat-row"><span>سجل الموسم</span><b>${esc(m.home.record||'-')} / ${esc(m.away.record||'-')}</b></div></div>
   <div id="tab-h2h" class="hidden">${h2hRows(m)}</div>`;}
 function switchTab(t){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));['pred','stats','h2h'].forEach(x=>{const el=$('#tab-'+x);if(el)el.classList.toggle('hidden',x!==t);});}
 function formDots(seed,real){
