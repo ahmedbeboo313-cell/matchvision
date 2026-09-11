@@ -384,6 +384,18 @@ function reportHealth(ok){
 
 /* ========== REMOTE CONFIG ========== */
 let remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],guide:{},inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{}};
+let lastInboxShow=0;
+const INBOX_COOLDOWN=30000; /* غيّرها لـ 8000 لو عايزها تظهر كل 8 ثواني حرفياً */
+function showInbox(force){
+  if(!(remoteCfg.inbox&&remoteCfg.inbox.active&&(remoteCfg.inbox.text||'').trim()))return;
+  const modal=$('#inboxModal');
+  if(!modal.classList.contains('hidden'))return;
+  const now=Date.now();
+  if(!force&&now-lastInboxShow<INBOX_COOLDOWN)return;
+  lastInboxShow=now;
+  $('#inboxText').textContent=remoteCfg.inbox.text;
+  modal.classList.remove('hidden');
+}
 function loadRemoteConfig(){
   db.collection('config').doc('settings').get().then(doc=>{
     if(doc.exists){ remoteCfg=Object.assign(remoteCfg,doc.data()); applyRemoteConfig(); }
@@ -406,10 +418,7 @@ function applyRemoteConfig(){
   if(g.s3)$('#gS3').textContent=g.s3;
   if(g.warn)$('#gWarn').textContent=g.warn;
   if(g.btn)$('#gBtn').textContent=g.btn;
-  if(remoteCfg.inbox&&remoteCfg.inbox.active&&(remoteCfg.inbox.text||'').trim()){
-    $('#inboxText').textContent=remoteCfg.inbox.text;
-    $('#inboxModal').classList.remove('hidden');
-  }
+  showInbox(true);
   if(remoteCfg.vip)$('#vipRow').classList.remove('hidden');
   if(remoteCfg.support&&remoteCfg.support.enabled){
     const b=$('#supportBtn'); b.textContent=remoteCfg.support.text||'💚 ادعمنا'; b.classList.remove('hidden');
@@ -446,14 +455,14 @@ async function sendSuggestion(){
 }
 
 const LEAGUES=[
- {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
+ {slug:'egy.1',name:'الدوري المصري',em:'🇪',home:1.35,away:0.95},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
- {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
+ {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
- {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
@@ -474,11 +483,11 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
  {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
- {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
+ {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
  {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
@@ -491,7 +500,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -577,7 +586,7 @@ async function liveFastPoll(includeSoon){
     const items=await fetchSet(reqs);
     mergeLive(items);
   }catch(e){}
-  finally{pollingFast=false;}
+  finally{pollingFast=false;showInbox(false);}
 }
 function mergeLive(items){
   let changed=false;
@@ -679,7 +688,7 @@ async function loadMatches(){
   list.sort((a,b)=>{if(state.mode==='finished')return new Date(b.date)-new Date(a.date);if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
   state.matches=list;applyPinned();trackFinished(list);detectKickoffs();
   predCache.clear();isLoading=false;lastLoadTs=Date.now();
-  loading.hidden=true;renderCurrent();updateBell();reportHealth(state.source==='live');
+  loading.hidden=true;renderCurrent();updateBell();reportHealth(state.source==='live');showInbox(false);
 }
 function applyPinned(){
   const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');
