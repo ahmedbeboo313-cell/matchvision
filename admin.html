@@ -93,7 +93,7 @@ body{font-family:'Cairo',sans-serif;background:#050810;color:#edf2ff;min-height:
 <div id="adminApp" class="admin hidden">
   <div class="top">
     <h2>Egypt <span>Bet</span> - لوحة التحكم</h2>
-    <div><span id="adminEmail" style="color:#9aa8c7;font-size:12px;margin-left:10px"></span><button onclick="signOut()">خروج</button></div>
+    <div><span id="adminEmail" style="color:#9aa8c7;font-size:12px;margin-left:10px"></span><button onclick="doSignOut()">خروج</button></div>
   </div>
 
   <div class="cards">
@@ -160,7 +160,7 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const INC = firebase.firestore.FieldValue.increment(1);
+const $ = s => document.querySelector(s);
 let allSugg = [];
 let chartInst = null;
 
@@ -168,7 +168,7 @@ auth.onAuthStateChanged(user=>{
   if(user){
     if(user.email !== 'admin@egyptbet.app'){
       auth.signOut();
-      $('#loginErr').textContent='الإيميل ده مش مصرح له.';
+      $('#loginErr').textContent='الإيميل ده مش مصرح له بالدخول.';
       return;
     }
     $('#loginScreen').classList.add('hidden');
@@ -183,11 +183,15 @@ $('#loginBtn').onclick=async()=>{
   try{
     await auth.signInWithEmailAndPassword($('#loginEmail').value.trim(), $('#loginPass').value);
   }catch(e){
-    $('#loginErr').textContent = e.code==='auth/invalid-credential'?'بيانات دخول غلط':e.message;
+    let msg='فشل تسجيل الدخول';
+    if(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password')msg='كلمة المرور غلط';
+    else if(e.code==='auth/user-not-found')msg='الإيميل مش موجود في Firebase';
+    else if(e.code==='auth/operation-not-allowed')msg='فعّل Email/Password من Firebase → Authentication → Sign-in method';
+    else if(e.code==='auth/too-many-requests')msg='محاولات كتير أوي، استنى شوية وجرب تاني';
+    $('#loginErr').textContent=msg;
   }
 };
-function signOut(){ auth.signOut(); location.reload(); }
-const $=s=>document.querySelector(s);
+function doSignOut(){ auth.signOut(); location.reload(); }
 
 async function loadAll(){
   try{
@@ -196,10 +200,9 @@ async function loadAll(){
       db.collection('counters').doc('betViews').get(),
       db.collection('counters').doc('downloads').get()
     ]);
-    $('#cVisits').textContent = (visitsDoc.data()?.total)||0;
-    $('#cBets').textContent = (betsDoc.data()?.total)||0;
-    $('#cDl').textContent = (dlDoc.data()?.total)||0;
-
+    $('#cVisits').textContent = (visitsDoc.data()&&visitsDoc.data().total)||0;
+    $('#cBets').textContent = (betsDoc.data()&&betsDoc.data().total)||0;
+    $('#cDl').textContent = (dlDoc.data()&&dlDoc.data().total)||0;
     await loadChart();
     await loadConfig();
     await loadSuggestions();
@@ -214,7 +217,7 @@ async function loadChart(){
   }
   const docs = await Promise.all(days.map(d=>db.collection('daily').doc(d).get()));
   const labels = days.map(d=>{const x=new Date(d);return x.toLocaleDateString('ar-EG',{weekday:'short',day:'numeric'});});
-  const data = docs.map(d=>(d.data()?.visits)||0);
+  const data = docs.map(d=>(d.data()&&d.data().visits)||0);
   const ctx=$('#chartWeek').getContext('2d');
   if(chartInst)chartInst.destroy();
   chartInst = new Chart(ctx,{
@@ -234,14 +237,14 @@ async function loadConfig(){
     $('#cfgMaintMsg').value=d.maintenanceMsg||'';
     $('#cfgBanner').value=d.banner||'';
     $('#cfgHideGuide').checked=!!d.disableGuide;
-    (d.disabledMarkets||[]).forEach(k=>{const el=document.querySelector(`[data-mk="${k}"]`);if(el)el.checked=true;});
+    (d.disabledMarkets||[]).forEach(k=>{const el=document.querySelector('[data-mk="'+k+'"]');if(el)el.checked=true;});
   }
 }
 
 async function loadSuggestions(){
   const snap = await db.collection('suggestions').orderBy('createdAt','desc').limit(100).get();
   allSugg = [];
-  snap.forEach(d=>allSugg.push({id:d.id,...d.data()}));
+  snap.forEach(d=>allSugg.push(Object.assign({id:d.id},d.data())));
   const unread = allSugg.filter(s=>!s.read && s.status==='pending').length;
   $('#cSugg').textContent = unread;
   $('#suggCount').textContent = allSugg.length;
@@ -255,20 +258,16 @@ function renderSuggestions(){
     const d=new Date(s.createdAt||0);
     const dateStr=d.toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     const stars = s.rating ? '★'.repeat(s.rating) : '';
-    return `<div class="sugg-item ${s.read?'read':''}">
-      <div class="sugg-head">
-        <b>${esc(s.name||'مجهول')} <span class="sugg-stars">${stars}</span></b>
-        <small>${dateStr}</small>
-      </div>
-      <div class="sugg-msg">${esc(s.message)}</div>
-      ${s.reply?`<div class="sugg-msg" style="color:#86efac;background:rgba(34,197,94,.08);padding:8px;border-radius:10px;margin-top:6px">ردك: ${esc(s.reply)}</div>`:''}
-      <div class="sugg-actions">
-        ${!s.read?`<button onclick="markRead('${s.id}')">✓ تعليم مقروء</button>`:''}
-        ${s.status!=='done'?`<button onclick="markDone('${s.id}')" class="done">✓✓ تم التنفيذ</button>`:''}
-        <button onclick="replyTo('${s.id}')">💬 رد</button>
-        <button onclick="deleteSugg('${s.id}')" class="del">🗑️ حذف</button>
-      </div>
-    </div>`;
+    return '<div class="sugg-item '+(s.read?'read':'')+'">'+
+      '<div class="sugg-head"><b>'+esc(s.name||'مجهول')+' <span class="sugg-stars">'+stars+'</span></b><small>'+dateStr+'</small></div>'+
+      '<div class="sugg-msg">'+esc(s.message)+'</div>'+
+      (s.reply?'<div class="sugg-msg" style="color:#86efac;background:rgba(34,197,94,.08);padding:8px;border-radius:10px;margin-top:6px">ردك: '+esc(s.reply)+'</div>':'')+
+      '<div class="sugg-actions">'+
+        (!s.read?'<button onclick="markRead(\''+s.id+'\')">✓ تعليم مقروء</button>':'')+
+        (s.status!=='done'?'<button onclick="markDone(\''+s.id+'\')" class="done">✓✓ تم التنفيذ</button>':'')+
+        '<button onclick="replyTo(\''+s.id+'\')">💬 رد</button>'+
+        '<button onclick="deleteSugg(\''+s.id+'\')" class="del">🗑️ حذف</button>'+
+      '</div></div>';
   }).join('');
 }
 
@@ -281,7 +280,7 @@ async function markDone(id){
   loadSuggestions();
 }
 async function replyTo(id){
-  const r = prompt('اكتب ردك (هيظهر للمستخدم لو عايز):');
+  const r = prompt('اكتب ردك على الاقتراح ده:');
   if(!r)return;
   await db.collection('suggestions').doc(id).update({reply:r,read:true});
   loadSuggestions();
@@ -317,17 +316,17 @@ $('#exportCsv').onclick=()=>{
     new Date(s.createdAt||0).toLocaleString('ar-EG'),
     s.status||'', s.reply||''
   ]));
-  const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`egyptbet-suggestions-${new Date().toISOString().slice(0,10)}.csv`;
+  a.download='egyptbet-suggestions-'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 };
 
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-setInterval(loadAll, 30000);
+setInterval(()=>{ if(!$('#adminApp').classList.contains('hidden')) loadAll(); }, 30000);
 </script>
 </body>
 </html>
