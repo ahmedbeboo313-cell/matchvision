@@ -290,7 +290,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
       <div id="trackRows"></div>
       <div class="setting-row hidden" id="vipRow"><span>👑 وضع VIP (أسواق خاصة)</span>
         <label class="switch"><input id="tgVip" type="checkbox"><span class="slider"></span></label></div>
-      <div class="setting-row"><span>تحديث ذكي (10ث لايف / 2د عادي)</span>
+      <div class="setting-row"><span>تحديث ذكي (8ث لايف / 30-60ث شامل)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
@@ -443,7 +443,7 @@ const LEAGUES=[
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
- {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
+ {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
@@ -478,22 +478,22 @@ const LEAGUES=[
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
  {slug:'uefa.europa.conf',name:'دوري المؤتمر الأوروبي',em:'🎖️',home:1.58,away:1.32},
- {slug:'uefa.nations',name:'دوري الأمم الأوروبية',em:'🇪🇺',home:1.45,away:1.15},
+ {slug:'uefa.nations',name:'دوري الأمم الأوروبية',em:'🇪',home:1.45,away:1.15},
  {slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},
  {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
- {slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},
+ {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
  {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
- {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
- {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
- {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
+ {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},
+ {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},
+ {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
  {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
  {slug:'conmebol.sudamericana',name:'كوبا سودامريكانا',em:'🌎',home:1.35,away:1.05},
  {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
  {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
- {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
- {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
+ {slug:'kor.1',name:'الدوري الكوري',em:'🇰',home:1.45,away:1.15},
+ {slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
  {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
@@ -523,10 +523,13 @@ function init(){
   const th=lsGet('mv_theme'); if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
   populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
   countVisit(); loadRemoteConfig();
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches();
+  });
   setTimeout(()=>{splash.classList.add('fade');
     setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
   },1600);
-  setInterval(tick,15000); setInterval(fastTick,5000); setInterval(secTick,1000);
+  setInterval(tick,10000); setInterval(fastTick,4000); setInterval(secTick,1000);
 }
 function maybeShowGuide(){
   if(remoteCfg.disableGuide)return;
@@ -534,29 +537,60 @@ function maybeShowGuide(){
   if(lsGet('mv_guide_day')===today)return;
   $('#guideModal').classList.remove('hidden');
 }
-function tick(){ if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return; if(Date.now()-lastLoadTs>=120000)loadMatches(); }
-function fastTick(){ if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return; if(!state.matches.some(m=>m.live))return; if(Date.now()-lastFastTs<10000||pollingFast)return; lastFastTs=Date.now(); liveFastPoll(); }
-async function liveFastPoll(){
+function soonKickoff(m){
+  const d=new Date(m.date);
+  if(isNaN(d)||m.live||isFinished(m))return false;
+  const diff=d-Date.now();
+  return diff>0&&diff<1200000;
+}
+function tick(){
+  if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
+  const since=Date.now()-lastLoadTs;
+  const urgent=state.matches.some(m=>m.live||soonKickoff(m));
+  if(since>=(urgent?30000:60000))loadMatches();
+}
+function fastTick(){
+  if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
+  const hasLive=state.matches.some(m=>m.live);
+  const hasSoon=state.matches.some(sooonKick);
+  if(!hasLive&&!hasSoon)return;
+  if(Date.now()-lastFastTs<8000||pollingFast)return;
+  lastFastTs=Date.now();
+  liveFastPoll(hasSoon);
+}
+function sooonKick(m){return soonKickoff(m);}
+async function liveFastPoll(includeSoon){
   pollingFast=true;
   try{
-    const slugs=[...new Set(state.matches.filter(m=>m.live&&m.sourceName==='ESPN').map(m=>m.leagueSlug))];
+    const slugs=[...new Set(state.matches.filter(m=>m.live||(includeSoon&&soonKickoff(m))).map(m=>m.leagueSlug))];
     if(!slugs.length)return;
     const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
     slugs.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(!l)return;
       reqs.push(fetchESPN(l,today.replace(/-/g,'')));reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
-    const items=await fetchSet(reqs); mergeLive(items.filter(m=>m.live));
-  }catch(e){} finally{pollingFast=false;}
+    reqs.push(fetchTSDBLive());
+    const items=await fetchSet(reqs);
+    mergeLive(items);
+  }catch(e){}
+  finally{pollingFast=false;}
 }
-function mergeLive(liveItems){
+function mergeLive(items){
   let changed=false;
-  liveItems.forEach(nm=>{
+  items.forEach(nm=>{
     const i=state.matches.findIndex(m=>m.id===nm.id);
-    if(i>=0){const om=state.matches[i];
-      if(om.scoreHome!==nm.scoreHome||om.scoreAway!==nm.scoreAway||om.minute!==nm.minute){state.matches[i]=Object.assign({},om,nm);changed=true;}}
-    else if(!state.matches.some(m=>matchKey(m)===matchKey(nm))){state.matches.unshift(nm);changed=true;}
+    if(i>=0){
+      const om=state.matches[i];
+      if(om.scoreHome!==nm.scoreHome||om.scoreAway!==nm.scoreAway||om.minute!==nm.minute||om.live!==nm.live||om.statusState!==nm.statusState||om.statusCompleted!==nm.statusCompleted){
+        state.matches[i]=Object.assign({},om,nm);changed=true;
+      }
+    } else if(nm.live&&!state.matches.some(m=>matchKey(m)===matchKey(nm))){
+      state.matches.unshift(nm);changed=true;
+    }
   });
   lastFastOkTs=Date.now();
-  if(changed){ state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);}); applyPinned(); detectKickoffs(); renderCurrent(); updateBell(); }
+  if(changed){
+    state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
+    applyPinned();detectKickoffs();renderCurrent();updateBell();
+  }
 }
 function secTick(){ if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;
   const s=Math.max(0,Math.round((Date.now()-Math.max(lastLoadTs,lastFastOkTs))/1000));
@@ -721,7 +755,7 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + ATTACK/DEFENSE/FORM ENGINE ========== */
+/* ========== POISSON + ATTACK/DEFENSE/FORM ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -742,10 +776,8 @@ function calc(m){
   if(hS&&aS&&hS.g>=3&&aS.g>=3){
     hasData=true;
     const fHv=(fH==null?0.5:fH), fAv=(fA==null?0.5:fA);
-    /* قوة الهجوم: نتايج الموسم + فورم آخر 5 مباريات */
     const attH=clamp(0.55+1.05*hS.pts+0.8*(fHv-0.5),0.45,1.9);
     const attA=clamp(0.55+1.05*aS.pts+0.8*(fAv-0.5),0.45,1.9);
-    /* هشاشة الدفاع: فريق نتايجه وحشة بيستقبل أكتر */
     const vulH=clamp(1.45-1.05*hS.pts-0.8*(fHv-0.5),0.5,1.9);
     const vulA=clamp(1.45-1.05*aS.pts-0.8*(fAv-0.5),0.5,1.9);
     lh=clamp(ld.home*clamp((attH+vulA)/2,0.5,1.8),0.35,3.6);
@@ -771,7 +803,6 @@ function buildPred(lh,la,lcorn,lcard){
     if(p>bp){bp=p;bi=i;bj=j;}
   }
   const o15=1-(t0+t1), o2=1-(t0+t1+t2), u2=t0+t1;
-  /* BTTS: احتمال كل فريق يسجل + معامل ترابط للمباريات المفتوحة */
   const pS1=1-Math.exp(-lh), pS2=1-Math.exp(-la);
   const bttsRaw=Math.min(0.95,pS1*pS2*1.08);
   const o95=1-poissonCdf(9,lcorn), o45=1-poissonCdf(4,lcard), u55=poissonCdf(5,lcard);
