@@ -71,6 +71,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .badge.loading{background:rgba(148,163,184,.12);color:#cbd5e1}
 .badge.live{background:rgba(34,197,94,.13);color:#86efac;border:1px solid rgba(34,197,94,.25)}
 .badge.demo{background:rgba(245,158,11,.13);color:#fcd34d;border:1px solid rgba(245,158,11,.25)}
+.badge.cache{background:rgba(56,189,248,.13);color:#7dd3fc;border:1px solid rgba(56,189,248,.25)}
 .icon-btn{position:relative;width:40px;height:40px;flex:none;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;font-size:18px;cursor:pointer}
 .icon-btn .count{position:absolute;top:-6px;left:-6px;min-width:18px;height:18px;border-radius:99px;background:var(--accent);color:#04120a;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
 .controls{display:grid;gap:9px;margin:12px 0}
@@ -393,9 +394,9 @@ function applyRemoteConfig(){
   if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){ remoteCfg.disabledMarkets.forEach(k=>{state.markets[k]=false;}); syncMarketCheckboxes(); }
   const g=remoteCfg.guide||{};
   if(g.title)$('#gTitle').innerHTML='إزاي تاخد <span>'+esc(g.title)+'</span>';
-  if(g.s1)$('#gS1').innerHTML=esc(g.s1);
-  if(g.s2)$('#gS2').innerHTML=esc(g.s2);
-  if(g.s3)$('#gS3').innerHTML=esc(g.s3);
+  if(g.s1)$('#gS1').textContent=g.s1;
+  if(g.s2)$('#gS2').textContent=g.s2;
+  if(g.s3)$('#gS3').textContent=g.s3;
   if(g.warn)$('#gWarn').textContent=g.warn;
   if(g.btn)$('#gBtn').textContent=g.btn;
   if(remoteCfg.inbox&&remoteCfg.inbox.active&&remoteCfg.inbox.id&&lsGet('eb_inbox_id')!==remoteCfg.inbox.id){
@@ -443,10 +444,10 @@ const LEAGUES=[
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
- {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
+ {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},
- {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
- {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
@@ -466,13 +467,13 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🧜',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
- {slug:'swe.1',name:'الدوري السويدي',em:'',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
- {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
- {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
- {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
+ {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
+ {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
+ {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
@@ -484,14 +485,14 @@ const LEAGUES=[
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},
  {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
- {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},
- {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},
- {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
+ {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
+ {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
+ {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
  {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
  {slug:'conmebol.sudamericana',name:'كوبا سودامريكانا',em:'🌎',home:1.35,away:1.05},
  {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
  {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
- {slug:'kor.1',name:'الدوري الكوري',em:'🇰',home:1.45,away:1.15},
+ {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
  {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
@@ -601,33 +602,60 @@ function bindEvents(){
   $('#clearFavBtn').onclick=()=>{favorites.clear();saveFavs();renderCurrent();};
 }
 
+/* ========== CACHE (الإصلاح التلقائي) ========== */
+function saveCache(list){
+  try{
+    const slim=list.slice(0,120).map(m=>({id:m.id,date:m.date,leagueName:m.leagueName,leagueSlug:m.leagueSlug,statusState:m.statusState,statusCompleted:m.statusCompleted,live:m.live,minute:m.minute,scoreHome:m.scoreHome,scoreAway:m.scoreAway,sourceName:m.sourceName,home:m.home,away:m.away,venue:m.venue}));
+    localStorage.setItem('eb_cache',JSON.stringify({ts:Date.now(),list:slim}));
+  }catch(e){}
+}
+function loadCache(){ try{return JSON.parse(localStorage.getItem('eb_cache'));}catch(e){return null;} }
+
 /* ========== DATA ========== */
 async function loadMatches(){
   if(isLoading)return;isLoading=true;state.source='loading';state.sourcesOk=[];updateSource();showLoading();
+  let items=[];
   try{
-    let items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests());
-    const okS=new Set(items.map(i=>i.sourceName));state.sourcesOk=[...okS];
-    if(!items.length){items=demoMatches();state.source='demo';state.sourcesOk=['تجريبي'];}else state.source='live';
-    let list=dedupe(items);
-    const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
-    list=list.filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
+    items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests());
+    if(!items.length){ await new Promise(r=>setTimeout(r,3000)); items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests()); }
+    if(items.length){ const okS=new Set(items.map(i=>i.sourceName)); state.sourcesOk=[...okS]; state.source='live'; saveCache(items); }
+  }catch(e){ items=[]; }
+  if(!items.length){
+    const c=loadCache();
+    if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){
+      items=c.list; state.source='cache'; state.sourcesOk=['مخزن ♻️'];
+    }else{
+      items=demoMatches(); state.source='demo'; state.sourcesOk=['تجريبي'];
+    }
+  }
+  let list=dedupe(items);
+  const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
+  list=list.filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
+  if(state.source!=='cache'){
     if(state.mode==='live')list=list.filter(m=>m.live);
     else if(state.mode==='finished')list=list.filter(m=>m.statusCompleted||m.statusState==='post');
     else list=list.filter(m=>m.live||isUpcoming(m));
-    list.sort((a,b)=>{if(state.mode==='finished')return new Date(b.date)-new Date(a.date);if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
-    state.matches=list;applyPinned();trackFinished(list);detectKickoffs();
-  }catch(e){state.matches=demoMatches();state.source='demo';state.sourcesOk=['تجريبي'];}
-  finally{predCache.clear();isLoading=false;lastLoadTs=Date.now();
-    loading.hidden=true;renderCurrent();updateBell();reportHealth(state.source==='live');}
+  }
+  list.sort((a,b)=>{if(state.mode==='finished')return new Date(b.date)-new Date(a.date);if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
+  state.matches=list;applyPinned();trackFinished(list);detectKickoffs();
+  predCache.clear();isLoading=false;lastLoadTs=Date.now();
+  loading.hidden=true;renderCurrent();updateBell();reportHealth(state.source==='live');
 }
 function applyPinned(){
   const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');
   if(!pk)return;
+  const parts=pk.split('|').filter(Boolean);
+  if(!parts.length)return;
   const i=state.matches.findIndex(m=>{
-    const mk=matchKey(m);
-    const mh=(m.home.name||'').toLowerCase();
-    const ma=(m.away.name||'').toLowerCase();
-    return mk===pk || mk.includes(pk) || pk.includes(mk) || (mh.includes(pk.split('|')[0]||'') && ma.includes(pk.split('|')[1]||''));
+    const mh=(m.home.name||'').toLowerCase().replace(/\s+/g,'');
+    const ma=(m.away.name||'').toLowerCase().replace(/\s+/g,'');
+    const mk=mh+'|'+ma;
+    if(mk===pk)return true;
+    const hit=(p,side)=>side===p||side.includes(p)||p.includes(side);
+    if(parts.length===2){
+      return (hit(parts[0],mh)&&hit(parts[1],ma))||(hit(parts[0],ma)&&hit(parts[1],mh));
+    }
+    return mk.includes(pk)||pk.includes(mk);
   });
   if(i>0){const [m]=state.matches.splice(i,1);m.pinned=true;state.matches.unshift(m);}
   else if(i===0){state.matches[0].pinned=true;}
@@ -814,7 +842,7 @@ function h2hRows(m){const r=mulberry32(hashCode(m.id+'h2h'));let out='';for(let 
 /* ========== HELPERS ========== */
 function updateStats(list){matchCount.textContent=list.length;avgConfidence.textContent=list.length?Math.round(list.reduce((s,m)=>s+getPrediction(m).confidence,0)/list.length)+'%':'-';}
 function showLoading(){loading.hidden=false;homeContent.innerHTML='';favContent.innerHTML='';homeEmpty.hidden=true;favEmpty.hidden=true;loading.innerHTML=Array.from({length:4},()=>'<div class="skeleton-card"></div>').join('');}
-function updateSource(){if(state.source==='live'&&state.sourcesOk.length){sourceBadge.textContent='مصادر: '+state.sourcesOk.join(' + ');sourceBadge.className='badge live';}else if(state.source==='demo'){sourceBadge.textContent='وضع تجريبي';sourceBadge.className='badge demo';}else{sourceBadge.textContent='جاري المصادر...';sourceBadge.className='badge loading';}}
+function updateSource(){if(state.source==='live'&&state.sourcesOk.length){sourceBadge.textContent='مصادر: '+state.sourcesOk.join(' + ');sourceBadge.className='badge live';}else if(state.source==='cache'){sourceBadge.textContent='♻️ بيانات مخزنة — المصادر بتحاول ترجع';sourceBadge.className='badge cache';}else if(state.source==='demo'){sourceBadge.textContent='وضع تجريبي';sourceBadge.className='badge demo';}else{sourceBadge.textContent='جاري المصادر...';sourceBadge.className='badge loading';}}
 function populateLeagueSelect(){leagueSelect.innerHTML='<option value="all">كل الدوريات</option>'+LEAGUES.map(l=>`<option value="${l.slug}">${l.name}</option>`).join('');}
 function setDateChipsActive(){document.querySelectorAll('.date-chip').forEach(c=>c.classList.toggle('active',fmtDate(addDays(new Date(),+c.dataset.offset))===state.date));}
 function toggleFav(id){favorites.has(id)?favorites.delete(id):favorites.add(id);saveFavs();renderCurrent();}
