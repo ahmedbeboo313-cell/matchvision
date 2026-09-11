@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة تحكم Egypt Bet</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:#050810;color:#edf2ff;min-height:100vh}
+.hidden{display:none!important}
+.login-screen{position:fixed;inset:0;display:grid;place-items:center;padding:20px;
+ background:radial-gradient(circle at top,rgba(34,197,94,.1),transparent 40%),#050810}
+.login-box{width:min(400px,100%);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+ border-radius:24px;padding:28px 24px;text-align:center}
+.login-box h1{font-size:22px;margin-bottom:6px}
+.login-box h1 span{color:#fbbf24}
+.login-box p{color:#9aa8c7;font-size:13px;margin-bottom:20px}
+.login-box input{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);
+ border-radius:12px;color:#fff;margin-bottom:10px;outline:none;font-family:inherit}
+.login-box button{width:100%;padding:13px;border:0;border-radius:12px;background:linear-gradient(135deg,#22c55e,#38bdf8);
+ color:#04120a;font-weight:800;cursor:pointer;font-size:15px;margin-top:8px}
+.err{color:#fca5a5;font-size:12px;margin-top:8px;min-height:18px}
+.admin{padding:20px;max-width:1200px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;
+ background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;margin-bottom:20px;flex-wrap:wrap}
+.top h2{font-size:18px}
+.top h2 span{color:#fbbf24}
+.top button{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3);
+ padding:8px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px}
+.card .label{color:#9aa8c7;font-size:12px;margin-bottom:6px}
+.card .value{font-size:28px;font-weight:800;color:#22c55e}
+.card .value.blue{color:#38bdf8}
+.card .value.gold{color:#fbbf24}
+.card .value.pink{color:#f472b6}
+.section{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;
+ padding:18px;margin-bottom:20px}
+.section h3{margin-bottom:14px;font-size:15px;color:#fbbf24}
+.row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.row label{min-width:120px;font-size:13px;color:#9aa8c7}
+.row input,.row textarea,.row select{flex:1;padding:10px 12px;border:1px solid rgba(255,255,255,.1);
+ background:rgba(255,255,255,.05);border-radius:10px;color:#fff;outline:none;font-family:inherit;min-width:0}
+.row textarea{min-height:60px;resize:vertical}
+.switch{position:relative;width:46px;height:26px;flex:none}
+.switch input{opacity:0}
+.slider{position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.15);transition:.25s;cursor:pointer}
+.slider:before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;right:3px;transition:.25s}
+.switch input:checked+.slider{background:#22c55e}
+.switch input:checked+.slider:before{transform:translateX(-20px)}
+.save-btn{width:100%;padding:13px;border:0;border-radius:12px;background:linear-gradient(135deg,#22c55e,#38bdf8);
+ color:#04120a;font-weight:800;cursor:pointer;font-size:14px;margin-top:10px}
+.save-btn.saved{background:#16a34a;color:#fff}
+.sugg-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;
+ padding:12px;margin-bottom:10px}
+.sugg-item.read{opacity:.65}
+.sugg-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.sugg-head b{font-size:13px}
+.sugg-head small{color:#9aa8c7;font-size:11px}
+.sugg-stars{color:#fbbf24;font-size:14px}
+.sugg-msg{font-size:13px;line-height:1.7;color:#e2e8f0;margin:6px 0}
+.sugg-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sugg-actions button{padding:6px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.15);
+ background:rgba(255,255,255,.05);color:#fff;font-size:11px;cursor:pointer;font-weight:700}
+.sugg-actions button.done{background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.4);color:#86efac}
+.sugg-actions button.del{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5}
+.export-btn{background:rgba(56,189,248,.15);color:#7dd3fc;border:1px solid rgba(56,189,248,.3);
+ padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:12px;margin-bottom:12px}
+.chart-wrap{position:relative;height:220px}
+.mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}
+.mk-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;
+ background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:12px;font-weight:700}
+@media(max-width:600px){.cards{grid-template-columns:1fr 1fr}.card .value{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h1>Egypt <span>Bet</span></h1>
+    <p>لوحة التحكم الإدارية</p>
+    <input id="loginEmail" type="email" placeholder="الإيميل" value="admin@egyptbet.app">
+    <input id="loginPass" type="password" placeholder="كلمة المرور">
+    <button id="loginBtn">دخول</button>
+    <div id="loginErr" class="err"></div>
+  </div>
+</div>
+
+<div id="adminApp" class="admin hidden">
+  <div class="top">
+    <h2>Egypt <span>Bet</span> - لوحة التحكم</h2>
+    <div><span id="adminEmail" style="color:#9aa8c7;font-size:12px;margin-left:10px"></span><button onclick="signOut()">خروج</button></div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="label">👥 زيارات التطبيق</div><div class="value" id="cVisits">0</div></div>
+    <div class="card"><div class="label">👁️ مشاهدات الرهانات</div><div class="value blue" id="cBets">0</div></div>
+    <div class="card"><div class="label">📥 تحميلات</div><div class="value gold" id="cDl">0</div></div>
+    <div class="card"><div class="label">📬 اقتراحات جديدة</div><div class="value pink" id="cSugg">0</div></div>
+  </div>
+
+  <div class="section">
+    <h3>📈 زيارات آخر 7 أيام</h3>
+    <div class="chart-wrap"><canvas id="chartWeek"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h3>🎛️ التحكم عن بُعد (بيطبق فوراً على التطبيق)</h3>
+    <div class="row">
+      <label>وضع الصيانة</label>
+      <label class="switch"><input id="cfgMaint" type="checkbox"><span class="slider"></span></label>
+    </div>
+    <div class="row">
+      <label>رسالة الصيانة</label>
+      <input id="cfgMaintMsg" placeholder="نعمل على تحديثات، هنرجع قريباً...">
+    </div>
+    <div class="row">
+      <label>بانر إعلاني (فاضي = مخفي)</label>
+      <input id="cfgBanner" placeholder="مثال: حمل النسخة الجديدة من الموقع!">
+    </div>
+    <div class="row">
+      <label>إخفاء نافذة الإرشاد</label>
+      <label class="switch"><input id="cfgHideGuide" type="checkbox"><span class="slider"></span></label>
+    </div>
+    <div>
+      <label style="display:block;margin:10px 0 6px;color:#9aa8c7;font-size:13px">الأسواق المعطلة مؤقتاً:</label>
+      <div class="mk-grid">
+        <div class="mk-row"><span>⚽ أهداف 2</span><label class="switch"><input data-mk="goals" type="checkbox"><span class="slider"></span></label></div>
+        <div class="mk-row"><span>🛡️ أهداف 1.5</span><label class="switch"><input data-mk="safe" type="checkbox"><span class="slider"></span></label></div>
+        <div class="mk-row"><span>🚩 ركنيات</span><label class="switch"><input data-mk="corners" type="checkbox"><span class="slider"></span></label></div>
+        <div class="mk-row"><span>🥅 BTTS</span><label class="switch"><input data-mk="btts" type="checkbox"><span class="slider"></span></label></div>
+        <div class="mk-row"><span>🟨 بطاقات 4.5</span><label class="switch"><input data-mk="cards" type="checkbox"><span class="slider"></span></label></div>
+        <div class="mk-row"><span>🛡️ بطاقات 5.5</span><label class="switch"><input data-mk="safeCards" type="checkbox"><span class="slider"></span></label></div>
+      </div>
+    </div>
+    <button class="save-btn" id="cfgSave">حفظ الإعدادات</button>
+  </div>
+
+  <div class="section">
+    <h3>📬 اقتراحات المستخدمين (<span id="suggCount">0</span>)</h3>
+    <button class="export-btn" id="exportCsv">📥 تصدير CSV</button>
+    <div id="suggList"></div>
+  </div>
+</div>
+
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",
+  authDomain: "egypt-bet-dab93.firebaseapp.com",
+  projectId: "egypt-bet-dab93",
+  storageBucket: "egypt-bet-dab93.firebasestorage.app",
+  messagingSenderId: "851474057927",
+  appId: "1:851474057927:web:8ab164b85be6ab30854ce2",
+  measurementId: "G-VZN5E9C1VQ"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const INC = firebase.firestore.FieldValue.increment(1);
+let allSugg = [];
+let chartInst = null;
+
+auth.onAuthStateChanged(user=>{
+  if(user){
+    if(user.email !== 'admin@egyptbet.app'){
+      auth.signOut();
+      $('#loginErr').textContent='الإيميل ده مش مصرح له.';
+      return;
+    }
+    $('#loginScreen').classList.add('hidden');
+    $('#adminApp').classList.remove('hidden');
+    $('#adminEmail').textContent=user.email;
+    loadAll();
+  }
+});
+
+$('#loginBtn').onclick=async()=>{
+  $('#loginErr').textContent='';
+  try{
+    await auth.signInWithEmailAndPassword($('#loginEmail').value.trim(), $('#loginPass').value);
+  }catch(e){
+    $('#loginErr').textContent = e.code==='auth/invalid-credential'?'بيانات دخول غلط':e.message;
+  }
+};
+function signOut(){ auth.signOut(); location.reload(); }
+const $=s=>document.querySelector(s);
+
+async function loadAll(){
+  try{
+    const [visitsDoc, betsDoc, dlDoc] = await Promise.all([
+      db.collection('counters').doc('visits').get(),
+      db.collection('counters').doc('betViews').get(),
+      db.collection('counters').doc('downloads').get()
+    ]);
+    $('#cVisits').textContent = (visitsDoc.data()?.total)||0;
+    $('#cBets').textContent = (betsDoc.data()?.total)||0;
+    $('#cDl').textContent = (dlDoc.data()?.total)||0;
+
+    await loadChart();
+    await loadConfig();
+    await loadSuggestions();
+  }catch(e){ console.error(e); }
+}
+
+async function loadChart(){
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  const docs = await Promise.all(days.map(d=>db.collection('daily').doc(d).get()));
+  const labels = days.map(d=>{const x=new Date(d);return x.toLocaleDateString('ar-EG',{weekday:'short',day:'numeric'});});
+  const data = docs.map(d=>(d.data()?.visits)||0);
+  const ctx=$('#chartWeek').getContext('2d');
+  if(chartInst)chartInst.destroy();
+  chartInst = new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{label:'زيارات',data,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.2)',tension:.3,fill:true}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true,ticks:{color:'#9aa8c7'},grid:{color:'rgba(255,255,255,.05)'}},
+      x:{ticks:{color:'#9aa8c7'},grid:{color:'rgba(255,255,255,.05)'}}}}
+  });
+}
+
+async function loadConfig(){
+  const doc = await db.collection('config').doc('settings').get();
+  if(doc.exists){
+    const d=doc.data();
+    $('#cfgMaint').checked=!!d.maintenance;
+    $('#cfgMaintMsg').value=d.maintenanceMsg||'';
+    $('#cfgBanner').value=d.banner||'';
+    $('#cfgHideGuide').checked=!!d.disableGuide;
+    (d.disabledMarkets||[]).forEach(k=>{const el=document.querySelector(`[data-mk="${k}"]`);if(el)el.checked=true;});
+  }
+}
+
+async function loadSuggestions(){
+  const snap = await db.collection('suggestions').orderBy('createdAt','desc').limit(100).get();
+  allSugg = [];
+  snap.forEach(d=>allSugg.push({id:d.id,...d.data()}));
+  const unread = allSugg.filter(s=>!s.read && s.status==='pending').length;
+  $('#cSugg').textContent = unread;
+  $('#suggCount').textContent = allSugg.length;
+  renderSuggestions();
+}
+
+function renderSuggestions(){
+  const list = $('#suggList');
+  if(!allSugg.length){list.innerHTML='<p style="color:#9aa8c7;text-align:center;padding:20px">لسه مفيش اقتراحات.</p>';return;}
+  list.innerHTML = allSugg.map(s=>{
+    const d=new Date(s.createdAt||0);
+    const dateStr=d.toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    const stars = s.rating ? '★'.repeat(s.rating) : '';
+    return `<div class="sugg-item ${s.read?'read':''}">
+      <div class="sugg-head">
+        <b>${esc(s.name||'مجهول')} <span class="sugg-stars">${stars}</span></b>
+        <small>${dateStr}</small>
+      </div>
+      <div class="sugg-msg">${esc(s.message)}</div>
+      ${s.reply?`<div class="sugg-msg" style="color:#86efac;background:rgba(34,197,94,.08);padding:8px;border-radius:10px;margin-top:6px">ردك: ${esc(s.reply)}</div>`:''}
+      <div class="sugg-actions">
+        ${!s.read?`<button onclick="markRead('${s.id}')">✓ تعليم مقروء</button>`:''}
+        ${s.status!=='done'?`<button onclick="markDone('${s.id}')" class="done">✓✓ تم التنفيذ</button>`:''}
+        <button onclick="replyTo('${s.id}')">💬 رد</button>
+        <button onclick="deleteSugg('${s.id}')" class="del">🗑️ حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function markRead(id){
+  await db.collection('suggestions').doc(id).update({read:true});
+  loadSuggestions();
+}
+async function markDone(id){
+  await db.collection('suggestions').doc(id).update({status:'done',read:true,doneAt:Date.now()});
+  loadSuggestions();
+}
+async function replyTo(id){
+  const r = prompt('اكتب ردك (هيظهر للمستخدم لو عايز):');
+  if(!r)return;
+  await db.collection('suggestions').doc(id).update({reply:r,read:true});
+  loadSuggestions();
+}
+async function deleteSugg(id){
+  if(!confirm('متأكد من الحذف؟'))return;
+  await db.collection('suggestions').doc(id).delete();
+  loadSuggestions();
+}
+
+$('#cfgSave').onclick=async()=>{
+  const btn=$('#cfgSave');
+  const disabled=[];
+  document.querySelectorAll('[data-mk]').forEach(el=>{if(el.checked)disabled.push(el.dataset.mk);});
+  await db.collection('config').doc('settings').set({
+    maintenance:$('#cfgMaint').checked,
+    maintenanceMsg:$('#cfgMaintMsg').value.trim(),
+    banner:$('#cfgBanner').value.trim(),
+    disableGuide:$('#cfgHideGuide').checked,
+    disabledMarkets:disabled,
+    updatedAt:Date.now()
+  },{merge:true});
+  btn.textContent='✓ تم الحفظ';
+  btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='حفظ الإعدادات';btn.classList.remove('saved');},1800);
+};
+
+$('#exportCsv').onclick=()=>{
+  if(!allSugg.length){alert('مفيش اقتراحات.');return;}
+  const rows=[['الاسم','التقييم','الرسالة','التاريخ','الحالة','الرد']];
+  allSugg.forEach(s=>rows.push([
+    s.name||'', s.rating||'', (s.message||'').replace(/\n/g,' '),
+    new Date(s.createdAt||0).toLocaleString('ar-EG'),
+    s.status||'', s.reply||''
+  ]));
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`egyptbet-suggestions-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+};
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+setInterval(loadAll, 30000);
+</script>
+</body>
+</html>
