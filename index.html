@@ -53,6 +53,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .sugg-hero b{color:#fff}
 .pin-badge{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
 .pred.vip-tile{border-color:#fbbf24;box-shadow:0 0 0 1px #fbbf24 inset,0 0 14px rgba(251,191,36,.18)}
+.pred.ai-tile{border-color:rgba(167,139,250,.65);box-shadow:0 0 0 1px rgba(167,139,250,.55) inset,0 0 18px rgba(167,139,250,.2)}
+.ai-badge{background:linear-gradient(135deg,#a78bfa,#f472b6);color:#04120a}
 .att-line{color:#7dd3fc!important}
 .ha{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:3px 10px 3px 4px;border-radius:99px;border:1px solid;margin-bottom:2px}
 .ha .num{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;color:#04120a}
@@ -201,8 +203,8 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
     <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
     <div class="gsteps">
-      <div class="gstep"><span>1</span><p id="gS1">دوّر على شارة <b class="suremini">ثقة كبيرة 🔥</b> — بتظهر لما هجوم الفريقين يكون عالي والتوقع نسبته قوية، ودي أقوى إشارة في المباراة.</p></div>
-      <div class="gstep"><span>2</span><p id="gS2">لو الشارة مش موجودة في مباراة، اختار التوقع صاحب <b>أعلى نسبة ثقة</b> من بين الباقي — ده تاني أفضل اختيار.</p></div>
+      <div class="gstep"><span>1</span><p id="gS1">دوّر على كارت <b class="suremini">🤖 اختيار الذكاء الاصطناعي</b> — بيجمع النسب والفورم وهجوم الفريقين في نظام نقاط واحد ويديك أضمن توقع في المباراة.</p></div>
+      <div class="gstep"><span>2</span><p id="gS2">بعده بص على شارة <b class="suremini">ثقة كبيرة 🔥</b> — بتظهر لما هجوم الفريقين يكون عالي والتوقع نسبته قوية.</p></div>
       <div class="gstep"><span>3</span><p id="gS3">بص على سطر <b>⚔️ هجوم</b> تحت كل توقع: رقم 1 = المضيف ورقم 2 = الضيف. هجوم عالي = أسواق الأهداف، هجوم ضعيف = أسواق "أقل من".</p></div>
     </div>
     <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
@@ -509,7 +511,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -520,7 +522,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -556,7 +558,6 @@ function init(){
     setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
   },1600);
   setInterval(tick,10000); setInterval(fastTick,4000); setInterval(secTick,1000);
-  /* Watchdog: لو أي تحميل علّق أكتر من 20 ثانية يفكّه ويعرض اللي موجود */
   setInterval(()=>{ if(isLoading&&Date.now()-loadStartTs>20000){ isLoading=false; loading.hidden=true; try{renderCurrent();}catch(e){} } },5000);
 }
 function maybeShowGuide(){
@@ -700,7 +701,6 @@ function fetchT(url,ms){
 }
 async function loadMatches(silent){
   if(isLoading)return;isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
-  /* وضع انتهت: لو عندنا كاش حديث اعرضه فوراً بدون سكيلتون */
   const finCached = state.mode==='finished' ? readFinCache() : null;
   if(finCached){ loading.hidden=true; }
   else if(!silent)showLoading(); else loading.hidden=true;
@@ -774,7 +774,6 @@ function buildRequests(){
   }
   return reqs;
 }
-/* وضع انتهت: أمس فقط + الدوريات الكبرى + كاش 30 دقيقة = فوري */
 async function fetchFinishedSet(){
   const cached=readFinCache();
   if(cached)return cached;
@@ -830,7 +829,7 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + DEEP ENGINE + LIVE MARKETS ENGINE ========== */
+/* ========== POISSON + DEEP ENGINE + AI PICK ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -857,6 +856,24 @@ function liveWinProbs(sh,sa,lhRem,laRem){
   }
   return {hw,dr,aw};
 }
+/* ===== محرك الذكاء الاصطناعي: نظام نقاط Ensemble يختار أضمن سوق ===== */
+function computeAiPick(r){
+  const cands=[];
+  const add=(k,ti,p,sup,reason)=>{ if(p&&p.prob!=null) cands.push({k,ti,text:p.text,prob:p.prob,sup,reason}); };
+  add('goals','أهداف 2',r.goals, r.bothAtt?0.85:0.50, r.bothAtt?'هجوم الفريقين عالي — مباراة مفتوحة':'إيقاع تهديفي متوسط');
+  add('g15','أهداف 1.5',r.g15, r.bothAtt?0.80:0.60, 'سوق عالي الاحتمال تاريخياً');
+  add('u15','أقل من 1.5',r.u15, r.bothWeak?0.85:0.40, r.bothWeak?'هجوم الفريقين ضعيف — مباراة مقفولة':'إيقاع تهديفي مرتفع');
+  add('u25','أقل من 2.5',r.u25, r.bothWeak?0.80:0.50, r.bothWeak?'فرصتين تكفيان (0/1/2 أهداف)':'إيقاع تهديفي مرتفع');
+  add('btts','كلا الفريقين يسجل',r.btts, r.bothAtt?0.85:0.45, r.bothAtt?'الفريقان يسجلان بانتظام':'هجوم طرف واحد بس');
+  add('corners','ركنيات 9.5',r.corners,0.60,'إيقاع هجومي يولد ركنيات');
+  add('cards55u','بطاقات 5.5',r.cards55u,0.65,'سوق آمن تاريخياً');
+  add('win','الفوز المباشر',r.win, r.winLive?0.95:(r.hasData?0.70:0.55), r.winLive?'مبني على مجريات المباراة اللحظية':'فارق القوة والفورم');
+  add('dc1','فرصة مزدوجة (1)',r.dc1, r.attHp>=55?0.80:0.50, 'المضيف نادراً ما يخسر');
+  add('dc2','فرصة مزدوجة (2)',r.dc2, r.attAp>=55?0.80:0.50, 'الضيف نادراً ما يخسر');
+  let best=null;
+  cands.forEach(c=>{ c.score=c.prob*0.75 + c.sup*100*0.25; if(!best||c.score>best.score)best=c; });
+  return best;
+}
 function getPrediction(m){if(predCache.has(m.id))return predCache.get(m.id);const p=calc(m);predCache.set(m.id,p);return p;}
 function calc(m){
   const ld=leagueData(m.leagueSlug), rng=mulberry32(hashCode(`${m.id}|${m.home.name}|${m.away.name}`));
@@ -880,10 +897,10 @@ function calc(m){
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
   const r=buildPred(lh,la,lcorn,lcard);
   r.hasData=hasData; r.formH=fH; r.formA=fA;
+  /* الاستثناء الوحيد اللحظي: الفوز المباشر فقط */
   if(m.live&&m.scoreHome!=null&&m.scoreAway!=null){
     const min=parseMinute(m.minute);
     const rem=Math.max(0,(90-min)/90);
-    const elapsed=Math.max(1,min);
     const sh=m.scoreHome, sa=m.scoreAway;
     const L=liveWinProbs(sh,sa,lh*rem,la*rem);
     const totW=L.hw+L.aw;
@@ -892,48 +909,9 @@ function calc(m){
       r.win = dH>=dA ? {text:'فوز المضيف (1)',prob:Math.round(dH*100),tone:'good'} : {text:'فوز الضيف (2)',prob:Math.round(dA*100),tone:'good'};
       r.winLive=true;
       r.win.note = r.win.prob>=70 ? '🛡️ اضمن توقع حالياً — محدث لحظياً' : 'محدث لحظياً حسب مجريات المباراة';
-      r.dc1={text:'1X (فوز المضيف أو تعادل)',prob:Math.round((L.hw+L.dr)*100),tone:(L.hw+L.dr)>=0.5?'good':'warn'};
-      r.dc2={text:'X2 (تعادل أو فوز الضيف)',prob:Math.round((L.aw+L.dr)*100),tone:(L.aw+L.dr)>=0.5?'good':'warn'};
     }
-    const obsGoals=sh+sa;
-    const liveRate=obsGoals/elapsed;
-    const preRate=(lh+la)/90;
-    const pace=clamp(preRate>0?liveRate/preRate:1,0.6,1.8);
-    const lamRem=Math.max(0.05,0.5*liveRate*(90-min)+0.5*(lh+la)*rem);
-    r.liveMk=true;
-    const liveNote=(pr)=>pr>=70?'🛡️ اضمن توقع حالياً — محدث لحظياً':'محدث لحظياً حسب هجمات الفريقين';
-    const bH=sh>0?1:1-Math.exp(-lh*rem);
-    const bA=sa>0?1:1-Math.exp(-la*rem);
-    const bttsLive=clamp(bH*bA,0,0.98);
-    r.btts=bttsLive>=0.5?{text:'نعم',prob:Math.round(bttsLive*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsLive)*100),tone:'warn'};
-    r.btts.note=liveNote(r.btts.prob);
-    const cornSoFar=lcorn*(1-rem)*pace;
-    const cornRem=Math.max(0.05,lcorn*rem*pace);
-    const tC=9.5-cornSoFar;
-    const o95Live=tC<0?1:1-poissonCdf(Math.floor(tC),cornRem);
-    r.corners=o95Live>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95Live*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95Live)*100),tone:'warn'};
-    r.corners.note=liveNote(r.corners.prob);
-    const diff=Math.abs(sh-sa);
-    let press=1;
-    if(min>60&&diff<=1)press=1.15; else if(diff>=3)press=0.85;
-    const cardSoFar=lcard*(1-rem)*pace*press;
-    const cardRem=Math.max(0.05,lcard*rem*pace*press);
-    const tK=5.5-cardSoFar;
-    const u55Live=tK<0?0:poissonCdf(Math.floor(tK),cardRem);
-    r.cards55u=u55Live>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55Live*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55Live)*100),tone:'hot'};
-    r.cards55u.note=liveNote(r.cards55u.prob);
-    const pLeq=(n)=>obsGoals>n?0:poissonCdf(n-obsGoals,lamRem);
-    const pU15=pLeq(1), pU25=pLeq(2), pO3=1-pLeq(2), pU1=pLeq(0);
-    r.g15={text:'أكثر من 1.5',prob:Math.round((1-pU15)*100),tone:(1-pU15)>=0.5?'good':'warn'};
-    r.g15.note=liveNote(r.g15.prob);
-    r.u15={text:'أقل من 1.5 أهداف',prob:Math.round(pU15*100),tone:pU15>=0.5?'good':'warn'};
-    r.u15.note=liveNote(r.u15.prob);
-    r.u25={text:'أقل من 2.5 أهداف',prob:Math.round(pU25*100),tone:pU25>=0.5?'good':'warn'};
-    r.u25.note=liveNote(r.u25.prob);
-    const den=pO3+pU1;
-    r.goals=den>0?(pO3>=pU1?{text:'أكثر من 2',prob:Math.round(pO3/den*100),tone:'good'}:{text:'أقل من 2',prob:Math.round(pU1/den*100),tone:'warn'}):{text:'أكثر من 2',prob:50,tone:'warn'};
-    r.goals.note=obsGoals===2?'إرجاع لو 2 بالضبط':liveNote(r.goals.prob);
   }
+  r.aiPick=computeAiPick(r);
   return r;
 }
 function buildPred(lh,la,lcorn,lcard){
@@ -987,14 +965,14 @@ function buildPred(lh,la,lcorn,lcard){
   return r;
 }
 function isSure(k,prob,p){
-  if(p.liveMk&&(k==='btts'||k==='corners'||k==='cards55u'||k==='goals'||k==='g15'||k==='u15'||k==='u25'))return prob>=70;
   if(k==='win'&&p.winLive)return prob>=70;
   if(k==='u15'||k==='u25')return prob>=60&&p.bothWeak;
   if(k==='dc1')return prob>=65&&p.attHp>=55;
   if(k==='dc2')return prob>=65&&p.attAp>=55;
   if(p.bothAtt){
     if(k==='btts')return prob>=55;
-    if(k==='goals'||k==='g15'||k==='win'||k==='exact'||k==='dc')return prob>=60;
+    if(k==='goals'||k==='g15')return prob>=60;
+    if(k==='exact'||k==='dc')return prob>=60;
   }
   return prob>=68;
 }
@@ -1036,6 +1014,10 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const pinB=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return`<article class="card ${m.pinned?'pinned-card':''}" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
+function aiTile(ai,r){
+  const att=(r&&r.attHp!=null)?`<div class="prob att-line">⚔️ هجوم: (1) ${r.attHp}% × (2) ${r.attAp}%</div>`:'';
+  return`<div class="pred ai-tile"><div class="pred-top"><span>🤖</span><span>اختيار الذكاء الاصطناعي</span><span class="sure ai-badge">الأضمن 🛡️</span></div><div class="pred-value good">${ai.ti} — ${ai.text}</div><div class="meter"><span style="width:${ai.prob}%"></span></div><div class="prob">ثقة ${ai.prob}% • ${ai.reason}</div>${att}</div>`;
+}
 function tiles(p){
   const W={goals:1.0,g15:1.05,u15:1.0,u25:1.0,dc1:1.0,dc2:1.0,corners:0.93,btts:1.05,cards55u:1.08,exact:1.0,dc:1.0,win:1.02};
   const en=[];
@@ -1053,7 +1035,9 @@ function tiles(p){
   if(!en.length)return'<div class="empty" style="grid-column:1/-1">فعّل سوقاً واحداً.</div>';
   const score=x=>x.p.prob*(W[x.k]||1)+(p.hasData?3:0);
   let best=en[0];en.forEach(x=>{if(score(x)>score(best))best=x;});
-  return en.map(x=>tile(x.ic,x.ti,x.p,isSure(x.k,x.p.prob,p),p)).join('');}
+  const body=en.map(x=>tile(x.ic,x.ti,x.p,isSure(x.k,x.p.prob,p),p)).join('');
+  return (p.aiPick?aiTile(p.aiPick,p):'')+body;
+}
 function tile(ic,ti,p,sure,r){
   const att=(r&&r.attHp!=null)?`<div class="prob att-line">⚔️ هجوم: (1) ${r.attHp}% × (2) ${r.attAp}%</div>`:'';
   return`<div class="pred ${sure?'sure-tile':''} ${p.vip?'vip-tile':''}"><div class="pred-top"><span>${ic}</span><span>${ti}</span>${sure?'<span class="sure">ثقة كبيرة 🔥</span>':''}</div><div class="pred-value ${p.tone}">${p.text}</div><div class="meter"><span style="width:${p.prob}%"></span></div><div class="prob">نسبة الثقة ${p.prob}%${p.note?' • '+p.note:''}</div>${att}</div>`;}
@@ -1063,7 +1047,10 @@ function resultTiles(m,p){const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
   const wH=(p.win.text.startsWith('فوز المضيف')&&sh>sa)||(p.win.text.startsWith('فوز الضيف')&&sa>sh);
   const u15H=tot<=1, u25H=tot<=2;
   const dc1H=sh>=sa, dc2H=sa>=sh;
-  return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🛡️</span><span>أهداف 1.5</span></div><div class="pred-value ${tot>=2?'good':'hot'}">أكثر من 1.5 ${tot>=2?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 1.5</span></div><div class="pred-value ${u15H?'good':'hot'}">أقل من 1.5 ${u15H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 2.5</span></div><div class="pred-value ${u25H?'good':'hot'}">أقل من 2.5 ${u25H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (1)</span></div><div class="pred-value ${dc1H?'good':'hot'}">1X ${dc1H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (2)</span></div><div class="pred-value ${dc2H?'good':'hot'}">X2 ${dc2H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
+  const ai=p.aiPick;
+  const aiHit=ai?((ai.k==='goals')?(tot!==2):((ai.k==='g15')?(tot>=2):((ai.k==='u15')?(tot<=1):((ai.k==='u25')?(tot<=2):((ai.k==='btts')?bH:((ai.k==='win')?wH:((ai.k==='dc1')?dc1H:((ai.k==='dc2')?dc2H:true))))))):true;
+  const aiTileFin=ai?`<div class="pred ai-tile"><div class="pred-top"><span>🤖</span><span>اختيار الذكاء الاصطناعي</span><span class="sure ai-badge">${aiHit?'أصاب ✔':'أخطأ ✘'}</span></div><div class="pred-value ${aiHit?'good':'hot'}">${ai.ti} — ${ai.text}</div><div class="prob">كانت الثقة ${ai.prob}% • ${ai.reason}</div></div>`:'';
+  return aiTileFin+`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🛡️</span><span>أهداف 1.5</span></div><div class="pred-value ${tot>=2?'good':'hot'}">أكثر من 1.5 ${tot>=2?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 1.5</span></div><div class="pred-value ${u15H?'good':'hot'}">أقل من 1.5 ${u15H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 2.5</span></div><div class="pred-value ${u25H?'good':'hot'}">أقل من 2.5 ${u25H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (1)</span></div><div class="pred-value ${dc1H?'good':'hot'}">1X ${dc1H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (2)</span></div><div class="pred-value ${dc2H?'good':'hot'}">X2 ${dc2H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
