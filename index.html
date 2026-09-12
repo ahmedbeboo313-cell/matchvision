@@ -2,6 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Egypt Bet | توقعات كرة القدم</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +20,7 @@ html,body{min-height:100%;overflow-x:hidden}
 body{font-family:'Cairo',system-ui,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(56,189,248,.15),transparent 30%),radial-gradient(circle at top right,rgba(34,197,94,.13),transparent 26%),linear-gradient(180deg,#08101f,#050810 45%);min-height:100vh}
 button,input,select,textarea{font:inherit;color:inherit}
 .hidden{display:none!important}
-#toTop{position:fixed;right:14px;bottom:96px;z-index:40;width:48px;height:48px;border-radius:50%;border:1px solid rgba(34,197,94,.4);background:rgba(5,8,16,.88);backdrop-filter:blur(10px);color:var(--accent);font-size:20px;font-weight:800;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 14px rgba(34,197,94,.25);opacity:0;pointer-events:none;transform:translateY(12px);transition:.25s}
+#toTop{position:fixed;right:14px;bottom:96px;z-index:40;width:48px;height:48px;border-radius:50%;border:1px solid rgba(34,197,94,.4);background:rgba(5,8,16,.88);backdrop-filter:blur(10px);color:var(--accent);font-size:20px;font-weight:900;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 14px rgba(34,197,94,.25);opacity:0;pointer-events:none;transform:translateY(12px);transition:.25s}
 #toTop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;box-shadow:0 10px 30px rgba(239,68,68,.45)}
 .banner{margin:0 0 10px;padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 10px 26px rgba(239,68,68,.35);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
@@ -506,7 +509,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -533,7 +536,7 @@ const leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),no
 const loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCount'),avgConfidence=$('#avgConfidence');
 const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search');
 const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
-let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0;
+let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0,loadStartTs=0;
 let lastFastTs=0,lastFastOkTs=0,pollingFast=false,liveFailStreak=0;
 let livePoolMap=new Map();
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
@@ -553,6 +556,8 @@ function init(){
     setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
   },1600);
   setInterval(tick,10000); setInterval(fastTick,4000); setInterval(secTick,1000);
+  /* Watchdog: لو أي تحميل علّق أكتر من 20 ثانية يفكّه ويعرض اللي موجود */
+  setInterval(()=>{ if(isLoading&&Date.now()-loadStartTs>20000){ isLoading=false; loading.hidden=true; try{renderCurrent();}catch(e){} } },5000);
 }
 function maybeShowGuide(){
   if(remoteCfg.disableGuide)return;
@@ -618,7 +623,9 @@ function mergeLive(items){
   if(changed){
     predCache.clear();
     state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
-    applyPinned();detectKickoffs();renderCurrent();updateBell();
+    applyPinned();detectKickoffs();
+    try{renderCurrent();}catch(e){console.error(e);}
+    updateBell();
     window.scrollTo({top:sy,behavior:'auto'});
   }
 }
@@ -637,7 +644,7 @@ function bindEvents(){
   $('#suggCancel').onclick=()=>$('#suggModal').classList.add('hidden');
   $('#suggSend').onclick=sendSuggestion;
   $('#tgVip').onchange=e=>{state.vip=e.target.checked;renderCurrent();};
-  $('#refreshBtn').onclick=()=>loadMatches();
+  $('#refreshBtn').onclick=()=>{ try{sessionStorage.removeItem(finKey());}catch(e){} loadMatches(); };
   $('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
   $('#backBtn').onclick=()=>showView(state.prevView||'home');
   $('#toTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
@@ -676,19 +683,30 @@ function saveCache(list){
   }catch(e){}
 }
 function loadCache(){ try{return JSON.parse(localStorage.getItem('eb_cache'));}catch(e){return null;} }
+function finKey(){ return 'eb_fin_'+state.league+'_'+fmtDate(addDays(new Date(),-1)); }
+function readFinCache(){
+  try{
+    const c=JSON.parse(sessionStorage.getItem(finKey())||'null');
+    if(c&&Date.now()-c.ts<1800000&&c.list&&c.list.length)return c.list;
+  }catch(e){}
+  return null;
+}
 
-/* ========== DATA (مع تايم أوت + تحميل ذكي) ========== */
+/* ========== DATA ========== */
 function fetchT(url,ms){
   const c=new AbortController();
   const t=setTimeout(()=>c.abort(),ms||8000);
   return fetch(url,{cache:'no-store',signal:c.signal}).finally(()=>clearTimeout(t));
 }
 async function loadMatches(silent){
-  if(isLoading)return;isLoading=true;state.source='loading';state.sourcesOk=[];updateSource();
-  if(!silent)showLoading(); else loading.hidden=true;
+  if(isLoading)return;isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
+  /* وضع انتهت: لو عندنا كاش حديث اعرضه فوراً بدون سكيلتون */
+  const finCached = state.mode==='finished' ? readFinCache() : null;
+  if(finCached){ loading.hidden=true; }
+  else if(!silent)showLoading(); else loading.hidden=true;
   let items=[];
   try{
-    items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests());
+    items=state.mode==='finished'?(finCached||await fetchFinishedSet()):await fetchSet(buildRequests());
     if(!items.length){ await new Promise(r=>setTimeout(r,2000)); items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests()); }
     if(items.length){ const okS=new Set(items.map(i=>i.sourceName)); state.sourcesOk=[...okS]; state.source='live'; saveCache(items); syncLivePool(items); }
   }catch(e){ items=[]; }
@@ -718,7 +736,8 @@ async function loadMatches(silent){
   predCache.clear();isLoading=false;lastLoadTs=Date.now();
   loading.hidden=true;
   const sy=silent?window.scrollY:null;
-  renderCurrent();updateBell();
+  try{ renderCurrent(); }catch(err){ console.error(err); homeEmpty.hidden=false; homeEmpty.textContent='حدث خطأ مؤقت في العرض — دوس تحديث ⟳'; }
+  updateBell();
   if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
   reportHealth(state.source==='live');showInbox(false);
 }
@@ -755,20 +774,18 @@ function buildRequests(){
   }
   return reqs;
 }
-/* وضع "انتهت": دوريات كبرى فقط + كاش 10 دقايق = فتح فوري بدون تعليق */
+/* وضع انتهت: أمس فقط + الدوريات الكبرى + كاش 30 دقيقة = فوري */
 async function fetchFinishedSet(){
-  const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1));
-  const key='eb_fin_'+state.league+'_'+yest;
-  try{
-    const c=JSON.parse(sessionStorage.getItem(key)||'null');
-    if(c&&Date.now()-c.ts<600000&&c.list&&c.list.length)return c.list;
-  }catch(e){}
+  const cached=readFinCache();
+  if(cached)return cached;
+  const yest=fmtDate(addDays(new Date(),-1));
   const finLeagues = state.league==='all' ? LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)) : LEAGUES.filter(l=>l.slug===state.league);
   const reqs=[];
-  [today,yest].forEach(ds=>{ finLeagues.forEach(l=>reqs.push(fetchESPN(l,ds.replace(/-/g,'')))); reqs.push(fetchTSDB(ds)); });
+  finLeagues.forEach(l=>reqs.push(fetchESPN(l,yest.replace(/-/g,''))));
+  reqs.push(fetchTSDB(yest));
   const items=await fetchSet(reqs);
-  try{ sessionStorage.setItem(key,JSON.stringify({ts:Date.now(),list:items.slice(0,250)})); }catch(e){}
-  state.finCache={day:today,league:state.league,list:items};
+  try{ sessionStorage.setItem(finKey(),JSON.stringify({ts:Date.now(),list:items.slice(0,250)})); }catch(e){}
+  state.finCache={day:fmtDate(new Date()),league:state.league,list:items};
   return items;
 }
 function activeLeagues(){return state.league==='all'?LEAGUES:LEAGUES.filter(l=>l.slug===state.league);}
