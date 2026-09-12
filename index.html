@@ -115,8 +115,10 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .vs strong{font-size:13px}
 .vs strong.score{font-size:17px;color:#fca5a5}
 .vs strong.scoreDone{font-size:17px;color:#e2e8f0}
-.pred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pred{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:10px;min-width:0}
+.pred-grid{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pred-grid::-webkit-scrollbar{display:none}
+.pred{flex:0 0 calc(50% - 4px);scroll-snap-align:start;display:flex;flex-direction:column;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:10px;min-width:0}
+.pred .meter{margin-top:auto}
 .pred.sure-tile{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 0 16px rgba(34,197,94,.15)}
 .pred-top{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:7px;font-weight:700;flex-wrap:wrap}
 .sure{margin-inline-start:auto;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;white-space:nowrap}
@@ -184,7 +186,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .nic{display:grid;place-items:center;height:20px}
 .nic svg{width:20px;height:20px}
 .success-msg{padding:14px;border-radius:14px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;text-align:center;font-weight:700;margin:10px 0}
-@media(max-width:520px){.pred-grid,.mini-grid,.mk-grid{grid-template-columns:1fr}.brand{font-size:16px}}
+@media(max-width:520px){.mini-grid,.mk-grid{grid-template-columns:1fr}.brand{font-size:16px}}
 </style>
 </head>
 <body>
@@ -516,7 +518,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
