@@ -53,11 +53,37 @@ button,input,select,textarea{font:inherit;color:inherit}
 .sugg-hero{width:100%;margin:0 0 12px;padding:14px 16px;border:1px solid rgba(251,191,36,.45);background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(34,197,94,.15));color:#fde68a;border-radius:20px;font-size:13.5px;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.28);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
 .sugg-hero b{color:#fff}
 .pin-badge{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
-/* ===== TICKET SYSTEM ===== */
-.ticket{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);cursor:pointer;max-width:100%;position:relative}
-.ticket:before{content:"";position:absolute;left:10px;right:10px;top:0;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:.7}
-.tk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.tk-teams{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:10px}
+/* ===== HERO + GRID ===== */
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.hero-card{border-radius:18px;padding:10px;display:flex;flex-direction:column;border:1px solid;min-width:0}
+.hero-ai{background:linear-gradient(135deg,rgba(167,139,250,.16),rgba(56,189,248,.10));border-color:rgba(167,139,250,.45)}
+.hero-safe{background:linear-gradient(135deg,rgba(34,197,94,.14),rgba(56,189,248,.08));border-color:rgba(34,197,94,.45)}
+.hero-top{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:var(--muted);margin-bottom:6px;gap:4px;flex-wrap:wrap}
+.hero-card .pred-value{font-size:13px;margin-bottom:6px}
+.pred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pred{display:flex;flex-direction:column;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:10px;min-width:0}
+.pred .meter{margin-top:auto}
+.pred .sh{font-size:10px;letter-spacing:-2px}
+.pred.sure-tile{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 0 16px rgba(34,197,94,.15)}
+.pred-top{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:11.5px;margin-bottom:7px;font-weight:700;flex-wrap:wrap}
+.sure{margin-inline-start:auto;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.ai-badge{background:linear-gradient(135deg,#a78bfa,#f472b6);color:#04120a}
+.pred-value{font-weight:800;font-size:14px;margin-bottom:8px}
+.good{color:#86efac}.warn{color:#fcd34d}.hot{color:#fda4af}.info{color:#7dd3fc}
+.meter{height:6px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden}
+.meter.big{height:8px}
+.meter span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.prob{margin-top:6px;color:var(--muted);font-size:10.5px;font-weight:700}
+.att-line{color:#7dd3fc!important}
+.match-foot{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:10.5px;margin-top:10px;font-weight:700;flex-wrap:wrap}
+.league-pill{font-size:11px;font-weight:800;color:#dbeafe;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.2);padding:5px 9px;border-radius:999px}
+.date-text{color:var(--muted);font-size:12px;font-weight:700}
+.live-pill{color:#fca5a5;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite}
+.done-pill{color:#cbd5e1;background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.3);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.fav-btn{border:0;background:rgba(255,255,255,.06);width:34px;height:34px;flex:none;border-radius:12px;font-size:17px;cursor:pointer}
+.fav-btn.active{color:#facc15}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:10px}
 .team{display:grid;justify-items:center;gap:6px;text-align:center;min-width:0}
 .team strong{font-size:13px;word-break:break-word}
 .team small{color:var(--muted);font-size:11px;min-height:15px}
@@ -69,42 +95,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .vs strong{font-size:13px}
 .vs strong.score{font-size:17px;color:#fca5a5}
 .vs strong.scoreDone{font-size:17px;color:#e2e8f0}
-.tk-hero{background:linear-gradient(135deg,rgba(167,139,250,.16),rgba(56,189,248,.10));border:1px solid rgba(167,139,250,.45);border-radius:16px;padding:10px 12px;margin-bottom:8px}
-.tk-safe{background:linear-gradient(135deg,rgba(34,197,94,.14),rgba(56,189,248,.08));border:1px solid rgba(34,197,94,.45);border-radius:16px;padding:10px 12px;margin-bottom:8px}
-.tk-hero-top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:6px;flex-wrap:wrap}
-.tk-hero .pred-value,.tk-safe .pred-value{font-size:14px;margin-bottom:6px}
-.mbar{height:6px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden}
-.mbar.big{height:8px}
-.mbar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent2),var(--accent))}
-.tk-rows{margin:8px 0}
-.mrow{display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:12px;background:rgba(255,255,255,.03);margin-bottom:6px;flex-wrap:wrap;border:1px solid transparent}
-.mrow .mi{width:20px;text-align:center;flex:none}
-.mrow .mn{flex:1;min-width:100px;font-size:11.5px;font-weight:700;color:var(--muted)}
-.mrow .mv{font-size:12px;font-weight:800}
-.mrow .mbar{flex:1;min-width:60px}
-.mrow .mp{width:34px;text-align:right;font-size:11px;font-weight:800;color:var(--text)}
-.mrow .sh{font-size:10px;letter-spacing:-2px}
-.mrow-sure{border-color:var(--accent);background:rgba(34,197,94,.08)}
-.tk-foot{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:10.5px;font-weight:700;margin-top:8px}
-.att-line{color:#7dd3fc!important}
-.league-pill{font-size:11px;font-weight:800;color:#dbeafe;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.2);padding:5px 9px;border-radius:999px}
-.date-text{color:var(--muted);font-size:12px;font-weight:700}
-.live-pill{color:#fca5a5;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite}
-.done-pill{color:#cbd5e1;background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.3);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800}
-.fav-btn{border:0;background:rgba(255,255,255,.06);width:34px;height:34px;flex:none;border-radius:12px;font-size:17px;cursor:pointer}
-.fav-btn.active{color:#facc15}
 .ha{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:3px 10px 3px 4px;border-radius:99px;border:1px solid;margin-bottom:2px}
 .ha .num{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;color:#04120a}
 .ha.home{color:#86efac;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3)}
 .ha.home .num{background:#22c55e}
 .ha.away{color:#93c5fd;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.3)}
 .ha.away .num{background:#38bdf8}
-.sure{margin-inline-start:auto;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;white-space:nowrap}
-.ai-badge{background:linear-gradient(135deg,#a78bfa,#f472b6);color:#04120a}
-.pred-value{font-weight:800;font-size:14px;margin-bottom:8px}
-.good{color:#86efac}.warn{color:#fcd34d}.hot{color:#fda4af}.info{color:#7dd3fc}
-.prob{margin-top:6px;color:var(--muted);font-size:11px;font-weight:700}
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:linear-gradient(180deg,#08101f,#050810);transition:opacity .5s}
 .splash.fade{opacity:0;pointer-events:none}
 .splash-box{display:grid;justify-items:center;gap:12px;text-align:center}
@@ -142,6 +138,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 input[type=date],input[type=search],select{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:15px;padding:10px 12px;outline:none;min-width:0;max-width:100%}
 select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-width:150px;flex:none}
 .statsbar{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;padding:0 4px 10px;flex-wrap:wrap}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);cursor:pointer;max-width:100%}
 .skeleton-card{height:230px;border-radius:var(--radius);margin-bottom:12px;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.09),rgba(255,255,255,.05));background-size:200% 100%;animation:shimmer 1.15s infinite linear}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .empty{padding:36px 18px;text-align:center;color:var(--muted);background:rgba(255,255,255,.04);border:1px dashed var(--line);border-radius:26px;line-height:1.9}
@@ -228,9 +225,9 @@ setTimeout(function(){
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
     <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
     <div class="gsteps">
-      <div class="gstep"><span>1</span><p id="gS1">افتح أي تذكرة وبص فوق خالص: <b class="suremini">🤖 التوقع الرئيسي</b> و<b class="suremini">🎫 التذكرة الآمنة</b> — دول أضمن اختيارين محسوبين رياضياً.</p></div>
-      <div class="gstep"><span>2</span><p id="gS2">كل سوق تحته <b>دروع أمان 🛡️</b> من 5 — كل ما الدروع تزيد، الأمان يزيد.</p></div>
-      <div class="gstep"><span>3</span><p id="gS3">بص على <b>⚔️ هجوم</b> و<b>📊 تقلب</b> تحت التذكرة: هجوم عالي = أهداف، تقلب منخفض = استقرار وأمان أكبر.</p></div>
+      <div class="gstep"><span>1</span><p id="gS1">فوق كل مباراة هتلاقي كارتين مميزين: <b class="suremini">🤖 التوقع الرئيسي</b> و<b class="suremini">🎫 التذكرة الآمنة</b> — دول أضمن اختيارين محسوبين رياضياً.</p></div>
+      <div class="gstep"><span>2</span><p id="gS2">باقي التوقعات جنب بعض بالترتيب حسب الأمان — كل كارت تحته <b>دروع 🛡️</b> من 5، وكل ما الدروع تزيد الأمان يزيد.</p></div>
+      <div class="gstep"><span>3</span><p id="gS3">بص على <b>⚔️ هجوم</b> تحت الكارت: هجوم عالي = أهداف، هجوم ضعيف = أسواق "أقل من". الكارت اللي عليه <b class="suremini">الأضمن 🛡️</b> هو أضمن سوق في المباراة.</p></div>
     </div>
     <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
     <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -478,7 +475,7 @@ const LEAGUES=[
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
- {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
+ {slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
@@ -499,9 +496,9 @@ const LEAGUES=[
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
  {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
- {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
+ {slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},
  {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
- {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
+ {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
@@ -807,7 +804,7 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + TICKET ENGINE ========== */
+/* ========== POISSON + SAFETY ENGINE ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -992,10 +989,8 @@ function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
 function renderCurrent(){
   updateSource();
-  const before=[...document.querySelectorAll('.pred-grid')].map(g=>g.scrollLeft);
   const fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];
   if(fn)fn();
-  document.querySelectorAll('.pred-grid').forEach((g,i)=>{ if(before[i]!=null) g.scrollLeft=before[i]; });
 }
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
 function dayLabel(iso){ const d=new Date(iso); if(isNaN(d))return ''; return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d); }
@@ -1027,12 +1022,22 @@ function renderNotifs(){loading.hidden=true;const now=Date.now(),items=[];
 function bellCount(){return state.notifEnabled?state.matches.filter(m=>m.live||(new Date(m.date)-Date.now())/36e5<=24).length:0;}
 function updateBell(){const n=bellCount();const read=lsGet('mv_bell_read');const show=n>0&&n!==read;bellBadge.textContent=n;bellBadge.classList.toggle('hidden',!show);}
 
-/* ========== TICKET RENDER ========== */
-function mrow(ic,name,val,prob,tone,shields,sure){
-  return `<div class="mrow ${sure?'mrow-sure':''}"><span class="mi">${ic}</span><span class="mn">${name}</span><span class="mv ${tone}">${val}</span><div class="mbar"><span style="width:${prob}%"></span></div><span class="mp">${prob}%</span><span class="sh">${shieldStr(shields)}</span>${sure?'<span class="sure">الأضمن 🛡️</span>':''}</div>`;
-}
-function buildRows(m,p,fin){
+/* ========== CARD BUILD (HERO + GRID) ========== */
+function pcard(ic,name,obj,k,p,fin,m,sure){
   const sh=m.scoreHome??0, sa=m.scoreAway??0, tot=sh+sa;
+  const shields=shieldsFor(k,obj.prob,p);
+  const hit=fin?hitCheck(k,p,m,tot,sh,sa):null;
+  const val=fin? obj.text+(hit===true?' ✔':hit===false?' ✘':'') : obj.text;
+  const tone=fin? (hit===true?'good':hit===false?'hot':obj.tone) : obj.tone;
+  const att=`<div class="prob att-line">⚔️ هجوم: (1) ${p.attHp}% × (2) ${p.attAp}%</div>`;
+  return `<div class="pred ${sure?'sure-tile':''}"><div class="pred-top"><span>${ic}</span><span>${name}</span>${sure?'<span class="sure">الأضمن 🛡️</span>':''}</div><div class="pred-value ${tone}">${val}</div><div class="meter"><span style="width:${obj.prob}%"></span></div><div class="prob">ثقة ${obj.prob}% <span class="sh">${shieldStr(shields)}</span></div>${att}</div>`;
+}
+function predBlock(m,p,fin){
+  const ai=p.aiPick, st=p.safeTicket;
+  const sh=m.scoreHome??0, sa=m.scoreAway??0, tot=sh+sa;
+  const aiHit=fin&&ai?aiHitCheck(ai.k,{tot:tot,bH:(sh>0&&sa>0),wH:sh>sa,dc1H:sh>=sa,dc2H:sa>=sh}):null;
+  const aiSh=ai?shieldsFor(ai.k,ai.prob,p):0;
+  const stSh=st?shieldsFor('ticket',st.prob,p):0;
   const defs=[];
   if(state.markets.goals)defs.push(['goals','⚽','أهداف 2',p.goals]);
   if(state.markets.safe)defs.push(['g15','🛡️','أهداف 1.5',p.g15]);
@@ -1048,40 +1053,29 @@ function buildRows(m,p,fin){
   defs.push(['cleanSheet','🧤','كلين شيت',p.cleanSheet]);
   defs.push(['bothHalves','🌓','أهداف في الشوطين',p.bothHalves]);
   defs.push(['range','🎯','نطاق الأهداف',p.range]);
-  if(p.comeback)defs.push(['comeback','🔄','مؤشر الريمونتادا',p.comeback]);
-  let sureK=null,bestS=-1;
-  defs.forEach(d=>{const s=safetyScore(d[0],d[3].prob,p);if(s>bestS){bestS=s;sureK=d[0];}});
-  return defs.map(d=>{
-    const k=d[0],ic=d[1],name=d[2],obj=d[3];
-    const shields=shieldsFor(k,obj.prob,p);
-    const hit=fin?hitCheck(k,p,m,tot,sh,sa):null;
-    const val=fin? obj.text+(hit===true?' ✔':hit===false?' ✘':'') : obj.text;
-    const tone=fin? (hit===true?'good':hit===false?'hot':obj.tone) : obj.tone;
-    return mrow(ic,name,val,obj.prob,tone,shields,k===sureK);
-  }).join('');
-}
-function ticketBody(m,p,fin){
-  const ai=p.aiPick, st=p.safeTicket;
-  const sh=m.scoreHome??0, sa=m.scoreAway??0, tot=sh+sa;
-  const aiHit=fin&&ai?aiHitCheck(ai.k,{tot:tot,bH:(sh>0&&sa>0),wH:sh>sa,dc1H:sh>=sa,dc2H:sa>=sh}):null;
-  const aiSh=ai?shieldsFor(ai.k,ai.prob,p):0;
-  const stSh=st?shieldsFor('ticket',st.prob,p):0;
-  return `${ai?`<div class="tk-hero"><div class="tk-hero-top"><span>🤖 التوقع الرئيسي (ذكاء اصطناعي)</span>${fin?(aiHit===true?'<span class="sure">أصاب ✔</span>':aiHit===false?'<span class="sure ai-badge">أخطأ ✘</span>':''):'<span class="sure ai-badge">الأضمن 🛡️</span>'}</div><div class="pred-value good">${ai.ti}: ${ai.text}</div><div class="mbar big"><span style="width:${ai.prob}%"></span></div><div class="prob">ثقة ${ai.prob}% • ${shieldStr(aiSh)} • ${ai.reason}</div></div>`:''}
-  ${st?`<div class="tk-safe"><div class="tk-hero-top"><span>🎫 التذكرة الآمنة (احتمال مركّب دقيق)</span><span class="sure">${shieldStr(stSh)}</span></div><div class="pred-value good">${st.text}</div><div class="mbar big"><span style="width:${st.prob}%"></span></div><div class="prob">احتمال مركّب ${st.prob}% — محسوب رياضياً من مصفوفة بواسون</div></div>`:''}
-  <div class="tk-rows">${buildRows(m,p,fin)}</div>
-  <div class="tk-foot"><span class="att-line">⚔️ هجوم: (1) ${p.attHp}% × (2) ${p.attAp}%</span><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.hasData?'تحليل عميق (سجل+فورم)':'تحليل أساسي'}</span></div>`;
+  if(p.comeback)defs.push(['comeback','🔄','الريمونتادا',p.comeback]);
+  defs.forEach(d=>{d.push(safetyScore(d[0],d[3].prob,p));});
+  defs.sort((a,b)=>b[4]-a[4]);
+  const sureK=defs[0][0];
+  const cards=defs.map(d=>pcard(d[1],d[2],d[3],d[0],p,fin,m,d[0]===sureK)).join('');
+  return `<div class="hero-grid">
+    ${ai?`<div class="hero-card hero-ai"><div class="hero-top"><span>🤖 التوقع الرئيسي</span>${fin?(aiHit===true?'<span class="sure">أصاب ✔</span>':aiHit===false?'<span class="sure ai-badge">أخطأ ✘</span>':'<span class="sure ai-badge">الأضمن</span>'):''}</div><div class="pred-value good">${ai.ti}: ${ai.text}</div><div class="meter big"><span style="width:${ai.prob}%"></span></div><div class="prob">ثقة ${ai.prob}% • ${shieldStr(aiSh)}</div><div class="prob">${ai.reason}</div></div>`:''}
+    ${st?`<div class="hero-card hero-safe"><div class="hero-top"><span>🎫 التذكرة الآمنة</span><span class="sh">${shieldStr(stSh)}</span></div><div class="pred-value good">${st.text}</div><div class="meter big"><span style="width:${st.prob}%"></span></div><div class="prob">مركّب ${st.prob}% — دقيق رياضياً</div></div>`:''}
+  </div>
+  <div class="pred-grid">${cards}</div>
+  <div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.hasData?'تحليل عميق (سجل+فورم)':'تحليل أساسي'}</span><span>الثقة: ${p.confidence}%</span></div>`;
 }
 function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
   const headR=m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?`<span class="done-pill">انتهت</span>`:`<span class="date-text">${fmtDT(m.date)}</span>`;
   const pinB=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  return`<article class="card ticket" data-match="${esc(m.id)}"><div class="tk-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="tk-teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div>${ticketBody(m,p,fin)}</article>`;}
+  return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div>${predBlock(m,p,fin)}</article>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
   const p=getPrediction(m),fin=isFinished(m)&&m.scoreHome!=null;$('#detailsTitle').textContent=m.leagueName;
   const vsB=m.live?`<div class="vs"><span class="liveTxt">مباشر ${esc(m.minute||'')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  detailsContent.innerHTML=`<div class="card ticket" style="cursor:default"><div class="tk-head"><span class="league-pill">${esc(m.leagueName)}</span>${m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?'<span class="done-pill">انتهت</span>':`<span class="date-text">${fmtDT(m.date)}</span>`}</div><div class="tk-teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small><div class="dots">${formDots(m.id+'h',m.homeForm)}</div></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small><div class="dots">${formDots(m.id+'a',m.awayForm)}</div></div></div>${ticketBody(m,p,fin)}</div>
+  detailsContent.innerHTML=`<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?'<span class="done-pill">انتهت</span>':`<span class="date-text">${fmtDT(m.date)}</span>`}</div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small><div class="dots">${formDots(m.id+'h',m.homeForm)}</div></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small><div class="dots">${formDots(m.id+'a',m.awayForm)}</div></div></div>${predBlock(m,p,fin)}</div>
   <div class="tabs"><button class="tab active" data-tab="stats">الإحصائيات</button><button class="tab" data-tab="h2h">المواجهات</button></div>
   <div id="tab-stats">${fin?`<div class="stat-row"><span>النتيجة</span><b>${m.scoreHome} - ${m.scoreAway}</b></div>`:''}<div class="stat-row"><span>⚔️ قوة الهجوم (1 × 2)</span><b>${p.attHp}% × ${p.attAp}%</b></div><div class="stat-row"><span>الأهداف المتوقعة (Poisson)</span><b>${(p.lh+p.la).toFixed(1)}</b></div><div class="stat-row"><span>الركنيات المتوقعة</span><b>${p.lcorn.toFixed(1)}</b></div><div class="stat-row"><span>البطاقات المتوقعة</span><b>${p.lcard.toFixed(1)}</b></div><div class="stat-row"><span>سجل الموسم</span><b>${esc(m.home.record||'-')} / ${esc(m.away.record||'-')}</b></div></div>
   <div id="tab-h2h" class="hidden">${h2hRows(m)}</div>`;}
