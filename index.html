@@ -461,6 +461,7 @@ async function sendSuggestion(){
   }
 }
 
+/* ========== الدوريات: الدرجة الأولى فقط (الدرجة الثانية اتشالت بالكامل) ========== */
 const LEAGUES=[
  {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
@@ -474,15 +475,10 @@ const LEAGUES=[
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
- {slug:'eng.2',name:'تشامبيونشيب إنجلترا',em:'🎩',home:1.45,away:1.15},
  {slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},
- {slug:'esp.2',name:'الليغا 2 إسبانيا',em:'🥈',home:1.40,away:1.05},
  {slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},
- {slug:'ita.2',name:'السيري B إيطاليا',em:'🥈',home:1.40,away:1.10},
  {slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},
- {slug:'ger.2',name:'البوندسليغا 2',em:'🥈',home:1.60,away:1.30},
  {slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},
- {slug:'fra.2',name:'الليغ 2 فرنسا',em:'🥈',home:1.40,away:1.10},
  {slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},
  {slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},
  {slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},
@@ -518,7 +514,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
