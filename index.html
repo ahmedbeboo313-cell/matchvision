@@ -315,6 +315,8 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
         <label class="mk"><input id="mkSafe" type="checkbox" checked> 🛡️ أهداف 1.5</label>
         <label class="mk"><input id="mkU15" type="checkbox" checked> 🔒 أقل من 1.5</label>
         <label class="mk"><input id="mkU25" type="checkbox" checked> 🔒 أقل من 2.5</label>
+        <label class="mk"><input id="mkDc1" type="checkbox" checked> 🎯 فرصة مزدوجة (1)</label>
+        <label class="mk"><input id="mkDc2" type="checkbox" checked> 🎯 فرصة مزدوجة (2)</label>
         <label class="mk"><input id="mkCorners" type="checkbox" checked> ركنيات 9.5</label>
         <label class="mk"><input id="mkBtts" type="checkbox" checked> كلا الفريقين يسجل</label>
         <label class="mk"><input id="mkSafeCards" type="checkbox" checked> 🛡️ بطاقات 5.5 (آمن)</label>
@@ -434,6 +436,7 @@ function applyRemoteConfig(){
 function syncMarketCheckboxes(){
   $('#mkGoals').checked=state.markets.goals;$('#mkSafe').checked=state.markets.safe;
   $('#mkU15').checked=state.markets.u15;$('#mkU25').checked=state.markets.u25;
+  $('#mkDc1').checked=state.markets.dc1;$('#mkDc2').checked=state.markets.dc2;
   $('#mkCorners').checked=state.markets.corners;$('#mkBtts').checked=state.markets.btts;
   $('#mkSafeCards').checked=state.markets.safeCards;
 }
@@ -461,7 +464,7 @@ async function sendSuggestion(){
   }
 }
 
-/* ========== الدوريات: الدرجة الأولى فقط (الدرجة الثانية اتشالت بالكامل) ========== */
+/* ========== الدوريات: الدرجة الأولى فقط ========== */
 const LEAGUES=[
  {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
@@ -471,7 +474,7 @@ const LEAGUES=[
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
- {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
@@ -514,7 +517,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -536,7 +539,7 @@ let livePoolMap=new Map();
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
  mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
  prevLive:null,finCache:null,vip:false,
- markets:{goals:true,safe:true,u15:true,u25:true,corners:true,btts:true,safeCards:true,win:true}};
+ markets:{goals:true,safe:true,u15:true,u25:true,dc1:true,dc2:true,corners:true,btts:true,safeCards:true,win:true}};
 
 init();
 function init(){
@@ -659,8 +662,8 @@ function bindEvents(){
   $('#tgAuto').onchange=e=>state.autoRefresh=e.target.checked;
   $('#tgNotif').onchange=e=>{state.notifEnabled=e.target.checked;updateBell();};
   $('#notifPermBtn').onclick=()=>{try{if(!('Notification' in window)){alert('المتصفح لا يدعم الإشعارات');return;}Notification.requestPermission().then(p=>alert(p==='granted'?'تم تفعيل الإشعارات ✅':'الإذن مرفوض ❌'));}catch(e){alert('غير مدعوم');}};
-  ['mkGoals','mkSafe','mkU15','mkU25','mkCorners','mkBtts','mkSafeCards'].forEach(id=>{$('#'+id).onchange=()=>{
-    state.markets={goals:$('#mkGoals').checked,safe:$('#mkSafe').checked,u15:$('#mkU15').checked,u25:$('#mkU25').checked,corners:$('#mkCorners').checked,btts:$('#mkBtts').checked,safeCards:$('#mkSafeCards').checked,win:state.markets.win};renderCurrent();};});
+  ['mkGoals','mkSafe','mkU15','mkU25','mkDc1','mkDc2','mkCorners','mkBtts','mkSafeCards'].forEach(id=>{$('#'+id).onchange=()=>{
+    state.markets={goals:$('#mkGoals').checked,safe:$('#mkSafe').checked,u15:$('#mkU15').checked,u25:$('#mkU25').checked,dc1:$('#mkDc1').checked,dc2:$('#mkDc2').checked,corners:$('#mkCorners').checked,btts:$('#mkBtts').checked,safeCards:$('#mkSafeCards').checked,win:state.markets.win};renderCurrent();};});
   $('#clearFavBtn').onclick=()=>{favorites.clear();saveFavs();renderCurrent();};
 }
 
@@ -855,7 +858,10 @@ function buildPred(lh,la,lcorn,lcard){
   const btts=bttsRaw>=0.5?{text:'نعم',prob:Math.round(bttsRaw*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsRaw)*100),tone:'warn'};
   const win=hw>=aw?{text:'فوز المضيف (1)',prob:Math.round(hw/(hw+aw)*100),tone:'good'}:{text:'فوز الضيف (2)',prob:Math.round(aw/(hw+aw)*100),tone:'good'};
   win.note='التعادل = إرجاع';
-  const dcOpts=[['1X (فوز المضيف أو تعادل)',hw+dr],['X2 (تعادل أو فوز الضيف)',aw+dr],['12 (فوز أي فريق)',hw+aw]];
+  const dc1P=hw+dr, dc2P=aw+dr;
+  const dc1={text:'1X (فوز المضيف أو تعادل)',prob:Math.round(dc1P*100),tone:dc1P>=0.5?'good':'warn'};
+  const dc2={text:'X2 (تعادل أو فوز الضيف)',prob:Math.round(dc2P*100),tone:dc2P>=0.5?'good':'warn'};
+  const dcOpts=[['1X (فوز المضيف أو تعادل)',dc1P],['X2 (تعادل أو فوز الضيف)',dc2P],['12 (فوز أي فريق)',hw+aw]];
   let dcBest=dcOpts[0];dcOpts.forEach(o=>{if(o[1]>dcBest[1])dcBest=o;});
   const r={
     goals,
@@ -864,6 +870,8 @@ function buildPred(lh,la,lcorn,lcard){
     u25,
     btts,
     win,
+    dc1,
+    dc2,
     corners:mk(o95,'أكثر من 9.5 ركنية','أقل من 9.5 ركنية','info','warn'),
     cards55u:u55>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55)*100),tone:'hot'},
     exactVip:{text:bi+' - '+bj,prob:Math.round(bp*100),tone:'info',vip:true},
@@ -878,6 +886,8 @@ function buildPred(lh,la,lcorn,lcard){
 }
 function isSure(k,prob,p){
   if(k==='u15'||k==='u25')return prob>=60&&p.bothWeak;
+  if(k==='dc1')return prob>=65&&p.attHp>=55;
+  if(k==='dc2')return prob>=65&&p.attAp>=55;
   if(p.bothAtt){
     if(k==='btts')return prob>=55;
     if(k==='goals'||k==='g15'||k==='win'||k==='exact'||k==='dc')return prob>=60;
@@ -917,12 +927,14 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return`<article class="card ${m.pinned?'pinned-card':''}" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
 function tiles(p){
-  const W={goals:1.0,g15:1.05,u15:1.0,u25:1.0,corners:0.93,btts:1.05,cards55u:1.08,exact:1.0,dc:1.0,win:1.02};
+  const W={goals:1.0,g15:1.05,u15:1.0,u25:1.0,dc1:1.0,dc2:1.0,corners:0.93,btts:1.05,cards55u:1.08,exact:1.0,dc:1.0,win:1.02};
   const en=[];
   if(state.markets.goals)en.push({k:'goals',ic:'⚽',ti:'أهداف 2',p:p.goals});
   if(state.markets.safe)en.push({k:'g15',ic:'🛡️',ti:'أهداف 1.5',p:p.g15});
   if(state.markets.u15!==false)en.push({k:'u15',ic:'🔒',ti:'أقل من 1.5 أهداف',p:p.u15});
   if(state.markets.u25!==false)en.push({k:'u25',ic:'🔒',ti:'أقل من 2.5 أهداف',p:p.u25});
+  if(state.markets.dc1!==false)en.push({k:'dc1',ic:'🎯',ti:'فرصة مزدوجة (1)',p:p.dc1});
+  if(state.markets.dc2!==false)en.push({k:'dc2',ic:'🎯',ti:'فرصة مزدوجة (2)',p:p.dc2});
   if(state.markets.win!==false)en.push({k:'win',ic:'🏆',ti:'الفوز المباشر',p:p.win});
   if(state.markets.corners)en.push({k:'corners',ic:'🚩',ti:'ركنيات 9.5',p:p.corners});
   if(state.markets.btts)en.push({k:'btts',ic:'🥅',ti:'كلا الفريقين يسجل',p:p.btts});
@@ -940,7 +952,8 @@ function resultTiles(m,p){const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
   const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
   const wH=(p.win.text.startsWith('فوز المضيف')&&sh>sa)||(p.win.text.startsWith('فوز الضيف')&&sa>sh);
   const u15H=tot<=1, u25H=tot<=2;
-  return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🛡️</span><span>أهداف 1.5</span></div><div class="pred-value ${tot>=2?'good':'hot'}">أكثر من 1.5 ${tot>=2?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 1.5</span></div><div class="pred-value ${u15H?'good':'hot'}">أقل من 1.5 ${u15H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 2.5</span></div><div class="pred-value ${u25H?'good':'hot'}">أقل من 2.5 ${u25H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
+  const dc1H=sh>=sa, dc2H=sa>=sh;
+  return`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🛡️</span><span>أهداف 1.5</span></div><div class="pred-value ${tot>=2?'good':'hot'}">أكثر من 1.5 ${tot>=2?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 1.5</span></div><div class="pred-value ${u15H?'good':'hot'}">أقل من 1.5 ${u15H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 2.5</span></div><div class="pred-value ${u25H?'good':'hot'}">أقل من 2.5 ${u25H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (1)</span></div><div class="pred-value ${dc1H?'good':'hot'}">1X ${dc1H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (2)</span></div><div class="pred-value ${dc2H?'good':'hot'}">X2 ${dc2H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
