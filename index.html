@@ -53,7 +53,6 @@ button,input,select,textarea{font:inherit;color:inherit}
 .sugg-hero{width:100%;margin:0 0 12px;padding:14px 16px;border:1px solid rgba(251,191,36,.45);background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(34,197,94,.15));color:#fde68a;border-radius:20px;font-size:13.5px;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.28);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
 .sugg-hero b{color:#fff}
 .pin-badge{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
-/* ===== SAFE DESIGN ===== */
 .safe-box{background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(56,189,248,.10));border:1px solid rgba(34,197,94,.5);border-radius:16px;padding:12px;margin-bottom:8px}
 .safe-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;font-size:11px;font-weight:800;color:var(--muted);flex-wrap:wrap}
 .safe-badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:10.5px;font-weight:900;padding:4px 10px;border-radius:99px;white-space:nowrap}
@@ -216,9 +215,9 @@ setTimeout(function(){
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
     <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
     <div class="gsteps">
-      <div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر كبير مكتوب عليه <b class="suremini">الأضمن 🛡️</b> — ده أعلى توقع ضماناً في المباراة، محسوب من سجل الموسم + الفورم + الهجوم + الدفاع + عامل الأرض.</p></div>
+      <div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر كبير مكتوب عليه <b class="suremini">الأضمن 🛡️</b> — ده أعلى توقع ضماناً، محسوب من سجل الموسم + الفورم + الهجوم + الدفاع + عامل الأرض + تعلّم من نتائج سابقة.</p></div>
       <div class="gstep"><span>2</span><p id="gS2">تحته شرائح صغيرة: توقعات مضمونة إضافية (نسبة ≥70% بس) — مفيش أي توقع ضعيف، كله مضمون بنسبة كبيرة.</p></div>
-      <div class="gstep"><span>3</span><p id="gS3">بص على نسبة الضمان وسطر ⚔️ الهجوم تحت الصندوق: كل ما النسبة تزيد والأ هجوم متوازن، الضمان يزيد. في المباريات المنتهية كل توقع عليه ✔ أو ✘.</p></div>
+      <div class="gstep"><span>3</span><p id="gS3">بص على نسبة الضمان وسطر ⚔️ الهجوم و🧠 التعلم تحت الصندوق: كل ما التعلم والنسبة يزيدوا، الضمان يزيد. في المنتهية كل توقع عليه ✔ أو ✘.</p></div>
     </div>
     <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
     <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -274,7 +273,7 @@ setTimeout(function(){
   </header>
   <section class="controls">
     <div class="mode-row">
-      <button class="chip mode-chip active" data-mode="all">🌐 الكل</button>
+      <button class="chip mode-chip active" data-mode="all">🌐 الكل (قادمة)</button>
       <button class="chip mode-chip" data-mode="live">🔴 لايف</button>
       <button class="chip mode-chip" data-mode="finished">⚪ انتهت</button>
     </div>
@@ -329,7 +328,7 @@ setTimeout(function(){
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
       <button id="notifPermBtn" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)">🔔 تفعيل إشعارات المتصفح</button>
-      <div class="setting-row"><span>مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
+      <div class="setting-row"><span>مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB (3 نقاط)</b></div>
       <div class="setting-row"><span>لون التطبيق</span>
         <div class="themes"><button class="theme-btn g" data-theme-set="green"></button><button class="theme-btn b" data-theme-set="blue"></button><button class="theme-btn p" data-theme-set="purple"></button></div></div>
       <button id="supportBtn" class="sugg-btn hidden" style="border-color:#fbbf24;background:rgba(251,191,36,.1);color:#fde68a"></button>
@@ -480,7 +479,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -509,7 +508,10 @@ const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('
 const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),finRow=$('#finRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
 let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0,loadStartTs=0,lastEmptyRetry=0;
 let lastFastTs=0,lastFastOkTs=0,lastCheckTs=0,pollingFast=false,liveFailStreak=0,finLoading=false;
-let livePoolMap=new Map();
+let livePoolMap=new Map(), finishedMap=new Map();
+let ADJ=lsGet('eb_adj')||{}; let adjSavePending=false;
+function adjFor(slug){ return ADJ[slug]||{lam:1,n:0}; }
+function saveAdj(){ if(adjSavePending)return; adjSavePending=true; setTimeout(()=>{adjSavePending=false; lsSet('eb_adj',ADJ);},1000); }
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
  mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
  prevLive:null,finCache:null,finSpan:3,vip:false,
@@ -535,7 +537,7 @@ function maybeShowGuide(){ if(remoteCfg.disableGuide)return; const today=fmtDate
 function soonKickoff(m){ const d=new Date(m.date); if(isNaN(d)||m.live||isFinished(m))return false; const diff=d-Date.now(); return diff>0&&diff<1200000; }
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
-  if(state.mode==='finished'){ lastCheckTs=Date.now(); return; }
+  if(state.mode==='finished'){ if(Date.now()-lastLoadTs>30000)loadFinishedFlow(true); else lastCheckTs=Date.now(); return; }
   const since=Date.now()-lastLoadTs;
   const urgent=state.matches.some(m=>m.live||soonKickoff(m));
   if(since>=(urgent?25000:45000))loadMatches(true);
@@ -559,7 +561,7 @@ async function liveFastPoll(includeSoon){
     if(!slugs.length)return;
     const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
     slugs.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(!l)return; reqs.push(fetchESPN(l,today.replace(/-/g,'')));reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
-    reqs.push(fetchTSDBLive());
+    reqs.push(fetchTSDBLive()); reqs.push(fetchTSDBDay(today));
     let items=await fetchSet(reqs);
     if(!items.length){ await new Promise(r=>setTimeout(r,1500)); items=await fetchSet(reqs); }
     if(items.length){ liveFailStreak=0; syncLivePool(items); mergeLive(items); }
@@ -571,11 +573,15 @@ function mergeLive(items){
   const sy=window.scrollY;
   let changed=false;
   items.forEach(nm=>{
+    const doneNow=(nm.statusCompleted||nm.statusState==='post');
+    if(doneNow){ finishedMap.set(nm.id,nm); livePoolMap.delete(nm.id); }
     const i=state.matches.findIndex(m=>m.id===nm.id);
     if(i>=0){
       const om=state.matches[i];
       if(om.scoreHome!==nm.scoreHome||om.scoreAway!==nm.scoreAway||om.minute!==nm.minute||om.live!==nm.live||om.statusState!==nm.statusState||om.statusCompleted!==nm.statusCompleted){ state.matches[i]=Object.assign({},om,nm);changed=true; }
-    } else if(nm.live&&!state.matches.some(m=>matchKey(m)===matchKey(nm))){ state.matches.unshift(nm);changed=true; }
+    }
+    else if(nm.live&&state.mode!=='finished'&&!state.matches.some(m=>matchKey(m)===matchKey(nm))){ state.matches.unshift(nm);changed=true; }
+    else if(doneNow&&state.mode==='finished'){ state.matches.unshift(nm);changed=true; }
   });
   lastFastOkTs=Date.now();
   if(changed){ predCache.clear(); state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);}); applyPinned();detectKickoffs(); try{renderCurrent();}catch(e){} updateBell(); window.scrollTo({top:sy,behavior:'auto'}); }
@@ -608,7 +614,7 @@ function bindEvents(){
     document.querySelectorAll('.mode-chip').forEach(x=>x.classList.toggle('active',x===c));
     dateRow.style.display=state.mode==='all'?'flex':'none';
     finRow.style.display=state.mode==='finished'?'flex':'none';
-    countLabel.textContent=state.mode==='live'?'مباراة مباشرة':state.mode==='finished'?'مباراة منتهية':'مباراة';
+    countLabel.textContent=state.mode==='live'?'مباراة مباشرة':state.mode==='finished'?'مباراة منتهية':'مباراة قادمة';
     loadMatches();});
   leagueSelect.onchange=()=>{state.league=leagueSelect.value;loadMatches();};
   search.oninput=()=>{state.query=search.value;renderCurrent();};
@@ -655,9 +661,9 @@ async function loadMatches(silent){
   list=list.filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
   if(state.source!=='cache'){
     if(state.mode==='live')list=list.filter(m=>m.live);
-    else list=list.filter(m=>m.live||isUpcoming(m));
+    else list=list.filter(m=>isUpcoming(m));
   }
-  if(state.mode==='all'||state.mode==='live'){
+  if(state.mode==='live'){
     const ids=new Set(list.map(m=>m.id));
     const extra=[...livePoolMap.values()].filter(m=>!ids.has(m.id)&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
     if(extra.length)list=[...extra,...list];
@@ -676,7 +682,7 @@ async function loadMatches(silent){
 async function fetchFinishedDay(d){
   const reqs=[];
   LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)).forEach(l=>reqs.push(fetchESPN(l,d.replace(/-/g,''))));
-  reqs.push(fetchTSDB(d));
+  reqs.push(fetchTSDBDay(d));
   const items=await fetchSet(reqs);
   return items.filter(m=>(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null);
 }
@@ -687,21 +693,25 @@ async function loadFinishedFlow(silent){
   const days=finDays();
   let list=[]; const missing=[];
   days.forEach(d=>{ const c=readDayCache(d); if(c&&c.length)list=list.concat(c); else missing.push(d); });
-  const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
-  const apply=()=>{ let l=dedupe(list).filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug)); l.sort((a,b)=>new Date(b.date)-new Date(a.date)); state.matches=l; predCache.clear(); try{renderCurrent();}catch(e){} updateBell(); };
-  if(list.length){ apply(); }
   for(const d of missing){
     if(document.hidden)break;
-    try{ const items=await fetchFinishedDay(d); writeDayCache(d,items); list=list.concat(items); apply(); }catch(e){}
+    try{ const items=await fetchFinishedDay(d); writeDayCache(d,items); list=list.concat(items); }catch(e){}
     await new Promise(r=>setTimeout(r,400));
   }
-  state.source=(missing.length&&list.length===0)?'demo':'live';
+  const fids=new Set(list.map(m=>m.id));
+  finishedMap.forEach((v,k)=>{ if(!fids.has(k))list.push(v); });
+  const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
+  let l=dedupe(list).filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
+  l.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  state.matches=l;
+  state.source=(l.length===0)?'demo':'live';
   if(state.source==='demo'){ state.matches=dedupe(demoMatches()); state.sourcesOk=['تجريبي']; } else state.sourcesOk=['أرشيف ✅'];
+  predCache.clear();
   isLoading=false;finLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();
   loading.hidden=true;
   trackFinished(state.matches);
   try{renderCurrent();}catch(e){}
-  updateSource();reportHealth(true);showInbox(false);
+  updateBell();updateSource();reportHealth(true);showInbox(false);
 }
 function applyPinned(){
   const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');
@@ -725,12 +735,12 @@ function buildRequests(){
   const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1)),reqs=[];
   const amer=state.league==='all'?AMER_SLUGS:AMER_SLUGS.filter(s=>s===state.league);
   const addAmer=()=>amer.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(l)reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
-  if(state.mode==='live'){ LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,'')))); addAmer(); reqs.push(fetchTSDBLive()); }
+  if(state.mode==='live'){ LEAGUES.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,'')))); addAmer(); reqs.push(fetchTSDBLive()); reqs.push(fetchTSDBDay(today)); }
   else{
     const sel=activeLeagues();
     sel.forEach(l=>reqs.push(fetchESPN(l,state.date.replace(/-/g,''))));
-    reqs.push(fetchTSDB(state.date)); reqs.push(fetchTSDBLive()); addAmer();
-    if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,''))));}
+    reqs.push(fetchTSDBDay(state.date)); addAmer();
+    if(state.date!==today){const core=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;core.forEach(l=>reqs.push(fetchESPN(l,today.replace(/-/g,'')))); reqs.push(fetchTSDBDay(today));}
   }
   return reqs;
 }
@@ -740,7 +750,8 @@ function parseESPN(e,l){const c=e.competitions?.[0]||{},cs=c.competitors||[];con
   return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:e.status?.type?.state||'pre',statusCompleted:!!e.status?.type?.completed,live,minute:live?(e.status?.type?.detail||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',homeForm:String(h.form||''),awayForm:String(a.form||''),
    home:{id:h.team?.id||'',name:h.team?.displayName||'فريق',abbr:h.team?.abbreviation||'',logo:h.team?.logo||h.team?.logos?.[0]?.href||'',record:getRec(h)},away:{id:a.team?.id||'',name:a.team?.displayName||'فريق',abbr:a.team?.abbreviation||'',logo:a.team?.logo||a.team?.logos?.[0]?.href||'',record:getRec(a)},venue:c.venue?.fullName||''};}
 function getRec(c){const r=c.records||[];if(!r.length)return'';const t=r.find(x=>x.type==='total'||x.name==='overall');return(t||r[0])?.summary||'';}
-async function fetchTSDB(ds){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,false));}
+async function fetchTSDB(ds){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,false)).catch(()=>[]);}
+async function fetchTSDBDay(ds){ try{ const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${ds}&s=Soccer`); if(!r.ok)return[]; const d=await r.json(); return (d.events||[]).map(e=>parseTSDB(e,false)); }catch(e){ return []; } }
 async function fetchTSDBLive(){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,true));}
 function parseTSDB(e,isLive){let dt=new Date();if(e.strDate){const p=new Date(`${e.strDate}T${e.strTime||'00:00:00'}Z`);if(!isNaN(p))dt=p;}const fin=!isLive&&e.strStatus==='Match Finished'&&e.intHomeScore!=null;
   return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري',leagueSlug:'tsdb-'+(e.idLeague||'x'),statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||''):'',homeForm:'',awayForm:'',
@@ -755,15 +766,17 @@ function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
 
+/* ========== LEARNING ENGINE ========== */
 function trackFinished(list){
-  const t=lsGet('mv_track')||{ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0},u25:{h:0,n:0}};let ch=false;
+  const t=lsGet('mv_track')||{ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0},u25:{h:0,n:0},u15:{h:0,n:0}};let ch=false;
   list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
     const p=getPrediction(m),sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
     if(tot!==2){const gH=(p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1);t.goals.n++;if(gH)t.goals.h++;}
-    const g15H=tot>=2;
+    const g15H=tot>=2, u15H=tot<=1, u25H=tot<=2;
     const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
-    const u25H=tot<=2;
-    t.g15.n++;if(g15H)t.g15.h++;t.btts.n++;if(bH)t.btts.h++;t.u25.n++;if(u25H)t.u25.h++;
+    t.g15.n++;if(g15H)t.g15.h++; t.u15.n++;if(u15H)t.u15.h++; t.u25.n++;if(u25H)t.u25.h++; t.btts.n++;if(bH)t.btts.h++;
+    const predLam=(p.lh+p.la)||1; const ratio=clamp(tot/predLam,0.4,2.5);
+    const a=adjFor(m.leagueSlug); a.lam = a.n? (a.lam*0.85+ratio*0.15):ratio; a.n=(a.n||0)+1; ADJ[m.leagueSlug]=a; saveAdj();
     t.ids.push(m.id);if(t.ids.length>600)t.ids.shift();ch=true;});
   if(ch)lsSet('mv_track',t);}
 
@@ -774,7 +787,7 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + SAFETY ENGINE ========== */
+/* ========== POISSON + SAFETY + LEARNING ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -807,10 +820,12 @@ function calc(m){
     lh=clamp(ld.home*clamp((attH+vulA)/2,0.5,1.8),0.35,3.6);
     la=clamp(ld.away*clamp((attA+vulH)/2,0.5,1.8),0.25,3.2);
   } else { lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2); la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8); }
+  const adjm=(adjFor(m.leagueSlug).lam)||1;
+  lh=clamp(lh*adjm,0.2,4); la=clamp(la*adjm,0.2,4);
   const lcorn=clamp(9.0+(lh+la-2.5)*0.8+rng()*1.2,6,13);
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
   const r=buildPred(lh,la,lcorn,lcard);
-  r.hasData=hasData; r.formH=fH; r.formA=fA;
+  r.hasData=hasData; r.formH=fH; r.formA=fA; r.learnN=adjFor(m.leagueSlug).n||0;
   const csH=Math.exp(-la), csA=Math.exp(-lh);
   r.cleanSheet = csH>=csA?{text:'كلين شيت: '+m.home.name+' (1)',prob:Math.round(csH*100),tone:'info'}:{text:'كلين شيت: '+m.away.name+' (2)',prob:Math.round(csA*100),tone:'info'};
   if(m.live&&m.scoreHome!=null&&m.scoreAway!=null){
@@ -904,7 +919,6 @@ function hitCheck(k,p,m,tot,sh,sa){
     case 'dc2': return sa>=sh;
     case 'range': return p.range.text.indexOf('0-1')>=0? tot<=1 : (p.range.text.indexOf('2-3')>=0? (tot===2||tot===3) : tot>=4);
     case 'cleanSheet': return p.cleanSheet.text.indexOf('(1)')>=0? sa===0 : sh===0;
-    case 'ticket': return null;
     default: return null;
   }
 }
@@ -922,7 +936,7 @@ function renderCurrent(){
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
 function dayLabel(iso){ const d=new Date(iso); if(isNaN(d))return ''; return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d); }
 function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);
-  if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='finished'?'⚠️ لسه بنحمّل الأرشيف... استنى ثواني أو دوس تحديث ⟳':state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':'لا توجد مباريات في التاريخ ده للدوري المختار.';return;}
+  if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='finished'?'⚠️ لسه بنحمّل الأرشيف... استنى ثواني أو دوس تحديث ⟳':state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':'لا توجد مباريات قادمة في التاريخ ده للدوري المختار.';return;}
   homeEmpty.hidden=true;
   if(state.mode==='finished'){
     const groups=new Map();
@@ -936,8 +950,8 @@ function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favori
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track');let acc=87,label='تقديري — بيتحول لحقيقي بعد 10 نتائج',rows='';
   if(t){const row=(n,o)=>o&&o.n?`<div class="stat-row"><span>${n}</span><b>${Math.round(o.h/o.n*100)}% (${o.n} توقع)</b></div>`:'';
-    rows=(row('أهداف 2',t.goals)+row('أهداف 1.5',t.g15)+row('كلا الفريقين يسجل',t.btts)+row('أقل من 2.5',t.u25))||'';
-    const tn=(t.goals?.n||0)+(t.g15?.n||0)+(t.btts?.n||0)+(t.u25?.n||0),th=(t.goals?.h||0)+(t.g15?.h||0)+(t.btts?.h||0)+(t.u25?.h||0);
+    rows=(row('أهداف 2',t.goals)+row('أهداف 1.5',t.g15)+row('كلا الفريقين يسجل',t.btts)+row('أقل من 2.5',t.u25)+row('أقل من 1.5',t.u15))||'';
+    const tn=(t.goals?.n||0)+(t.g15?.n||0)+(t.btts?.n||0)+(t.u25?.n||0)+(t.u15?.n||0),th=(t.goals?.h||0)+(t.g15?.h||0)+(t.btts?.h||0)+(t.u25?.h||0)+(t.u15?.h||0);
     if(tn>=10){acc=Math.round(th/tn*100);label='دقة حقيقية مقاسة ✔';}}
   if(!rows)rows='<div class="stat-row"><span>لسه مفيش نتائج متسجلة</span><b>-</b></div>';
   const C=213.6;$('#ringFg').style.strokeDashoffset=C*(1-acc/100);$('#ringText').textContent=acc+'%';$('#ringLabel').textContent=label;$('#trackRows').innerHTML=rows;$('#statAnalyzed').textContent=state.matches.length;$('#statToday').textContent=state.matches.filter(m=>m.live).length;}
@@ -982,7 +996,7 @@ function safeBlock(m,p,fin){
   const safeBox=`<div class="safe-box"><div class="safe-head"><span>${best[1]} ${best[2]}</span><span class="safe-badge">الأضمن 🛡️ ${shieldStr(bSh)}</span></div><div class="safe-val ${fin?(bHit===true?'good':bHit===false?'hot':''):best[3].tone}">${fin? best[3].text+(bHit===true?' ✔':bHit===false?' ✘':''):best[3].text}</div><div class="meter big"><span style="width:${best[3].prob}%"></span></div><div class="prob">نسبة الضمان ${best[3].prob}% • ⚔️ هجوم (1) ${p.attHp}% × (2) ${p.attAp}%</div></div>`;
   const chips=others.map(d=>{const h=hitOf(d);return `<span class="schip ${fin?(h===true?'hit':h===false?'miss':''):''}">${d[1]} ${fin? d[3].text+(h===true?' ✔':h===false?' ✘':''):d[3].text} <span class="sp">${d[3].prob}%</span></span>`;}).join('');
   const othersWrap=others.length?`<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">${chips}</div>`:'';
-  const foot=`<div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.hasData?'تحليل عميق (سجل+فورم+هجوم)':'تحليل أساسي'}</span></div>`;
+  const foot=`<div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.learnN? 'متعلم من '+p.learnN+' مباراة':'تحليل أساسي'}</span></div>`;
   return safeBox+othersWrap+foot;
 }
 function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
