@@ -17,7 +17,7 @@ html,body{min-height:100%;overflow-x:hidden}
 body{font-family:'Cairo',system-ui,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(56,189,248,.15),transparent 30%),radial-gradient(circle at top right,rgba(34,197,94,.13),transparent 26%),linear-gradient(180deg,#08101f,#050810 45%);min-height:100vh}
 button,input,select,textarea{font:inherit;color:inherit}
 .hidden{display:none!important}
-#toTop{position:fixed;right:14px;bottom:96px;z-index:40;width:48px;height:48px;border-radius:50%;border:1px solid rgba(34,197,94,.4);background:rgba(5,8,16,.88);backdrop-filter:blur(10px);color:var(--accent);font-size:20px;font-weight:900;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 14px rgba(34,197,94,.25);opacity:0;pointer-events:none;transform:translateY(12px);transition:.25s}
+#toTop{position:fixed;right:14px;bottom:96px;z-index:40;width:48px;height:48px;border-radius:50%;border:1px solid rgba(34,197,94,.4);background:rgba(5,8,16,.88);backdrop-filter:blur(10px);color:var(--accent);font-size:20px;font-weight:800;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 14px rgba(34,197,94,.25);opacity:0;pointer-events:none;transform:translateY(12px);transition:.25s}
 #toTop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;box-shadow:0 10px 30px rgba(239,68,68,.45)}
 .banner{margin:0 0 10px;padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 10px 26px rgba(239,68,68,.35);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
@@ -115,7 +115,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .vs strong{font-size:13px}
 .vs strong.score{font-size:17px;color:#fca5a5}
 .vs strong.scoreDone{font-size:17px;color:#e2e8f0}
-.pred-grid{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pred-grid{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .pred-grid::-webkit-scrollbar{display:none}
 .pred{flex:0 0 calc(50% - 4px);scroll-snap-align:start;display:flex;flex-direction:column;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:10px;min-width:0}
 .pred .meter{margin-top:auto}
@@ -489,12 +489,12 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
  {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
  {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
- {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
@@ -517,7 +517,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -816,7 +816,6 @@ function parseMinute(min){
   if(!mm)return 45;
   return clamp(+mm[1],0,95);
 }
-/* محرك الفوز اللحظي */
 function liveWinProbs(sh,sa,lhRem,laRem){
   let hw=0,dr=0,aw=0;
   for(let i=0;i<=8;i++)for(let j=0;j<=8;j++){
@@ -849,13 +848,11 @@ function calc(m){
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
   const r=buildPred(lh,la,lcorn,lcard);
   r.hasData=hasData; r.formH=fH; r.formA=fA;
-  /* ===== محرك التحديث اللحظي لكل الأسواق أثناء اللايف ===== */
   if(m.live&&m.scoreHome!=null&&m.scoreAway!=null){
     const min=parseMinute(m.minute);
     const rem=Math.max(0,(90-min)/90);
     const elapsed=Math.max(1,min);
     const sh=m.scoreHome, sa=m.scoreAway;
-    /* الفوز المباشر + الفرصة المزدوجة */
     const L=liveWinProbs(sh,sa,lh*rem,la*rem);
     const totW=L.hw+L.aw;
     if(totW>0.0001){
@@ -866,7 +863,6 @@ function calc(m){
       r.dc1={text:'1X (فوز المضيف أو تعادل)',prob:Math.round((L.hw+L.dr)*100),tone:(L.hw+L.dr)>=0.5?'good':'warn'};
       r.dc2={text:'X2 (تعادل أو فوز الضيف)',prob:Math.round((L.aw+L.dr)*100),tone:(L.aw+L.dr)>=0.5?'good':'warn'};
     }
-    /* إيقاع الهجوم اللحظي من معدل الأهداف الفعلي */
     const obsGoals=sh+sa;
     const liveRate=obsGoals/elapsed;
     const preRate=(lh+la)/90;
@@ -874,20 +870,17 @@ function calc(m){
     const lamRem=Math.max(0.05,0.5*liveRate*(90-min)+0.5*(lh+la)*rem);
     r.liveMk=true;
     const liveNote=(pr)=>pr>=70?'🛡️ اضمن توقع حالياً — محدث لحظياً':'محدث لحظياً حسب هجمات الفريقين';
-    /* BTTS لحظياً */
     const bH=sh>0?1:1-Math.exp(-lh*rem);
     const bA=sa>0?1:1-Math.exp(-la*rem);
     const bttsLive=clamp(bH*bA,0,0.98);
     r.btts=bttsLive>=0.5?{text:'نعم',prob:Math.round(bttsLive*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsLive)*100),tone:'warn'};
     r.btts.note=liveNote(r.btts.prob);
-    /* الركنيات لحظياً */
     const cornSoFar=lcorn*(1-rem)*pace;
     const cornRem=Math.max(0.05,lcorn*rem*pace);
     const tC=9.5-cornSoFar;
     const o95Live=tC<0?1:1-poissonCdf(Math.floor(tC),cornRem);
     r.corners=o95Live>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95Live*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95Live)*100),tone:'warn'};
     r.corners.note=liveNote(r.corners.prob);
-    /* البطاقات لحظياً + معامل الضغط */
     const diff=Math.abs(sh-sa);
     let press=1;
     if(min>60&&diff<=1)press=1.15; else if(diff>=3)press=0.85;
@@ -897,7 +890,6 @@ function calc(m){
     const u55Live=tK<0?0:poissonCdf(Math.floor(tK),cardRem);
     r.cards55u=u55Live>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55Live*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55Live)*100),tone:'hot'};
     r.cards55u.note=liveNote(r.cards55u.prob);
-    /* أسواق الأهداف لحظياً */
     const pLeq=(n)=>obsGoals>n?0:poissonCdf(n-obsGoals,lamRem);
     const pU15=pLeq(1), pU25=pLeq(2), pO3=1-pLeq(2), pU1=pLeq(0);
     r.g15={text:'أكثر من 1.5',prob:Math.round((1-pU15)*100),tone:(1-pU15)>=0.5?'good':'warn'};
@@ -980,7 +972,14 @@ function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
 
 /* ========== VIEWS ========== */
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
-function renderCurrent(){updateSource();({home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails})[state.view]?.();}
+/* رسم ذكي: بيحفظ مكان وقوفك في كاروسيل التوقعات ويرجّعك له تاني بالظبط */
+function renderCurrent(){
+  updateSource();
+  const before=[...document.querySelectorAll('.pred-grid')].map(g=>g.scrollLeft);
+  const fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];
+  if(fn)fn();
+  document.querySelectorAll('.pred-grid').forEach((g,i)=>{ if(before[i]!=null) g.scrollLeft=before[i]; });
+}
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
 function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':state.mode==='finished'?'⚪ لا توجد نتائج.':'لا توجد مباريات في التاريخ ده للدوري المختار. جرّب تاريخ تاني أو "كل الدوريات".';return;}homeEmpty.hidden=true;homeContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
