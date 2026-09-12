@@ -489,7 +489,7 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
  {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
@@ -517,7 +517,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -798,7 +798,7 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + DEEP ATTACK/DEFENSE/FORM + LIVE WIN ENGINE ========== */
+/* ========== POISSON + DEEP ENGINE + LIVE MARKETS ENGINE ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -816,7 +816,7 @@ function parseMinute(min){
   if(!mm)return 45;
   return clamp(+mm[1],0,95);
 }
-/* محرك الفوز اللحظي: بيوزع الأهداف المتبقية حسب قوة هجوم كل فريق */
+/* محرك الفوز اللحظي */
 function liveWinProbs(sh,sa,lhRem,laRem){
   let hw=0,dr=0,aw=0;
   for(let i=0;i<=8;i++)for(let j=0;j<=8;j++){
@@ -849,20 +849,66 @@ function calc(m){
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
   const r=buildPred(lh,la,lcorn,lcard);
   r.hasData=hasData; r.formH=fH; r.formA=fA;
-  /* ===== التحديث اللحظي للفوز المباشر والفرصة المزدوجة أثناء اللايف ===== */
+  /* ===== محرك التحديث اللحظي لكل الأسواق أثناء اللايف ===== */
   if(m.live&&m.scoreHome!=null&&m.scoreAway!=null){
     const min=parseMinute(m.minute);
     const rem=Math.max(0,(90-min)/90);
-    const L=liveWinProbs(m.scoreHome,m.scoreAway,lh*rem,la*rem);
-    const tot=L.hw+L.aw;
-    if(tot>0.0001){
-      const dH=L.hw/tot, dA=L.aw/tot;
+    const elapsed=Math.max(1,min);
+    const sh=m.scoreHome, sa=m.scoreAway;
+    /* الفوز المباشر + الفرصة المزدوجة */
+    const L=liveWinProbs(sh,sa,lh*rem,la*rem);
+    const totW=L.hw+L.aw;
+    if(totW>0.0001){
+      const dH=L.hw/totW, dA=L.aw/totW;
       r.win = dH>=dA ? {text:'فوز المضيف (1)',prob:Math.round(dH*100),tone:'good'} : {text:'فوز الضيف (2)',prob:Math.round(dA*100),tone:'good'};
       r.winLive=true;
       r.win.note = r.win.prob>=70 ? '🛡️ اضمن توقع حالياً — محدث لحظياً' : 'محدث لحظياً حسب مجريات المباراة';
       r.dc1={text:'1X (فوز المضيف أو تعادل)',prob:Math.round((L.hw+L.dr)*100),tone:(L.hw+L.dr)>=0.5?'good':'warn'};
       r.dc2={text:'X2 (تعادل أو فوز الضيف)',prob:Math.round((L.aw+L.dr)*100),tone:(L.aw+L.dr)>=0.5?'good':'warn'};
     }
+    /* إيقاع الهجوم اللحظي من معدل الأهداف الفعلي */
+    const obsGoals=sh+sa;
+    const liveRate=obsGoals/elapsed;
+    const preRate=(lh+la)/90;
+    const pace=clamp(preRate>0?liveRate/preRate:1,0.6,1.8);
+    const lamRem=Math.max(0.05,0.5*liveRate*(90-min)+0.5*(lh+la)*rem);
+    r.liveMk=true;
+    const liveNote=(pr)=>pr>=70?'🛡️ اضمن توقع حالياً — محدث لحظياً':'محدث لحظياً حسب هجمات الفريقين';
+    /* BTTS لحظياً */
+    const bH=sh>0?1:1-Math.exp(-lh*rem);
+    const bA=sa>0?1:1-Math.exp(-la*rem);
+    const bttsLive=clamp(bH*bA,0,0.98);
+    r.btts=bttsLive>=0.5?{text:'نعم',prob:Math.round(bttsLive*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsLive)*100),tone:'warn'};
+    r.btts.note=liveNote(r.btts.prob);
+    /* الركنيات لحظياً */
+    const cornSoFar=lcorn*(1-rem)*pace;
+    const cornRem=Math.max(0.05,lcorn*rem*pace);
+    const tC=9.5-cornSoFar;
+    const o95Live=tC<0?1:1-poissonCdf(Math.floor(tC),cornRem);
+    r.corners=o95Live>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95Live*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95Live)*100),tone:'warn'};
+    r.corners.note=liveNote(r.corners.prob);
+    /* البطاقات لحظياً + معامل الضغط */
+    const diff=Math.abs(sh-sa);
+    let press=1;
+    if(min>60&&diff<=1)press=1.15; else if(diff>=3)press=0.85;
+    const cardSoFar=lcard*(1-rem)*pace*press;
+    const cardRem=Math.max(0.05,lcard*rem*pace*press);
+    const tK=5.5-cardSoFar;
+    const u55Live=tK<0?0:poissonCdf(Math.floor(tK),cardRem);
+    r.cards55u=u55Live>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55Live*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55Live)*100),tone:'hot'};
+    r.cards55u.note=liveNote(r.cards55u.prob);
+    /* أسواق الأهداف لحظياً */
+    const pLeq=(n)=>obsGoals>n?0:poissonCdf(n-obsGoals,lamRem);
+    const pU15=pLeq(1), pU25=pLeq(2), pO3=1-pLeq(2), pU1=pLeq(0);
+    r.g15={text:'أكثر من 1.5',prob:Math.round((1-pU15)*100),tone:(1-pU15)>=0.5?'good':'warn'};
+    r.g15.note=liveNote(r.g15.prob);
+    r.u15={text:'أقل من 1.5 أهداف',prob:Math.round(pU15*100),tone:pU15>=0.5?'good':'warn'};
+    r.u15.note=liveNote(r.u15.prob);
+    r.u25={text:'أقل من 2.5 أهداف',prob:Math.round(pU25*100),tone:pU25>=0.5?'good':'warn'};
+    r.u25.note=liveNote(r.u25.prob);
+    const den=pO3+pU1;
+    r.goals=den>0?(pO3>=pU1?{text:'أكثر من 2',prob:Math.round(pO3/den*100),tone:'good'}:{text:'أقل من 2',prob:Math.round(pU1/den*100),tone:'warn'}):{text:'أكثر من 2',prob:50,tone:'warn'};
+    r.goals.note=obsGoals===2?'إرجاع لو 2 بالضبط':liveNote(r.goals.prob);
   }
   return r;
 }
@@ -917,6 +963,7 @@ function buildPred(lh,la,lcorn,lcard){
   return r;
 }
 function isSure(k,prob,p){
+  if(p.liveMk&&(k==='btts'||k==='corners'||k==='cards55u'||k==='goals'||k==='g15'||k==='u15'||k==='u25'))return prob>=70;
   if(k==='win'&&p.winLive)return prob>=70;
   if(k==='u15'||k==='u25')return prob>=60&&p.bothWeak;
   if(k==='dc1')return prob>=65&&p.attHp>=55;
