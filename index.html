@@ -323,7 +323,7 @@ setTimeout(function(){
       <div id="trackRows"></div>
       <div class="setting-row hidden" id="vipRow"><span>👑 وضع VIP (أسواق خاصة)</span>
         <label class="switch"><input id="tgVip" type="checkbox"><span class="slider"></span></label></div>
-      <div class="setting-row"><span>تحديث ذكي (5ث لايف / 25-45ث شامل)</span>
+      <div class="setting-row"><span>تحديث ذكي (5ث لايف / 10ث منتهية)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
@@ -528,7 +528,7 @@ function init(){
       setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
     },1600);
     setInterval(tick,10000); setInterval(fastTick,4000); setInterval(secTick,1000);
-    setInterval(()=>{ if(isLoading&&Date.now()-loadStartTs>20000){ isLoading=false; loading.hidden=true; try{renderCurrent();}catch(e){} } },5000);
+    setInterval(()=>{ if(isLoading&&Date.now()-loadStartTs>20000){ isLoading=false; loading.hidden=true; try{renderCurrent();}catch(e){} updateSource(); } },5000);
   }catch(e){
     setTimeout(()=>{splash.classList.add('fade');setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');},500);},800);
   }
@@ -537,7 +537,7 @@ function maybeShowGuide(){ if(remoteCfg.disableGuide)return; const today=fmtDate
 function soonKickoff(m){ const d=new Date(m.date); if(isNaN(d)||m.live||isFinished(m))return false; const diff=d-Date.now(); return diff>0&&diff<1200000; }
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
-  if(state.mode==='finished'){ if(Date.now()-lastLoadTs>30000)loadFinishedFlow(true); else lastCheckTs=Date.now(); return; }
+  if(state.mode==='finished'){ if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true); else lastCheckTs=Date.now(); return; }
   const since=Date.now()-lastLoadTs;
   const urgent=state.matches.some(m=>m.live||soonKickoff(m));
   if(since>=(urgent?25000:45000))loadMatches(true);
@@ -574,7 +574,7 @@ function mergeLive(items){
   let changed=false;
   items.forEach(nm=>{
     const doneNow=(nm.statusCompleted||nm.statusState==='post');
-    if(doneNow){ finishedMap.set(nm.id,nm); livePoolMap.delete(nm.id); }
+    if(doneNow&&nm.scoreHome!=null){ finishedMap.set(nm.id,nm); livePoolMap.delete(nm.id); }
     const i=state.matches.findIndex(m=>m.id===nm.id);
     if(i>=0){
       const om=state.matches[i];
@@ -645,39 +645,43 @@ async function loadMatches(silent){
   if(state.mode==='finished'){ loadFinishedFlow(silent); return; }
   if(isLoading)return;isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
   if(!silent)showLoading(); else loading.hidden=true;
-  let items=[];
   try{
-    items=await fetchSet(buildRequests());
-    if(!items.length){ await new Promise(r=>setTimeout(r,1500)); items=await fetchSet(buildRequests()); }
-    if(items.length){ const okS=new Set(items.map(i=>i.sourceName)); state.sourcesOk=[...okS]; state.source='live'; saveCache(items); syncLivePool(items); }
-  }catch(e){ items=[]; }
-  if(!items.length){
-    const c=loadCache();
-    if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){ items=c.list; state.source='cache'; state.sourcesOk=['مخزن ♻️']; }
-    else{ items=demoMatches(); state.source='demo'; state.sourcesOk=['تجريبي']; }
+    let items=[];
+    try{
+      items=await fetchSet(buildRequests());
+      if(!items.length){ await new Promise(r=>setTimeout(r,1500)); items=await fetchSet(buildRequests()); }
+      if(items.length){ const okS=new Set(items.map(i=>i.sourceName)); state.sourcesOk=[...okS]; state.source='live'; saveCache(items); syncLivePool(items); }
+    }catch(e){ items=[]; }
+    if(!items.length){
+      const c=loadCache();
+      if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){ items=c.list; state.source='cache'; state.sourcesOk=['مخزن ♻️']; }
+      else{ items=demoMatches(); state.source='demo'; state.sourcesOk=['تجريبي']; }
+    }
+    let list=dedupe(items);
+    const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
+    list=list.filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
+    if(state.source!=='cache'){
+      if(state.mode==='live')list=list.filter(m=>m.live);
+      else list=list.filter(m=>isUpcoming(m));
+    }
+    if(state.mode==='live'){
+      const ids=new Set(list.map(m=>m.id));
+      const extra=[...livePoolMap.values()].filter(m=>!ids.has(m.id)&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
+      if(extra.length)list=[...extra,...list];
+    }
+    list.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
+    state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();
+    predCache.clear();
+  }catch(e){}
+  finally{
+    isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();
+    loading.hidden=true;
+    const sy=silent?window.scrollY:null;
+    try{ renderCurrent(); }catch(err){ console.error(err); }
+    if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
+    updateBell();updateSource();reportHealth(state.source==='live');showInbox(false);
+    if(state.matches.length===0&&Date.now()-lastEmptyRetry>20000){ lastEmptyRetry=Date.now(); setTimeout(()=>{ if(state.matches.length===0&&!isLoading&&state.mode!=='finished')loadMatches(true); },8000); }
   }
-  let list=dedupe(items);
-  const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
-  list=list.filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
-  if(state.source!=='cache'){
-    if(state.mode==='live')list=list.filter(m=>m.live);
-    else list=list.filter(m=>isUpcoming(m));
-  }
-  if(state.mode==='live'){
-    const ids=new Set(list.map(m=>m.id));
-    const extra=[...livePoolMap.values()].filter(m=>!ids.has(m.id)&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
-    if(extra.length)list=[...extra,...list];
-  }
-  list.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
-  state.matches=list;applyPinned();trackFinished(list);detectKickoffs();
-  predCache.clear();isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();
-  loading.hidden=true;
-  const sy=silent?window.scrollY:null;
-  try{ renderCurrent(); }catch(err){ console.error(err); homeEmpty.hidden=false; homeEmpty.textContent='حدث خطأ مؤقت في العرض — دوس تحديث ⟳'; }
-  updateBell();
-  if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
-  reportHealth(state.source==='live');showInbox(false);
-  if(list.length===0&&Date.now()-lastEmptyRetry>20000){ lastEmptyRetry=Date.now(); setTimeout(()=>{ if(state.matches.length===0&&!isLoading&&state.mode!=='finished')loadMatches(true); },8000); }
 }
 async function fetchFinishedDay(d){
   const reqs=[];
@@ -690,28 +694,39 @@ async function loadFinishedFlow(silent){
   if(finLoading)return; finLoading=true;
   isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
   if(!silent)showLoading(); else loading.hidden=true;
-  const days=finDays();
-  let list=[]; const missing=[];
-  days.forEach(d=>{ const c=readDayCache(d); if(c&&c.length)list=list.concat(c); else missing.push(d); });
-  for(const d of missing){
-    if(document.hidden)break;
-    try{ const items=await fetchFinishedDay(d); writeDayCache(d,items); list=list.concat(items); }catch(e){}
-    await new Promise(r=>setTimeout(r,400));
+  let list=[];
+  try{
+    const days=finDays();
+    const missing=[];
+    days.forEach(d=>{ const c=readDayCache(d); if(c&&c.length)list=list.concat(c); else missing.push(d); });
+    for(const d of missing){
+      if(document.hidden)break;
+      try{ const items=await fetchFinishedDay(d); writeDayCache(d,items); list=list.concat(items); }catch(e){}
+      await new Promise(r=>setTimeout(r,300));
+    }
+    try{
+      const today=fmtDate(new Date());
+      const liveItems=await fetchSet([fetchTSDBLive(), fetchTSDBDay(today)]);
+      liveItems.forEach(m=>{ if((m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null) finishedMap.set(m.id,m); });
+    }catch(e){}
+    finishedMap.forEach((v,k)=>{ if(!list.some(m=>m.id===k)) list.push(v); });
+    const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
+    let l=dedupe(list).filter(m=>(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
+    l.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    state.matches=l;
+    state.source=(l.length===0)?'demo':'live';
+    if(state.source==='demo'){ state.matches=dedupe(demoMatches()); state.sourcesOk=['تجريبي']; } else state.sourcesOk=['أرشيف ✅'];
+    predCache.clear();
+    try{trackFinished(state.matches);}catch(e){}
+  }catch(e){}
+  finally{
+    isLoading=false;finLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();
+    loading.hidden=true;
+    const sy=silent?window.scrollY:null;
+    try{renderCurrent();}catch(e){}
+    if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
+    updateBell();updateSource();reportHealth(true);showInbox(false);
   }
-  const fids=new Set(list.map(m=>m.id));
-  finishedMap.forEach((v,k)=>{ if(!fids.has(k))list.push(v); });
-  const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
-  let l=dedupe(list).filter(m=>!hm.has(matchKey(m))&&!hl.has(m.leagueSlug));
-  l.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  state.matches=l;
-  state.source=(l.length===0)?'demo':'live';
-  if(state.source==='demo'){ state.matches=dedupe(demoMatches()); state.sourcesOk=['تجريبي']; } else state.sourcesOk=['أرشيف ✅'];
-  predCache.clear();
-  isLoading=false;finLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();
-  loading.hidden=true;
-  trackFinished(state.matches);
-  try{renderCurrent();}catch(e){}
-  updateBell();updateSource();reportHealth(true);showInbox(false);
 }
 function applyPinned(){
   const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');
@@ -750,9 +765,9 @@ function parseESPN(e,l){const c=e.competitions?.[0]||{},cs=c.competitors||[];con
   return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:e.status?.type?.state||'pre',statusCompleted:!!e.status?.type?.completed,live,minute:live?(e.status?.type?.detail||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',homeForm:String(h.form||''),awayForm:String(a.form||''),
    home:{id:h.team?.id||'',name:h.team?.displayName||'فريق',abbr:h.team?.abbreviation||'',logo:h.team?.logo||h.team?.logos?.[0]?.href||'',record:getRec(h)},away:{id:a.team?.id||'',name:a.team?.displayName||'فريق',abbr:a.team?.abbreviation||'',logo:a.team?.logo||a.team?.logos?.[0]?.href||'',record:getRec(a)},venue:c.venue?.fullName||''};}
 function getRec(c){const r=c.records||[];if(!r.length)return'';const t=r.find(x=>x.type==='total'||x.name==='overall');return(t||r[0])?.summary||'';}
-async function fetchTSDB(ds){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,false)).catch(()=>[]);}
+async function fetchTSDB(ds){ try{ const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`); if(!r.ok)return[]; const d=await r.json(); return (d.events||[]).map(e=>parseTSDB(e,false)); }catch(e){ return []; } }
 async function fetchTSDBDay(ds){ try{ const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${ds}&s=Soccer`); if(!r.ok)return[]; const d=await r.json(); return (d.events||[]).map(e=>parseTSDB(e,false)); }catch(e){ return []; } }
-async function fetchTSDBLive(){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,true));}
+async function fetchTSDBLive(){ try{ const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer`); if(!r.ok)return[]; const d=await r.json(); return (d.events||[]).map(e=>parseTSDB(e,true)); }catch(e){ return []; } }
 function parseTSDB(e,isLive){let dt=new Date();if(e.strDate){const p=new Date(`${e.strDate}T${e.strTime||'00:00:00'}Z`);if(!isNaN(p))dt=p;}const fin=!isLive&&e.strStatus==='Match Finished'&&e.intHomeScore!=null;
   return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري',leagueSlug:'tsdb-'+(e.idLeague||'x'),statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||''):'',homeForm:'',awayForm:'',
    scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',
@@ -766,19 +781,28 @@ function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
 
-/* ========== LEARNING ENGINE ========== */
+/* ========== LEARNING ENGINE (آمن ضد البيانات القديمة) ========== */
 function trackFinished(list){
-  const t=lsGet('mv_track')||{ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0},u25:{h:0,n:0},u15:{h:0,n:0}};let ch=false;
-  list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
-    const p=getPrediction(m),sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
-    if(tot!==2){const gH=(p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1);t.goals.n++;if(gH)t.goals.h++;}
-    const g15H=tot>=2, u15H=tot<=1, u25H=tot<=2;
-    const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
-    t.g15.n++;if(g15H)t.g15.h++; t.u15.n++;if(u15H)t.u15.h++; t.u25.n++;if(u25H)t.u25.h++; t.btts.n++;if(bH)t.btts.h++;
-    const predLam=(p.lh+p.la)||1; const ratio=clamp(tot/predLam,0.4,2.5);
-    const a=adjFor(m.leagueSlug); a.lam = a.n? (a.lam*0.85+ratio*0.15):ratio; a.n=(a.n||0)+1; ADJ[m.leagueSlug]=a; saveAdj();
-    t.ids.push(m.id);if(t.ids.length>600)t.ids.shift();ch=true;});
-  if(ch)lsSet('mv_track',t);}
+  try{
+    const t={ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0},u25:{h:0,n:0},u15:{h:0,n:0}};
+    const stored=lsGet('mv_track');
+    if(stored&&typeof stored==='object'){
+      if(Array.isArray(stored.ids))t.ids=stored.ids;
+      ['goals','g15','btts','u25','u15'].forEach(k=>{ if(stored[k]&&typeof stored[k]==='object'){ t[k].h=+stored[k].h||0; t[k].n=+stored[k].n||0; } });
+    }
+    let ch=false;
+    list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
+      const p=getPrediction(m),sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
+      if(tot!==2){const gH=(p.goals.text.startsWith('أكثر')&&tot>=3)||(!p.goals.text.startsWith('أكثر')&&tot<=1);t.goals.n++;if(gH)t.goals.h++;}
+      const g15H=tot>=2, u15H=tot<=1, u25H=tot<=2;
+      const bH=(p.btts.text==='نعم'&&sh>0&&sa>0)||(p.btts.text==='لا'&&(sh===0||sa===0));
+      t.g15.n++;if(g15H)t.g15.h++; t.u15.n++;if(u15H)t.u15.h++; t.u25.n++;if(u25H)t.u25.h++; t.btts.n++;if(bH)t.btts.h++;
+      const predLam=(p.lh+p.la)||1; const ratio=clamp(tot/predLam,0.4,2.5);
+      const a=adjFor(m.leagueSlug); a.lam = a.n? (a.lam*0.85+ratio*0.15):ratio; a.n=(a.n||0)+1; ADJ[m.leagueSlug]=a; saveAdj();
+      t.ids.push(m.id);if(t.ids.length>600)t.ids.shift();ch=true;});
+    if(ch)lsSet('mv_track',t);
+  }catch(e){}
+}
 
 function detectKickoffs(){const liveNow=state.matches.filter(m=>m.live),ids=new Set(liveNow.map(m=>m.id));
   if(state.prevLive&&state.notifEnabled)liveNow.forEach(m=>{if(!state.prevLive.has(m.id)&&favorites.has(m.id))kickNotify(m);});state.prevLive=ids;}
@@ -930,8 +954,10 @@ function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
 function renderCurrent(){
   updateSource();
+  const sy=window.scrollY;
   const fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];
   if(fn)fn();
+  window.scrollTo({top:sy,behavior:'auto'});
 }
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
 function dayLabel(iso){ const d=new Date(iso); if(isNaN(d))return ''; return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d); }
@@ -949,7 +975,7 @@ function renderHome(){loading.hidden=true;const list=filtered();updateStats(list
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track');let acc=87,label='تقديري — بيتحول لحقيقي بعد 10 نتائج',rows='';
-  if(t){const row=(n,o)=>o&&o.n?`<div class="stat-row"><span>${n}</span><b>${Math.round(o.h/o.n*100)}% (${o.n} توقع)</b></div>`:'';
+  if(t){const row=(n,o)=>(o&&o.n)?`<div class="stat-row"><span>${n}</span><b>${Math.round(o.h/o.n*100)}% (${o.n} توقع)</b></div>`:'';
     rows=(row('أهداف 2',t.goals)+row('أهداف 1.5',t.g15)+row('كلا الفريقين يسجل',t.btts)+row('أقل من 2.5',t.u25)+row('أقل من 1.5',t.u15))||'';
     const tn=(t.goals?.n||0)+(t.g15?.n||0)+(t.btts?.n||0)+(t.u25?.n||0)+(t.u15?.n||0),th=(t.goals?.h||0)+(t.g15?.h||0)+(t.btts?.h||0)+(t.u25?.h||0)+(t.u15?.h||0);
     if(tn>=10){acc=Math.round(th/tn*100);label='دقة حقيقية مقاسة ✔';}}
