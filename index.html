@@ -23,8 +23,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 #toTop{position:fixed;right:14px;bottom:96px;z-index:40;width:48px;height:48px;border-radius:50%;border:1px solid rgba(34,197,94,.4);background:rgba(5,8,16,.88);backdrop-filter:blur(10px);color:var(--accent);font-size:20px;font-weight:900;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 14px rgba(34,197,94,.25);opacity:0;pointer-events:none;transform:translateY(12px);transition:.25s}
 #toTop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 .kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:12px 16px;border-radius:18px;font-size:13px;font-weight:800;text-align:center;box-shadow:0 10px 30px rgba(239,68,68,.45)}
-.banner{margin:0 0 10px;padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 10px 26px rgba(239,68,68,.35);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
-.banner button{background:rgba(0,0,0,.25);border:0;color:#fff;padding:5px 10px;border-radius:10px;cursor:pointer;font-weight:800;flex:none}
+.banner{margin:0 0 10px;padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;display:flex;justify-content:center;align-items:center;gap:8px;box-shadow:0 10px 26px rgba(239,68,68,.35);animation:gpop .4s cubic-bezier(.2,1.4,.4,1);text-align:center}
 .maintenance{position:fixed;inset:0;z-index:500;background:linear-gradient(180deg,#08101f,#050810);display:grid;place-items:center;text-align:center;padding:20px}
 .maintenance h1{font-size:24px;color:#fbbf24;margin-bottom:10px}
 .maintenance p{color:var(--muted);max-width:400px;line-height:1.8}
@@ -265,7 +264,7 @@ setTimeout(function(){
 </div>
 
 <div id="appShell" class="app hidden">
-  <div id="bannerTop" class="banner hidden"><span id="bannerText"></span><button id="bannerClose">✕</button></div>
+  <div id="bannerTop" class="banner hidden"><span id="bannerText"></span></div>
   <header class="topbar">
     <div class="brandrow">
       <svg viewBox="0 0 64 64"><defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgC)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/></svg>
@@ -455,6 +454,7 @@ function applyRemoteConfig(){
     $('#splash').classList.add('fade'); setTimeout(()=>$('#splash').classList.add('hidden'),500);
     return;
   }
+  /* البانر: بيظهر بس لو أنت كاتب رسالة له من اللوحة — المستخدم ميقدرش يقفله */
   if(remoteCfg.banner){ $('#bannerText').textContent=remoteCfg.banner; $('#bannerTop').classList.remove('hidden'); }
   if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){ remoteCfg.disabledMarkets.forEach(k=>{state.markets[k]=false;}); syncMarketCheckboxes(); }
   const g=remoteCfg.guide||{};
@@ -511,7 +511,7 @@ const LEAGUES=[
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
- {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
@@ -530,7 +530,7 @@ const LEAGUES=[
  {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
  {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
  {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
@@ -611,7 +611,6 @@ function soonKickoff(m){
   const diff=d-Date.now();
   return diff>0&&diff<1200000;
 }
-/* كل 10 ثواني: إما تحديث شامل (25-45ث) أو تحقق خفيف يصفّر العداد */
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
   const since=Date.now()-lastLoadTs;
@@ -671,7 +670,6 @@ function mergeLive(items){
     window.scrollTo({top:sy,behavior:'auto'});
   }
 }
-/* العداد بيعرض آخر مرة التطبيق تحقق أو حدّث — فمش بيعدّي ~10 ثواني أبداً */
 function secTick(){ if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;
   const base=Math.max(lastLoadTs,lastFastOkTs,lastCheckTs);
   const s=Math.max(0,Math.round((Date.now()-base)/1000));
@@ -682,7 +680,6 @@ function bindEvents(){
   $('#guideModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeGuide();});
   $('#inboxOk').onclick=()=>{$('#inboxModal').classList.add('hidden');};
   $('#inboxModal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#inboxOk').click();});
-  $('#bannerClose').onclick=()=>$('#bannerTop').classList.add('hidden');
   const openSugg=()=>$('#suggModal').classList.remove('hidden');
   $('#openSuggBtn').onclick=openSugg; $('#suggHero').onclick=openSugg;
   $('#suggCancel').onclick=()=>$('#suggModal').classList.add('hidden');
