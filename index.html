@@ -63,6 +63,17 @@ button,input,select,textarea{font:inherit;color:inherit}
 .schip .sp{color:#86efac}
 .schip.hit{border-color:var(--accent);color:#86efac}
 .schip.miss{border-color:rgba(239,68,68,.5);color:#fca5a5}
+/* ===== ACCUMULATOR ===== */
+.accum-sec{margin-bottom:16px}
+.accum-head{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:14px;font-weight:900;color:var(--text);margin-bottom:6px}
+.accum-comb{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:12px;font-weight:900;padding:4px 12px;border-radius:99px;white-space:nowrap}
+.accum-desc{color:var(--muted);font-size:11px;font-weight:700;margin-bottom:8px;line-height:1.7}
+.accum-legs{display:grid;gap:8px}
+.accum-leg{background:rgba(255,255,255,.05);border:1px solid rgba(34,197,94,.35);border-radius:14px;padding:10px}
+.accum-leg-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+.accum-leg-top .sp{color:#86efac;font-size:11px;font-weight:800}
+.accum-teams{font-size:13px;font-weight:800;margin-bottom:2px}
+.accum-mkt{color:var(--accent2);font-size:11.5px;font-weight:800}
 .meter{height:6px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden}
 .meter.big{height:8px}
 .meter span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent2),var(--accent))}
@@ -180,11 +191,11 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .sugg-btn{width:100%;border:1px solid var(--accent);background:rgba(34,197,94,.1);color:var(--accent);padding:12px;border-radius:16px;font-weight:800;cursor:pointer;margin-top:10px}
 .disclaimer{color:#8ea0bf;font-size:11px;text-align:center;line-height:1.8;margin-top:4px}
 .disclaimer b{color:#fbbf24}
-.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;width:min(580px,calc(100% - 20px));display:flex;gap:5px;padding:8px;background:rgba(5,8,16,.9);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(18px);z-index:30;box-shadow:var(--shadow)}
+.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;width:min(580px,calc(100% - 20px));display:flex;gap:4px;padding:8px;background:rgba(5,8,16,.9);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(18px);z-index:30;box-shadow:var(--shadow)}
 .nav-item{flex:1;border:0;background:transparent;color:var(--muted);display:grid;justify-items:center;gap:3px;padding:8px 2px;border-radius:18px;cursor:pointer;min-width:0}
 .nav-item.active{background:rgba(34,197,94,.12);color:#e8f8ee}
 .nav-item small{font-size:10px;font-weight:800}
-.nic{display:grid;place-items:center;height:20px}
+.nic{display:grid;place-items:center;height:20px;font-size:16px}
 .nic svg{width:20px;height:20px}
 .success-msg{padding:14px;border-radius:14px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;text-align:center;font-weight:700;margin:10px 0}
 @media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}}
@@ -217,7 +228,7 @@ setTimeout(function(){
     <div class="gsteps">
       <div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر كبير مكتوب عليه <b class="suremini">الأضمن 🛡️</b> — ده أعلى توقع ضماناً، محسوب من سجل الموسم + الفورم + الهجوم + الدفاع + عامل الأرض + تعلّم من نتائج سابقة.</p></div>
       <div class="gstep"><span>2</span><p id="gS2">تحته شرائح صغيرة: توقعات مضمونة إضافية (نسبة ≥70% بس) — مفيش أي توقع ضعيف، كله مضمون بنسبة كبيرة.</p></div>
-      <div class="gstep"><span>3</span><p id="gS3">بص على نسبة الضمان وسطر ⚔️ الهجوم و🧠 التعلم تحت الصندوق: كل ما التعلم والنسبة يزيدوا، الضمان يزيد. في المنتهية كل توقع عليه ✔ أو ✘.</p></div>
+      <div class="gstep"><span>3</span><p id="gS3">في قسم <b>التراكمي 🎫</b> هتلاقي 3 تراكميات جاهزة (فريقين يسجلوا / أهداف / لايف) مختارة بأعلى احتمالاً — النسبة المركبة معروضة فوق كل تراكمي.</p></div>
     </div>
     <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
     <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -335,6 +346,7 @@ setTimeout(function(){
       <button id="clearFavBtn" class="danger">مسح كل المفضلة</button>
       <button id="openSuggBtn" class="sugg-btn">📝 ابعتلي اقتراح أو رأي</button>
     </section>
+    <section id="view-accum" class="view hidden"><div id="accumContent"></div></section>
     <section id="view-notifications" class="view hidden"><div id="notifContent"></div></section>
   </main>
   <footer class="disclaimer">التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — نسبة الإصابة عالية لكن لا يوجد ضمان مطلق.<br>تصميم وتطوير: <b>Ahmed Bebo</b></footer>
@@ -342,6 +354,7 @@ setTimeout(function(){
     <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small>الرئيسية</small></button>
     <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small>المفضلة</small></button>
     <button class="nav-item" data-view="leagues"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 5H4.5A2.5 2.5 0 007 9.5"/><path d="M17 5h2.5A2.5 2.5 0 0117 9.5"/><path d="M12 14v4"/><path d="M8.5 20h7"/></svg></span><small>الدوريات</small></button>
+    <button class="nav-item" data-view="accum"><span class="nic">🎫</span><small>التراكمي</small></button>
     <button class="nav-item" data-view="stats"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg></span><small>الإحصائيات</small></button>
     <button class="nav-item" data-view="notifications"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15v-4.5a5.5 5.5 0 0111 0V15l1.8 2.2H4.7z"/><path d="M10 19.5a2 2 0 004 0"/></svg></span><small>التنبيهات</small></button>
   </nav>
@@ -479,7 +492,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -502,13 +515,13 @@ const DEF_LEAGUE={home:1.50,away:1.20};
 const $=s=>document.querySelector(s);
 const splash=$('#splash'),appShell=$('#appShell');
 const homeContent=$('#homeContent'),homeEmpty=$('#homeEmpty'),favContent=$('#favContent'),favEmpty=$('#favEmpty');
-const leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),notifContent=$('#notifContent');
+const leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),notifContent=$('#notifContent'),accumContent=$('#accumContent');
 const loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCount'),avgConfidence=$('#avgConfidence');
 const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search');
 const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),finRow=$('#finRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
 let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0,loadStartTs=0,lastEmptyRetry=0;
 let lastFastTs=0,lastFastOkTs=0,lastCheckTs=0,pollingFast=false,liveFailStreak=0,finLoading=false;
-let livePoolMap=new Map(), finishedMap=new Map();
+let livePoolMap=new Map(), finishedMap=new Map(), upcomingPool=new Map();
 let ADJ=lsGet('eb_adj')||{}; let adjSavePending=false;
 function adjFor(slug){ return ADJ[slug]||{lam:1,n:0}; }
 function saveAdj(){ if(adjSavePending)return; adjSavePending=true; setTimeout(()=>{adjSavePending=false; lsSet('eb_adj',ADJ);},1000); }
@@ -671,6 +684,7 @@ async function loadMatches(silent){
     }
     list.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
     state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();
+    if(state.mode==='all'){ upcomingPool=new Map(list.map(m=>[m.id,m])); }
     predCache.clear();
   }catch(e){}
   finally{
@@ -781,7 +795,7 @@ function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
 
-/* ========== LEARNING ENGINE (آمن ضد البيانات القديمة) ========== */
+/* ========== LEARNING ENGINE ========== */
 function trackFinished(list){
   try{
     const t={ids:[],goals:{h:0,n:0},g15:{h:0,n:0},btts:{h:0,n:0},u25:{h:0,n:0},u15:{h:0,n:0}};
@@ -951,11 +965,11 @@ function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>1
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
 
 /* ========== VIEWS ========== */
-function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
+function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications','accum'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
 function renderCurrent(){
   updateSource();
   const sy=window.scrollY;
-  const fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];
+  const fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails,accum:renderAccum}[state.view];
   if(fn)fn();
   window.scrollTo({top:sy,behavior:'auto'});
 }
@@ -974,6 +988,33 @@ function renderHome(){loading.hidden=true;const list=filtered();updateStats(list
 }
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
+/* ========== ACCUMULATOR (التراكمي) ========== */
+function accumBlock(icon,title,desc,legs,emptyMsg){
+  if(!legs||!legs.length) return `<div class="accum-sec"><div class="accum-head">${icon} ${title}</div><div class="empty" style="padding:18px">${emptyMsg}</div></div>`;
+  let comb=1; legs.forEach(x=>{comb*= (x.best.prob/100);});
+  const combPct=Math.round(comb*100);
+  const rows=legs.map(x=>{const prob=x.best.prob;const sh=shieldsFor('ticket',prob,x.p);
+    return `<div class="accum-leg"><div class="accum-leg-top"><span class="league-pill">${esc(x.m.leagueName)}</span><span class="sp">${prob}% ${shieldStr(sh)}</span></div><div class="accum-teams">${esc(x.m.home.name)} × ${esc(x.m.away.name)}</div><div class="accum-mkt">${x.best.text}</div></div>`;}).join('');
+  return `<div class="accum-sec"><div class="accum-head">${icon} ${title}<span class="accum-comb">مركّب ${combPct}%</span></div><div class="accum-desc">${desc}</div><div class="accum-legs">${rows}</div></div>`;
+}
+function renderAccum(){
+  loading.hidden=true;
+  const upcoming=[...upcomingPool.values()];
+  const live=[...livePoolMap.values()];
+  const mkB=(m)=>{const p=getPrediction(m);return {m,p,best:p.btts};};
+  const mkG=(m)=>{const p=getPrediction(m);const opts=[p.goals,p.g15,p.u15,p.u25];let best=opts[0];opts.forEach(o=>{if(o.prob>best.prob)best=o;});return {m,p,best};};
+  const mkL=(m)=>{const p=getPrediction(m);const opts=[p.win,p.dc1,p.dc2];let best=opts[0];opts.forEach(o=>{if(o.prob>best.prob)best=o;});return {m,p,best};};
+  let bAll=upcoming.map(mkB).filter(x=>x.best.text==='نعم').sort((a,z)=>z.best.prob-a.best.prob);
+  let bLegs=bAll.filter(x=>x.best.prob>=68).slice(0,5); if(bLegs.length<4)bLegs=bAll.slice(0,4);
+  let gAll=upcoming.map(mkG).sort((a,z)=>z.best.prob-a.best.prob);
+  let gLegs=gAll.filter(x=>x.best.prob>=70).slice(0,5); if(gLegs.length<4)gLegs=gAll.slice(0,4);
+  let lAll=live.map(mkL).sort((a,z)=>z.best.prob-a.best.prob);
+  let lLegs=lAll.filter(x=>x.best.prob>=70).slice(0,5); if(lLegs.length<4)lLegs=lAll.slice(0,4);
+  accumContent.innerHTML =
+    accumBlock('🥅','تراكمي كلا الفريقين يسجلوا','تحليل عميق جداً: سجل الموسم + فورم آخر 5 + هجوم/دفاع كل فريق + عامل الأرض + تعلّم — مختار أعلى 4-5 مباريات احتمالاً لـ "نعم"',bLegs,'لا توجد مباريات كافية لتراكمي الفريقين يسجل حالياً.')
+    + accumBlock('⚽','تراكمي الأهداف','تحليل عميق جداً: لكل مباراة أضمن سوق أهداف (أكثر/أقل) حسب بواسون + التعلم — مختار الأعلى احتمالاً',gLegs,'لا توجد مباريات كافية لتراكمي الأهداف حالياً.')
+    + accumBlock('🔴','تراكمي لايف','تحليل لحظي عميق: لكل مباراة لايف أضمن سوق (فوز/فرصة مزدوجة) محدث لحظياً — مختار الأعلى احتمالاً',lLegs,'لا توجد مباريات لايف حالياً — هيظهر تراكمي لايف أول ما فيه لايف.');
+}
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track');let acc=87,label='تقديري — بيتحول لحقيقي بعد 10 نتائج',rows='';
   if(t){const row=(n,o)=>(o&&o.n)?`<div class="stat-row"><span>${n}</span><b>${Math.round(o.h/o.n*100)}% (${o.n} توقع)</b></div>`:'';
     rows=(row('أهداف 2',t.goals)+row('أهداف 1.5',t.g15)+row('كلا الفريقين يسجل',t.btts)+row('أقل من 2.5',t.u25)+row('أقل من 1.5',t.u15))||'';
