@@ -464,7 +464,7 @@ async function sendSuggestion(){
   }
 }
 
-/* ========== الدوريات: الدرجة الأولى فقط ========== */
+/* ========== الدوريات ========== */
 const LEAGUES=[
  {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
@@ -494,7 +494,7 @@ const LEAGUES=[
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
  {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
  {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
- {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
@@ -677,14 +677,19 @@ function saveCache(list){
 }
 function loadCache(){ try{return JSON.parse(localStorage.getItem('eb_cache'));}catch(e){return null;} }
 
-/* ========== DATA ========== */
+/* ========== DATA (مع تايم أوت + تحميل ذكي) ========== */
+function fetchT(url,ms){
+  const c=new AbortController();
+  const t=setTimeout(()=>c.abort(),ms||8000);
+  return fetch(url,{cache:'no-store',signal:c.signal}).finally(()=>clearTimeout(t));
+}
 async function loadMatches(silent){
   if(isLoading)return;isLoading=true;state.source='loading';state.sourcesOk=[];updateSource();
   if(!silent)showLoading(); else loading.hidden=true;
   let items=[];
   try{
     items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests());
-    if(!items.length){ await new Promise(r=>setTimeout(r,3000)); items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests()); }
+    if(!items.length){ await new Promise(r=>setTimeout(r,2000)); items=state.mode==='finished'?await fetchFinishedSet():await fetchSet(buildRequests()); }
     if(items.length){ const okS=new Set(items.map(i=>i.sourceName)); state.sourcesOk=[...okS]; state.source='live'; saveCache(items); syncLivePool(items); }
   }catch(e){ items=[]; }
   if(!items.length){
@@ -750,20 +755,30 @@ function buildRequests(){
   }
   return reqs;
 }
+/* وضع "انتهت": دوريات كبرى فقط + كاش 10 دقايق = فتح فوري بدون تعليق */
 async function fetchFinishedSet(){
   const today=fmtDate(new Date()),yest=fmtDate(addDays(new Date(),-1));
-  if(state.finCache&&state.finCache.day===today&&state.finCache.league===state.league)return state.finCache.list;
-  const reqs=[];[today,yest].forEach(ds=>{activeLeagues().forEach(l=>reqs.push(fetchESPN(l,ds.replace(/-/g,''))));reqs.push(fetchTSDB(ds));});
-  const items=await fetchSet(reqs);state.finCache={day:today,league:state.league,list:items};return items;
+  const key='eb_fin_'+state.league+'_'+yest;
+  try{
+    const c=JSON.parse(sessionStorage.getItem(key)||'null');
+    if(c&&Date.now()-c.ts<600000&&c.list&&c.list.length)return c.list;
+  }catch(e){}
+  const finLeagues = state.league==='all' ? LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)) : LEAGUES.filter(l=>l.slug===state.league);
+  const reqs=[];
+  [today,yest].forEach(ds=>{ finLeagues.forEach(l=>reqs.push(fetchESPN(l,ds.replace(/-/g,'')))); reqs.push(fetchTSDB(ds)); });
+  const items=await fetchSet(reqs);
+  try{ sessionStorage.setItem(key,JSON.stringify({ts:Date.now(),list:items.slice(0,250)})); }catch(e){}
+  state.finCache={day:today,league:state.league,list:items};
+  return items;
 }
 function activeLeagues(){return state.league==='all'?LEAGUES:LEAGUES.filter(l=>l.slug===state.league);}
-async function fetchESPN(l,ds){const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l.slug}/scoreboard?dates=${ds}`,{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseESPN(e,l));}
+async function fetchESPN(l,ds){const r=await fetchT(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l.slug}/scoreboard?dates=${ds}`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseESPN(e,l));}
 function parseESPN(e,l){const c=e.competitions?.[0]||{},cs=c.competitors||[];const h=cs.find(x=>x.homeAway==='home')||cs[0]||{},a=cs.find(x=>x.homeAway==='away')||cs[1]||{};const live=e.status?.type?.state==='in';
   return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:e.status?.type?.state||'pre',statusCompleted:!!e.status?.type?.completed,live,minute:live?(e.status?.type?.detail||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',homeForm:String(h.form||''),awayForm:String(a.form||''),
    home:{name:h.team?.displayName||'فريق',abbr:h.team?.abbreviation||'',logo:h.team?.logo||h.team?.logos?.[0]?.href||'',record:getRec(h)},away:{name:a.team?.displayName||'فريق',abbr:a.team?.abbreviation||'',logo:a.team?.logo||a.team?.logos?.[0]?.href||'',record:getRec(a)},venue:c.venue?.fullName||''};}
 function getRec(c){const r=c.records||[];if(!r.length)return'';const t=r.find(x=>x.type==='total'||x.name==='overall');return(t||r[0])?.summary||'';}
-async function fetchTSDB(ds){const r=await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`,{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,false));}
-async function fetchTSDBLive(){const r=await fetch(`https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer`,{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,true));}
+async function fetchTSDB(ds){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d=${ds}&s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,false));}
+async function fetchTSDBLive(){const r=await fetchT(`https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer`);if(!r.ok)throw 0;const d=await r.json();return(d.events||[]).map(e=>parseTSDB(e,true));}
 function parseTSDB(e,isLive){let dt=new Date();if(e.strDate){const p=new Date(`${e.strDate}T${e.strTime||'00:00:00'}Z`);if(!isNaN(p))dt=p;}const fin=!isLive&&e.strStatus==='Match Finished'&&e.intHomeScore!=null;
   return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري',leagueSlug:'tsdb-'+(e.idLeague||'x'),statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||''):'',homeForm:'',awayForm:'',
    scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',
@@ -972,7 +987,6 @@ function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
 
 /* ========== VIEWS ========== */
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
-/* رسم ذكي: بيحفظ مكان وقوفك في كاروسيل التوقعات ويرجّعك له تاني بالظبط */
 function renderCurrent(){
   updateSource();
   const before=[...document.querySelectorAll('.pred-grid')].map(g=>g.scrollLeft);
