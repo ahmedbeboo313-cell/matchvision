@@ -299,7 +299,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
       <div id="trackRows"></div>
       <div class="setting-row hidden" id="vipRow"><span>👑 وضع VIP (أسواق خاصة)</span>
         <label class="switch"><input id="tgVip" type="checkbox"><span class="slider"></span></label></div>
-      <div class="setting-row"><span>تحديث ذكي (8ث لايف / 30-60ث شامل)</span>
+      <div class="setting-row"><span>تحديث ذكي (5ث لايف / 30-60ث شامل)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
       <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
@@ -464,9 +464,9 @@ const LEAGUES=[
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
- {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
- {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
- {slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},
+ {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
+ {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
+ {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
@@ -488,7 +488,7 @@ const LEAGUES=[
  {slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},
  {slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},
  {slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},
- {slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},
+ {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
  {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
@@ -505,7 +505,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
@@ -514,7 +514,7 @@ const LEAGUES=[
  {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
  {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
- {slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},
+ {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
  {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
@@ -533,7 +533,7 @@ const loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCo
 const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search');
 const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
 let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0;
-let lastFastTs=0,lastFastOkTs=0,pollingFast=false;
+let lastFastTs=0,lastFastOkTs=0,pollingFast=false,liveFailStreak=0;
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
  mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,
  prevLive:null,finCache:null,vip:false,
@@ -575,7 +575,7 @@ function fastTick(){
   const hasLive=state.matches.some(m=>m.live);
   const hasSoon=state.matches.some(m=>soonKickoff(m));
   if(!hasLive&&!hasSoon)return;
-  if(Date.now()-lastFastTs<8000||pollingFast)return;
+  if(Date.now()-lastFastTs<5000||pollingFast)return;
   lastFastTs=Date.now();
   liveFastPoll(hasSoon);
 }
@@ -588,9 +588,11 @@ async function liveFastPoll(includeSoon){
     slugs.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(!l)return;
       reqs.push(fetchESPN(l,today.replace(/-/g,'')));reqs.push(fetchESPN(l,yest.replace(/-/g,'')));});
     reqs.push(fetchTSDBLive());
-    const items=await fetchSet(reqs);
-    mergeLive(items);
-  }catch(e){}
+    let items=await fetchSet(reqs);
+    if(!items.length){ await new Promise(r=>setTimeout(r,1500)); items=await fetchSet(reqs); }
+    if(items.length){ liveFailStreak=0; mergeLive(items); }
+    else { liveFailStreak++; if(liveFailStreak>=3){ liveFailStreak=0; loadMatches(); } }
+  }catch(e){ liveFailStreak++; if(liveFailStreak>=3){ liveFailStreak=0; loadMatches(); } }
   finally{pollingFast=false;showInbox(false);}
 }
 function mergeLive(items){
