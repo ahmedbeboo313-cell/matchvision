@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revertise"/>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
@@ -195,6 +196,23 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 </style>
 </head>
 <body>
+<script>
+/* Watchdog مستقل: بيفتح التطبيق غصباً بعد 7 ثواني حتى لو أي سكربت تاني وقع */
+window.addEventListener('error',function(e){ try{window.__ebErr=String(e.message||'');}catch(x){} });
+setTimeout(function(){
+  try{
+    var s=document.getElementById('splash'), a=document.getElementById('appShell');
+    if(s&&!s.classList.contains('hidden')){
+      s.classList.add('fade');
+      setTimeout(function(){
+        s.classList.add('hidden');
+        if(a)a.classList.remove('hidden');
+        if(window.__ebErr){ var em=document.getElementById('homeEmpty'); if(em){ em.hidden=false; em.textContent='⚠️ حصل خطأ في تحميل النسخة دي: '+window.__ebErr+' — امسح كاش الموقع وحمل النسخة الأخيرة.'; } }
+      },500);
+    }
+  }catch(e){}
+},7000);
+</script>
 <div id="kickBanner" class="kick hidden"></div>
 <div id="maintenanceScreen" class="maintenance hidden"><div><h1>🔧 التطبيق في وضع الصيانة</h1><p id="maintenanceMsg">نعمل على تحديثات جديدة، هنرجع قريباً.</p><p style="margin-top:20px;color:#fbbf24">— فريق Egypt Bet</p></div></div>
 
@@ -345,11 +363,20 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 
 <script>
 'use strict';
-/* ========== FIREBASE ========== */
+/* ========== FIREBASE (مع Fallback آمن) ========== */
 const FIREBASE_CONFIG={apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2",measurementId:"G-VZN5E9C1VQ"};
-firebase.initializeApp(FIREBASE_CONFIG);
-const db=firebase.firestore();
-const FIELD_INC=firebase.firestore.FieldValue.increment(1);
+let db=null;
+try{
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db=firebase.firestore();
+}catch(e){ db=null; }
+const FIELD_INC=(window.firebase&&firebase.firestore&&firebase.firestore.FieldValue)?firebase.firestore.FieldValue.increment(1):1;
+if(!db){
+  const P=()=>Promise.resolve();
+  const docStub={set:P,get:()=>Promise.resolve({exists:false,data:()=>null}),update:P,delete:P};
+  function makeQ(){ const q={get:()=>Promise.resolve({docs:[],size:0,forEach:()=>{}}),limit:function(){return q;},orderBy:function(){return q;},where:function(){return q;}}; return q; }
+  db={collection:()=>({doc:()=>docStub,add:P,get:()=>Promise.resolve({docs:[],size:0,forEach:()=>{}}),where:()=>makeQ(),orderBy:()=>makeQ(),limit:()=>makeQ()}),batch:()=>({delete:()=>{},commit:P})};
+}
 const SID=sessionStorage.getItem('eb_sid')||(()=>{const s=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem('eb_sid',s);return s;})();
 const tzName=()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'؟'}catch(e){return'؟'}};
 const devName=()=>/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'موبايل':'كمبيوتر';
@@ -478,7 +505,7 @@ const LEAGUES=[
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
- {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
@@ -511,7 +538,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -548,17 +575,21 @@ const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'hom
 
 init();
 function init(){
-  const th=lsGet('mv_theme'); if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
-  populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
-  countVisit(); loadRemoteConfig();
-  document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);
-  });
-  setTimeout(()=>{splash.classList.add('fade');
-    setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
-  },1600);
-  setInterval(tick,10000); setInterval(fastTick,4000); setInterval(secTick,1000);
-  setInterval(()=>{ if(isLoading&&Date.now()-loadStartTs>20000){ isLoading=false; loading.hidden=true; try{renderCurrent();}catch(e){} } },5000);
+  try{
+    const th=lsGet('mv_theme'); if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
+    populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
+    countVisit(); loadRemoteConfig();
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);
+    });
+    setTimeout(()=>{splash.classList.add('fade');
+      setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);
+    },1600);
+    setInterval(tick,10000); setInterval(fastTick,4000); setInterval(secTick,1000);
+    setInterval(()=>{ if(isLoading&&Date.now()-loadStartTs>20000){ isLoading=false; loading.hidden=true; try{renderCurrent();}catch(e){} } },5000);
+  }catch(e){
+    setTimeout(()=>{splash.classList.add('fade');setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');},500);},800);
+  }
 }
 function maybeShowGuide(){
   if(remoteCfg.disableGuide)return;
@@ -856,7 +887,19 @@ function liveWinProbs(sh,sa,lhRem,laRem){
   }
   return {hw,dr,aw};
 }
-/* ===== محرك الذكاء الاصطناعي: نظام نقاط Ensemble يختار أضمن سوق ===== */
+function aiHitCheck(k,c){
+  switch(k){
+    case 'goals': return c.tot!==2;
+    case 'g15': return c.tot>=2;
+    case 'u15': return c.tot<=1;
+    case 'u25': return c.tot<=2;
+    case 'btts': return c.bH;
+    case 'win': return c.wH;
+    case 'dc1': return c.dc1H;
+    case 'dc2': return c.dc2H;
+    default: return true;
+  }
+}
 function computeAiPick(r){
   const cands=[];
   const add=(k,ti,p,sup,reason)=>{ if(p&&p.prob!=null) cands.push({k,ti,text:p.text,prob:p.prob,sup,reason}); };
@@ -897,7 +940,6 @@ function calc(m){
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
   const r=buildPred(lh,la,lcorn,lcard);
   r.hasData=hasData; r.formH=fH; r.formA=fA;
-  /* الاستثناء الوحيد اللحظي: الفوز المباشر فقط */
   if(m.live&&m.scoreHome!=null&&m.scoreAway!=null){
     const min=parseMinute(m.minute);
     const rem=Math.max(0,(90-min)/90);
@@ -1014,9 +1056,10 @@ function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFin
   const pinB=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
   const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
   return`<article class="card ${m.pinned?'pinned-card':''}" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div><div class="pred-grid">${fin?resultTiles(m,p):tiles(p)}</div><div class="match-foot"><span>${fin?'':'الثقة: '+p.confidence+'%'}</span><span>${esc(m.sourceName||'')}</span></div></article>`;}
-function aiTile(ai,r){
+function aiTile(ai,r,hitBadge){
   const att=(r&&r.attHp!=null)?`<div class="prob att-line">⚔️ هجوم: (1) ${r.attHp}% × (2) ${r.attAp}%</div>`:'';
-  return`<div class="pred ai-tile"><div class="pred-top"><span>🤖</span><span>اختيار الذكاء الاصطناعي</span><span class="sure ai-badge">الأضمن 🛡️</span></div><div class="pred-value good">${ai.ti} — ${ai.text}</div><div class="meter"><span style="width:${ai.prob}%"></span></div><div class="prob">ثقة ${ai.prob}% • ${ai.reason}</div>${att}</div>`;
+  const badge=hitBadge!=null?(hitBadge?'<span class="sure ai-badge">أصاب ✔</span>':'<span class="sure ai-badge">أخطأ ✘</span>'):'<span class="sure ai-badge">الأضمن 🛡️</span>';
+  return`<div class="pred ai-tile"><div class="pred-top"><span>🤖</span><span>اختيار الذكاء الاصطناعي</span>${badge}</div><div class="pred-value good">${ai.ti} — ${ai.text}</div><div class="meter"><span style="width:${ai.prob}%"></span></div><div class="prob">${hitBadge!=null?'كانت الثقة':'ثقة'} ${ai.prob}% • ${ai.reason}</div>${att}</div>`;
 }
 function tiles(p){
   const W={goals:1.0,g15:1.05,u15:1.0,u25:1.0,dc1:1.0,dc2:1.0,corners:0.93,btts:1.05,cards55u:1.08,exact:1.0,dc:1.0,win:1.02};
@@ -1036,7 +1079,7 @@ function tiles(p){
   const score=x=>x.p.prob*(W[x.k]||1)+(p.hasData?3:0);
   let best=en[0];en.forEach(x=>{if(score(x)>score(best))best=x;});
   const body=en.map(x=>tile(x.ic,x.ti,x.p,isSure(x.k,x.p.prob,p),p)).join('');
-  return (p.aiPick?aiTile(p.aiPick,p):'')+body;
+  return (p.aiPick?aiTile(p.aiPick,p,null):'')+body;
 }
 function tile(ic,ti,p,sure,r){
   const att=(r&&r.attHp!=null)?`<div class="prob att-line">⚔️ هجوم: (1) ${r.attHp}% × (2) ${r.attAp}%</div>`:'';
@@ -1048,9 +1091,8 @@ function resultTiles(m,p){const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
   const u15H=tot<=1, u25H=tot<=2;
   const dc1H=sh>=sa, dc2H=sa>=sh;
   const ai=p.aiPick;
-  const aiHit=ai?((ai.k==='goals')?(tot!==2):((ai.k==='g15')?(tot>=2):((ai.k==='u15')?(tot<=1):((ai.k==='u25')?(tot<=2):((ai.k==='btts')?bH:((ai.k==='win')?wH:((ai.k==='dc1')?dc1H:((ai.k==='dc2')?dc2H:true))))))):true;
-  const aiTileFin=ai?`<div class="pred ai-tile"><div class="pred-top"><span>🤖</span><span>اختيار الذكاء الاصطناعي</span><span class="sure ai-badge">${aiHit?'أصاب ✔':'أخطأ ✘'}</span></div><div class="pred-value ${aiHit?'good':'hot'}">${ai.ti} — ${ai.text}</div><div class="prob">كانت الثقة ${ai.prob}% • ${ai.reason}</div></div>`:'';
-  return aiTileFin+`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🛡️</span><span>أهداف 1.5</span></div><div class="pred-value ${tot>=2?'good':'hot'}">أكثر من 1.5 ${tot>=2?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 1.5</span></div><div class="pred-value ${u15H?'good':'hot'}">أقل من 1.5 ${u15H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 2.5</span></div><div class="pred-value ${u25H?'good':'hot'}">أقل من 2.5 ${u25H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (1)</span></div><div class="pred-value ${dc1H?'good':'hot'}">1X ${dc1H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (2)</span></div><div class="pred-value ${dc2H?'good':'hot'}">X2 ${dc2H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
+  const aiFin=ai?aiTile(ai,p,aiHitCheck(ai.k,{tot:tot,bH:bH,wH:wH,dc1H:dc1H,dc2H:dc2H})):'';
+  return aiFin+`<div class="pred"><div class="pred-top"><span>⚽</span><span>أهداف 2</span></div><div class="pred-value ${gRes.c}">${gRes.t}</div><div class="prob">${gRes.s}</div></div><div class="pred"><div class="pred-top"><span>🛡️</span><span>أهداف 1.5</span></div><div class="pred-value ${tot>=2?'good':'hot'}">أكثر من 1.5 ${tot>=2?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 1.5</span></div><div class="pred-value ${u15H?'good':'hot'}">أقل من 1.5 ${u15H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🔒</span><span>أقل من 2.5</span></div><div class="pred-value ${u25H?'good':'hot'}">أقل من 2.5 ${u25H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (1)</span></div><div class="pred-value ${dc1H?'good':'hot'}">1X ${dc1H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🎯</span><span>فرصة مزدوجة (2)</span></div><div class="pred-value ${dc2H?'good':'hot'}">X2 ${dc2H?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🥅</span><span>BTTS</span></div><div class="pred-value ${bH?'good':'hot'}">${p.btts.text} ${bH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div><div class="pred"><div class="pred-top"><span>🏆</span><span>الفوز المباشر</span></div><div class="pred-value ${wH?'good':'hot'}">${p.win.text} ${wH?'✔':'✘'}</div><div class="prob">${sh} - ${sa}</div></div>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
