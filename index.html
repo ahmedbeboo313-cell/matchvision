@@ -474,7 +474,7 @@ const LEAGUES=[
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
  {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
- {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
@@ -517,7 +517,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -616,6 +616,7 @@ function mergeLive(items){
   });
   lastFastOkTs=Date.now();
   if(changed){
+    predCache.clear();
     state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
     applyPinned();detectKickoffs();renderCurrent();updateBell();
     window.scrollTo({top:sy,behavior:'auto'});
@@ -797,7 +798,7 @@ function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + DEEP ATTACK/DEFENSE/FORM ENGINE ========== */
+/* ========== POISSON + DEEP ATTACK/DEFENSE/FORM + LIVE WIN ENGINE ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -808,6 +809,22 @@ function formVal(str){
   if(!ch.length)return null;
   let s=0;ch.forEach(c=>{s+= c==='W'?1:(c==='D'?0.5:0);});
   return s/ch.length;
+}
+function parseMinute(min){
+  if(!min)return 0;
+  const mm=String(min).match(/(\d{1,2})/);
+  if(!mm)return 45;
+  return clamp(+mm[1],0,95);
+}
+/* محرك الفوز اللحظي: بيوزع الأهداف المتبقية حسب قوة هجوم كل فريق */
+function liveWinProbs(sh,sa,lhRem,laRem){
+  let hw=0,dr=0,aw=0;
+  for(let i=0;i<=8;i++)for(let j=0;j<=8;j++){
+    const p=poissonPmf(i,lhRem)*poissonPmf(j,laRem);
+    const fh=sh+i, fa=sa+j;
+    if(fh>fa)hw+=p; else if(fh===fa)dr+=p; else aw+=p;
+  }
+  return {hw,dr,aw};
 }
 function getPrediction(m){if(predCache.has(m.id))return predCache.get(m.id);const p=calc(m);predCache.set(m.id,p);return p;}
 function calc(m){
@@ -832,6 +849,21 @@ function calc(m){
   const lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
   const r=buildPred(lh,la,lcorn,lcard);
   r.hasData=hasData; r.formH=fH; r.formA=fA;
+  /* ===== التحديث اللحظي للفوز المباشر والفرصة المزدوجة أثناء اللايف ===== */
+  if(m.live&&m.scoreHome!=null&&m.scoreAway!=null){
+    const min=parseMinute(m.minute);
+    const rem=Math.max(0,(90-min)/90);
+    const L=liveWinProbs(m.scoreHome,m.scoreAway,lh*rem,la*rem);
+    const tot=L.hw+L.aw;
+    if(tot>0.0001){
+      const dH=L.hw/tot, dA=L.aw/tot;
+      r.win = dH>=dA ? {text:'فوز المضيف (1)',prob:Math.round(dH*100),tone:'good'} : {text:'فوز الضيف (2)',prob:Math.round(dA*100),tone:'good'};
+      r.winLive=true;
+      r.win.note = r.win.prob>=70 ? '🛡️ اضمن توقع حالياً — محدث لحظياً' : 'محدث لحظياً حسب مجريات المباراة';
+      r.dc1={text:'1X (فوز المضيف أو تعادل)',prob:Math.round((L.hw+L.dr)*100),tone:(L.hw+L.dr)>=0.5?'good':'warn'};
+      r.dc2={text:'X2 (تعادل أو فوز الضيف)',prob:Math.round((L.aw+L.dr)*100),tone:(L.aw+L.dr)>=0.5?'good':'warn'};
+    }
+  }
   return r;
 }
 function buildPred(lh,la,lcorn,lcard){
@@ -885,6 +917,7 @@ function buildPred(lh,la,lcorn,lcard){
   return r;
 }
 function isSure(k,prob,p){
+  if(k==='win'&&p.winLive)return prob>=70;
   if(k==='u15'||k==='u25')return prob>=60&&p.bothWeak;
   if(k==='dc1')return prob>=65&&p.attHp>=55;
   if(k==='dc2')return prob>=65&&p.attAp>=55;
