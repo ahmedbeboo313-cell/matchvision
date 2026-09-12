@@ -97,7 +97,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .mode-chip[data-mode="live"].active{background:linear-gradient(135deg,rgba(239,68,68,.28),rgba(245,158,11,.2));border-color:#ef4444;color:#fecaca}
 .mode-chip[data-mode="finished"].active{background:rgba(148,163,184,.2);border-color:#94a3b8;color:#e2e8f0}
 input[type=date],input[type=search],select{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:15px;padding:10px 12px;outline:none;min-width:0;max-width:100%}
-select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-width:130px;flex:none}
+select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-width:150px;flex:none}
 .statsbar{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;padding:0 4px 10px;flex-wrap:wrap}
 .card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;max-width:100%}
 .card.pinned-card{border-color:rgba(251,191,36,.5);box-shadow:0 0 0 1px rgba(251,191,36,.4),0 12px 32px rgba(0,0,0,.35)}
@@ -538,16 +538,16 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
- {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
+ {slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},
  {slug:'conmebol.libertadores',name:'كأس ليبرتادوريس',em:'🌎',home:1.40,away:1.10},
  {slug:'conmebol.sudamericana',name:'كوبا سودامريكانا',em:'🌎',home:1.35,away:1.05},
  {slug:'concacaf.champions',name:'دوري أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},
  {slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
- {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
+ {slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
  {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
@@ -565,7 +565,7 @@ const leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),no
 const loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCount'),avgConfidence=$('#avgConfidence');
 const lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search');
 const bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),countLabel=$('#countLabel'),kickBanner=$('#kickBanner');
-let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0,loadStartTs=0;
+let favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0,loadStartTs=0,lastEmptyRetry=0;
 let lastFastTs=0,lastFastOkTs=0,pollingFast=false,liveFailStreak=0;
 let livePoolMap=new Map();
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',
@@ -727,7 +727,7 @@ function readFinCache(){
   return null;
 }
 
-/* ========== DEEP FORM ENGINE: فورم آخر 50 مباراة ========== */
+/* ========== DEEP FORM ENGINE: فورم آخر 50 مباراة (عند الطلب فقط) ========== */
 let teamFormCache={};
 let formQueue=[], formWorking=false;
 function loadTeamFormCache(){
@@ -768,9 +768,9 @@ async function fetchTeamForm(tid,slug){
     let w=0,d=0,l=0,gf=0,ga=0;
     last.forEach(x=>{ gf+=x.ms; ga+=x.os; if(x.ms>x.os)w++; else if(x.ms===x.os)d++; else l++; });
     const l5=last.slice(0,5);
-    let gf5=0,ga5=0,w5=0,d5=0,l5c=0;
-    l5.forEach(x=>{ gf5+=x.ms; ga5+=x.os; if(x.ms>x.os)w5++; else if(x.ms===x.os)d5++; else l5c++; });
-    const obj={ts:Date.now(),n:last.length,w,d,l,gf,ga,gf5,ga5,w5,d5,l5c};
+    let gf5=0,ga5=0;
+    l5.forEach(x=>{ gf5+=x.ms; ga5+=x.os; });
+    const obj={ts:Date.now(),n:last.length,w,d,l,gf,ga,gf5,ga5};
     teamFormCache[tid]=obj;
     saveTeamFormCache();
     return obj;
@@ -788,7 +788,7 @@ function enqueueForms(list,priority){
       }
     });
   });
-  formQueue=formQueue.slice(0,120);
+  formQueue=formQueue.slice(0,20);
   pumpForm();
 }
 async function pumpForm(){
@@ -802,7 +802,7 @@ async function pumpForm(){
     if(c&&Date.now()-c.ts<43200000)continue;
     const got=await fetchTeamForm(tid,sl);
     if(got)changed=true;
-    await new Promise(r=>setTimeout(r,250));
+    await new Promise(r=>setTimeout(r,600));
   }
   formWorking=false;
   if(changed){ predCache.clear(); try{renderCurrent();}catch(e){} }
@@ -855,7 +855,14 @@ async function loadMatches(silent){
   updateBell();
   if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
   reportHealth(state.source==='live');showInbox(false);
-  if(state.source==='live')enqueueForms(list,false);
+  /* التحليل العميق: للمباراة المثبتة فقط (مش لكل القائمة) */
+  const pm=list.find(m=>m.pinned);
+  if(pm)enqueueForms([pm],true);
+  /* إعادة محاولة تلقائية لو القائمة فاضية */
+  if(list.length===0&&Date.now()-lastEmptyRetry>20000){
+    lastEmptyRetry=Date.now();
+    setTimeout(()=>{ if(state.matches.length===0&&!isLoading)loadMatches(true); },8000);
+  }
 }
 function applyPinned(){
   const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');
@@ -1005,18 +1012,17 @@ function calc(m){
   const ld=leagueData(m.leagueSlug), rng=mulberry32(hashCode(`${m.id}|${m.home.name}|${m.away.name}`));
   const hS=recToStrength(m.home.record), aS=recToStrength(m.away.record);
   const fH=formVal(m.homeForm), fA=formVal(m.awayForm);
-  const dH=teamFormCache[m.home&&m.home.id||'']||null;
-  const dA=teamFormCache[m.away&&m.away.id||'']||null;
+  const dH=teamFormCache[(m.home&&m.home.id)||'']||null;
+  const dA=teamFormCache[(m.away&&m.away.id)||'']||null;
   let lh,la,hasData=false,deep=false,deepStats=null;
   if(dH&&dA&&dH.n>=10&&dA.n>=10){
-    /* ===== التحليل العميق: فورم آخر 50 مباراة + آخر 5 ===== */
     deep=true; hasData=true;
     const lgAvg=(ld.home+ld.away)/2;
     const attH50=dH.gf/dH.n, defH50=dH.ga/dH.n;
     const attA50=dA.gf/dA.n, defA50=dA.ga/dA.n;
-    const n5=Math.min(5,dH.n), m5=Math.min(5,dA.n);
+    const m5=Math.min(5,dH.n), n5=Math.min(5,dA.n);
     const attH5=dH.gf5/m5, defH5=dH.ga5/m5;
-    const attA5=dA.gf5/m5, defA5=dA.ga5/m5;
+    const attA5=dA.gf5/n5, defA5=dA.ga5/n5;
     const attH=0.75*attH50+0.25*attH5, defHm=0.75*defH50+0.25*defH5;
     const attA=0.75*attA50+0.25*attA5, defAm=0.75*defA50+0.25*defA5;
     lh=clamp(ld.home*(attH/lgAvg)*(defAm/lgAvg),0.30,3.8);
@@ -1131,7 +1137,7 @@ function renderCurrent(){
   document.querySelectorAll('.pred-grid').forEach((g,i)=>{ if(before[i]!=null) g.scrollLeft=before[i]; });
 }
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
-function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':state.mode==='finished'?'⚪ لا توجد نتائج.':'لا توجد مباريات في التاريخ ده للدوري المختار. جرّب تاريخ تاني أو "كل الدوريات".';return;}homeEmpty.hidden=true;homeContent.innerHTML=list.map(m=>matchCard(m)).join('');}
+function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML='⚠️ المصادر بطيئة دلوقتي — بنحمّل البيانات وبنحاول تاني تلقائياً كل شوية...';return;}homeEmpty.hidden=true;homeContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track');let acc=87,label='تقديري — بيتحول لحقيقي بعد 10 نتائج',rows='';
