@@ -53,6 +53,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 .sugg-hero{width:100%;margin:0 0 12px;padding:14px 16px;border:1px solid rgba(251,191,36,.45);background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(34,197,94,.15));color:#fde68a;border-radius:20px;font-size:13.5px;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.28);animation:gpop .4s cubic-bezier(.2,1.4,.4,1)}
 .sugg-hero b{color:#fff}
 .pin-badge{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+/* Today's Pick */
+.today-card{background:linear-gradient(135deg,rgba(251,191,36,.16),rgba(245,158,11,.08));border:1px solid rgba(251,191,36,.5);border-radius:20px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(251,191,36,.12)}
+.today-head{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:14px;font-weight:900;color:#fde68a;margin-bottom:4px;flex-wrap:wrap}
+.today-comb{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#04120a;font-size:11px;font-weight:900;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.today-sub{color:var(--muted);font-size:11px;font-weight:700;margin-bottom:10px}
+.tp-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:1px solid rgba(251,191,36,.3);border-radius:14px;padding:10px;margin-bottom:8px}
+.tp-idx{flex:none;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#04120a;font-weight:900;display:grid;place-items:center;font-size:13px}
+.tp-body{flex:1;min-width:0}
+.tp-match{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-mkt{font-size:11px;font-weight:700;color:var(--accent2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-nums{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.tp-odds{font-size:13px;font-weight:900;color:#fbbf24}
+.tp-prob{font-size:10px;font-weight:800;color:var(--muted)}
+.tp-res{font-size:12px;font-weight:900}
 .safe-box{background:linear-gradient(135deg,rgba(34,197,94,.16),rgba(56,189,248,.10));border:1px solid rgba(34,197,94,.5);border-radius:16px;padding:12px;margin-bottom:8px}
 .safe-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;font-size:11px;font-weight:800;color:var(--muted);flex-wrap:wrap}
 .safe-badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04120a;font-size:10.5px;font-weight:900;padding:4px 10px;border-radius:99px;white-space:nowrap}
@@ -130,6 +144,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .badge.cache{background:rgba(56,189,248,.13);color:#7dd3fc;border:1px solid rgba(56,189,248,.25)}
 .icon-btn{position:relative;width:40px;height:40px;flex:none;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;font-size:18px;cursor:pointer}
 .icon-btn .count{position:absolute;top:-6px;left:-6px;min-width:18px;height:18px;border-radius:99px;background:var(--accent);color:#04120a;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+.lang-btn{width:40px;height:40px;flex:none;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;font-size:13px;font-weight:900;cursor:pointer;color:var(--accent2)}
 .controls{display:grid;gap:9px;margin:12px 0}
 .mode-row,.date-row,.filters-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;max-width:100%}
 .mode-row::-webkit-scrollbar,.date-row::-webkit-scrollbar,.filters-row::-webkit-scrollbar{display:none}
@@ -218,43 +233,43 @@ setTimeout(function(){
 },7000);
 </script>
 <div id="kickBanner" class="kick hidden"></div>
-<div id="maintenanceScreen" class="maintenance hidden"><div><h1>🔧 التطبيق في وضع الصيانة</h1><p id="maintenanceMsg">نعمل على تحديثات جديدة، هنرجع قريباً.</p><p style="margin-top:20px;color:#fbbf24">— فريق Egypt Bet</p></div></div>
+<div id="maintenanceScreen" class="maintenance hidden"><div><h1 data-i18n="mnt_title">🔧 التطبيق في وضع الصيانة</h1><p id="maintenanceMsg" data-i18n="mnt_msg">نعمل على تحديثات جديدة، هنرجع قريباً.</p><p style="margin-top:20px;color:#fbbf24">— فريق Egypt Bet</p></div></div>
 
 <div id="guideModal" class="gmodal hidden">
   <div class="gcard">
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
-    <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
+    <h2 id="gTitle"></h2>
     <div class="gsteps">
-      <div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر كبير مكتوب عليه <b class="suremini">الأضمن 🛡️</b> — ده أعلى توقع ضماناً، محسوب من تحليل عميق جداً قبل المباراة (سجل الموسم + فورم + هجوم/دفاع + عامل الأرض + تعلّم).</p></div>
-      <div class="gstep"><span>2</span><p id="gS2">تحته شرائح صغيرة: توقعات مضمونة إضافية (نسبة ≥70% بس) — مفيش أي توقع ضعيف، كله مضمون بنسبة كبيرة.</p></div>
-      <div class="gstep"><span>3</span><p id="gS3">في قسم <b>التراكمي 🎫</b> هتلاقي 3 تراكميات (فريقين يسجلوا / أهداف / هدف شوط أول) — وكل تراكمي بيتحدث لحظياً أول ما أرجله تخلص، وبتشوف ✔/✘ لكل رجل وسجل المكسب/الخسارة.</p></div>
+      <div class="gstep"><span>1</span><p id="gS1"></p></div>
+      <div class="gstep"><span>2</span><p id="gS2"></p></div>
+      <div class="gstep"><span>3</span><p id="gS3"></p></div>
     </div>
-    <p class="gwarn" id="gWarn">⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية وضمن ميزانيتك بس.</p>
-    <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
-    <div class="gcredit">تصميم وتطوير: <b>Ahmed Bebo</b></div>
+    <p class="gwarn" id="gWarn"></p>
+    <button id="guideOk" class="gbtn"><span id="gBtn"></span></button>
+    <div class="gcredit"><span data-i18n="credit">تصميم وتطوير:</span> <b>Ahmed Bebo</b></div>
   </div>
 </div>
 
 <div id="inboxModal" class="gmodal hidden">
   <div class="gcard">
-    <h2>📢 <span>رسالة من الإدارة</span></h2>
+    <h2>📢 <span data-i18n="inbox_title">رسالة من الإدارة</span></h2>
     <p id="inboxText" style="color:var(--text);font-size:14px;line-height:2;margin:10px 0 16px;text-align:right"></p>
-    <button id="inboxOk" class="gbtn">تمام ✅</button>
+    <button id="inboxOk" class="gbtn" data-i18n="ok">تمام ✅</button>
   </div>
 </div>
 
 <div id="suggModal" class="gmodal hidden">
   <div class="gcard sugg-form">
-    <h2>📝 <span>ابعتلي رأيك</span></h2>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:14px">اقتراحك بيروح للأحمد مباشرة وبيتحقق منه في اللوحة.</p>
-    <label>الاسم (اختياري)</label>
+    <h2>📝 <span data-i18n="sugg_title">ابعتلي رأيك</span></h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:14px" data-i18n="sugg_sub">اقتراحك بيروح للأحمد مباشرة وبيتحقق منه في اللوحة.</p>
+    <label data-i18n="sugg_name">الاسم (اختياري)</label>
     <input id="suggName" type="text" placeholder="مجهول" maxlength="50">
-    <label>تقييمك للتطبيق</label>
+    <label data-i18n="sugg_rate">تقييمك للتطبيق</label>
     <div class="stars" id="suggStars"><span class="star" data-v="1">★</span><span class="star" data-v="2">★</span><span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span></div>
-    <label>رسالتك أو اقتراحك</label>
-    <textarea id="suggMsg" placeholder="اكتب رأيك، المشاكل، اللي تحب يتضاف، أو أي تعديل..." maxlength="500"></textarea>
-    <button id="suggSend" class="gbtn">إرسال ✉️</button>
-    <button id="suggCancel" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button>
+    <label data-i18n="sugg_msg">رسالتك أو اقتراحك</label>
+    <textarea id="suggMsg" placeholder="..." maxlength="500"></textarea>
+    <button id="suggSend" class="gbtn" data-i18n="send">إرسال ✉️</button>
+    <button id="suggCancel" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer" data-i18n="cancel">إلغاء</button>
     <div id="suggResult"></div>
   </div>
 </div>
@@ -263,7 +278,7 @@ setTimeout(function(){
   <div class="splash-box">
     <svg viewBox="0 0 64 64"><defs><linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgA)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/></svg>
     <h1>Egypt <span>Bet</span></h1>
-    <p>توقعات ذكية مبنية على إحصائيات حقيقية</p>
+    <p data-i18n="splash_sub">توقعات ذكية مبنية على إحصائيات حقيقية</p>
     <div class="splash-bar"><span></span></div>
   </div>
 </div>
@@ -273,92 +288,93 @@ setTimeout(function(){
   <header class="topbar">
     <div class="brandrow">
       <svg viewBox="0 0 64 64"><defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgC)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/></svg>
-      <div><div class="brand">Egypt <span>Bet</span></div><div class="sub">قادمة • لايف • منتهية</div></div>
+      <div><div class="brand">Egypt <span>Bet</span></div><div class="sub" data-i18n="app_sub">قادمة • لايف • منتهية</div></div>
     </div>
     <div class="top-actions">
-      <span id="sourceBadge" class="badge loading">جاري المصادر...</span>
+      <span id="sourceBadge" class="badge loading"></span>
+      <button id="langBtn" class="lang-btn" title="Language">EN</button>
       <button id="bellBtn" class="icon-btn" title="الإشعارات">🔔<span id="bellBadge" class="count hidden">0</span></button>
       <button id="refreshBtn" class="icon-btn" title="تحديث">⟳</button>
     </div>
   </header>
   <section class="controls">
     <div class="mode-row">
-      <button class="chip mode-chip active" data-mode="all">🌐 الكل (قادمة)</button>
-      <button class="chip mode-chip" data-mode="live">🔴 لايف</button>
-      <button class="chip mode-chip" data-mode="finished">⚪ انتهت</button>
+      <button class="chip mode-chip active" data-mode="all" data-i18n="mode_all">🌐 الكل (قادمة)</button>
+      <button class="chip mode-chip" data-mode="live" data-i18n="mode_live">🔴 لايف</button>
+      <button class="chip mode-chip" data-mode="finished" data-i18n="mode_fin">⚪ انتهت</button>
     </div>
     <div class="date-row" id="dateRow">
-      <button class="chip date-chip" data-offset="0">اليوم</button>
-      <button class="chip date-chip active" data-offset="1">غداً</button>
-      <button class="chip date-chip" data-offset="2">بعد غد</button>
+      <button class="chip date-chip" data-offset="0" data-i18n="day_today">اليوم</button>
+      <button class="chip date-chip active" data-offset="1" data-i18n="day_tom">غداً</button>
+      <button class="chip date-chip" data-offset="2" data-i18n="day_after">بعد غد</button>
       <input id="datePicker" type="date"/>
     </div>
     <div class="date-row hidden" id="finRow">
-      <button class="chip fin-chip" data-span="1">أمس</button>
-      <button class="chip fin-chip active" data-span="3">آخر 3 أيام</button>
-      <button class="chip fin-chip" data-span="7">آخر 7 أيام</button>
+      <button class="chip fin-chip" data-span="1" data-i18n="fin_d1">أمس</button>
+      <button class="chip fin-chip active" data-span="3" data-i18n="fin_d3">آخر 3 أيام</button>
+      <button class="chip fin-chip" data-span="7" data-i18n="fin_d7">آخر 7 أيام</button>
     </div>
     <div class="filters-row">
       <select id="leagueSelect"></select>
-      <input id="search" type="search" placeholder="ابحث عن فريق أو دوري..."/>
+      <input id="search" type="search" data-i18n-ph="search_ph" placeholder="ابحث عن فريق أو دوري..."/>
     </div>
   </section>
   <section class="statsbar">
-    <div><span id="matchCount">0</span> <span id="countLabel">مباراة</span></div>
-    <div>متوسط الثقة: <span id="avgConfidence">-</span></div>
-    <div id="lastUpdated">لم يتم التحديث بعد</div>
+    <div><span id="matchCount">0</span> <span id="countLabel"></span></div>
+    <div><span data-i18n="sb_avg">متوسط الثقة:</span> <span id="avgConfidence">-</span></div>
+    <div id="lastUpdated"></div>
   </section>
   <main>
     <div id="loading" hidden></div>
     <section id="view-home" class="view">
-      <button id="suggHero" class="sugg-hero">💬 جرّبت التطبيق؟ <b>ابعتلي رأيك واقتراحك</b> — صوتك مسموع 📝</button>
+      <button id="suggHero" class="sugg-hero"></button>
       <div id="homeContent"></div><div id="homeEmpty" class="empty" hidden></div>
     </section>
     <section id="view-details" class="view hidden">
       <div class="back-row"><button id="backBtn" class="icon-btn">→</button><b id="detailsTitle"></b></div>
       <div id="detailsContent"></div>
     </section>
-    <section id="view-favorites" class="view hidden"><div id="favContent"></div><div id="favEmpty" class="empty" hidden>⭐ لا توجد مباريات مفضلة بعد.</div></section>
+    <section id="view-favorites" class="view hidden"><div id="favContent"></div><div id="favEmpty" class="empty" hidden></div></section>
     <section id="view-leagues" class="view hidden"><div id="leaguesContent" class="leagues-grid"></div></section>
     <section id="view-stats" class="view hidden">
       <div class="ring-card">
         <div class="ring"><svg width="86" height="86"><circle class="bgc" cx="43" cy="43" r="34"/><circle id="ringFg" class="fgc" cx="43" cy="43" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="ringText">0%</b></div>
-        <div><div style="font-weight:800">دقة التوقعات</div><small id="ringLabel" style="color:var(--muted)">لسه مفيش توقعات متقيمة</small></div>
+        <div><div style="font-weight:800" data-i18n="acc_title">دقة التوقعات</div><small id="ringLabel" style="color:var(--muted)"></small></div>
       </div>
       <div class="mini-grid">
-        <div class="mini">توقعات متقيمة<b id="statAnalyzed">0</b></div>
-        <div class="mini">مباريات مباشرة<b id="statToday">0</b></div>
+        <div class="mini"><span data-i18n="evaluated">توقعات متقيمة</span><b id="statAnalyzed">0</b></div>
+        <div class="mini"><span data-i18n="live_matches">مباريات مباشرة</span><b id="statToday">0</b></div>
       </div>
-      <b style="display:block;margin:4px 0 8px;font-size:13px">📊 إحصائيات التوقعات:</b>
+      <b style="display:block;margin:4px 0 8px;font-size:13px" data-i18n="stats_title">📊 إحصائيات التوقعات:</b>
       <div id="trackRows"></div>
-      <button id="resetStats" class="danger">تصفير كل الإحصائيات</button>
-      <div class="setting-row hidden" id="vipRow"><span>👑 وضع VIP (أسواق خاصة)</span>
+      <button id="resetStats" class="danger" data-i18n="reset">تصفير كل الإحصائيات</button>
+      <div class="setting-row hidden" id="vipRow"><span data-i18n="set_vip">👑 وضع VIP (أسواق خاصة)</span>
         <label class="switch"><input id="tgVip" type="checkbox"><span class="slider"></span></label></div>
-      <div class="setting-row"><span>تحديث ذكي (تحليل عميق ثابت)</span>
+      <div class="setting-row"><span data-i18n="set_auto">تحديث ذكي (تحليل عميق ثابت)</span>
         <label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
-      <div class="setting-row"><span>تنبيهات بداية مباريات المفضلة</span>
+      <div class="setting-row"><span data-i18n="set_notif">تنبيهات بداية مباريات المفضلة</span>
         <label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
-      <button id="notifPermBtn" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)">🔔 تفعيل إشعارات المتصفح</button>
-      <div class="setting-row"><span>مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
-      <div class="setting-row"><span>لون التطبيق</span>
+      <button id="notifPermBtn" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)" data-i18n="set_perm">🔔 تفعيل إشعارات المتصفح</button>
+      <div class="setting-row"><span data-i18n="set_src">مصادر البيانات</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
+      <div class="setting-row"><span data-i18n="set_color">لون التطبيق</span>
         <div class="themes"><button class="theme-btn g" data-theme-set="green"></button><button class="theme-btn b" data-theme-set="blue"></button><button class="theme-btn p" data-theme-set="purple"></button></div></div>
       <button id="supportBtn" class="sugg-btn hidden" style="border-color:#fbbf24;background:rgba(251,191,36,.1);color:#fde68a"></button>
-      <button id="clearFavBtn" class="danger">مسح كل المفضلة</button>
-      <button id="openSuggBtn" class="sugg-btn">📝 ابعتلي اقتراح أو رأي</button>
+      <button id="clearFavBtn" class="danger" data-i18n="clear_fav">مسح كل المفضلة</button>
+      <button id="openSuggBtn" class="sugg-btn" data-i18n="open_sugg">📝 ابعتلي اقتراح أو رأي</button>
     </section>
     <section id="view-accum" class="view hidden"><div id="accumContent"></div></section>
     <section id="view-notifications" class="view hidden"><div id="notifContent"></div></section>
   </main>
-  <footer class="disclaimer">التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — نسبة الإصابة عالية لكن لا يوجد ضمان مطلق.<br>تصميم وتطوير: <b>Ahmed Bebo</b></footer>
+  <footer class="disclaimer"><span data-i18n="disclaimer">التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — نسبة الإصابة عالية لكن لا يوجد ضمان مطلق.</span><br><span data-i18n="credit">تصميم وتطوير:</span> <b>Ahmed Bebo</b></footer>
   <nav class="bottom-nav">
-    <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small>الرئيسية</small></button>
-    <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small>المفضلة</small></button>
-    <button class="nav-item" data-view="leagues"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 5H4.5A2.5 2.5 0 007 9.5"/><path d="M17 5h2.5A2.5 2.5 0 0117 9.5"/><path d="M12 14v4"/><path d="M8.5 20h7"/></svg></span><small>الدوريات</small></button>
-    <button class="nav-item" data-view="accum"><span class="nic">🎫</span><small>التراكمي</small></button>
-    <button class="nav-item" data-view="stats"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg></span><small>الإحصائيات</small></button>
-    <button class="nav-item" data-view="notifications"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15v-4.5a5.5 5.5 0 0111 0V15l1.8 2.2H4.7z"/><path d="M10 19.5a2 2 0 004 0"/></svg></span><small>التنبيهات</small></button>
+    <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small data-i18n="nav_home">الرئيسية</small></button>
+    <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small data-i18n="nav_fav">المفضلة</small></button>
+    <button class="nav-item" data-view="leagues"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 5H4.5A2.5 2.5 0 007 9.5"/><path d="M17 5h2.5A2.5 2.5 0 0117 9.5"/><path d="M12 14v4"/><path d="M8.5 20h7"/></svg></span><small data-i18n="nav_leagues">الدوريات</small></button>
+    <button class="nav-item" data-view="accum"><span class="nic">🎫</span><small data-i18n="nav_accum">التراكمي</small></button>
+    <button class="nav-item" data-view="stats"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg></span><small data-i18n="nav_stats">الإحصائيات</small></button>
+    <button class="nav-item" data-view="notifications"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15v-4.5a5.5 5.5 0 0111 0V15l1.8 2.2H4.7z"/><path d="M10 19.5a2 2 0 004 0"/></svg></span><small data-i18n="nav_notif">التنبيهات</small></button>
   </nav>
-  <button id="toTop" title="ارجع لفوق">⬆</button>
+  <button id="toTop" title="Top">⬆</button>
 </div>
 
 <script>
@@ -367,6 +383,83 @@ function lsGet(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){retur
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function ssGet(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
 function ssSet(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
+
+/* ========== I18N ========== */
+let LANG=lsGet('lang')||'ar';
+const STR={
+ ar:{
+  app_sub:'قادمة • لايف • منتهية', src_loading:'جاري المصادر...', sources:'مصادر:', cache_src:'♻️ بيانات مخزنة — المصادر بتحاول ترجع', demo_src:'وضع تجريبي', archive_src:'أرشيف ✅',
+  nav_home:'الرئيسية',nav_fav:'المفضلة',nav_leagues:'الدوريات',nav_accum:'التراكمي',nav_stats:'الإحصائيات',nav_notif:'التنبيهات',
+  mode_all:'🌐 الكل (قادمة)',mode_live:'🔴 لايف',mode_fin:'⚪ انتهت',
+  day_today:'اليوم',day_tom:'غداً',day_after:'بعد غد', fin_d1:'أمس',fin_d3:'آخر 3 أيام',fin_d7:'آخر 7 أيام',
+  all_leagues:'كل الدوريات', search_ph:'ابحث عن فريق أو دوري...',
+  sb_matches:'مباراة', sb_live:'مباراة مباشرة', sb_fin:'مباراة منتهية', sb_up:'مباراة قادمة', sb_avg:'متوسط الثقة:', sb_upd_none:'لم يتم التحديث بعد', ago_s:'آخر تحديث: من', sec:'ثانية', min:'دقيقة',
+  sugg_hero:'💬 جرّبت التطبيق؟ <b>ابعتلي رأيك واقتراحك</b> — صوتك مسموع 📝',
+  empty_fin:'⚠️ لسه بنحمّل الأرشيف... استنى ثواني أو دوس تحديث ⟳', empty_live:'🔴 لا توجد مباريات مباشرة الآن.', empty_up:'لا توجد مباريات قادمة في التاريخ ده للدوري المختار.',
+  today_title:'🌟 توقع اليوم', today_sub:'أضمن توقعين بأودز مناسب للربح', combined:'مركّب', odds:'أودز',
+  pick_won:'✅ توقع اليوم كسب!', pick_lost:'❌ توقع اليوم خسر',
+  safest:'الأضمن 🛡️', sure:'ثقة كبيرة 🔥', extra_safe:'توقعات مضمونة إضافية:', attack:'⚔️ هجوم:', volatility:'📊 تقلب:', vol_low:'منخفض',vol_mid:'متوسط',vol_high:'عالي', learned:'متعلم من', basic:'تحليل أساسي', matches_word:'مباراة',
+  accum_stats:'📊 إحصائيات التراكمي', accum_btts:'🥅 تراكمي فريقين يسجلوا', accum_goals:'⚽ تراكمي أهداف', accum_h1:'🌓 تراكمي هدف شوط أول', accum_last:'آخر نتائج التراكمي:', won:'كسب', lost:'خسر',
+  empty_accum_btts:'لا توجد مباريات كافية لتراكمي الفريقين يسجل حالياً.', empty_accum_goals:'لا توجد مباريات كافية لتراكمي الأهداف حالياً.', empty_accum_h1:'لا توجد مباريات كافية لتراكمي هدف الشوط الأول حالياً.',
+  acc_title:'دقة التوقعات', acc_none:'لسه مفيش توقعات متقيمة', acc_real:'دقة حقيقية:', evaluated:'توقعات متقيمة', live_matches:'مباريات مباشرة', stats_title:'📊 إحصائيات التوقعات:', dist_market:'توزيع الكسب حسب السوق:', no_wins:'لسه مفيش توقعات كسبت', wins_word:'كسب', reset:'تصفير كل الإحصائيات',
+  set_vip:'👑 وضع VIP (أسواق خاصة)', set_auto:'تحديث ذكي (تحليل عميق ثابت)', set_notif:'تنبيهات بداية مباريات المفضلة', set_perm:'🔔 تفعيل إشعارات المتصفح', set_src:'مصادر البيانات', set_color:'لون التطبيق', clear_fav:'مسح كل المفضلة', open_sugg:'📝 ابعتلي اقتراح أو رأي',
+  disclaimer:'التوقعات مبنية على نماذج إحصائية ومعدلات حقيقية — نسبة الإصابة عالية لكن لا يوجد ضمان مطلق.', credit:'تصميم وتطوير:',
+  mnt_title:'🔧 التطبيق في وضع الصيانة', mnt_msg:'نعمل على تحديثات جديدة، هنرجع قريباً.', ok:'تمام ✅',
+  sugg_title:'ابعتلي رأيك', sugg_sub:'اقتراحك بيروح للأحمد مباشرة وبيتحقق منه في اللوحة.', sugg_name:'الاسم (اختياري)', sugg_rate:'تقييمك للتطبيق', sugg_msg:'رسالتك أو اقتراحك', send:'إرسال ✉️', cancel:'إلغاء',
+  g_title_a:'إزاي تاخد ', g_title_b:'التوقع الصح', g_s1:'كل مباراة ليها صندوق أخضر كبير مكتوب عليه الأضمن 🛡️ — ده أعلى توقع ضماناً، محسوب من تحليل عميق جداً قبل المباراة.', g_s2:'تحته شرائح صغيرة: توقعات مضمونة إضافية (نسبة ≥70% بس) — مفيش أي توقع ضعيف.', g_s3:'في قسم التراكمي 🎫 هتلاقي 3 تراكميات بتتحدث لحظياً أول ما الأرجل تخلص.', g_warn:'⚠️ تذكير مهم: التوقعات مبنية على نماذج إحصائية — النسبة العالية مش ضمان مطلق. راهن بمسؤولية.', g_btn:'يلا نبدأ ⚽',
+  host:'المضيف', guest:'الضيف', live_word:'مباشر', fin_word:'انتهت', not_started:'لم تبدأ', result:'النتيجة', confidence:'الثقة',
+  tab_stats:'الإحصائيات', tab_h2h:'المواجهات', strength:'⚔️ قوة الهجوم (1 × 2)', exp_goals:'الأهداف المتوقعة (Poisson)', exp_corners:'الركنيات المتوقعة', exp_cards:'البطاقات المتوقعة', season:'سجل الموسم',
+  m_goals:'أهداف 2',m_g15:'أهداف 1.5',m_u15:'أقل من 1.5',m_u25:'أقل من 2.5',m_win:'الفوز المباشر',m_dc1:'فرصة مزدوجة 1',m_dc2:'فرصة مزدوجة 2',m_btts:'الفريقين يسجل',m_corners:'ركنيات 9.5',m_cards:'بطاقات 5.5',m_firstgoal:'نافذة الهدف الأول',m_h1:'هدف في الشوط الأول',m_clean:'كلين شيت',m_both:'أهداف في الشوطين',m_range:'نطاق الأهداف',m_ticket:'التذكرة الآمنة',
+  over2:'أكثر من 2',under2:'أقل من 2',over15:'أكثر من 1.5',under15:'أقل من 1.5 أهداف',under25:'أقل من 2.5 أهداف',yes:'نعم',no:'لا',win_home:'فوز المضيف (1)',win_away:'فوز الضيف (2)',dc1:'1X (فوز المضيف أو تعادل)',dc2:'X2 (تعادل أو فوز الضيف)',corn_over:'أكثر من 9.5 ركنية',corn_under:'أقل من 9.5 ركنية',card_under:'أقل من 5.5 بطاقات',card_over:'أكثر من 5.5 بطاقات',firstgoal:'أول هدف في',h1goal:'هدف في الشوط الأول',clean:'كلين شيت:',bothhalves:'أهداف في الشوطين',range01:'0-1 أهداف',range23:'2-3 أهداف',range4:'4+ أهداف'
+ },
+ en:{
+  app_sub:'Upcoming • Live • Finished', src_loading:'Loading sources...', sources:'Sources:', cache_src:'♻️ Cached — sources retrying', demo_src:'Demo mode', archive_src:'Archive ✅',
+  nav_home:'Home',nav_fav:'Favorites',nav_leagues:'Leagues',nav_accum:'Accumulator',nav_stats:'Stats',nav_notif:'Alerts',
+  mode_all:'🌐 All (Upcoming)',mode_live:'🔴 Live',mode_fin:' Finished',
+  day_today:'Today',day_tom:'Tomorrow',day_after:'After', fin_d1:'Yesterday',fin_d3:'Last 3 days',fin_d7:'Last 7 days',
+  all_leagues:'All Leagues', search_ph:'Search team or league...',
+  sb_matches:'matches', sb_live:'live', sb_fin:'finished', sb_up:'upcoming', sb_avg:'Avg confidence:', sb_upd_none:'Not updated yet', ago_s:'Updated:', sec:'s ago', min:'m ago',
+  sugg_hero:'💬 Tried the app? <b>Send your feedback</b> — your voice matters 📝',
+  empty_fin:'⚠️ Loading archive... wait or tap refresh ⟳', empty_live:'🔴 No live matches now.', empty_up:'No upcoming matches for this date/league.',
+  today_title:'🌟 Today\'s Pick', today_sub:'Two safest picks with decent odds for profit', combined:'Combo', odds:'Odds',
+  pick_won:'✅ Today\'s Pick WON!', pick_lost:'❌ Today\'s Pick lost',
+  safest:'Safest 🛡️', sure:'High confidence 🔥', extra_safe:'Extra safe picks:', attack:'⚔️ Attack:', volatility:'📊 Volatility:', vol_low:'Low',vol_mid:'Medium',vol_high:'High', learned:'Learned from', basic:'Basic analysis', matches_word:'matches',
+  accum_stats:'📊 Accumulator Stats', accum_btts:' BTTS Accumulator', accum_goals:'⚽ Goals Accumulator', accum_h1:'🌓 1st-Half Goal Accumulator', accum_last:'Latest accumulator results:', won:'Won', lost:'Lost',
+  empty_accum_btts:'Not enough matches for BTTS accumulator.', empty_accum_goals:'Not enough matches for goals accumulator.', empty_accum_h1:'Not enough matches for 1st-half goal accumulator.',
+  acc_title:'Prediction Accuracy', acc_none:'No evaluated predictions yet', acc_real:'Real accuracy:', evaluated:'Evaluated', live_matches:'Live matches', stats_title:'📊 Prediction Stats:', dist_market:'Wins by market:', no_wins:'No wins yet', wins_word:'Won', reset:'Reset all stats',
+  set_vip:'👑 VIP mode (special markets)', set_auto:'Smart refresh (deep static analysis)', set_notif:'Favorite kickoff alerts', set_perm:' Enable browser notifications', set_src:'Data sources', set_color:'App theme', clear_fav:'Clear all favorites', open_sugg:'📝 Send feedback',
+  disclaimer:'Predictions are statistical models — high accuracy is not a guarantee. Bet responsibly.', credit:'Design & Dev:',
+  mnt_title:'🔧 Maintenance mode', mnt_msg:'We are updating, back soon.', ok:'OK ✅',
+  sugg_title:'Send feedback', sugg_sub:'Your suggestion goes straight to Ahmed.', sugg_name:'Name (optional)', sugg_rate:'Rate the app', sugg_msg:'Your message', send:'Send ✉️', cancel:'Cancel',
+  g_title_a:'How to get ', g_title_b:'the right pick', g_s1:'Every match has a green "Safest 🛡️" box — the highest-guarantee pick from deep pre-match analysis.', g_s2:'Below it: extra safe picks (≥70% only) — no weak picks.', g_s3:'In Accumulator 🎫 you get 3 accumulators that update live as legs finish.', g_warn:'⚠️ Reminder: predictions are statistical — high accuracy is not a guarantee. Bet responsibly.', g_btn:'Let\'s go ⚽',
+  host:'Home', guest:'Away', live_word:'LIVE', fin_word:'FT', not_started:'Upcoming', result:'Score', confidence:'Confidence',
+  tab_stats:'Stats', tab_h2h:'H2H', strength:'⚔️ Attack (1 × 2)', exp_goals:'Expected goals (Poisson)', exp_corners:'Expected corners', exp_cards:'Expected cards', season:'Season record',
+  m_goals:'Goals 2',m_g15:'Goals 1.5',m_u15:'Under 1.5',m_u25:'Under 2.5',m_win:'Match winner',m_dc1:'Double chance 1',m_dc2:'Double chance 2',m_btts:'BTTS',m_corners:'Corners 9.5',m_cards:'Cards 5.5',m_firstgoal:'First goal window',m_h1:'1st-half goal',m_clean:'Clean sheet',m_both:'Both halves goals',m_range:'Goals range',m_ticket:'Safe ticket',
+  over2:'Over 2',under2:'Under 2',over15:'Over 1.5',under15:'Under 1.5 goals',under25:'Under 2.5 goals',yes:'Yes',no:'No',win_home:'Home win (1)',win_away:'Away win (2)',dc1:'1X (Home or draw)',dc2:'X2 (Draw or away)',corn_over:'Over 9.5 corners',corn_under:'Under 9.5 corners',card_under:'Under 5.5 cards',card_over:'Over 5.5 cards',firstgoal:'First goal in',h1goal:'1st-half goal',clean:'Clean sheet:',bothhalves:'Both halves goals',range01:'0-1 goals',range23:'2-3 goals',range4:'4+ goals'
+ }
+};
+function t(k){ return (STR[LANG]&&STR[LANG][k])||STR.ar[k]||k; }
+function applyLang(){
+  document.documentElement.dir = LANG==='ar'?'rtl':'ltr';
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
+  const lb=$('#langBtn'); if(lb) lb.textContent = LANG==='ar'?'EN':'ع';
+  setGuideDefaults();
+  populateLeagueSelect();
+  predCache.clear();
+  renderCurrent();
+}
+function setGuideDefaults(){
+  const g=remoteCfg.guide||{};
+  $('#gTitle').innerHTML = (g.title? esc(g.title) : t('g_title_a')+'<span>'+t('g_title_b')+'</span>');
+  $('#gS1').textContent = g.s1||t('g_s1');
+  $('#gS2').textContent = g.s2||t('g_s2');
+  $('#gS3').textContent = g.s3||t('g_s3');
+  $('#gWarn').textContent = g.warn||t('g_warn');
+  $('#gBtn').textContent = g.btn||t('g_btn');
+  $('#suggHero').innerHTML = t('sugg_hero');
+}
 
 const FIREBASE_CONFIG={apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2",measurementId:"G-VZN5E9C1VQ"};
 let db=null;
@@ -379,8 +472,8 @@ if(!db){
   db={collection:()=>({doc:()=>docStub,add:P,get:()=>Promise.resolve({docs:[],size:0,forEach:()=>{}}),where:()=>makeQ(),orderBy:()=>makeQ(),limit:()=>makeQ()}),batch:()=>({delete:()=>{},commit:P})};
 }
 const SID=ssGet('eb_sid')||(()=>{const s=Math.random().toString(36).slice(2)+Date.now().toString(36);ssSet('eb_sid',s);return s;})();
-const tzName=()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'؟'}catch(e){return'؟'}};
-const devName=()=>/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'موبايل':'كمبيوتر';
+const tzName=()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'?'}catch(e){return'?'}};
+const devName=()=>/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop';
 
 function countVisit(){
   if(ssGet('eb_visit'))return;
@@ -422,32 +515,34 @@ function applyRemoteConfig(){
   window.EB_EXTRAS=remoteCfg.extras||{};
   if(remoteCfg.maintenance){ $('#maintenanceScreen').classList.remove('hidden'); if(remoteCfg.maintenanceMsg)$('#maintenanceMsg').textContent=remoteCfg.maintenanceMsg; $('#splash').classList.add('fade'); setTimeout(()=>$('#splash').classList.add('hidden'),500); return; }
   if(remoteCfg.banner){ $('#bannerText').textContent=remoteCfg.banner; $('#bannerTop').classList.remove('hidden'); }
-  const g=remoteCfg.guide||{};
-  if(g.title)$('#gTitle').innerHTML='إزاي تاخد <span>'+esc(g.title)+'</span>';
-  if(g.s1)$('#gS1').textContent=g.s1;
-  if(g.s2)$('#gS2').textContent=g.s2;
-  if(g.s3)$('#gS3').textContent=g.s3;
-  if(g.warn)$('#gWarn').textContent=g.warn;
-  if(g.btn)$('#gBtn').textContent=g.btn;
+  if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){ remoteCfg.disabledMarkets.forEach(k=>{state.markets[k]=false;}); syncMarketCheckboxes(); }
+  setGuideDefaults();
   showInbox(true);
   if(remoteCfg.vip)$('#vipRow').classList.remove('hidden');
-  if(remoteCfg.support&&remoteCfg.support.enabled){ const b=$('#supportBtn'); b.textContent=remoteCfg.support.text||'💚 ادعمنا'; b.classList.remove('hidden'); b.onclick=()=>{ try{window.open(remoteCfg.support.link,'_blank');}catch(e){} }; }
+  if(remoteCfg.support&&remoteCfg.support.enabled){ const b=$('#supportBtn'); b.textContent=remoteCfg.support.text||'💚 Support'; b.classList.remove('hidden'); b.onclick=()=>{ try{window.open(remoteCfg.support.link,'_blank');}catch(e){} }; }
+}
+function syncMarketCheckboxes(){
+  $('#mkGoals').checked=state.markets.goals;$('#mkSafe').checked=state.markets.safe;
+  $('#mkU15').checked=state.markets.u15;$('#mkU25').checked=state.markets.u25;
+  $('#mkDc1').checked=state.markets.dc1;$('#mkDc2').checked=state.markets.dc2;
+  $('#mkCorners').checked=state.markets.corners;$('#mkBtts').checked=state.markets.btts;
+  $('#mkSafeCards').checked=state.markets.safeCards;
 }
 
 let suggRating=0;
 document.querySelectorAll('#suggStars .star').forEach(s=>{ s.addEventListener('click',()=>{ suggRating=+s.dataset.v; document.querySelectorAll('#suggStars .star').forEach((x,i)=>x.classList.toggle('active',i<suggRating)); }); });
 async function sendSuggestion(){
-  const name=($('#suggName').value||'').trim()||'مجهول';
+  const name=($('#suggName').value||'').trim()||(LANG==='ar'?'مجهول':'Anonymous');
   const msg=($('#suggMsg').value||'').trim();
-  if(!msg){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5">اكتب رسالتك الأول!</div>';return;}
-  $('#suggSend').disabled=true;$('#suggSend').textContent='جاري الإرسال...';
+  if(!msg){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5">'+(LANG==='ar'?'اكتب رسالتك الأول!':'Write your message first!')+'</div>';return;}
+  $('#suggSend').disabled=true;
   try{
     await db.collection('suggestions').add({name,rating:suggRating||0,message:msg,createdAt:Date.now(),status:'pending',read:false});
-    $('#suggResult').innerHTML='<div class="success-msg">✅ وصل! شكراً ليك يا نجم.</div>';
-    setTimeout(()=>{ $('#suggModal').classList.add('hidden'); $('#suggName').value='';$('#suggMsg').value='';suggRating=0; document.querySelectorAll('#suggStars .star').forEach(x=>x.classList.remove('active')); $('#suggResult').innerHTML='';$('#suggSend').disabled=false;$('#suggSend').textContent='إرسال ✉️'; },1800);
+    $('#suggResult').innerHTML='<div class="success-msg">'+(LANG==='ar'?'✅ وصل! شكراً ليك يا نجم.':'✅ Received! Thanks!')+'</div>';
+    setTimeout(()=>{ $('#suggModal').classList.add('hidden'); $('#suggName').value='';$('#suggMsg').value='';suggRating=0; document.querySelectorAll('#suggStars .star').forEach(x=>x.classList.remove('active')); $('#suggResult').innerHTML='';$('#suggSend').disabled=false; },1800);
   }catch(e){
-    $('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5">فشل الإرسال، حاول تاني.</div>';
-    $('#suggSend').disabled=false;$('#suggSend').textContent='إرسال ✉️';
+    $('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#fca5a5">'+(LANG==='ar'?'فشل الإرسال، حاول تاني.':'Send failed, retry.')+'</div>';
+    $('#suggSend').disabled=false;
   }
 }
 
@@ -457,10 +552,10 @@ const LEAGUES=[
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
  {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
- {slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},
+ {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
- {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},
- {slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
+ {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
  {slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},
@@ -478,10 +573,10 @@ const LEAGUES=[
  {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
  {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
  {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
- {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},
+ {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
@@ -492,7 +587,7 @@ const LEAGUES=[
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
  {slug:'usa.1',name:'الدوري الأمريكي MLS',em:'🗽',home:1.60,away:1.35},
  {slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},
- {slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},
+ {slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},
  {slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},
  {slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},
  {slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},
@@ -503,7 +598,7 @@ const LEAGUES=[
  {slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},
  {slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},
  {slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},
- {slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},
+ {slug:'ind.1',name:'الدوري الهندي',em:'🇮🇳',home:1.45,away:1.10},
  {slug:'afc.champions',name:'دوري أبطال آسيا',em:'🌏',home:1.45,away:1.10},
  {slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},
  {slug:'fifa.friendly',name:'مباريات ودية دولية',em:'🤝',home:1.45,away:1.15}
@@ -534,7 +629,7 @@ init();
 function init(){
   try{
     const th=lsGet('mv_theme'); if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
-    populateLeagueSelect(); datePicker.value=state.date; setDateChipsActive(); bindEvents();
+    applyLang(); setDateChipsActive(); bindEvents();
     countVisit(); loadRemoteConfig();
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')){ if(state.mode!=='finished'&&Date.now()-lastLoadTs>20000)loadMatches(true); } });
     setTimeout(()=>{splash.classList.add('fade');
@@ -550,7 +645,7 @@ function maybeShowGuide(){ if(remoteCfg.disableGuide)return; const today=fmtDate
 function soonKickoff(m){ const d=new Date(m.date); if(isNaN(d)||m.live||isFinished(m))return false; const diff=d-Date.now(); return diff>0&&diff<1200000; }
 function tick(){
   if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
-  evalAccum();
+  evalAccum(); evalTodayPick();
   if(state.mode==='finished'){ if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true); else lastCheckTs=Date.now(); return; }
   const since=Date.now()-lastLoadTs;
   const urgent=state.matches.some(m=>m.live||soonKickoff(m));
@@ -598,18 +693,19 @@ function mergeLive(items){
     else if(doneNow&&state.mode==='finished'){ state.matches.unshift(nm);changed=true; }
   });
   lastFastOkTs=Date.now();
-  if(changed){ predCache.clear(); state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);}); applyPinned();detectKickoffs(); evalAccum(); try{renderCurrent();}catch(e){} updateBell(); window.scrollTo({top:sy,behavior:'auto'}); }
+  if(changed){ predCache.clear(); state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);}); applyPinned();detectKickoffs(); evalAccum(); evalTodayPick(); try{renderCurrent();}catch(e){} updateBell(); window.scrollTo({top:sy,behavior:'auto'}); }
 }
 function secTick(){ if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;
   const base=Math.max(lastLoadTs,lastFastOkTs,lastCheckTs);
   const s=Math.max(0,Math.round((Date.now()-base)/1000));
-  lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`; }
+  lastUpdated.textContent = s<60? `${t('ago_s')} ${s} ${t('sec')}` : `${t('ago_s')} ${Math.floor(s/60)} ${t('min')}`; }
 function bindEvents(){
   const closeGuide=()=>{$('#guideModal').classList.add('hidden');lsSet('mv_guide_day',fmtDate(new Date()));};
   $('#guideOk').onclick=closeGuide;
   $('#guideModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeGuide();});
   $('#inboxOk').onclick=()=>{$('#inboxModal').classList.add('hidden');};
   $('#inboxModal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#inboxOk').click();});
+  $('#langBtn').onclick=()=>{ LANG = LANG==='ar'?'en':'ar'; lsSet('lang',LANG); applyLang(); };
   const openSugg=()=>$('#suggModal').classList.remove('hidden');
   $('#openSuggBtn').onclick=openSugg; $('#suggHero').onclick=openSugg;
   $('#suggCancel').onclick=()=>$('#suggModal').classList.add('hidden');
@@ -628,7 +724,7 @@ function bindEvents(){
     document.querySelectorAll('.mode-chip').forEach(x=>x.classList.toggle('active',x===c));
     dateRow.style.display=state.mode==='all'?'flex':'none';
     finRow.style.display=state.mode==='finished'?'flex':'none';
-    countLabel.textContent=state.mode==='live'?'مباراة مباشرة':state.mode==='finished'?'مباراة منتهية':'مباراة قادمة';
+    countLabel.textContent = state.mode==='live'?t('sb_live'):state.mode==='finished'?t('sb_fin'):t('sb_up');
     loadMatches();});
   leagueSelect.onchange=()=>{state.league=leagueSelect.value;loadMatches();};
   search.oninput=()=>{state.query=search.value;renderCurrent();};
@@ -637,13 +733,13 @@ function bindEvents(){
     const fav=e.target.closest('[data-fav]');if(fav){e.stopPropagation();toggleFav(fav.dataset.fav);return;}
     const lg=e.target.closest('[data-league]');if(lg){state.league=lg.dataset.league;leagueSelect.value=state.league;showView('home');loadMatches();return;}
     const mc=e.target.closest('[data-match]');if(mc){openDetails(mc.dataset.match);return;}
-    const tb=e.target.closest('[data-theme-set]');if(tb){const t=tb.dataset.themeSet;if(t==='green')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);lsSet('mv_theme',t);}
+    const tb=e.target.closest('[data-theme-set]');if(tb){const t2=tb.dataset.themeSet;if(t2==='green')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t2);lsSet('mv_theme',t2);}
     const tab=e.target.closest('[data-tab]');if(tab)switchTab(tab.dataset.tab);
   });
   $('#tgAuto').onchange=e=>state.autoRefresh=e.target.checked;
   $('#tgNotif').onchange=e=>{state.notifEnabled=e.target.checked;updateBell();};
-  $('#notifPermBtn').onclick=()=>{try{if(!('Notification' in window)){alert('المتصفح لا يدعم الإشعارات');return;}Notification.requestPermission().then(p=>alert(p==='granted'?'تم تفعيل الإشعارات ✅':'الإذن مرفوض ❌'));}catch(e){alert('غير مدعوم');}};
-  const rs=$('#resetStats'); if(rs) rs.onclick=()=>{ lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}}); lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]}); renderCurrent(); };
+  $('#notifPermBtn').onclick=()=>{try{if(!('Notification' in window)){alert('Not supported');return;}Notification.requestPermission().then(p=>alert(p==='granted'?'✅':'❌'));}catch(e){alert('Not supported');}};
+  const rs=$('#resetStats'); if(rs) rs.onclick=()=>{ lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}}); lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]}); lsSet('todayPick',null); renderCurrent(); };
   $('#clearFavBtn').onclick=()=>{favorites.clear();saveFavs();renderCurrent();};
 }
 
@@ -669,8 +765,8 @@ async function loadMatches(silent){
     }catch(e){ items=[]; }
     if(!items.length){
       const c=loadCache();
-      if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){ items=c.list; state.source='cache'; state.sourcesOk=['مخزن ♻️']; }
-      else{ items=demoMatches(); state.source='demo'; state.sourcesOk=['تجريبي']; }
+      if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){ items=c.list; state.source='cache'; state.sourcesOk=['cache']; }
+      else{ items=demoMatches(); state.source='demo'; state.sourcesOk=['demo']; }
     }
     let list=dedupe(items);
     const hm=new Set(remoteCfg.hiddenMatches||[]), hl=new Set(remoteCfg.hiddenLeagues||[]);
@@ -685,7 +781,7 @@ async function loadMatches(silent){
       if(extra.length)list=[...extra,...list];
     }
     list.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
-    state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();evalAccum();
+    state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();evalAccum();evalTodayPick();
     if(state.mode==='all'){ upcomingPool=new Map(list.map(m=>[m.id,m])); }
     predCache.clear();
   }catch(e){}
@@ -731,10 +827,10 @@ async function loadFinishedFlow(silent){
     l.sort((a,b)=>new Date(b.date)-new Date(a.date));
     state.matches=l;
     state.source=(l.length===0)?'demo':'live';
-    if(state.source==='demo'){ state.matches=dedupe(demoMatches()); state.sourcesOk=['تجريبي']; } else state.sourcesOk=['أرشيف ✅'];
+    if(state.source==='demo'){ state.matches=dedupe(demoMatches()); state.sourcesOk=['demo']; } else state.sourcesOk=['archive'];
     predCache.clear();
     try{trackFinished(state.matches);}catch(e){}
-    evalAccum();
+    evalAccum(); evalTodayPick();
   }catch(e){}
   finally{
     isLoading=false;finLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();
@@ -792,7 +888,7 @@ function parseTSDB(e,isLive){let dt=new Date();if(e.strDate){const p=new Date(`$
 function demoMatches(){
   const fx=[['الدوري المصري','egy.1','الأهلي','4-2-0','الزمالك','3-2-1','استاد القاهرة','20:00','WWDWL','LWWDW'],['الدوري الإنجليزي','eng.1','مانشستر سيتي','4-1-1','ليفربول','4-2-0','ملعب الاتحاد','19:00','WWWDW','WDWWL'],['الدوري الإسباني','esp.1','ريال مدريد','5-0-1','برشلونة','4-1-1','سانتياغو برنابيو','21:00','WWWWW','WDWLW'],['دوري روشن السعودي','ksa.1','الهلال','5-1-0','النصر','4-1-1','المملكة أرينا','21:30','WWDWW','WLWDW'],['دوري أبطال أفريقيا','caf.champions','الأهلي','3-1-0','الترجي','2-2-0','استاد القاهرة','21:00','WDWWL','DDLWD']];
   return fx.map((f,i)=>{let d=new Date(`${state.date}T${f[7]}:00`);if(isNaN(d))d=addDays(new Date(),1);if(d<=new Date())d.setDate(d.getDate()+1);
-   return{id:`demo-${state.date}-${i}`,date:d.toISOString(),leagueName:f[0],leagueSlug:f[1],statusState:'pre',statusCompleted:false,live:false,minute:'',scoreHome:null,scoreAway:null,sourceName:'تجريبي',homeForm:f[8],awayForm:f[9],home:{id:'',name:f[2],abbr:f[2].slice(0,3),logo:'',record:f[3]},away:{id:'',name:f[4],abbr:f[4].slice(0,3),logo:'',record:f[5]},venue:f[6]};});}
+   return{id:`demo-${state.date}-${i}`,date:d.toISOString(),leagueName:f[0],leagueSlug:f[1],statusState:'pre',statusCompleted:false,live:false,minute:'',scoreHome:null,scoreAway:null,sourceName:'demo',homeForm:f[8],awayForm:f[9],home:{id:'',name:f[2],abbr:f[2].slice(0,3),logo:'',record:f[3]},away:{id:'',name:f[4],abbr:f[4].slice(0,3),logo:'',record:f[5]},venue:f[6]};});}
 function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/\s+/g,'');}
 function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
@@ -829,11 +925,11 @@ function trackFinished(list){
 function detectKickoffs(){const liveNow=state.matches.filter(m=>m.live),ids=new Set(liveNow.map(m=>m.id));
   if(state.prevLive&&state.notifEnabled)liveNow.forEach(m=>{if(!state.prevLive.has(m.id)&&favorites.has(m.id))kickNotify(m);});state.prevLive=ids;}
 function kickNotify(m){try{navigator.vibrate&&navigator.vibrate([300,100,300]);}catch(e){}beep();
-  kickBanner.innerHTML=`🔴 <b>بدأت الآن:</b> ${esc(m.home.name)} × ${esc(m.away.name)}`;kickBanner.classList.remove('hidden');setTimeout(()=>kickBanner.classList.add('hidden'),8000);
-  try{if('Notification' in window&&Notification.permission==='granted')new Notification('بدأت المباراة ⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
+  kickBanner.innerHTML=`🔴 <b>${LANG==='ar'?'بدأت الآن:':'Started:'}</b> ${esc(m.home.name)} × ${esc(m.away.name)}`;kickBanner.classList.remove('hidden');setTimeout(()=>kickBanner.classList.add('hidden'),8000);
+  try{if('Notification' in window&&Notification.permission==='granted')new Notification('⚽',{body:`${m.home.name} × ${m.away.name}`});}catch(e){}}
 function beep(){try{const ctx=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());[0,0.2].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(0.0001,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t+0.15);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.16);});}catch(e){}}
 
-/* ========== POISSON + DEEP STATIC ANALYSIS ========== */
+/* ========== POISSON + DEEP ANALYSIS ========== */
 function poissonPmf(k,l){let p=Math.exp(-l);for(let i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(slug){return LEAGUES.find(l=>l.slug===slug)||DEF_LEAGUE;}
@@ -871,7 +967,7 @@ function calc(m){
   const r=buildPred(lh,la,lcorn,lcard);
   r.hasData=hasData; r.formH=fH; r.formA=fA; r.learnN=adjFor(m.leagueSlug).n||0;
   const csH=Math.exp(-la), csA=Math.exp(-lh);
-  r.cleanSheet = csH>=csA?{text:'كلين شيت: '+m.home.name+' (1)',prob:Math.round(csH*100),tone:'info'}:{text:'كلين شيت: '+m.away.name+' (2)',prob:Math.round(csA*100),tone:'info'};
+  r.cleanSheet = csH>=csA?{text:t('clean')+' '+m.home.name+' (1)',prob:Math.round(csH*100),tone:'info'}:{text:t('clean')+' '+m.away.name+' (2)',prob:Math.round(csA*100),tone:'info'};
   return r;
 }
 function buildPred(lh,la,lcorn,lcard){
@@ -879,21 +975,21 @@ function buildPred(lh,la,lcorn,lcard){
   for(let i=0;i<=maxG;i++){ph[i]=poissonPmf(i,lh);pa[i]=poissonPmf(i,la);}
   let t0=0,t1=0,t2=0,t3=0,hw=0,dr=0,aw=0;
   const combos=[
-    ['أكثر من 2.5','كلا الفريقين يسجل',(i,j)=>i+j>=3&&i>=1&&j>=1],
-    ['أكثر من 2.5','فوز المضيف',(i,j)=>i+j>=3&&i>j],
-    ['أكثر من 2.5','فوز الضيف',(i,j)=>i+j>=3&&i<j],
-    ['كلا الفريقين يسجل','فوز المضيف',(i,j)=>i>=1&&j>=1&&i>j],
-    ['كلا الفريقين يسجل','فوز الضيف',(i,j)=>i>=1&&j>=1&&i<j],
-    ['أقل من 2.5','فوز المضيف',(i,j)=>i+j<=2&&i>j],
-    ['أقل من 2.5','فوز الضيف',(i,j)=>i+j<=2&&i<j],
-    ['أقل من 2.5','فريق واحد يسجل',(i,j)=>i+j<=2&&(i===0||j===0)]
+    ['over25_btts',(i,j)=>i+j>=3&&i>=1&&j>=1],
+    ['over25_home',(i,j)=>i+j>=3&&i>j],
+    ['over25_away',(i,j)=>i+j>=3&&i<j],
+    ['btts_home',(i,j)=>i>=1&&j>=1&&i>j],
+    ['btts_away',(i,j)=>i>=1&&j>=1&&i<j],
+    ['under25_home',(i,j)=>i+j<=2&&i>j],
+    ['under25_away',(i,j)=>i+j<=2&&i<j],
+    ['under25_one',(i,j)=>i+j<=2&&(i===0||j===0)]
   ];
   const comboSums=combos.map(()=>0);
   for(let i=0;i<=maxG;i++)for(let j=0;j<=maxG;j++){
-    const p=ph[i]*pa[j],t=i+j;
-    if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;else if(t===3)t3+=p;
+    const p=ph[i]*pa[j],tt=i+j;
+    if(tt===0)t0+=p;else if(tt===1)t1+=p;else if(tt===2)t2+=p;else if(tt===3)t3+=p;
     if(i>j)hw+=p;else if(i===j)dr+=p;else aw+=p;
-    for(let ci=0;ci<combos.length;ci++){ if(combos[ci][2](i,j))comboSums[ci]+=p; }
+    for(let ci=0;ci<combos.length;ci++){ if(combos[ci][1](i,j))comboSums[ci]+=p; }
   }
   let sci=0; for(let ci=1;ci<comboSums.length;ci++){ if(comboSums[ci]>comboSums[sci])sci=ci; }
   const o15=1-(t0+t1), o2=1-(t0+t1+t2), u2=t0+t1;
@@ -901,36 +997,37 @@ function buildPred(lh,la,lcorn,lcard){
   const pS1=1-Math.exp(-lh), pS2=1-Math.exp(-la);
   const bttsRaw=Math.min(0.95,pS1*pS2*1.08);
   const o95=1-poissonCdf(9,lcorn), u55=poissonCdf(5,lcard);
-  const mk=(op,ot,ut,to,tu)=>op>=0.5?{text:ot,prob:Math.round(op*100),tone:to}:{text:ut,prob:Math.round((1-op)*100),tone:tu};
-  const goals=o2>=u2?{text:'أكثر من 2',prob:Math.round(o2/(o2+u2)*100),tone:'good'}:{text:'أقل من 2',prob:Math.round(u2/(o2+u2)*100),tone:'warn'};
-  const g15={text:'أكثر من 1.5',prob:Math.round(o15*100),tone:o15>=0.5?'good':'warn'};
-  const u15={text:'أقل من 1.5 أهداف',prob:Math.round(u15P*100),tone:u15P>=0.5?'good':'warn'};
-  const u25={text:'أقل من 2.5 أهداف',prob:Math.round(u25P*100),tone:u25P>=0.5?'good':'warn'};
-  const btts=bttsRaw>=0.5?{text:'نعم',prob:Math.round(bttsRaw*100),tone:'good'}:{text:'لا',prob:Math.round((1-bttsRaw)*100),tone:'warn'};
-  const win=hw>=aw?{text:'فوز المضيف (1)',prob:Math.round(hw/(hw+aw)*100),tone:'good'}:{text:'فوز الضيف (2)',prob:Math.round(aw/(hw+aw)*100),tone:'good'};
+  const goals=o2>=u2?{text:t('over2'),prob:Math.round(o2/(o2+u2)*100),tone:'good'}:{text:t('under2'),prob:Math.round(u2/(o2+u2)*100),tone:'warn'};
+  const g15={text:t('over15'),prob:Math.round(o15*100),tone:o15>=0.5?'good':'warn'};
+  const u15={text:t('under15'),prob:Math.round(u15P*100),tone:u15P>=0.5?'good':'warn'};
+  const u25={text:t('under25'),prob:Math.round(u25P*100),tone:u25P>=0.5?'good':'warn'};
+  const btts=bttsRaw>=0.5?{text:t('yes'),prob:Math.round(bttsRaw*100),tone:'good'}:{text:t('no'),prob:Math.round((1-bttsRaw)*100),tone:'warn'};
+  const win=hw>=aw?{text:t('win_home'),prob:Math.round(hw/(hw+aw)*100),tone:'good'}:{text:t('win_away'),prob:Math.round(aw/(hw+aw)*100),tone:'good'};
   const dc1P=hw+dr, dc2P=aw+dr;
-  const dc1={text:'1X (فوز المضيف أو تعادل)',prob:Math.round(dc1P*100),tone:dc1P>=0.5?'good':'warn'};
-  const dc2={text:'X2 (تعادل أو فوز الضيف)',prob:Math.round(dc2P*100),tone:dc2P>=0.5?'good':'warn'};
+  const dc1={text:t('dc1'),prob:Math.round(dc1P*100),tone:dc1P>=0.5?'good':'warn'};
+  const dc2={text:t('dc2'),prob:Math.round(dc2P*100),tone:dc2P>=0.5?'good':'warn'};
   const lam=lh+la;
   const wf=[[0,20,"0-20'"],[20,45,"21-45'"],[45,70,"46-70'"],[70,91,"70+'"]];
   let bw=wf[0],bp2=-1;
   wf.forEach(w=>{const pr=Math.exp(-lam*w[0]/90)-Math.exp(-lam*w[1]/90);if(pr>bp2){bp2=pr;bw=w;}});
-  const firstGoal={text:'أول هدف في '+bw[2],prob:Math.round(bp2*100),tone:'info'};
-  const h1Goal={text:'هدف في الشوط الأول',prob:Math.round((1-Math.exp(-lam*0.47))*100),tone:(1-Math.exp(-lam*0.47))>=0.5?'good':'warn'};
+  const firstGoal={text:t('firstgoal')+' '+bw[2],prob:Math.round(bp2*100),tone:'info'};
+  const h1Goal={text:t('h1goal'),prob:Math.round((1-Math.exp(-lam*0.47))*100),tone:(1-Math.exp(-lam*0.47))>=0.5?'good':'warn'};
   const bh=Math.pow(1-Math.exp(-lam/2),2);
-  const bothHalves={text:'أهداف في الشوطين',prob:Math.round(bh*100),tone:bh>=0.5?'good':'warn'};
+  const bothHalves={text:t('bothhalves'),prob:Math.round(bh*100),tone:bh>=0.5?'good':'warn'};
   const r01=t0+t1, r23=t2+t3, r4=1-(r01+r23);
-  const ranges=[['0-1 أهداف',r01],['2-3 أهداف',r23],['4+ أهداف',r4]];
+  const ranges=[[t('range01'),r01],[t('range23'),r23],[t('range4'),r4]];
   let rw=ranges[0]; ranges.forEach(x=>{if(x[1]>rw[1])rw=x;});
   const range={text:rw[0],prob:Math.round(rw[1]*100),tone:'info'};
-  const safeTicket={text:combos[sci][0]+' + '+combos[sci][1],prob:Math.round(comboSums[sci]*100),tone:'good'};
+  const comboNames={over25_btts:[t('over2'),t('m_btts')],over25_home:[t('over2'),t('win_home')],over25_away:[t('over2'),t('win_away')],btts_home:[t('m_btts'),t('win_home')],btts_away:[t('m_btts'),t('win_away')],under25_home:[t('under25'),t('win_home')],under25_away:[t('under25'),t('win_away')],under25_one:[t('under25'),t('m_clean')]};
+  const cn=comboNames[combos[sci][0]]||['',''];
+  const safeTicket={text:cn[0]+' + '+cn[1],prob:Math.round(comboSums[sci]*100),tone:'good'};
   const bal=1-Math.min(1,Math.abs(lh-la)/Math.max(0.001,Math.max(lh,la)));
   const v=(lam/3.2)*0.6+bal*0.4;
   const volIdx=v<0.55?0:(v<0.75?1:2);
   const r={
     goals,g15,u15,u25,btts,win,dc1,dc2,h1Goal,
-    corners:mk(o95,'أكثر من 9.5 ركنية','أقل من 9.5 ركنية','info','warn'),
-    cards55u:u55>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55)*100),tone:'hot'},
+    corners:o95>=0.5?{text:t('corn_over'),prob:Math.round(o95*100),tone:'info'}:{text:t('corn_under'),prob:Math.round((1-o95)*100),tone:'warn'},
+    cards55u:u55>=0.5?{text:t('card_under'),prob:Math.round(u55*100),tone:'good'}:{text:t('card_over'),prob:Math.round((1-u55)*100),tone:'hot'},
     firstGoal,bothHalves,range,safeTicket,volIdx,
     lh,la,lcorn,lcard,
     attHp:Math.round(pS1*100), attAp:Math.round(pS2*100),
@@ -942,23 +1039,88 @@ function buildPred(lh,la,lcorn,lcard){
 }
 function hitCheck(k,p,m,tot,sh,sa){
   switch(k){
-    case 'goals': if(tot===2)return null; return p.goals.text.startsWith('أكثر')? tot>=3 : tot<=1;
+    case 'goals': if(tot===2)return null; return p.goals.text.indexOf(t('over2'))===0? tot>=3 : tot<=1;
     case 'g15': return tot>=2;
     case 'u15': return tot<=1;
     case 'u25': return tot<=2;
-    case 'btts': return (sh>0&&sa>0)===(p.btts.text==='نعم');
-    case 'win': return (sh>sa)===(p.win.text.indexOf('المضيف')>=0);
+    case 'btts': return (sh>0&&sa>0)===(p.btts.text===t('yes'));
+    case 'win': return (sh>sa)===(p.win.text.indexOf(t('win_home'))===0);
     case 'dc1': return sh>=sa;
     case 'dc2': return sa>=sh;
     case 'h1': return tot>=1;
-    case 'range': return p.range.text.indexOf('0-1')>=0? tot<=1 : (p.range.text.indexOf('2-3')>=0? (tot===2||tot===3) : tot>=4);
-    case 'cleanSheet': return p.cleanSheet.text.indexOf('(1)')>=0? sa===0 : sh===0;
+    case 'range': return p.range.text===t('range01')? tot<=1 : (p.range.text===t('range23')? (tot===2||tot===3) : tot>=4);
+    case 'cleanSheet': return p.cleanSheet.text.indexOf('(1)')>0? sa===0 : sh===0;
     default: return null;
   }
 }
 function hashCode(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
+
+/* ========== TODAY'S PICK (2 picks, safe + decent odds) ========== */
+function genTodayPicks(){
+  const today=fmtDate(new Date());
+  const stored=lsGet('todayPick');
+  if(stored&&stored.date===today&&stored.picks)return stored;
+  const ups=state.matches.filter(m=>!isFinished(m)&&!m.live&&fmtDate(new Date(m.date))===today);
+  let cands=[];
+  ups.forEach(m=>{
+    const p=getPrediction(m);
+    const defs=buildDefs(m,p);
+    defs.forEach(d=>{
+      const prob=d[3].prob/100;
+      if(prob<0.62||prob>0.85)return;
+      const odds=1/prob;
+      const sc=safetyScore(d[0],d[3].prob,p)*0.6 + Math.min(odds,2.0)/2.0*0.4;
+      cands.push({matchId:m.id,mkt:d[0],mktName:d[2],text:d[3].text,prob:d[3].prob,odds:odds,home:m.home.name,away:m.away.name,league:m.leagueName,sc:sc});
+    });
+  });
+  cands.sort((a,b)=>b.sc-a.sc);
+  const picks=[];
+  for(const c of cands){ if(picks.length>=2)break; if(picks.some(p=>p.matchId===c.matchId))continue; picks.push(c); }
+  const obj={date:today,picks:picks,evaluated:false,results:[]};
+  lsSet('todayPick',obj);
+  return obj;
+}
+function evalTodayPick(){
+  const tp=lsGet('todayPick'); if(!tp||tp.evaluated||!tp.picks||!tp.picks.length)return;
+  let allDone=true; const results=[];
+  tp.picks.forEach(pk=>{
+    const m=state.matches.find(x=>x.id===pk.matchId)||finishedMap.get(pk.matchId);
+    if(!m||!isFinished(m)||m.scoreHome==null){allDone=false;results.push(null);return;}
+    const p=getPrediction(m);
+    const hit=hitCheck(pk.mkt,p,m,m.scoreHome+m.scoreAway,m.scoreHome,m.scoreAway);
+    results.push(hit===true);
+  });
+  if(allDone){
+    tp.evaluated=true; tp.results=results;
+    lsSet('todayPick',tp);
+    const wins=results.filter(r=>r===true).length;
+    pushTodayNotif(wins>0,wins,tp.picks.length);
+  }
+}
+function pushTodayNotif(won,wins,total){
+  const list=lsGet('winNotifs')||[];
+  list.unshift({won:won,wins:wins,total:total,ts:Date.now()});
+  if(list.length>20)list.pop();
+  lsSet('winNotifs',list);
+  kickBanner.innerHTML= won? '✅ <b>'+t('pick_won')+' ('+wins+'/'+total+')</b>' : '❌ <b>'+t('pick_lost')+'</b>';
+  kickBanner.classList.remove('hidden');
+  setTimeout(()=>kickBanner.classList.add('hidden'),8000);
+  beep();
+}
+function todayPickHTML(){
+  const tp=genTodayPicks();
+  if(!tp||!tp.picks||!tp.picks.length)return '';
+  const comb=tp.picks.reduce((a,p)=>a*(p.prob/100),1);
+  const combOdds=tp.picks.reduce((a,p)=>a*p.odds,1);
+  const rows=tp.picks.map((p,i)=>{
+    const st= tp.evaluated? (tp.results[i]===true?'✔':tp.results[i]===false?'✘':'…') : '…';
+    const stColor= tp.evaluated? (tp.results[i]===true?'#86efac':tp.results[i]===false?'#fca5a5':'var(--muted)') : 'var(--muted)';
+    return `<div class="tp-row"><span class="tp-idx">${i+1}</span><div class="tp-body"><div class="tp-match">${esc(p.league)} — ${esc(p.home)} × ${esc(p.away)}</div><div class="tp-mkt">${esc(p.mktName)}: ${esc(p.text)}</div></div><div class="tp-nums"><span class="tp-odds">${p.odds.toFixed(2)}</span><span class="tp-prob">${p.prob}%</span><span class="tp-res" style="color:${stColor}">${st}</span></div></div>`;
+  }).join('');
+  return `<div class="today-card"><div class="today-head"><span>${t('today_title')}</span><span class="today-comb">${t('combined')} ${Math.round(comb*100)}% | ${combOdds.toFixed(2)}</span></div><div class="today-sub">${t('today_sub')}</div>${rows}</div>`;
+}
 
 /* ========== VIEWS ========== */
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications','accum'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===v));renderCurrent();}
@@ -970,20 +1132,21 @@ function renderCurrent(){
   window.scrollTo({top:sy,behavior:'auto'});
 }
 function filtered(){let l=[...state.matches];if(state.league!=='all')l=l.filter(m=>m.leagueSlug===state.league);if(state.query.trim()){const q=state.query.trim().toLowerCase();l=l.filter(m=>[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().includes(q));}return l;}
-function dayLabel(iso){ const d=new Date(iso); if(isNaN(d))return ''; return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d); }
+function dayLabel(iso){ const d=new Date(iso); if(isNaN(d))return ''; return new Intl.DateTimeFormat(LANG==='ar'?'ar-EG':'en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d); }
 function renderHome(){loading.hidden=true;const list=filtered();updateStats(list);
-  if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='finished'?'⚠️ لسه بنحمّل الأرشيف... استنى ثواني أو دوس تحديث ⟳':state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':'لا توجد مباريات قادمة في التاريخ ده للدوري المختار.';return;}
+  const tpHTML = todayPickHTML();
+  if(!list.length){homeContent.innerHTML=tpHTML;homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='finished'?t('empty_fin'):state.mode==='live'?t('empty_live'):t('empty_up');return;}
   homeEmpty.hidden=true;
+  let html=tpHTML;
   if(state.mode==='finished'){
     const groups=new Map();
     list.forEach(m=>{const k=fmtDate(new Date(m.date));if(!groups.has(k))groups.set(k,[]);groups.get(k).push(m);});
-    let html='';
-    [...groups.entries()].forEach(([k,items])=>{ html+=`<div class="day-head">📅 ${dayLabel(items[0].date)} (${items.length} مباراة)</div>`+items.map(m=>matchCard(m)).join(''); });
-    homeContent.innerHTML=html;
-  } else homeContent.innerHTML=list.map(m=>matchCard(m)).join('');
+    [...groups.entries()].forEach(([k,items])=>{ html+=`<div class="day-head">📅 ${dayLabel(items[0].date)} (${items.length} ${t('matches_word')})</div>`+items.map(m=>matchCard(m)).join(''); });
+  } else html+=list.map(m=>matchCard(m)).join('');
+  homeContent.innerHTML=html;
 }
-function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
-function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
+function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;favEmpty.textContent=LANG==='ar'?'⭐ لا توجد مباريات مفضلة بعد.':'⭐ No favorites yet.';return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
+function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>${t('all_leagues')}<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
 /* ========== ACCUMULATOR ========== */
 function legStatus(x){
   const m=state.matches.find(mm=>mm.id===x.m.id)||finishedMap.get(x.m.id);
@@ -1030,7 +1193,7 @@ function accumBlock(icon,title,desc,legs,emptyMsg){
   const rows=legs.map(x=>{const prob=x.best.prob;const sh=shieldsFor('ticket',prob,x.p);const st=legStatus(x);
     const stBadge = st.done? (st.won===true?'<span class="sp">✔</span>': st.won===false?'<span class="sp" style="color:#fca5a5">✘</span>':'<span class="sp">↩</span>') : '<span class="sp" style="color:var(--muted)">…</span>';
     return `<div class="accum-leg"><div class="accum-leg-top"><span class="league-pill">${esc(x.m.leagueName)}</span><span class="sp">${prob}% ${shieldStr(sh)} ${stBadge}</span></div><div class="accum-teams">${esc(x.m.home.name)} × ${esc(x.m.away.name)}</div><div class="accum-mkt">${x.best.text}</div></div>`;}).join('');
-  return `<div class="accum-sec"><div class="accum-head">${icon} ${title}<span class="accum-comb">مركّب ${combPct}%</span></div><div class="accum-desc">${desc}</div><div class="accum-legs">${rows}</div></div>`;
+  return `<div class="accum-sec"><div class="accum-head">${icon} ${title}<span class="accum-comb">${t('combined')} ${combPct}%</span></div><div class="accum-desc">${desc}</div><div class="accum-legs">${rows}</div></div>`;
 }
 function renderAccum(){
   loading.hidden=true;
@@ -1039,7 +1202,7 @@ function renderAccum(){
   const mkB=(m)=>{const p=getPrediction(m);return {m,p,best:p.btts,bestKey:'btts'};};
   const mkG=(m)=>{const p=getPrediction(m);const opts=[['goals',p.goals],['g15',p.g15],['u15',p.u15],['u25',p.u25]];let bk=opts[0][0],bp=opts[0][1];opts.forEach(o=>{if(o[1].prob>bp.prob){bp=o[1];bk=o[0];}});return {m,p,best:bp,bestKey:bk};};
   const mkH=(m)=>{const p=getPrediction(m);return {m,p,best:p.h1Goal,bestKey:'h1'};};
-  let bAll=upcoming.map(mkB).filter(x=>x.best.text==='نعم').sort((a,z)=>z.best.prob-a.best.prob);
+  let bAll=upcoming.map(mkB).filter(x=>x.best.text===t('yes')).sort((a,z)=>z.best.prob-a.best.prob);
   let bLegs=bAll.filter(x=>x.best.prob>=68).slice(0,5); if(bLegs.length<4)bLegs=bAll.slice(0,4);
   let gAll=upcoming.map(mkG).sort((a,z)=>z.best.prob-a.best.prob);
   let gLegs=gAll.filter(x=>x.best.prob>=70).slice(0,5); if(gLegs.length<4)gLegs=gAll.slice(0,4);
@@ -1047,57 +1210,57 @@ function renderAccum(){
   let hLegs=hAll.filter(x=>x.best.prob>=70).slice(0,5); if(hLegs.length<4)hLegs=hAll.slice(0,4);
   recordSnap('b',bLegs); recordSnap('g',gLegs); recordSnap('h1',hLegs);
   const A=lsGet('mv_accum')||{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},history:[]};
-  const hist=(A.history||[]).slice(0,8).map(h=>{const label=h.part==='b'?'فريقين يسجلوا':h.part==='g'?'أهداف':'هدف شوط أول';return `<span class="schip ${h.won?'hit':'miss'}">${h.won?'✔':'✘'} ${label}</span>`;}).join('');
-  const histBlock=hist?`<div class="safe-others-label">آخر نتائج التراكمي:</div><div class="safe-others">${hist}</div>`:'';
-  const statsBlock=`<div class="accum-sec"><div class="accum-head">📊 إحصائيات التراكمي</div>
-    <div class="stat-row"><span>🥅 تراكمي فريقين يسجلوا</span><b>كسب ${A.b.w} / خسر ${A.b.l}</b></div>
-    <div class="stat-row"><span>⚽ تراكمي أهداف</span><b>كسب ${A.g.w} / خسر ${A.g.l}</b></div>
-    <div class="stat-row"><span>🌓 تراكمي هدف شوط أول</span><b>كسب ${A.h1.w} / خسر ${A.h1.l}</b></div>
+  const hist=(A.history||[]).slice(0,8).map(h=>{const label=h.part==='b'?t('accum_btts'):h.part==='g'?t('accum_goals'):t('accum_h1');return `<span class="schip ${h.won?'hit':'miss'}">${h.won?'✔':'✘'} ${label}</span>`;}).join('');
+  const histBlock=hist?`<div class="safe-others-label">${t('accum_last')}</div><div class="safe-others">${hist}</div>`:'';
+  const statsBlock=`<div class="accum-sec"><div class="accum-head">${t('accum_stats')}</div>
+    <div class="stat-row"><span>${t('accum_btts')}</span><b>${t('won')} ${A.b.w} / ${t('lost')} ${A.b.l}</b></div>
+    <div class="stat-row"><span>${t('accum_goals')}</span><b>${t('won')} ${A.g.w} / ${t('lost')} ${A.g.l}</b></div>
+    <div class="stat-row"><span>${t('accum_h1')}</span><b>${t('won')} ${A.h1.w} / ${t('lost')} ${A.h1.l}</b></div>
     ${histBlock}</div>`;
   accumContent.innerHTML = statsBlock
-    + accumBlock('🥅','تراكمي كلا الفريقين يسجلوا','تحليل عميق جداً: سجل الموسم + فورم آخر 5 + هجوم/دفاع كل فريق + عامل الأرض + تعلّم — أعلى 4-5 مباريات احتمالاً لـ "نعم"',bLegs,'لا توجد مباريات كافية لتراكمي الفريقين يسجل حالياً.')
-    + accumBlock('⚽','تراكمي الأهداف','تحليل عميق جداً: لكل مباراة أضمن سوق أهداف (أكثر/أقل) حسب بواسون + التعلم — الأعلى احتمالاً',gLegs,'لا توجد مباريات كافية لتراكمي الأهداف حالياً.')
-    + accumBlock('🌓','تراكمي هدف في الشوط الأول','تحليل عميق جداً: احتمال هدف على الأقل في الشوط الأول محسوب من مجموع هجمات الفريقين — الأعلى احتمالاً',hLegs,'لا توجد مباريات كافية لتراكمي هدف الشوط الأول حالياً.');
+    + accumBlock('🥅',t('accum_btts'),'',bLegs,t('empty_accum_btts'))
+    + accumBlock('⚽',t('accum_goals'),'',gLegs,t('empty_accum_goals'))
+    + accumBlock('🌓',t('accum_h1'),'',hLegs,t('empty_accum_h1'));
 }
 function renderStats(){loading.hidden=true;
-  const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};
-  const byMkt=t.byMkt||{};
-  const acc=t.evaluated?Math.round(t.wins/t.evaluated*100):0;
+  const t2=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};
+  const byMkt=t2.byMkt||{};
+  const acc=t2.evaluated?Math.round(t2.wins/t2.evaluated*100):0;
   const C=213.6;$('#ringFg').style.strokeDashoffset=C*(1-acc/100);$('#ringText').textContent=acc+'%';
-  $('#ringLabel').textContent=t.evaluated?`دقة حقيقية: ${t.wins} كسب من ${t.evaluated}`:'لسه مفيش توقعات متقيمة';
-  const mktRows=Object.keys(byMkt).length? `<div class="safe-others-label">توزيع الكسب حسب السوق:</div>`+Object.keys(byMkt).map(k=>`<div class="stat-row"><span>📊 ${esc(k)}</span><b>${byMkt[k]} كسب</b></div>`).join('') : '';
-  const winsRows=t.winsList.length? t.winsList.map(w=>`<div class="stat-row"><span>✅ ${esc(w.mkt)} — ${esc(w.match)}</span><b>${w.prob}%</b></div>`).join('') : '<div class="stat-row"><span>لسه مفيش توقعات كسبت</span><b>-</b></div>';
+  $('#ringLabel').textContent=t2.evaluated?`${t('acc_real')} ${t2.wins} ${t('wins_word')} / ${t2.evaluated}`:t('acc_none');
+  const mktRows=Object.keys(byMkt).length? `<div class="safe-others-label">${t('dist_market')}</div>`+Object.keys(byMkt).map(k=>`<div class="stat-row"><span>📊 ${esc(k)}</span><b>${byMkt[k]} ${t('wins_word')}</b></div>`).join('') : '';
+  const winsRows=t2.winsList.length? t2.winsList.map(w=>`<div class="stat-row"><span>✅ ${esc(w.mkt)} — ${esc(w.match)}</span><b>${w.prob}%</b></div>`).join('') : `<div class="stat-row"><span>${t('no_wins')}</span><b>-</b></div>`;
   $('#trackRows').innerHTML = mktRows + winsRows;
-  $('#statAnalyzed').textContent=t.evaluated;
+  $('#statAnalyzed').textContent=t2.evaluated;
   $('#statToday').textContent=state.matches.filter(m=>m.live).length;
 }
 function renderNotifs(){loading.hidden=true;const now=Date.now(),items=[];
-  state.matches.forEach(m=>{if(m.live){items.push({ic:'🔴',t:'مباراة مباشرة',s:`${m.home.name} × ${m.away.name} — ${m.scoreHome??0}-${m.scoreAway??0}`});return;}const h=(new Date(m.date)-now)/36e5;if(h>0&&h<=36)items.push({ic:'⏰',t:`${m.home.name} × ${m.away.name}`,s:`تبدأ بعد ${h<1?'أقل من ساعة':Math.round(h)+' ساعة'}`});});
-  [...favorites].slice(0,3).forEach(id=>{const m=state.matches.find(x=>x.id===id);if(m)items.push({ic:'⭐',t:'في المفضلة',s:`${m.home.name} × ${m.away.name}`});});
-  if(!state.notifEnabled){notifContent.innerHTML='<div class="empty">التنبيهات متوقفة.</div>';return;}
-  notifContent.innerHTML=items.map(n=>`<div class="notif"><span class="ic">${n.ic}</span><div><b>${esc(n.t)}</b><small>${esc(n.s)}</small></div></div>`).join('')||'<div class="empty">لا توجد إشعارات.</div>';updateBell();}
+  (lsGet('winNotifs')||[]).forEach(w=>{ items.push({ic:w.won?'✅':'❌',t:w.won?t('pick_won'):t('pick_lost'),s:`${w.wins}/${w.total}`}); });
+  state.matches.forEach(m=>{if(m.live){items.push({ic:'🔴',t:LANG==='ar'?'مباراة مباشرة':'Live',s:`${m.home.name} × ${m.away.name} — ${m.scoreHome??0}-${m.scoreAway??0}`});return;}const h=(new Date(m.date)-now)/36e5;if(h>0&&h<=36)items.push({ic:'⏰',t:`${m.home.name} × ${m.away.name}`,s:h<1?(LANG==='ar'?'أقل من ساعة':'<1h'):`${Math.round(h)}h`});});
+  if(!state.notifEnabled&&items.length===0){notifContent.innerHTML='<div class="empty">'+(LANG==='ar'?'التنبيهات متوقفة.':'Alerts off.')+'</div>';return;}
+  notifContent.innerHTML=items.map(n=>`<div class="notif"><span class="ic">${n.ic}</span><div><b>${esc(n.t)}</b><small>${esc(n.s)}</small></div></div>`).join('')||'<div class="empty">'+(LANG==='ar'?'لا توجد إشعارات.':'No alerts.')+'</div>';updateBell();}
 function bellCount(){return state.notifEnabled?state.matches.filter(m=>m.live||(new Date(m.date)-Date.now())/36e5<=24).length:0;}
 function updateBell(){const n=bellCount();const read=lsGet('mv_bell_read');const show=n>0&&n!==read;bellBadge.textContent=n;bellBadge.classList.toggle('hidden',!show);}
 
-/* ========== SAFE-ONLY CARD ========== */
+/* ========== SAFE CARD ========== */
 function buildDefs(m,p){
   const d=[];
-  if(state.markets.goals)d.push(['goals','⚽','أهداف 2',p.goals]);
-  if(state.markets.safe)d.push(['g15','🛡️','أهداف 1.5',p.g15]);
-  if(state.markets.u15!==false)d.push(['u15','🔒','أقل من 1.5',p.u15]);
-  if(state.markets.u25!==false)d.push(['u25','🔒','أقل من 2.5',p.u25]);
-  if(state.markets.win!==false)d.push(['win','🏆','الفوز المباشر',p.win]);
-  if(state.markets.dc1!==false)d.push(['dc1','🎯','فرصة مزدوجة 1',p.dc1]);
-  if(state.markets.dc2!==false)d.push(['dc2','🎯','فرصة مزدوجة 2',p.dc2]);
-  if(state.markets.btts)d.push(['btts','🥅','الفريقين يسجل',p.btts]);
-  if(state.markets.corners)d.push(['corners','🚩','ركنيات 9.5',p.corners]);
-  if(state.markets.safeCards)d.push(['cards55u','🛡️','بطاقات 5.5',p.cards55u]);
-  d.push(['firstGoal','⏱️','نافذة الهدف الأول',p.firstGoal]);
-  d.push(['h1','🌓','هدف في الشوط الأول',p.h1Goal]);
-  d.push(['cleanSheet','🧤','كلين شيت',p.cleanSheet]);
-  d.push(['bothHalves','🌓','أهداف في الشوطين',p.bothHalves]);
-  d.push(['range','🎯','نطاق الأهداف',p.range]);
-  d.push(['ticket','🎫','التذكرة الآمنة',p.safeTicket]);
+  if(state.markets.goals)d.push(['goals',t('m_goals'),p.goals]);
+  if(state.markets.safe)d.push(['g15',t('m_g15'),p.g15]);
+  if(state.markets.u15!==false)d.push(['u15',t('m_u15'),p.u15]);
+  if(state.markets.u25!==false)d.push(['u25',t('m_u25'),p.u25]);
+  if(state.markets.win!==false)d.push(['win',t('m_win'),p.win]);
+  if(state.markets.dc1!==false)d.push(['dc1',t('m_dc1'),p.dc1]);
+  if(state.markets.dc2!==false)d.push(['dc2',t('m_dc2'),p.dc2]);
+  if(state.markets.btts)d.push(['btts',t('m_btts'),p.btts]);
+  if(state.markets.corners)d.push(['corners',t('m_corners'),p.corners]);
+  if(state.markets.safeCards)d.push(['cards55u',t('m_cards'),p.cards55u]);
+  d.push(['firstGoal',t('m_firstgoal'),p.firstGoal]);
+  d.push(['h1',t('m_h1'),p.h1Goal]);
+  d.push(['cleanSheet',t('m_clean'),p.cleanSheet]);
+  d.push(['bothHalves',t('m_both'),p.bothHalves]);
+  d.push(['range',t('m_range'),p.range]);
+  d.push(['ticket',t('m_ticket'),p.safeTicket]);
   return d;
 }
 function safeBlock(m,p,fin){
@@ -1110,25 +1273,25 @@ function safeBlock(m,p,fin){
   const hitOf=(d)=>fin?hitCheck(d[0],p,m,tot,sh,sa):null;
   const bHit=hitOf(best);
   const bSh=shieldsFor(best[0],best[3].prob,p);
-  const safeBox=`<div class="safe-box"><div class="safe-head"><span>${best[1]} ${best[2]}</span><span class="safe-badge">الأضمن 🛡️ ${shieldStr(bSh)}</span></div><div class="safe-val ${fin?(bHit===true?'good':bHit===false?'hot':''):best[3].tone}">${fin? best[3].text+(bHit===true?' ✔':bHit===false?' ✘':''):best[3].text}</div><div class="meter big"><span style="width:${best[3].prob}%"></span></div><div class="prob">نسبة الضمان ${best[3].prob}% • ⚔️ هجوم (1) ${p.attHp}% × (2) ${p.attAp}%</div></div>`;
-  const chips=others.map(d=>{const h=hitOf(d);return `<span class="schip ${fin?(h===true?'hit':h===false?'miss':''):''}">${d[1]} ${fin? d[3].text+(h===true?' ✔':h===false?' ✘':''):d[3].text} <span class="sp">${d[3].prob}%</span></span>`;}).join('');
-  const othersWrap=others.length?`<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">${chips}</div>`:'';
-  const foot=`<div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.learnN? 'متعلم من '+p.learnN+' مباراة':'تحليل أساسي'}</span></div>`;
+  const safeBox=`<div class="safe-box"><div class="safe-head"><span>${best[1]}</span><span class="safe-badge">${t('safest')} ${shieldStr(bSh)}</span></div><div class="safe-val ${fin?(bHit===true?'good':bHit===false?'hot':''):best[3].tone}">${fin? best[2]+(bHit===true?' ✔':bHit===false?' ✘':''):best[2]}</div><div class="meter big"><span style="width:${best[3].prob}%"></span></div><div class="prob">${best[3].prob}% • ${t('attack')} (1) ${p.attHp}% × (2) ${p.attAp}%</div></div>`;
+  const chips=others.map(d=>{const h=hitOf(d);return `<span class="schip ${fin?(h===true?'hit':h===false?'miss':''):''}">${d[1]} ${fin? d[2]+(h===true?' ✔':h===false?' ✘':''):d[2]} <span class="sp">${d[3].prob}%</span></span>`;}).join('');
+  const othersWrap=others.length?`<div class="safe-others-label">${t('extra_safe')}</div><div class="safe-others">${chips}</div>`:'';
+  const foot=`<div class="match-foot"><span>${t('volatility')} ${[t('vol_low'),t('vol_mid'),t('vol_high')][p.volIdx||0]}</span><span>🧠 ${p.learnN? t('learned')+' '+p.learnN+' '+t('matches_word'):t('basic')}</span></div>`;
   return safeBox+othersWrap+foot;
 }
 function matchCard(m){const p=getPrediction(m),fav=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
-  const headR=m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?`<span class="done-pill">انتهت</span>`:`<span class="date-text">${fmtDT(m.date)}</span>`;
-  const pinB=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
-  const vsB=m.live?`<div class="vs"><span class="liveTxt">النتيجة</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">النتيجة</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div>${safeBlock(m,p,fin)}</article>`;}
+  const headR=m.live?`<span class="live-pill"><span class="live-dot"></span>${t('live_word')} ${esc(m.minute||'')}</span>`:fin?`<span class="done-pill">${t('fin_word')}</span>`:`<span class="date-text">${fmtDT(m.date)}</span>`;
+  const pinB=m.pinned?'<span class="pin-badge">⭐ '+(LANG==='ar'?'مباراة اليوم':'Match of day')+'</span>':'';
+  const vsB=m.live?`<div class="vs"><span class="liveTxt">${t('result')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">${t('result')}</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>${t('not_started')}</span><strong>${timeOnly(m.date)}</strong></div>`;
+  return`<article class="card" data-match="${esc(m.id)}"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${pinB}${headR}<button class="fav-btn ${fav?'active':''}" data-fav="${esc(m.id)}">${fav?'★':'☆'}</button></div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 ${t('host')}</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ ${t('guest')}</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small></div></div>${safeBlock(m,p,fin)}</article>`;}
 function teamVis(t){return t.logo?`<img class="logo" src="${esc(t.logo)}" alt="" loading="lazy" onerror="this.style.display='none'">`:`<div class="placeholder">${esc(t.abbr||(t.name||'').slice(0,2))}</div>`;}
 function openDetails(id){const m=state.matches.find(x=>x.id===id);if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){const m=state.matches.find(x=>x.id===state.detailsId);if(!m){showView('home');return;}
   const p=getPrediction(m),fin=isFinished(m)&&m.scoreHome!=null;$('#detailsTitle').textContent=m.leagueName;
-  const vsB=m.live?`<div class="vs"><span class="liveTxt">مباشر ${esc(m.minute||'')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>لم تبدأ</span><strong>${timeOnly(m.date)}</strong></div>`;
-  detailsContent.innerHTML=`<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?'<span class="done-pill">انتهت</span>':`<span class="date-text">${fmtDT(m.date)}</span>`}</div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 المضيف</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small><div class="dots">${formDots(m.id+'h',m.homeForm)}</div></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ الضيف</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small><div class="dots">${formDots(m.id+'a',m.awayForm)}</div></div></div>${safeBlock(m,p,fin)}</div>
-  <div class="tabs"><button class="tab active" data-tab="stats">الإحصائيات</button><button class="tab" data-tab="h2h">المواجهات</button></div>
-  <div id="tab-stats">${fin?`<div class="stat-row"><span>النتيجة</span><b>${m.scoreHome} - ${m.scoreAway}</b></div>`:''}<div class="stat-row"><span>⚔️ قوة الهجوم (1 × 2)</span><b>${p.attHp}% × ${p.attAp}%</b></div><div class="stat-row"><span>الأهداف المتوقعة (Poisson)</span><b>${(p.lh+p.la).toFixed(1)}</b></div><div class="stat-row"><span>الركنيات المتوقعة</span><b>${p.lcorn.toFixed(1)}</b></div><div class="stat-row"><span>البطاقات المتوقعة</span><b>${p.lcard.toFixed(1)}</b></div><div class="stat-row"><span>سجل الموسم</span><b>${esc(m.home.record||'-')} / ${esc(m.away.record||'-')}</b></div></div>
+  const vsB=m.live?`<div class="vs"><span class="liveTxt">${t('live_word')} ${esc(m.minute||'')}</span><strong class="score">${m.scoreHome??0} - ${m.scoreAway??0}</strong></div>`:fin?`<div class="vs"><span class="doneTxt">${t('fin_word')}</span><strong class="scoreDone">${m.scoreHome} - ${m.scoreAway}</strong></div>`:`<div class="vs"><span>${t('not_started')}</span><strong>${timeOnly(m.date)}</strong></div>`;
+  detailsContent.innerHTML=`<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">${esc(m.leagueName)}</span>${m.live?`<span class="live-pill"><span class="live-dot"></span>${t('live_word')}</span>`:fin?`<span class="done-pill">${t('fin_word')}</span>`:`<span class="date-text">${fmtDT(m.date)}</span>`}</div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠 ${t('host')}</span>${teamVis(m.home)}<strong>${esc(m.home.name)}</strong><small>${esc(m.home.record||'')}</small><div class="dots">${formDots(m.id+'h',m.homeForm)}</div></div>${vsB}<div class="team"><span class="ha away"><span class="num">2</span>✈️ ${t('guest')}</span>${teamVis(m.away)}<strong>${esc(m.away.name)}</strong><small>${esc(m.away.record||'')}</small><div class="dots">${formDots(m.id+'a',m.awayForm)}</div></div></div>${safeBlock(m,p,fin)}</div>
+  <div class="tabs"><button class="tab active" data-tab="stats">${t('tab_stats')}</button><button class="tab" data-tab="h2h">${t('tab_h2h')}</button></div>
+  <div id="tab-stats">${fin?`<div class="stat-row"><span>${t('result')}</span><b>${m.scoreHome} - ${m.scoreAway}</b></div>`:''}<div class="stat-row"><span>${t('strength')}</span><b>${p.attHp}% × ${p.attAp}%</b></div><div class="stat-row"><span>${t('exp_goals')}</span><b>${(p.lh+p.la).toFixed(1)}</b></div><div class="stat-row"><span>${t('exp_corners')}</span><b>${p.lcorn.toFixed(1)}</b></div><div class="stat-row"><span>${t('exp_cards')}</span><b>${p.lcard.toFixed(1)}</b></div><div class="stat-row"><span>${t('season')}</span><b>${esc(m.home.record||'-')} / ${esc(m.away.record||'-')}</b></div></div>
   <div id="tab-h2h" class="hidden">${h2hRows(m)}</div>`;}
 function switchTab(t){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));['stats','h2h'].forEach(x=>{const el=$('#tab-'+x);if(el)el.classList.toggle('hidden',x!==t);});}
 function formDots(seed,real){
@@ -1136,21 +1299,26 @@ function formDots(seed,real){
     if(ch.length)return ch.map(c=>`<span class="dot ${c==='W'?'w':c==='D'?'d':'l'}"></span>`).join('');}
   const r=mulberry32(hashCode(seed));let out='';for(let i=0;i<5;i++){const v=r();out+=`<span class="dot ${v<0.45?'w':v<0.75?'d':'l'}"></span>`;}return out;
 }
-function h2hRows(m){const r=mulberry32(hashCode(m.id+'h2h'));let out='';for(let i=0;i<5;i++){const d=addDays(new Date(),-30*(i+1));const a=Math.floor(r()*4),b=Math.floor(r()*4);out+=`<div class="h2h-row"><span>${new Intl.DateTimeFormat('ar-EG',{day:'numeric',month:'short',year:'numeric'}).format(d)}</span><b>${esc(m.home.name)} ${a} - ${b} ${esc(m.away.name)}</b></div>`;}return out;}
+function h2hRows(m){const r=mulberry32(hashCode(m.id+'h2h'));let out='';for(let i=0;i<5;i++){const d=addDays(new Date(),-30*(i+1));const a=Math.floor(r()*4),b=Math.floor(r()*4);out+=`<div class="h2h-row"><span>${new Intl.DateTimeFormat(LANG==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short',year:'numeric'}).format(d)}</span><b>${esc(m.home.name)} ${a} - ${b} ${esc(m.away.name)}</b></div>`;}return out;}
 
 /* ========== HELPERS ========== */
-function updateStats(list){matchCount.textContent=list.length;avgConfidence.textContent=list.length?Math.round(list.reduce((s,m)=>s+getPrediction(m).confidence,0)/list.length)+'%':'-';}
+function updateStats(list){matchCount.textContent=list.length;avgConfidence.textContent=list.length?Math.round(list.reduce((s,m)=>s+getPrediction(m).confidence,0)/list.length)+'%':'-';countLabel.textContent=state.mode==='live'?t('sb_live'):state.mode==='finished'?t('sb_fin'):t('sb_up');}
 function showLoading(){loading.hidden=false;homeContent.innerHTML='';favContent.innerHTML='';homeEmpty.hidden=true;favEmpty.hidden=true;loading.innerHTML=Array.from({length:4},()=>'<div class="skeleton-card"></div>').join('');}
-function updateSource(){if(state.source==='live'&&state.sourcesOk.length){sourceBadge.textContent='مصادر: '+state.sourcesOk.join(' + ');sourceBadge.className='badge live';}else if(state.source==='cache'){sourceBadge.textContent='♻️ بيانات مخزنة — المصادر بتحاول ترجع';sourceBadge.className='badge cache';}else if(state.source==='demo'){sourceBadge.textContent='وضع تجريبي';sourceBadge.className='badge demo';}else{sourceBadge.textContent='جاري المصادر...';sourceBadge.className='badge loading';}}
-function populateLeagueSelect(){leagueSelect.innerHTML='<option value="all">كل الدوريات</option>'+LEAGUES.map(l=>`<option value="${l.slug}">${l.name}</option>`).join('');}
+function updateSource(){
+  if(state.source==='live'&&state.sourcesOk.length){sourceBadge.textContent=t('sources')+' '+state.sourcesOk.map(s=>s==='archive'?t('archive_src'):s).join(' + ');sourceBadge.className='badge live';}
+  else if(state.source==='cache'){sourceBadge.textContent=t('cache_src');sourceBadge.className='badge cache';}
+  else if(state.source==='demo'){sourceBadge.textContent=t('demo_src');sourceBadge.className='badge demo';}
+  else{sourceBadge.textContent=t('src_loading');sourceBadge.className='badge loading';}
+}
+function populateLeagueSelect(){leagueSelect.innerHTML=`<option value="all">${t('all_leagues')}</option>`+LEAGUES.map(l=>`<option value="${l.slug}">${l.name}</option>`).join('');}
 function setDateChipsActive(){document.querySelectorAll('.date-chip').forEach(c=>c.classList.toggle('active',fmtDate(addDays(new Date(),+c.dataset.offset))===state.date));}
 function toggleFav(id){favorites.has(id)?favorites.delete(id):favorites.add(id);saveFavs();renderCurrent();}
 function saveFavs(){lsSet('fav_matches',[...favorites]);}
 function loadFavs(){try{return new Set(JSON.parse(localStorage.getItem('fav_matches')||'[]'));}catch(e){return new Set();}}
 function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
 function fmtDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-function fmtDT(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d);}
-function timeOnly(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit'}).format(d);}
+function fmtDT(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat(LANG==='ar'?'ar-EG':'en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d);}
+function timeOnly(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat(LANG==='ar'?'ar-EG':'en-GB',{hour:'2-digit',minute:'2-digit'}).format(d);}
 function esc(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));}
 window.EB={state,db,remoteCfg};
 </script>
