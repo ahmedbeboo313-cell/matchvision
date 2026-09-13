@@ -12,7 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-:root{--bg:#050810;--line:rgba(255,255,255,.09);--text:#edf2ff;--muted:#9aa8c7;--accent:#22c55e;--accent2:#38bdf8;--radius:24px;--shadow:0 12px 32px rgba(0,0,0,.28)}
+:root{--bg:#050810;--line:rgba(255,255,255,.09);--text:#edf2ff;--muted:#9aa8c7;--accent:#22c55e;--accent2:#38bdf8;--radius:24px;--shadow:12px 32px rgba(0,0,0,.28)}
 [data-theme="blue"]{--accent:#38bdf8;--accent2:#818cf8}
 [data-theme="purple"]{--accent:#a78bfa;--accent2:#f472b6}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -329,7 +329,7 @@ setTimeout(function(){
         <div class="mini">توقعات متقيمة<b id="statAnalyzed">0</b></div>
         <div class="mini">مباريات مباشرة<b id="statToday">0</b></div>
       </div>
-      <b style="display:block;margin:4px 0 8px;font-size:13px">✅ التوقعات اللي كسبت فقط:</b>
+      <b style="display:block;margin:4px 0 8px;font-size:13px">📊 إحصائيات التوقعات:</b>
       <div id="trackRows"></div>
       <button id="resetStats" class="danger">تصفير كل الإحصائيات</button>
       <div class="setting-row hidden" id="vipRow"><span>👑 وضع VIP (أسواق خاصة)</span>
@@ -456,10 +456,10 @@ const LEAGUES=[
  {slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},
  {slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},
  {slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},
- {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲🇦',home:1.35,away:1.00},
+ {slug:'mar.1',name:'الدوري المغربي (بوتولا)',em:'🇲',home:1.35,away:1.00},
  {slug:'tun.1',name:'الدوري التونسي',em:'🇹🇳',home:1.35,away:0.95},
  {slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},
- {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},
+ {slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},
  {slug:'nga.1',name:'الدوري النيجيري',em:'🇳🇬',home:1.30,away:0.95},
  {slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},
  {slug:'caf.confederation',name:'كأس الكونفدرالية الأفريقية',em:'🌍',home:1.30,away:0.95},
@@ -478,15 +478,15 @@ const LEAGUES=[
  {slug:'den.1',name:'الدوري الدنماركي',em:'🇩🇰',home:1.55,away:1.25},
  {slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},
  {slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},
- {slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},
+ {slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},
  {slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},
- {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},
+ {slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},
  {slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},
  {slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},
  {slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},
  {slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},
  {slug:'uefa.europa.conf',name:'دوري المؤتمر الأوروبي',em:'🎖️',home:1.58,away:1.32},
- {slug:'uefa.nations',name:'دوري الأمم الأوروبية',em:'🇪',home:1.45,away:1.15},
+ {slug:'uefa.nations',name:'دوري الأمم الأوروبية',em:'🇪🇺',home:1.45,away:1.15},
  {slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},
  {slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},
  {slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},
@@ -642,7 +642,7 @@ function bindEvents(){
   $('#tgAuto').onchange=e=>state.autoRefresh=e.target.checked;
   $('#tgNotif').onchange=e=>{state.notifEnabled=e.target.checked;updateBell();};
   $('#notifPermBtn').onclick=()=>{try{if(!('Notification' in window)){alert('المتصفح لا يدعم الإشعارات');return;}Notification.requestPermission().then(p=>alert(p==='granted'?'تم تفعيل الإشعارات ✅':'الإذن مرفوض ❌'));}catch(e){alert('غير مدعوم');}};
-  const rs=$('#resetStats'); if(rs) rs.onclick=()=>{ lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[]}); lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{}}); renderCurrent(); };
+  const rs=$('#resetStats'); if(rs) rs.onclick=()=>{ lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}}); lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{}}); renderCurrent(); };
   $('#clearFavBtn').onclick=()=>{favorites.clear();saveFavs();renderCurrent();};
 }
 
@@ -796,10 +796,11 @@ function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
 
-/* ========== TRACKING (wins only + learning) ========== */
+/* ========== TRACKING (wins + per-market stats + learning) ========== */
 function trackFinished(list){
   try{
-    const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[]};
+    const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};
+    if(!t.byMkt)t.byMkt={};
     let ch=false;
     list.forEach(m=>{
       if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
@@ -809,7 +810,12 @@ function trackFinished(list){
       const tot=m.scoreHome+m.scoreAway;
       const hit=hitCheck(best[0],p,m,tot,m.scoreHome,m.scoreAway);
       t.evaluated++;
-      if(hit===true){ t.wins++; t.winsList.unshift({mkt:best[2],match:m.home.name+' × '+m.away.name,prob:best[3].prob,ts:Date.now()}); if(t.winsList.length>30)t.winsList.pop(); }
+      if(hit===true){
+        t.wins++;
+        t.byMkt[best[2]]=(t.byMkt[best[2]]||0)+1;
+        t.winsList.unshift({mkt:best[2],match:m.home.name+' × '+m.away.name,prob:best[3].prob,ts:Date.now()});
+        if(t.winsList.length>30)t.winsList.pop();
+      }
       const predLam=(p.lh+p.la)||1; const ratio=clamp(tot/predLam,0.4,2.5);
       const a=adjFor(m.leagueSlug); a.lam=a.n?(a.lam*0.85+ratio*0.15):ratio; a.n=(a.n||0)+1; ADJ[m.leagueSlug]=a; saveAdj();
       t.ids.push(m.id); if(t.ids.length>600)t.ids.shift(); ch=true;
@@ -976,7 +982,7 @@ function renderHome(){loading.hidden=true;const list=filtered();updateStats(list
 }
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const counts={};state.matches.forEach(m=>counts[m.leagueSlug]=(counts[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${counts[l.slug]||0}</small></button>`).join('');}
-/* ========== ACCUMULATOR (3 أجزاء + إحصائيات مكسب/خسارة لكل جزء) ========== */
+/* ========== ACCUMULATOR ========== */
 function recordSnap(part,legs){
   try{
     const A=lsGet('mv_accum')||{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{}};
@@ -1037,12 +1043,14 @@ function renderAccum(){
     + accumBlock('🌓','تراكمي هدف في الشوط الأول','تحليل عميق جداً: احتمال هدف على الأقل في الشوط الأول محسوب من مجموع هجمات الفريقين — الأعلى احتمالاً',hLegs,'لا توجد مباريات كافية لتراكمي هدف الشوط الأول حالياً.');
 }
 function renderStats(){loading.hidden=true;
-  const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[]};
+  const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};
+  const byMkt=t.byMkt||{};
   const acc=t.evaluated?Math.round(t.wins/t.evaluated*100):0;
   const C=213.6;$('#ringFg').style.strokeDashoffset=C*(1-acc/100);$('#ringText').textContent=acc+'%';
   $('#ringLabel').textContent=t.evaluated?`دقة حقيقية: ${t.wins} كسب من ${t.evaluated}`:'لسه مفيش توقعات متقيمة';
-  const rows=t.winsList.length? t.winsList.map(w=>`<div class="stat-row"><span>✅ ${esc(w.mkt)} — ${esc(w.match)}</span><b>${w.prob}%</b></div>`).join('') : '<div class="stat-row"><span>لسه مفيش توقعات كسبت</span><b>-</b></div>';
-  $('#trackRows').innerHTML=rows;
+  const mktRows=Object.keys(byMkt).length? `<div class="safe-others-label">توزيع الكسب حسب السوق:</div>`+Object.keys(byMkt).map(k=>`<div class="stat-row"><span>📊 ${esc(k)}</span><b>${byMkt[k]} كسب</b></div>`).join('') : '';
+  const winsRows=t.winsList.length? t.winsList.map(w=>`<div class="stat-row"><span>✅ ${esc(w.mkt)} — ${esc(w.match)}</span><b>${w.prob}%</b></div>`).join('') : '<div class="stat-row"><span>لسه مفيش توقعات كسبت</span><b>-</b></div>';
+  $('#trackRows').innerHTML = mktRows + winsRows;
   $('#statAnalyzed').textContent=t.evaluated;
   $('#statToday').textContent=state.matches.filter(m=>m.live).length;
 }
