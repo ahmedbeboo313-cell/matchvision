@@ -398,7 +398,6 @@ function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/
 function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
-/* ===== TRACKING (مصلَّح) ===== */
 function trackFinished(list){try{const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};if(!t.byMkt)t.byMkt={};let ch=false;
 list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
 const p=getPrediction(m);
@@ -474,7 +473,6 @@ function hitCheck(k,p,m,tot,sh,sa){switch(k){case 'goals':if(tot===2)return null
 function hashCode(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
-/* ===== ACCUMULATOR ===== */
 function accumLegs(){
 const pool=todayPool.filter(m=>m.live||isUpcoming(m));
 const mkB=m=>{const p=getPrediction(m);return{m,p,best:p.btts,bestKey:'btts'};};
@@ -557,9 +555,9 @@ if(state.markets.dc1!==false)d.push(['dc1','فرصة مزدوجة 1',p.dc1]);
 if(state.markets.dc2!==false)d.push(['dc2','فرصة مزدوجة 2',p.dc2]);
 if(state.markets.btts)d.push(['btts','الفريقين يسجل',p.btts]);
 if(state.markets.corners)d.push(['corners','ركنيات 9.5',p.corners]);
-if(state.markets.safeCards)d.push(['cards55u','بطاقات 5.5',p.cards55u]);
+if(state.markets.safeCards)d.push(['cards55u','البطاقات',p.cards55u]);
 d.push(['firstGoal','نافذة الهدف الأول',p.firstGoal]);
-d.push(['h1','هدف في الشوط الأول',p.h1Goal]);
+d.push(['h1','الشوط الأول',p.h1Goal]);
 d.push(['cleanSheet','كلين شيت',p.cleanSheet]);
 d.push(['bothHalves','أهداف في الشوطين',p.bothHalves]);
 d.push(['range','نطاق الأهداف',p.range]);
@@ -571,7 +569,7 @@ const sh=m.scoreHome??0,sa=m.scoreAway??0,tot=sh+sa;
 const hOf=d=>fin?hitCheck(d[0],p,m,tot,sh,sa):null;
 const bH=hOf(best);const bSh=shieldsFor(best[0],best[2].prob,p);
 const sb=`<div class="safe-box"><div class="safe-head"><span>${best[1]}</span><span class="safe-badge">الأضمن 🛡️ ${shieldStr(bSh)}</span></div><div class="safe-val ${fin?(bH===true?'good':bH===false?'hot':''):best[2].tone}">${fin?best[2].text+(bH===true?' ✔':bH===false?' ✘':''):best[2].text}</div><div class="meter big"><span style="width:${best[2].prob}%"></span></div><div class="prob">${best[2].prob}% • ⚔️ هجوم (1) ${p.attHp}% × (2) ${p.attAp}%</div></div>`;
-const chps=others.map(d=>{const h=hOf(d);return`<span class="schip ${fin?(h===true?'hit':h===false?'miss':''):''}">${d[1]} ${fin?d[2].text+(h===true?' ✔':h===false?' ✘':''):d[2].text} <span class="sp">${d[2].prob}%</span></span>`;}).join('');
+const chps=others.map(d=>{const h=hOf(d);return`<span class="schip ${fin?(h===true?'hit':h===false?'miss':''):''}">${fin?d[2].text+(h===true?' ✔':h===false?' ✘':''):d[2].text} <span class="sp">${d[2].prob}%</span></span>`;}).join('');
 const ow=others.length?`<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">${chps}</div>`:'';
 const ft=`<div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.learnN?'متعلم من '+p.learnN:'تحليل أساسي'}</span></div>`;
 return sb+ow+ft;}
