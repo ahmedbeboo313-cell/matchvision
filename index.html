@@ -147,7 +147,7 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <div class="gsteps">
 <div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — أعلى توقع ضماناً من تحليل عميق (سجل+فورم+هجوم/دفاع+أرض+تعلّم فوري).</p></div>
 <div class="gstep"><span>2</span><p id="gS2">تحته شرائح توقعات مضمونة إضافية (≥75% بس) — مفيش توقع ضعيف.</p></div>
-<div class="gstep"><span>3</span><p id="gS3">في <b>التراكمي 🎫</b> ثلاثة تراكميات بتتحدث فوراً أول ما أرجلها تخلص، وتشوف كسب/خسارة كل جزء لحظياً.</p></div>
+<div class="gstep"><span>3</span><p id="gS3">في <b>التراكمي 🎫</b> الأرجل بتتثبت أول ما تتختار ومبتتغيرش لحد ما مبارياتها تخلص، وبعدها النتيجة بتظهر فوق في الإحصائيات.</p></div>
 </div>
 <p class="gwarn" id="gWarn">⚠️ التوقعات إحصائية مدروسة — النسبة العالية مش ضمان مطلق. راهن بمسؤولية.</p>
 <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -242,7 +242,7 @@ let suggRating=0;
 document.querySelectorAll('#suggStars .star').forEach(s=>{s.addEventListener('click',()=>{suggRating=+s.dataset.v;document.querySelectorAll('#suggStars .star').forEach((x,i)=>x.classList.toggle('active',i<suggRating));});});
 async function sendSuggestion(){const n=($('#suggName').value||'').trim()||'مجهول';const m=($('#suggMsg').value||'').trim();if(!m){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);color:#fca5a5">اكتب رسالتك!</div>';return;}$('#suggSend').disabled=true;try{await db.collection('suggestions').add({name:n,rating:suggRating,message:m,createdAt:Date.now(),status:'pending'});$('#suggResult').innerHTML='<div class="success-msg">✅ وصل!</div>';setTimeout(()=>{$('#suggModal').classList.add('hidden');$('#suggMsg').value='';suggRating=0;$('#suggResult').innerHTML='';$('#suggSend').disabled=false;},1500);}catch(e){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);color:#fca5a5">فشل الإرسال</div>';$('#suggSend').disabled=false;}}
 const LEAGUES=[
-{slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},{slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},{slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},{slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},{slug:'mar.1',name:'الدوري المغربي',em:'🇲🇦',home:1.35,away:1.00},{slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},{slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},{slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},{slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},{slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},{slug:'caf.confederation',name:'الكونفدرالية',em:'🌍',home:1.30,away:0.95},{slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},{slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},{slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},{slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},{slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},{slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},{slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},{slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},{slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},{slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},{slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},{slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},{slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},{slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},{slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},{slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},{slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},{slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},{slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺🇦',home:1.50,away:1.15},{slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},{slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},{slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},{slug:'uefa.europa.conf',name:'دوري المؤتمر',em:'🎖️',home:1.58,away:1.32},{slug:'uefa.nations',name:'دوري الأمم',em:'🇪🇺',home:1.45,away:1.15},{slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},{slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},{slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},{slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},{slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},{slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},{slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},{slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},{slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},{slug:'conmebol.libertadores',name:'ليبرتادوريس',em:'🌎',home:1.40,away:1.10},{slug:'conmebol.sudamericana',name:'سودامريكانا',em:'🌎',home:1.35,away:1.05},{slug:'concacaf.champions',name:'أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},{slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},{slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},{slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},{slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},{slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},{slug:'afc.champions',name:'أبطال آسيا',em:'🌏',home:1.45,away:1.10},{slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},{slug:'fifa.friendly',name:'وديات دولية',em:'🤝',home:1.45,away:1.15}];
+{slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},{slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},{slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},{slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},{slug:'mar.1',name:'الدوري المغربي',em:'🇲🇦',home:1.35,away:1.00},{slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},{slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},{slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},{slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},{slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},{slug:'caf.confederation',name:'الكونفدرالية',em:'🌍',home:1.30,away:0.95},{slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},{slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},{slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},{slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},{slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},{slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},{slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},{slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},{slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},{slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},{slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},{slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},{slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},{slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},{slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},{slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},{slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},{slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},{slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},{slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},{slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},{slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},{slug:'uefa.europa.conf',name:'دوري المؤتمر',em:'🎖️',home:1.58,away:1.32},{slug:'uefa.nations',name:'دوري الأمم',em:'🇪',home:1.45,away:1.15},{slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},{slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},{slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},{slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},{slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},{slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},{slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},{slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},{slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},{slug:'conmebol.libertadores',name:'ليبرتادوريس',em:'🌎',home:1.40,away:1.10},{slug:'conmebol.sudamericana',name:'سودامريكانا',em:'🌎',home:1.35,away:1.05},{slug:'concacaf.champions',name:'أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},{slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},{slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},{slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},{slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},{slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},{slug:'afc.champions',name:'أبطال آسيا',em:'🌏',home:1.45,away:1.10},{slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},{slug:'fifa.friendly',name:'وديات دولية',em:'🤝',home:1.45,away:1.15}];
 const CORE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','ned.1','por.1','tur.1','bra.1','arg.1','sco.1','bel.1'];
 const AMER_SLUGS=['usa.1','mex.1','bra.1','arg.1'];
 const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي','4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
@@ -347,7 +347,6 @@ if(state.mode==='live'){const ids=new Set(list.map(m=>m.id));const ex=[...livePo
 list.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
 state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();
 if(state.mode==='all')upcomingPool=new Map(list.map(m=>[m.id,m]));
-recordAccumSnaps();evalAccum();
 predCache.clear();isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;
 const sy=silent?window.scrollY:null;
 try{renderCurrent();}catch(e){console.error(e);}
@@ -400,11 +399,9 @@ function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/
 function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
-/* ===== TRACKING + تعلم فوري لكل فريق ===== */
 function trackFinished(list){try{const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};if(!t.byMkt)t.byMkt={};let ch=false;
 list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
 const p=getPrediction(m);const sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
-// دراسة فورية لكل فريق
 const th=TEAMADJ[m.home.id]||(TEAMADJ[m.home.id]={gf:0,ga:0,n:0});th.gf+=sh;th.ga+=sa;th.n++;
 const ta=TEAMADJ[m.away.id]||(TEAMADJ[m.away.id]={gf:0,ga:0,n:0});ta.gf+=sa;ta.ga+=sh;ta.n++;
 const df=buildDefs(m,p,true);
@@ -434,9 +431,7 @@ const hS=recToStrength(m.home.record),aS=recToStrength(m.away.record);const fH=f
 const tH=TEAMADJ[m.home.id],tA=TEAMADJ[m.away.id];
 let lh,la,hasData=false;
 if(tH&&tA&&tH.n>=3&&tA.n>=3){
-// دراسة فورية لكل فريق: هجوم/دفاع فعلي من آخر مبارياته
 hasData=true;
-const lgAvg=(ld.home+ld.away)/2;
 const attH=tH.gf/tH.n,defH=tH.ga/tH.n,attA=tA.gf/tA.n,defA=tA.ga/tA.n;
 const teamLH=(attH+defA)/2,teamLA=(attA+defH)/2;
 lh=clamp(0.45*ld.home+0.55*teamLH,0.3,3.6);
@@ -497,6 +492,7 @@ default:return null;}}
 function hashCode(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
+/* ===== TRAAKUMI: أرجل مثبّتة (Locked) ===== */
 function accumLegs(){
 const pool=todayPool.filter(m=>m.live||isUpcoming(m));
 const mkB=m=>{const p=getPrediction(m);return{m,p,best:p.btts,bestKey:'btts'};};
@@ -509,11 +505,32 @@ let gL=gA.filter(x=>x.best.prob>=75).slice(0,5);if(gL.length<4)gL=gA.slice(0,4);
 let hA=pool.map(mkH).sort((a,z)=>z.best.prob-a.best.prob);
 let hL=hA.filter(x=>x.best.prob>=75).slice(0,5);if(hL.length<4)hL=hA.slice(0,4);
 return{bL,gL,hL};}
-function recordAccumSnaps(){try{const{bL,gL,hL}=accumLegs();const A=lsGet('mv_accum')||{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]};if(!A.snap)A.snap={};if(!A.history)A.history=[];
-if((!A.snap.b||!A.snap.b.length)&&bL.length)A.snap.b=bL.map(x=>({id:x.m.id,mk:x.bestKey,prob:x.best.prob}));
-if((!A.snap.g||!A.snap.g.length)&&gL.length)A.snap.g=gL.map(x=>({id:x.m.id,mk:x.bestKey,prob:x.best.prob}));
-if((!A.snap.h1||!A.snap.h1.length)&&hL.length)A.snap.h1=hL.map(x=>({id:x.m.id,mk:x.bestKey,prob:x.best.prob}));
-lsSet('mv_accum',A);}catch(e){}}
+function legsFromSnap(part){
+const A=lsGet('mv_accum');const snap=A&&A.snap&&A.snap[part];
+if(!snap||!snap.length)return[];
+return snap.map(leg=>{
+const m=state.matches.find(x=>x.id===leg.id)||finishedMap.get(leg.id);
+if(!m)return null;
+const p=getPrediction(m);
+let best;
+if(leg.mk==='btts')best=p.btts;else if(leg.mk==='h1')best=p.h1Goal;
+else if(leg.mk==='goals')best=p.goals;else if(leg.mk==='g15')best=p.g15;
+else if(leg.mk==='u15')best=p.u15;else if(leg.mk==='u25')best=p.u25;else best=p.goals;
+return {m,p,best,bestKey:leg.mk,prob:leg.prob};
+}).filter(Boolean);}
+function getPartLegs(part){
+let legs=legsFromSnap(part);
+if(!legs.length){
+let A=lsGet('mv_accum');if(!A)A={b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]};
+if(!A.snap)A.snap={};
+const {bL,gL,hL}=accumLegs();
+const src=part==='b'?bL:part==='g'?gL:hL;
+A.snap[part]=(src&&src.length)?src.map(x=>({id:x.m.id,mk:x.bestKey,prob:x.best.prob})):null;
+lsSet('mv_accum',A);
+legs=legsFromSnap(part);
+}
+return legs;}
+function recordAccumSnaps(){getPartLegs('b');getPartLegs('g');getPartLegs('h1');}
 function evalAccum(){try{const A=lsGet('mv_accum');if(!A||!A.snap)return;if(!A.history)A.history=[];let ch=false;
 ['b','g','h1'].forEach(part=>{const snap=A.snap&&A.snap[part];if(!snap||!snap.length)return;
 let allDone=true,lost=false;
@@ -524,17 +541,17 @@ if(allDone){const won=!lost;if(won)A[part].w++;else A[part].l++;A.history.unshif
 if(ch)lsSet('mv_accum',A);}catch(e){}}
 function accumBlock(icon,title,legs,emptyMsg){
 if(!legs||!legs.length)return`<div class="accum-sec"><div class="accum-head">${icon} ${title}</div><div class="empty" style="padding:18px">${emptyMsg}</div></div>`;
-let comb=1;legs.forEach(x=>comb*=x.best.prob/100);
-const rows=legs.map(x=>{const prob=x.best.prob;const sh=shieldsFor('ticket',prob,x.p);const st=legStatus(x);
+let comb=1;legs.forEach(x=>comb*=(x.prob!=null?x.prob:x.best.prob)/100);
+const rows=legs.map(x=>{const prob=x.prob!=null?x.prob:x.best.prob;const sh=shieldsFor('ticket',prob,x.p);const st=legStatus(x);
 const b=st.done?(st.won===true?'<span class="sp">✔</span>':st.won===false?'<span class="sp" style="color:#fca5a5">✘</span>':'<span class="sp">↩</span>'):'<span class="sp" style="color:var(--muted)">…</span>';
 return`<div class="accum-leg"><div class="accum-leg-top"><span class="league-pill">${esc(x.m.leagueName)}</span><span class="sp">${prob}% ${shieldStr(sh)} ${b}</span></div><div class="accum-teams">${esc(x.m.home.name)} × ${esc(x.m.away.name)}</div><div class="accum-mkt">${x.best.text}</div></div>`;}).join('');
 return`<div class="accum-sec"><div class="accum-head">${icon} ${title}<span class="accum-comb">مركّب ${Math.round(comb*100)}%</span></div><div class="accum-legs">${rows}</div></div>`;}
 function legStatus(x){const m=state.matches.find(mm=>mm.id===x.m.id)||finishedMap.get(x.m.id);if(!m||!isFinished(m)||m.scoreHome==null)return{done:false,won:null};
 const p=getPrediction(m);const hit=hitCheck(x.bestKey,p,m,m.scoreHome+m.scoreAway,m.scoreHome,m.scoreAway);
 if(hit===true)return{done:true,won:true};if(hit===false)return{done:true,won:false};return{done:true,won:null};}
-function renderAccum(){loading.hidden=true;recordAccumSnaps();evalAccum();
-const{bL,gL,hL}=accumLegs();
+function renderAccum(){loading.hidden=true;evalAccum();recordAccumSnaps();
 const A=lsGet('mv_accum')||{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},history:[]};
+const bL=getPartLegs('b'),gL=getPartLegs('g'),hL=getPartLegs('h1');
 const st=part=>{const s=A.snap&&A.snap[part];if(s&&s.length)return`<span class="schip pend">⏳ قيد الانتظار</span>`;return`<span class="schip">${A[part].w} كسب / ${A[part].l} خسر</span>`;};
 const hist=(A.history||[]).slice(0,8).map(h=>{const lb=h.part==='b'?'فريقين يسجلوا':h.part==='g'?'أهداف':'هدف شوط أول';return`<span class="schip ${h.won?'hit':'miss'}">${h.won?'✔':'✘'} ${lb}</span>`;}).join('');
 const histBlock=hist?`<div class="safe-others-label">آخر نتائج التراكمي:</div><div class="safe-others">${hist}</div>`:'';
