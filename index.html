@@ -21,6 +21,13 @@ button,input,select,textarea{font:inherit;color:inherit}.hidden{display:none!imp
 .tg-fab .tg-sub{font-size:10.5px;font-weight:700;opacity:.92;display:flex;align-items:center;gap:4px}
 .tg-fab .tg-sub .dot-live{width:6px;height:6px;border-radius:50%;background:#86efac;animation:pulse 1s infinite}
 @keyframes tgpulse{0%,100%{box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 0 rgba(34,158,217,.55)}50%{box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 14px rgba(34,158,217,0)}}
+.imgmodal{position:fixed;inset:0;z-index:350;background:rgba(0,0,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+.imgmodal img{max-width:100%;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.imgmodal .hint{color:#cbd5e1;font-size:12px;margin:12px 0;text-align:center;line-height:1.7}
+.imgmodal .row{display:flex;gap:8px}
+.imgmodal button{border:0;border-radius:14px;padding:11px 20px;font-weight:800;cursor:pointer}
+.imgmodal .share{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.imgmodal .close{background:rgba(255,255,255,.12);color:#fff}
 .banker-card{background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(245,158,11,.08));border:1px solid rgba(251,191,36,.5);border-radius:20px;padding:14px;margin-bottom:14px;cursor:pointer;box-shadow:0 8px 26px rgba(251,191,36,.15)}
 .banker-head{display:flex;justify-content:space-between;align-items:center;font-weight:900;color:#fde68a;margin-bottom:8px}
 .banker-prob{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#04120a;padding:4px 14px;border-radius:99px;font-size:13px;font-weight:900}
@@ -176,9 +183,9 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
 <div class="gsteps">
-<div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — أعلى توقع ضماناً من تحليل عميق (سجل + فورم + هجوم/دفاع + أرض + تعلّم).</p></div>
-<div class="gstep"><span>2</span><p id="gS2">فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده، بيظهر بالنسبة بس.</p></div>
-<div class="gstep"><span>3</span><p id="gS3">زرار 📤 على أي مباراة يولّد كارت صورة شيك تشاركه في ثانية.</p></div>
+<div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — أعلى توقع ضماناً من تحليل عميق.</p></div>
+<div class="gstep"><span>2</span><p id="gS2">فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده بالنسبة بس.</p></div>
+<div class="gstep"><span>3</span><p id="gS3">زرار ?? على أي مباراة يفتحلك الصورة جاهزة — اضغط عليها ضغطة مطوّلة واحفظها أو شاركها.</p></div>
 </div>
 <p class="gwarn" id="gWarn">⚠️ التوقعات إحصائية ومدروسة ومتطابقة على كل الأجهزة — لا ضمان مطلق.</p>
 <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -193,6 +200,11 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <button id="suggSend" class="gbtn">إرسال ✉️</button>
 <button id="suggCancel" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button>
 <div id="suggResult"></div></div></div>
+<div id="imgModal" class="imgmodal hidden">
+  <img id="imgModalImg" alt="كارت التوقع"/>
+  <div class="hint">💡 اضغط ضغطة مطوّلة على الصورة لحفظها أو مشاركتها على أي تطبيق</div>
+  <div class="row"><button id="imgShare" class="share">📤 مشاركة النص</button><button id="imgClose" class="close">✖ إغلاق</button></div>
+</div>
 <div id="adminLogin" class="gmodal hidden"><div class="gcard">
 <h2>🔐 <span>دخول إداري</span></h2>
 <p style="color:var(--muted);font-size:13px;margin-bottom:14px">اكتب كلمة السر للوصول للوحة التحكم</p>
@@ -309,7 +321,9 @@ $('#adminLoginBtn').onclick=doAdminLogin;
 $('#adminPass').addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
 $('#ad_close').onclick=()=>$('#adminPanel').classList.add('hidden');
 $('#ad_save').onclick=saveAdminSettings;
-$('#tgFab').addEventListener('click',()=>countTgClick());}
+$('#tgFab').addEventListener('click',()=>countTgClick());
+$('#imgModal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#imgModal').classList.add('hidden');});
+$('#imgClose').onclick=()=>$('#imgModal').classList.add('hidden');}
 function openAdminLogin(){$('#adminPass').value='';$('#adminLoginErr').textContent='';$('#adminLogin').classList.remove('hidden');setTimeout(()=>$('#adminPass').focus(),200);}
 function doAdminLogin(){const p=$('#adminPass').value;const pass=remoteCfg.adminPass||'bebo2026';if(p===pass){$('#adminLogin').classList.add('hidden');openAdminPanel();}else{$('#adminLoginErr').textContent='❌ كلمة السر غلط';}}
 function openAdminPanel(){const tg=remoteCfg.telegram||{};$('#ad_tg_show').checked=tg.enabled!==false;$('#ad_tg_main').value=tg.mainText||'انضم لقناتنا 🔔';$('#ad_tg_sub').value=tg.subText||'+2.4K مشترك';$('#ad_tg_link').value=tg.link||'https://t.me/+P98t0SG-FJVlOWQ8';$('#ad_newpass').value='';$('#ad_status').innerHTML='';$('#adminPanel').classList.remove('hidden');}
@@ -566,7 +580,7 @@ default:return null;}}
 function hashCode(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
-/* ===== توقع اليوم: الأضمن حقيقة (أعلى أمان) — بالنسبة بس ===== */
+/* ===== توقع اليوم: الأضمن بالنسبة بس ===== */
 function getBanker(){
   const today=fmtDate(new Date());
   const pool=state.matches.filter(m=>!isFinished(m)&&!m.live&&fmtDate(new Date(m.date))===today);
@@ -579,7 +593,8 @@ function renderBanker(){const b=getBanker();if(!b)return'';const sh=shieldsFor(b
   return `<div class="banker-card" data-match="${esc(b.m.id)}"><div class="banker-head"><span>🎯 توقع اليوم</span><span class="banker-prob">${b.pred.prob}%</span></div><div class="banker-teams">${esc(b.m.home.name)} × ${esc(b.m.away.name)}</div><div class="banker-pick">${esc(b.name)} — ${esc(b.pred.text)}</div><div class="banker-foot"><span>${esc(b.m.leagueName)} • ${timeOnly(b.m.date)} • ${shieldStr(sh)}</span><button class="fav-btn" data-share="${esc(b.m.id)}">📤</button></div></div>`;}
 function maybeBankerPush(){const b=getBanker();if(!b)return;const today=fmtDate(new Date());if(lsGet('banker_day')===today)return;lsSet('banker_day',today);
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('🎯 توقع اليوم نزل!',{body:`${b.m.home.name} × ${b.m.away.name} — ${b.pred.text} (${b.pred.prob}%)`});}catch(e){}}
-/* ===== مشاركة كارت ===== */
+/* ===== مشاركة الكارت: صورة جاهزة (ضغط مطوّل للحفظ/المشاركة) ===== */
+function copyText(t){try{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('تم نسخ النص ✅');}catch(e){}}
 function shareMatch(m){
   const p=getPrediction(m);const fin=isFinished(m)&&m.scoreHome!=null;
   const df=buildDefs(m,p,fin);df.forEach(d=>d.push(safetyScore(d[0],d[2].prob,p)));df.sort((a,b)=>b[3]-a[3]);const top=df[0];
@@ -595,13 +610,12 @@ function shareMatch(m){
   x.fillStyle='#22c55e';x.font='bold 28px Cairo, sans-serif';x.fillText('التوقع: '+top[1]+' — '+top[2].text,400,318);
   x.fillStyle='#86efac';x.font='bold 24px Cairo, sans-serif';x.fillText('الثقة: '+top[2].prob+'%  '+shieldStr(shieldsFor(top[0],top[2].prob,p)),400,354);
   x.fillStyle='#9aa8c7';x.font='14px Cairo, sans-serif';x.fillText('Egypt Bet — توقعات إحصائية',400,398);
+  const data=c.toDataURL('image/png');
+  $('#imgModalImg').src=data;
+  $('#imgModal').classList.remove('hidden');
+  $('#imgShare').onclick=()=>{const txt=`⚽ ${m.home.name} × ${m.away.name}\n🎯 التوقع: ${top[1]} — ${top[2].text}\n🛡️ الثقة: ${top[2].prob}%\nمن Egypt Bet`;
+    if(navigator.share){navigator.share({title:'Egypt Bet',text:txt}).catch(()=>copyText(txt));}else{copyText(txt);}};
   countShare();
-  c.toBlob(async blob=>{
-    const txt=`⚽ ${m.home.name} × ${m.away.name}\n🎯 التوقع: ${top[1]} — ${top[2].text}\n🛡️ الثقة: ${top[2].prob}%\nمن Egypt Bet`;
-    try{if(blob&&navigator.canShare&&navigator.canShare({files:[new File([blob],'egyptbet.png',{type:'image/png'})]})){await navigator.share({files:[new File([blob],'egyptbet.png',{type:'image/png'})],title:'Egypt Bet',text:txt});return;}}catch(e){}
-    try{if(navigator.share){await navigator.share({title:'Egypt Bet',text:txt});return;}}catch(e){}
-    if(blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='egyptbet.png';a.click();}
-  },'image/png');
 }
 /* ===== التراكمي ===== */
 function accumLegs(){
