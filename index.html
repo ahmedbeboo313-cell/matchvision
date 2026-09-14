@@ -21,13 +21,6 @@ button,input,select,textarea{font:inherit;color:inherit}.hidden{display:none!imp
 .tg-fab .tg-sub{font-size:10.5px;font-weight:700;opacity:.92;display:flex;align-items:center;gap:4px}
 .tg-fab .tg-sub .dot-live{width:6px;height:6px;border-radius:50%;background:#86efac;animation:pulse 1s infinite}
 @keyframes tgpulse{0%,100%{box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 0 rgba(34,158,217,.55)}50%{box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 14px rgba(34,158,217,0)}}
-.imgmodal{position:fixed;inset:0;z-index:350;background:rgba(0,0,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
-.imgmodal img{max-width:100%;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
-.imgmodal .hint{color:#cbd5e1;font-size:12px;margin:12px 0;text-align:center;line-height:1.7}
-.imgmodal .row{display:flex;gap:8px}
-.imgmodal button{border:0;border-radius:14px;padding:11px 20px;font-weight:800;cursor:pointer}
-.imgmodal .share{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
-.imgmodal .close{background:rgba(255,255,255,.12);color:#fff}
 .banker-card{background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(245,158,11,.08));border:1px solid rgba(251,191,36,.5);border-radius:20px;padding:14px;margin-bottom:14px;cursor:pointer;box-shadow:0 8px 26px rgba(251,191,36,.15)}
 .banker-head{display:flex;justify-content:space-between;align-items:center;font-weight:900;color:#fde68a;margin-bottom:8px}
 .banker-prob{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#04120a;padding:4px 14px;border-radius:99px;font-size:13px;font-weight:900}
@@ -185,7 +178,7 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <div class="gsteps">
 <div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — أعلى توقع ضماناً من تحليل عميق.</p></div>
 <div class="gstep"><span>2</span><p id="gS2">فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده بالنسبة بس، وثابت طول اليوم.</p></div>
-<div class="gstep"><span>3</span><p id="gS3">زرار 📤 على أي مباراة ينزّلك الصورة أو يشاركها مباشرة.</p></div>
+<div class="gstep"><span>3</span><p id="gS3">في <b>التراكمي 🎫</b> الأرجل بتتثبت أول ما تتختار ومبتتغيرش لحد ما مبارياتها تخلص.</p></div>
 </div>
 <p class="gwarn" id="gWarn">⚠️ التوقعات إحصائية ومدروسة ومتطابقة على كل الأجهزة — لا ضمان مطلق.</p>
 <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
@@ -200,11 +193,6 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <button id="suggSend" class="gbtn">إرسال ✉️</button>
 <button id="suggCancel" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button>
 <div id="suggResult"></div></div></div>
-<div id="imgModal" class="imgmodal hidden">
-  <img id="imgModalImg" alt="كارت التوقع"/>
-  <div class="hint">💡 اضغط ضغطة مطوّلة على الصورة لحفظها أو مشاركتها على أي تطبيق</div>
-  <div class="row"><button id="imgShare" class="share">📤 مشاركة النص</button><button id="imgClose" class="close">✖ إغلاق</button></div>
-</div>
 <div id="adminLogin" class="gmodal hidden"><div class="gcard">
 <h2>🔐 <span>دخول إداري</span></h2>
 <p style="color:var(--muted);font-size:13px;margin-bottom:14px">اكتب كلمة السر للوصول للوحة التحكم</p>
@@ -300,7 +288,6 @@ setInterval(()=>{if(!document.hidden)beat();},30000);
 function countBetView(){const d=new Date().toISOString().slice(0,10);db.collection('counters').doc('betViews').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});}
 function countMatchView(m){db.collection('matchViews').doc(matchKey(m)).set({count:FIELD_INC,title:m.home.name+' × '+m.away.name,ts:Date.now()},{merge:true}).catch(()=>{});}
 function countTgClick(){const d=new Date().toISOString().slice(0,10);db.collection('counters').doc('tgClicks').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});db.collection('daily').doc(d).set({tgClicks:FIELD_INC},{merge:true}).catch(()=>{});}
-function countShare(){const d=new Date().toISOString().slice(0,10);db.collection('counters').doc('shares').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});db.collection('daily').doc(d).set({shares:FIELD_INC},{merge:true}).catch(()=>{});}
 function reportHealth(ok){const n=Date.now();if(n-(+ssGet('eb_h')||0)<300000)return;ssSet('eb_h',String(n));db.collection('counters').doc('sourcesHealth').set({status:ok?'ok':'down',ts:n},{merge:true}).catch(()=>{});}
 let remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],guide:{},inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{},telegram:{enabled:true,mainText:'انضم لقناتنا 🔔',subText:'+2.4K مشترك',link:'https://t.me/+P98t0SG-FJVlOWQ8'},adminPass:'bebo2026'};
 let lastInboxShow=0;
@@ -319,10 +306,7 @@ $('#adminCancel').onclick=()=>$('#adminLogin').classList.add('hidden');
 $('#adminLoginBtn').onclick=doAdminLogin;
 $('#adminPass').addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
 $('#ad_close').onclick=()=>$('#adminPanel').classList.add('hidden');
-$('#ad_save').onclick=saveAdminSettings;
-$('#tgFab').addEventListener('click',()=>countTgClick());
-$('#imgModal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#imgModal').classList.add('hidden');});
-$('#imgClose').onclick=()=>$('#imgModal').classList.add('hidden');}
+$('#ad_save').onclick=saveAdminSettings;}
 function openAdminLogin(){$('#adminPass').value='';$('#adminLoginErr').textContent='';$('#adminLogin').classList.remove('hidden');setTimeout(()=>$('#adminPass').focus(),200);}
 function doAdminLogin(){const p=$('#adminPass').value;const pass=remoteCfg.adminPass||'bebo2026';if(p===pass){$('#adminLogin').classList.add('hidden');openAdminPanel();}else{$('#adminLoginErr').textContent='❌ كلمة السر غلط';}}
 function openAdminPanel(){const tg=remoteCfg.telegram||{};$('#ad_tg_show').checked=tg.enabled!==false;$('#ad_tg_main').value=tg.mainText||'انضم لقناتنا 🔔';$('#ad_tg_link').value=tg.link||'https://t.me/+P98t0SG-FJVlOWQ8';$('#ad_newpass').value='';$('#ad_status').innerHTML='';$('#adminPanel').classList.remove('hidden');}
@@ -333,6 +317,7 @@ try{await db.collection('config').doc('settings').set(newCfg,{merge:true});remot
 const LEAGUES=[
 {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},{slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},{slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},{slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},{slug:'mar.1',name:'الدوري المغربي',em:'🇲',home:1.35,away:1.00},{slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},{slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},{slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},{slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},{slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},{slug:'caf.confederation',name:'الكونفدرالية',em:'🌍',home:1.30,away:0.95},{slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},{slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},{slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},{slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},{slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},{slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},{slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},{slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},{slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},{slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},{slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},{slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},{slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},{slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},{slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},{slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},{slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},{slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},{slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},{slug:'cze.1',name:'الدوري التشيكي',em:'🇨',home:1.50,away:1.20},{slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},{slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},{slug:'uefa.europa.conf',name:'دوري المؤتمر',em:'🎖️',home:1.58,away:1.32},{slug:'uefa.nations',name:'دوري الأمم',em:'🇪',home:1.45,away:1.15},{slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},{slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},{slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},{slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},{slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},{slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},{slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},{slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},{slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},{slug:'conmebol.libertadores',name:'ليبرتادوريس',em:'🌎',home:1.40,away:1.10},{slug:'conmebol.sudamericana',name:'سودامريكانا',em:'🌎',home:1.35,away:1.05},{slug:'concacaf.champions',name:'أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},{slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},{slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},{slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},{slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},{slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},{slug:'afc.champions',name:'أبطال آسيا',em:'🌏',home:1.45,away:1.10},{slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},{slug:'fifa.friendly',name:'وديات دولية',em:'🤝',home:1.45,away:1.15}];
 const CORE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','ned.1','por.1','tur.1','bra.1','arg.1','sco.1','bel.1'];
+const LIVE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','uefa.europa.conf','ned.1','por.1','tur.1','sco.1','bel.1','gre.1','swi.1','den.1','nor.1','swe.1','pol.1','aut.1','cro.1','ukr.1','cze.1','bra.1','arg.1','mex.1','usa.1','col.1','chi.1','uru.1','ecu.1','per.1','jpn.1','kor.1','chn.1','aus.1','ind.1','uae.1','qat.1','mar.1','tun.1','alg.1','rsa.1','nga.1','caf.champions','caf.confederation','afc.champions','conmebol.libertadores','conmebol.sudamericana','concacaf.champions','uefa.nations','fifa.world','fifa.friendly'];
 const AMER_SLUGS=['usa.1','mex.1','bra.1','arg.1'];
 const TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي','4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
 const DEF_LEAGUE={home:1.50,away:1.20};
@@ -356,16 +341,23 @@ setInterval(()=>{if(isLoading&&Date.now()-loadStartTs>20000){isLoading=false;loa
 function maybeShowGuide(){if(remoteCfg.disableGuide)return;const t=fmtDate(new Date());if(lsGet('mv_guide_day')===t)return;$('#guideModal').classList.remove('hidden');}
 function soonKickoff(m){const d=new Date(m.date);if(isNaN(d)||m.live||isFinished(m))return false;const df=d-Date.now();return df>0&&df<1200000;}
 function tick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;evalAccum();if(state.view==='accum')renderAccum();if(state.mode==='finished'){if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true);else lastCheckTs=Date.now();return;}const s=Date.now()-lastLoadTs;const u=state.matches.some(m=>m.live||soonKickoff(m));if(s>=(u?25000:45000))loadMatches(true);else lastCheckTs=Date.now();}
-function fastTick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;if(state.mode==='finished')return;const hl=state.matches.some(m=>m.live);const hs=state.matches.some(m=>soonKickoff(m));if(!hl&&!hs)return;if(Date.now()-lastFastTs<5000||pollingFast)return;lastFastTs=Date.now();liveFastPoll(hs);}
-function syncLivePool(it){it.forEach(m=>{if(m.live)livePoolMap.set(m.id,m);else if(livePoolMap.has(m.id))livePoolMap.delete(m.id);});}
-async function liveFastPoll(inc){pollingFast=true;try{
-const sl=[...new Set(state.matches.filter(m=>m.live||(inc&&soonKickoff(m))).map(m=>m.leagueSlug))];if(!sl.length)return;
-const td=fmtDate(new Date()),ys=fmtDate(addDays(new Date(),-1)),rq=[];
-sl.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(!l)return;rq.push(fetchESPN(l,td.replace(/-/g,'')));rq.push(fetchESPN(l,ys.replace(/-/g,'')));});
-rq.push(fetchTSDBLive());rq.push(fetchTSDBDay(td));
-let it=await fetchSet(rq);if(!it.length){await new Promise(r=>setTimeout(r,1500));it=await fetchSet(rq);}
+/* ===== مسح لايف شامل كل 10 ثواني في وضع اللايف (يكتشف أي ماتش جديد يبدأ تلقائي) ===== */
+function fastTick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;if(state.mode==='finished')return;
+const isLiveMode=(state.mode==='live');
+const hl=state.matches.some(m=>m.live);const hs=state.matches.some(m=>soonKickoff(m));
+if(!isLiveMode&&!hl&&!hs)return;
+const interval=isLiveMode?10000:5000;
+if(Date.now()-lastFastTs<interval||pollingFast)return;
+lastFastTs=Date.now();liveFastPoll();}
+async function liveFastPoll(){pollingFast=true;try{
+const td=fmtDate(new Date());
+const rq=[fetchTSDBLive(),fetchTSDBDay(td)];
+LIVE_SLUGS.forEach(sl=>{const l=LEAGUES.find(x=>x.slug===sl);if(l)rq.push(fetchESPN(l,td.replace(/-/g,'')));});
+let it=await fetchSet(rq);
+if(!it.length){await new Promise(r=>setTimeout(r,1500));it=await fetchSet(rq);}
 if(it.length){liveFailStreak=0;syncLivePool(it);mergeLive(it);}else{liveFailStreak++;if(liveFailStreak>=3){liveFailStreak=0;loadMatches(true);}}
 }catch(e){liveFailStreak++;if(liveFailStreak>=3){liveFailStreak=0;loadMatches(true);}}finally{pollingFast=false;showInbox(false);}}
+function syncLivePool(it){it.forEach(m=>{if(m.live)livePoolMap.set(m.id,m);else if(livePoolMap.has(m.id))livePoolMap.delete(m.id);});}
 function mergeLive(it){const sy=window.scrollY;let ch=false;
 it.forEach(nm=>{const dn=(nm.statusCompleted||nm.statusState==='post');
 if(dn&&nm.scoreHome!=null){finishedMap.set(nm.id,nm);livePoolMap.delete(nm.id);}
@@ -397,7 +389,6 @@ leagueSelect.onchange=()=>{state.league=leagueSelect.value;loadMatches();};
 search.oninput=()=>{state.query=search.value;renderCurrent();};
 document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{showView(b.dataset.view);window.scrollTo({top:0,behavior:'auto'});});
 document.addEventListener('click',e=>{
-const shr=e.target.closest('[data-share]');if(shr){e.stopPropagation();const mm=state.matches.find(x=>x.id===shr.dataset.share);if(mm)shareMatch(mm);return;}
 const f=e.target.closest('[data-fav]');if(f){e.stopPropagation();toggleFav(f.dataset.fav);return;}
 const lg=e.target.closest('[data-league]');if(lg){state.league=lg.dataset.league;leagueSelect.value=state.league;showView('home');loadMatches();return;}
 const mc=e.target.closest('[data-match]');if(mc){openDetails(mc.dataset.match);return;}
@@ -467,7 +458,7 @@ async function fetchSet(rq){const r=await Promise.allSettled(rq);let i=[];r.forE
 function buildRequests(){const td=fmtDate(new Date()),ys=fmtDate(addDays(new Date(),-1)),rq=[];
 const am=state.league==='all'?AMER_SLUGS:AMER_SLUGS.filter(s=>s===state.league);
 const addAm=()=>am.forEach(s=>{const l=LEAGUES.find(x=>x.slug===s);if(l)rq.push(fetchESPN(l,ys.replace(/-/g,'')));});
-if(state.mode==='live'){const PRI=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','ned.1','por.1','tur.1','bra.1','arg.1'];PRI.forEach(sl=>{const l=LEAGUES.find(x=>x.slug===sl);if(l)rq.push(fetchESPN(l,td.replace(/-/g,'')));});addAm();rq.push(fetchTSDBLive());rq.push(fetchTSDBDay(td));}
+if(state.mode==='live'){LIVE_SLUGS.forEach(sl=>{const l=LEAGUES.find(x=>x.slug===sl);if(l)rq.push(fetchESPN(l,td.replace(/-/g,'')));});addAm();rq.push(fetchTSDBLive());rq.push(fetchTSDBDay(td));}
 else{const sel=activeLeagues();sel.forEach(l=>rq.push(fetchESPN(l,state.date.replace(/-/g,''))));rq.push(fetchTSDBDay(state.date));addAm();
 if(state.date!==td){const co=state.league==='all'?LEAGUES.filter(l=>CORE_SLUGS.includes(l.slug)):sel;co.forEach(l=>rq.push(fetchESPN(l,td.replace(/-/g,''))));rq.push(fetchTSDBDay(td));}}
 return rq;}
@@ -575,7 +566,6 @@ default:return null;}}
 function hashCode(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
-/* ===== توقع اليوم: ثابت طول اليوم ===== */
 function getBanker(){
   const today=fmtDate(new Date());
   const saved=lsGet('eb_banker_saved');
@@ -599,50 +589,9 @@ function getBanker(){
   if(best)lsSet('eb_banker_saved',{day:today,mid:best.m.id,mk:best.mkt});
   return best;}
 function renderBanker(){const b=getBanker();if(!b)return'';const sh=shieldsFor(b.mkt,b.pred.prob,b.p);
-  return `<div class="banker-card" data-match="${esc(b.m.id)}"><div class="banker-head"><span>🎯 توقع اليوم</span><span class="banker-prob">${b.pred.prob}%</span></div><div class="banker-teams">${esc(b.m.home.name)} × ${esc(b.m.away.name)}</div><div class="banker-pick">${esc(b.name)} — ${esc(b.pred.text)}</div><div class="banker-foot"><span>${esc(b.m.leagueName)} • ${timeOnly(b.m.date)} • ${shieldStr(sh)}</span><button class="fav-btn" data-share="${esc(b.m.id)}">📤</button></div></div>`;}
+  return `<div class="banker-card" data-match="${esc(b.m.id)}"><div class="banker-head"><span>🎯 توقع اليوم</span><span class="banker-prob">${b.pred.prob}%</span></div><div class="banker-teams">${esc(b.m.home.name)} × ${esc(b.m.away.name)}</div><div class="banker-pick">${esc(b.name)} — ${esc(b.pred.text)}</div><div class="banker-foot"><span>${esc(b.m.leagueName)} • ${timeOnly(b.m.date)} • ${shieldStr(sh)}</span></div></div>`;}
 function maybeBankerPush(){const b=getBanker();if(!b)return;const today=fmtDate(new Date());if(lsGet('banker_day')===today)return;lsSet('banker_day',today);
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('🎯 توقع اليوم نزل!',{body:`${b.m.home.name} × ${b.m.away.name} — ${b.pred.text} (${b.pred.prob}%)`});}catch(e){}}
-/* ===== مشاركة/تنزيل الصورة ===== */
-function copyText(t){try{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('تم نسخ النص ✅');}catch(e){}}
-function forceDownload(blob,txt){
-  try{
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download='egypt-bet-'+Date.now()+'.png';a.style.display='none';
-    document.body.appendChild(a);a.click();
-    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},3000);
-  }catch(e){copyText(txt);}
-}
-function shareMatch(m){
-  const p=getPrediction(m);const fin=isFinished(m)&&m.scoreHome!=null;
-  const df=buildDefs(m,p,fin);df.forEach(d=>d.push(safetyScore(d[0],d[2].prob,p)));df.sort((a,b)=>b[3]-a[3]);const top=df[0];
-  const c=document.createElement('canvas');c.width=800;c.height=420;const x=c.getContext('2d');
-  const g=x.createLinearGradient(0,0,0,420);g.addColorStop(0,'#0b1220');g.addColorStop(1,'#050810');x.fillStyle=g;x.fillRect(0,0,800,420);
-  x.fillStyle='#22c55e';x.fillRect(0,0,800,8);
-  x.textAlign='right';x.fillStyle='#fbbf24';x.font='bold 30px Cairo, sans-serif';x.fillText('Egypt Bet',760,64);
-  x.fillStyle='#9aa8c7';x.font='16px Cairo, sans-serif';x.fillText('توقعات ذكية مبنية على الإحصاء',760,90);
-  x.textAlign='center';x.fillStyle='#7dd3fc';x.font='bold 20px Cairo, sans-serif';x.fillText(m.leagueName,400,140);
-  x.fillStyle='#edf2ff';x.font='bold 34px Cairo, sans-serif';x.fillText(m.home.name,400,190);
-  x.fillStyle='#9aa8c7';x.font='bold 22px Cairo, sans-serif';x.fillText('ضد',400,222);
-  x.fillStyle='#edf2ff';x.font='bold 34px Cairo, sans-serif';x.fillText(m.away.name,400,262);
-  x.fillStyle='#22c55e';x.font='bold 28px Cairo, sans-serif';x.fillText('التوقع: '+top[1]+' — '+top[2].text,400,318);
-  x.fillStyle='#86efac';x.font='bold 24px Cairo, sans-serif';x.fillText('الثقة: '+top[2].prob+'%  '+shieldStr(shieldsFor(top[0],top[2].prob,p)),400,354);
-  x.fillStyle='#9aa8c7';x.font='14px Cairo, sans-serif';x.fillText('Egypt Bet — توقعات إحصائية',400,398);
-  const txt=`⚽ ${m.home.name} × ${m.away.name}\n🎯 التوقع: ${top[1]} — ${top[2].text}\n🛡️ الثقة: ${top[2].prob}%\nمن Egypt Bet`;
-  c.toBlob(function(blob){
-    if(!blob){copyText(txt);return;}
-    try{
-      const file=new File([blob],'egypt-bet.png',{type:'image/png'});
-      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-        navigator.share({title:'Egypt Bet',text:txt,files:[file]}).catch(function(){forceDownload(blob,txt);});
-        countShare();return;
-      }
-    }catch(e){}
-    forceDownload(blob,txt);
-    countShare();
-  },'image/png');
-}
-/* ===== التراكمي ===== */
 function accumLegs(){
 const pool=todayPool.filter(m=>m.live||isUpcoming(m));
 const mkB=m=>{const p=getPrediction(m);return{m,p,best:p.btts,bestKey:'btts'};};
@@ -735,7 +684,7 @@ const bH=hOf(best);const bSh=shieldsFor(best[0],best[2].prob,p);
 const sb=`<div class="safe-box"><div class="safe-head"><span>${best[1]}</span><span class="safe-badge">الأضمن 🛡️ ${shieldStr(bSh)}</span></div><div class="safe-val ${fin?(bH===true?'good':bH===false?'hot':''):best[2].tone}">${fin?best[2].text+(bH===true?' ✔':bH===false?' ✘':''):best[2].text}</div><div class="meter big"><span style="width:${best[2].prob}%"></span></div><div class="prob">${best[2].prob}% • ⚔️ هجوم (1) ${p.attHp}% × (2) ${p.attAp}%</div></div>`;
 const chps=others.map(d=>{const h=hOf(d);return`<span class="schip ${fin?(h===true?'hit':h===false?'miss':''):''}">${fin?d[2].text+(h===true?' ✔':h===false?' ✘':''):d[2].text} <span class="sp">${d[2].prob}%</span></span>`;}).join('');
 const ow=others.length?`<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">${chps}</div>`:'';
-const ft=`<div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.learnN?'مدروس من '+p.learnN+' مباراة':'تحليل أساسي'}</span><button class="fav-btn" data-share="${esc(m.id)}" style="margin-inline-start:auto">📤</button></div>`;
+const ft=`<div class="match-foot"><span>📊 تقلب: ${['منخفض','متوسط','عالي'][p.volIdx||0]}</span><span>🧠 ${p.learnN?'مدروس من '+p.learnN+' مباراة':'تحليل أساسي'}</span></div>`;
 return sb+ow+ft;}
 function matchCard(m){const p=getPrediction(m),fv=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
 const hr=m.live?`<span class="live-pill"><span class="live-dot"></span>مباشر ${esc(m.minute||'')}</span>`:fin?'<span class="done-pill">انتهت</span>':`<span class="date-text">${fmtDT(m.date)}</span>`;
