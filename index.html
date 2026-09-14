@@ -13,6 +13,17 @@ body{font-family:'Cairo',sans-serif;color:var(--text);background:radial-gradient
 button,input,select,textarea{font:inherit;color:inherit}.hidden{display:none!important}
 #toTop{position:fixed;right:14px;bottom:96px;z-index:40;width:48px;height:48px;border-radius:50%;border:1px solid rgba(34,197,94,.4);background:rgba(5,8,16,.88);color:var(--accent);font-size:20px;font-weight:900;display:grid;place-items:center;cursor:pointer;opacity:0;pointer-events:none;transition:.25s}
 #toTop.show{opacity:1;pointer-events:auto}
+
+/* ===== زرار التليجرام العائم ===== */
+.tg-fab{position:fixed;left:14px;bottom:96px;z-index:45;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#2AABEE,#229ED9);color:#fff;border-radius:999px;padding:12px 20px 12px 14px;text-decoration:none;font-weight:800;font-size:13.5px;box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 0 rgba(34,158,217,.6);animation:tgpulse 2.2s infinite;transition:transform .2s}
+.tg-fab:active{transform:scale(.96)}
+.tg-fab svg{width:24px;height:24px;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.tg-fab .tg-txt{display:flex;flex-direction:column;line-height:1.15;text-align:right}
+.tg-fab .tg-main{font-size:13.5px;font-weight:900}
+.tg-fab .tg-sub{font-size:10.5px;font-weight:700;opacity:.92;display:flex;align-items:center;gap:4px}
+.tg-fab .tg-sub .dot-live{width:6px;height:6px;border-radius:50%;background:#86efac;animation:pulse 1s infinite}
+@keyframes tgpulse{0%,100%{box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 0 rgba(34,158,217,.55)}50%{box-shadow:0 12px 36px rgba(34,158,217,.55),0 0 0 14px rgba(34,158,217,0)}}
+
 .kick{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:200;width:min(560px,calc(100% - 20px));background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:12px;border-radius:18px;font-size:13px;font-weight:800;text-align:center}
 .banner{margin:0 0 10px;padding:12px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;text-align:center}
 .day-head{margin:16px 4px 8px;font-size:13px;font-weight:800;color:var(--accent);display:flex;gap:8px;align-items:center}.day-head:after{content:"";flex:1;height:1px;background:var(--line)}
@@ -74,7 +85,7 @@ button,input,select,textarea{font:inherit;color:inherit}.hidden{display:none!imp
 @keyframes load{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
 .app{width:min(580px,100%);margin:0 auto;padding:14px 14px 100px}
 .topbar{position:sticky;top:10px;z-index:20;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding:12px;background:rgba(5,8,16,.78);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(16px)}
-.brandrow{display:flex;align-items:center;gap:10px}.brandrow svg{width:40px;height:40px}
+.brandrow{display:flex;align-items:center;gap:10px;cursor:pointer}.brandrow svg{width:40px;height:40px}
 .brand{font-size:17px;font-weight:800}.brand span{color:#fbbf24}.sub{color:var(--muted);font-size:11px}
 .top-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
 .badge{padding:7px 9px;border-radius:999px;font-size:11px;font-weight:700;text-align:center}
@@ -131,6 +142,23 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .nav-item.active{background:rgba(34,197,94,.12);color:#e8f8ee}.nav-item small{font-size:10px;font-weight:800}
 .nic{display:grid;place-items:center;height:20px;font-size:16px}.nic svg{width:20px;height:20px}
 .success-msg{padding:14px;border-radius:14px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;text-align:center;font-weight:700;margin:10px 0}
+
+/* ===== لوحة التحكم الإدارية ===== */
+.admin-panel{position:fixed;inset:0;z-index:400;background:rgba(3,6,12,.92);backdrop-filter:blur(12px);overflow-y:auto;padding:18px}
+.admin-card{margin:20px auto;width:min(460px,100%);background:linear-gradient(180deg,#0c1526,#070d18);border:1px solid rgba(251,191,36,.4);border-radius:26px;padding:22px}
+.admin-card h2{font-size:20px;margin-bottom:14px;font-weight:900;color:#fbbf24;text-align:center}
+.admin-card .ad-row{margin-bottom:12px}
+.admin-card label{display:block;margin-bottom:5px;color:var(--muted);font-size:12px;font-weight:700}
+.admin-card input,.admin-card textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;padding:11px;color:var(--text);font-family:inherit}
+.admin-card textarea{min-height:70px;resize:vertical}
+.ad-btns{display:grid;gap:8px;margin-top:14px}
+.ad-btn{border:0;border-radius:14px;padding:12px;font-weight:800;cursor:pointer;font-size:14px}
+.ad-btn.save{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.ad-btn.close{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}
+.ad-status{padding:10px;border-radius:12px;margin-top:10px;font-size:12px;text-align:center;font-weight:700}
+.ad-status.ok{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+.ad-status.err{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+
 @media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}}
 </style>
 </head>
@@ -140,6 +168,16 @@ window.addEventListener('error',function(e){try{window.__ebErr=String(e.message|
 setTimeout(function(){try{var s=document.getElementById('splash'),a=document.getElementById('appShell');if(s&&!s.classList.contains('hidden')){s.classList.add('fade');setTimeout(function(){s.classList.add('hidden');if(a)a.classList.remove('hidden');if(window.__ebErr){var em=document.getElementById('homeEmpty');if(em){em.hidden=false;em.textContent='⚠️ خطأ: '+window.__ebErr;}}},500);}}catch(e){}},7000);
 </script>
 <div id="kickBanner" class="kick hidden"></div>
+
+<!-- زرار التليجرام العائم -->
+<a id="tgFab" class="tg-fab hidden" href="https://t.me/+P98t0SG-FJVlOWQ8" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+  <span class="tg-txt">
+    <span class="tg-main" id="tgFabMain">انضم لقناتنا 🔔</span>
+    <span class="tg-sub" id="tgFabSub"><span class="dot-live"></span><span id="tgFabCount">+2.4K مشترك</span></span>
+  </span>
+</a>
+
 <div id="maintenanceScreen" class="maintenance hidden"><div><h1>🔧 وضع الصيانة</h1><p id="maintenanceMsg">نعمل على تحديثات، هنرجع قريباً.</p><p style="margin-top:20px;color:#fbbf24">— فريق Egypt Bet</p></div></div>
 <div id="guideModal" class="gmodal hidden"><div class="gcard">
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
@@ -162,13 +200,71 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <button id="suggSend" class="gbtn">إرسال ✉️</button>
 <button id="suggCancel" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button>
 <div id="suggResult"></div></div></div>
+
+<!-- لوحة التحكم الإدارية -->
+<div id="adminLogin" class="gmodal hidden"><div class="gcard">
+<h2>🔐 <span>دخول إداري</span></h2>
+<p style="color:var(--muted);font-size:13px;margin-bottom:14px">اكتب كلمة السر للوصول للوحة التحكم</p>
+<input id="adminPass" type="password" placeholder="كلمة السر" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:10px;color:var(--text);text-align:center;letter-spacing:3px">
+<button id="adminLoginBtn" class="gbtn">دخول 🔓</button>
+<button id="adminCancel" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button>
+<div id="adminLoginErr" style="color:#fca5a5;margin-top:10px;font-size:12px;text-align:center"></div>
+</div></div>
+
+<div id="adminPanel" class="admin-panel hidden">
+<div class="admin-card">
+<h2>🎛️ لوحة التحكم الإدارية</h2>
+
+<div style="background:rgba(34,158,217,.1);border:1px solid rgba(34,158,217,.3);border-radius:16px;padding:14px;margin-bottom:14px">
+<div style="font-weight:900;color:#7dd3fc;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+إعدادات زرار التليجرام
+</div>
+
+<div class="setting-row" style="margin-bottom:10px">
+<span>إظهار الزرار للمستخدمين</span>
+<label class="switch"><input id="ad_tg_show" type="checkbox"><span class="slider"></span></label>
+</div>
+
+<div class="ad-row">
+<label>النص الرئيسي</label>
+<input id="ad_tg_main" type="text" placeholder="انضم لقناتنا 🔔" maxlength="40">
+</div>
+
+<div class="ad-row">
+<label>النص الفرعي (جنب النقطة الخضراء)</label>
+<input id="ad_tg_sub" type="text" placeholder="+2.4K مشترك" maxlength="30">
+</div>
+
+<div class="ad-row">
+<label>اللينك</label>
+<input id="ad_tg_link" type="text" placeholder="https://t.me/..." maxlength="200">
+</div>
+</div>
+
+<div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:16px;padding:14px;margin-bottom:14px">
+<div style="font-weight:900;color:#fde68a;margin-bottom:10px">🔒 تغيير كلمة السر</div>
+<div class="ad-row">
+<label>كلمة السر الجديدة</label>
+<input id="ad_newpass" type="password" placeholder="سيبها فاضية لو مش عايز تغيرها" maxlength="40">
+</div>
+</div>
+
+<div class="ad-btns">
+<button id="ad_save" class="ad-btn save">💾 حفظ التغييرات</button>
+<button id="ad_close" class="ad-btn close">إغلاق</button>
+</div>
+<div id="ad_status"></div>
+</div>
+</div>
+
 <div id="splash" class="splash"><div class="splash-box">
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgA)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <h1>Egypt <span>Bet</span></h1><p>توقعات ذكية مبنية على إحصائيات حقيقية</p><div class="splash-bar"><span></span></div></div></div>
 <div id="appShell" class="app hidden">
 <div id="bannerTop" class="banner hidden"><span id="bannerText"></span></div>
 <header class="topbar">
-<div class="brandrow"><svg viewBox="0 0 64 64"><defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgC)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/></svg>
+<div class="brandrow" id="brandRow"><svg viewBox="0 0 64 64"><defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgC)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <div><div class="brand">Egypt <span>Bet</span></div><div class="sub">قادمة • لايف • منتهية</div></div></div>
 <div class="top-actions"><span id="sourceBadge" class="badge loading">جاري المصادر...</span><button id="bellBtn" class="icon-btn">🔔<span id="bellBadge" class="count hidden">0</span></button><button id="refreshBtn" class="icon-btn">⟳</button></div>
 </header>
@@ -231,16 +327,89 @@ function beat(){db.collection('presence').doc(SID).set({lastSeen:Date.now()},{me
 setInterval(()=>{if(!document.hidden)beat();},30000);
 function countBetView(){const d=new Date().toISOString().slice(0,10);db.collection('counters').doc('betViews').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});}
 function countMatchView(m){db.collection('matchViews').doc(matchKey(m)).set({count:FIELD_INC,title:m.home.name+' × '+m.away.name,ts:Date.now()},{merge:true}).catch(()=>{});}
+function countTgClick(){const d=new Date().toISOString().slice(0,10);db.collection('counters').doc('tgClicks').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(()=>{});db.collection('daily').doc(d).set({tgClicks:FIELD_INC},{merge:true}).catch(()=>{});}
 function reportHealth(ok){const n=Date.now();if(n-(+ssGet('eb_h')||0)<300000)return;ssSet('eb_h',String(n));db.collection('counters').doc('sourcesHealth').set({status:ok?'ok':'down',ts:n},{merge:true}).catch(()=>{});}
-let remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],guide:{},inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{}};
+let remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],guide:{},inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{},telegram:{enabled:true,mainText:'انضم لقناتنا 🔔',subText:'+2.4K مشترك',link:'https://t.me/+P98t0SG-FJVlOWQ8'},adminPass:'bebo2026'};
 let lastInboxShow=0;
 function showInbox(f){if(!(remoteCfg.inbox&&remoteCfg.inbox.active&&(remoteCfg.inbox.text||'').trim()))return;const m=$('#inboxModal');if(!m.classList.contains('hidden'))return;const n=Date.now();if(!f&&n-lastInboxShow<30000)return;lastInboxShow=n;$('#inboxText').textContent=remoteCfg.inbox.text;m.classList.remove('hidden');}
-function loadRemoteConfig(){db.collection('config').doc('settings').get().then(d=>{if(d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();}}).catch(()=>{});}
+
+/* ===== تطبيق زرار التليجرام ===== */
+function applyTelegram(){
+  const fab=$('#tgFab'),tg=remoteCfg.telegram||{};
+  if(!fab)return;
+  if(tg.enabled===false||!tg.link){fab.classList.add('hidden');return;}
+  fab.href=tg.link;
+  $('#tgFabMain').textContent=tg.mainText||'انضم لقناتنا 🔔';
+  $('#tgFabSub').innerHTML='<span class="dot-live"></span><span>'+(tg.subText||'+2.4K مشترك')+'</span>';
+  fab.classList.remove('hidden');
+}
+
+function loadRemoteConfig(){db.collection('config').doc('settings').get().then(d=>{if(d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();applyTelegram();}else{db.collection('config').doc('settings').set(remoteCfg).catch(()=>{});applyTelegram();}}).catch(()=>{});}
 function applyRemoteConfig(){window.EB_EXTRAS=remoteCfg.extras||{};if(remoteCfg.maintenance){$('#maintenanceScreen').classList.remove('hidden');if(remoteCfg.maintenanceMsg)$('#maintenanceMsg').textContent=remoteCfg.maintenanceMsg;$('#splash').classList.add('fade');setTimeout(()=>$('#splash').classList.add('hidden'),500);return;}if(remoteCfg.banner){$('#bannerText').textContent=remoteCfg.banner;$('#bannerTop').classList.remove('hidden');}if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){remoteCfg.disabledMarkets.forEach(k=>state.markets[k]=false);syncMk();}showInbox(true);if(remoteCfg.vip)$('#vipRow').classList.remove('hidden');if(remoteCfg.support&&remoteCfg.support.enabled){const b=$('#supportBtn');b.textContent=remoteCfg.support.text||'💚 ادعمنا';b.classList.remove('hidden');b.onclick=()=>{try{window.open(remoteCfg.support.link,'_blank');}catch(e){}};}}
 function syncMk(){const g=$('#mkGoals');if(!g)return;g.checked=state.markets.goals;const s=$('#mkSafe');if(s)s.checked=state.markets.safe;const u1=$('#mkU15');if(u1)u1.checked=state.markets.u15;const u2=$('#mkU25');if(u2)u2.checked=state.markets.u25;}
 let suggRating=0;
 document.querySelectorAll('#suggStars .star').forEach(s=>{s.addEventListener('click',()=>{suggRating=+s.dataset.v;document.querySelectorAll('#suggStars .star').forEach((x,i)=>x.classList.toggle('active',i<suggRating));});});
 async function sendSuggestion(){const n=($('#suggName').value||'').trim()||'مجهول';const m=($('#suggMsg').value||'').trim();if(!m){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);color:#fca5a5">اكتب رسالتك!</div>';return;}$('#suggSend').disabled=true;try{await db.collection('suggestions').add({name:n,rating:suggRating,message:m,createdAt:Date.now(),status:'pending'});$('#suggResult').innerHTML='<div class="success-msg">✅ وصل!</div>';setTimeout(()=>{$('#suggModal').classList.add('hidden');$('#suggMsg').value='';suggRating=0;$('#suggResult').innerHTML='';$('#suggSend').disabled=false;},1500);}catch(e){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);color:#fca5a5">فشل الإرسال</div>';$('#suggSend').disabled=false;}}
+
+/* ===== لوحة التحكم الإدارية ===== */
+let brandTaps=0,brandTapTimer=null;
+function setupAdmin(){
+  const brand=$('#brandRow');
+  if(!brand)return;
+  brand.addEventListener('click',()=>{
+    brandTaps++;
+    clearTimeout(brandTapTimer);
+    brandTapTimer=setTimeout(()=>{brandTaps=0;},1200);
+    if(brandTaps>=3){brandTaps=0;openAdminLogin();}
+  });
+  $('#adminCancel').onclick=()=>$('#adminLogin').classList.add('hidden');
+  $('#adminLoginBtn').onclick=doAdminLogin;
+  $('#adminPass').addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
+  $('#ad_close').onclick=()=>$('#adminPanel').classList.add('hidden');
+  $('#ad_save').onclick=saveAdminSettings;
+  $('#tgFab').addEventListener('click',()=>countTgClick());
+}
+function openAdminLogin(){
+  $('#adminPass').value='';$('#adminLoginErr').textContent='';
+  $('#adminLogin').classList.remove('hidden');
+  setTimeout(()=>$('#adminPass').focus(),200);
+}
+function doAdminLogin(){
+  const p=$('#adminPass').value;
+  const pass=remoteCfg.adminPass||'bebo2026';
+  if(p===pass){$('#adminLogin').classList.add('hidden');openAdminPanel();}
+  else{$('#adminLoginErr').textContent='❌ كلمة السر غلط';}
+}
+function openAdminPanel(){
+  const tg=remoteCfg.telegram||{};
+  $('#ad_tg_show').checked=tg.enabled!==false;
+  $('#ad_tg_main').value=tg.mainText||'انضم لقناتنا 🔔';
+  $('#ad_tg_sub').value=tg.subText||'+2.4K مشترك';
+  $('#ad_tg_link').value=tg.link||'https://t.me/+P98t0SG-FJVlOWQ8';
+  $('#ad_newpass').value='';
+  $('#ad_status').innerHTML='';
+  $('#adminPanel').classList.remove('hidden');
+}
+async function saveAdminSettings(){
+  const st=$('#ad_status');st.className='ad-status';st.textContent='جاري الحفظ...';
+  const newCfg={telegram:{
+    enabled:$('#ad_tg_show').checked,
+    mainText:$('#ad_tg_main').value.trim()||'انضم لقناتنا 🔔',
+    subText:$('#ad_tg_sub').value.trim()||'+2.4K مشترك',
+    link:$('#ad_tg_link').value.trim()||'https://t.me/+P98t0SG-FJVlOWQ8'
+  }};
+  const np=$('#ad_newpass').value.trim();
+  if(np)newCfg.adminPass=np;
+  try{
+    await db.collection('config').doc('settings').set(newCfg,{merge:true});
+    remoteCfg.telegram=newCfg.telegram;
+    if(np)remoteCfg.adminPass=np;
+    applyTelegram();
+    st.className='ad-status ok';st.textContent='✅ تم الحفظ بنجاح!';
+    setTimeout(()=>$('#adminPanel').classList.add('hidden'),1500);
+  }catch(e){st.className='ad-status err';st.textContent='❌ فشل الحفظ: '+e.message;}
+}
+
 const LEAGUES=[
 {slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},{slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},{slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},{slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},{slug:'mar.1',name:'الدوري المغربي',em:'🇲🇦',home:1.35,away:1.00},{slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},{slug:'alg.1',name:'الدوري الجزائري',em:'🇩🇿',home:1.40,away:1.00},{slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿🇦',home:1.35,away:1.00},{slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},{slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},{slug:'caf.confederation',name:'الكونفدرالية',em:'🌍',home:1.30,away:0.95},{slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},{slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},{slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},{slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},{slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},{slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},{slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},{slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},{slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},{slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},{slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},{slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},{slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},{slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},{slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},{slug:'pol.1',name:'الدوري البولندي',em:'🇵🇱',home:1.50,away:1.20},{slug:'aut.1',name:'الدوري النمساوي',em:'🇦🇹',home:1.60,away:1.30},{slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},{slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},{slug:'cze.1',name:'الدوري التشيكي',em:'🇨🇿',home:1.50,away:1.20},{slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},{slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},{slug:'uefa.europa.conf',name:'دوري المؤتمر',em:'🎖️',home:1.58,away:1.32},{slug:'uefa.nations',name:'دوري الأمم',em:'🇪',home:1.45,away:1.15},{slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},{slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},{slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},{slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},{slug:'col.1',name:'الدوري الكولومبي',em:'🇨🇴',home:1.40,away:1.05},{slug:'chi.1',name:'الدوري التشيلي',em:'🇨🇱',home:1.40,away:1.05},{slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺🇾',home:1.40,away:1.00},{slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪🇨',home:1.40,away:1.05},{slug:'per.1',name:'الدوري البيروفي',em:'🇵🇪',home:1.35,away:1.00},{slug:'conmebol.libertadores',name:'ليبرتادوريس',em:'🌎',home:1.40,away:1.10},{slug:'conmebol.sudamericana',name:'سودامريكانا',em:'🌎',home:1.35,away:1.05},{slug:'concacaf.champions',name:'أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},{slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},{slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},{slug:'chn.1',name:'الدوري الصيني',em:'🇨🇳',home:1.45,away:1.15},{slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},{slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},{slug:'afc.champions',name:'أبطال آسيا',em:'🌏',home:1.45,away:1.10},{slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},{slug:'fifa.friendly',name:'وديات دولية',em:'🤝',home:1.45,away:1.15}];
 const CORE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','ned.1','por.1','tur.1','bra.1','arg.1','sco.1','bel.1'];
@@ -258,7 +427,7 @@ const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'hom
 init();
 function init(){try{
 const th=lsGet('mv_theme');if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
-populateLeagueSelect();datePicker.value=state.date;setDateChipsActive();bindEvents();countVisit();loadRemoteConfig();
+populateLeagueSelect();datePicker.value=state.date;setDateChipsActive();bindEvents();setupAdmin();countVisit();loadRemoteConfig();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);});
 setTimeout(()=>{splash.classList.add('fade');setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);},1600);
 setInterval(tick,10000);setInterval(fastTick,4000);setInterval(secTick,1000);
@@ -492,7 +661,6 @@ default:return null;}}
 function hashCode(s){let h=0;for(let i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
-/* ===== TRAAKUMI: أرجل مثبّتة (Locked) ===== */
 function accumLegs(){
 const pool=todayPool.filter(m=>m.live||isUpcoming(m));
 const mkB=m=>{const p=getPrediction(m);return{m,p,best:p.btts,bestKey:'btts'};};
