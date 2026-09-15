@@ -176,11 +176,11 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <h2 id="gTitle">إزاي تاخد <span>التوقع الصح</span>؟</h2>
 <div class="gsteps">
-<div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — أعلى توقع ضماناً من تحليل عميق.</p></div>
-<div class="gstep"><span>2</span><p id="gS2">فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده بالنسبة بس، وثابت طول اليوم.</p></div>
-<div class="gstep"><span>3</span><p id="gS3">في <b>التراكمي 🎫</b> الأرجل بتتثبت أول ما تتختار ومبتتغيرش لحد ما مبارياتها تخلص.</p></div>
+<div class="gstep"><span>1</span><p id="gS1">كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — توقع ثابت مدروس من سجل الفريقين والفورم وأداء البيت/البره والتعلم الفوري.</p></div>
+<div class="gstep"><span>2</span><p id="gS2">فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده، وثابت طول اليوم.</p></div>
+<div class="gstep"><span>3</span><p id="gS3">أي توقع بيظهر بيفضل <b>ثابت</b> حتى بعد ما الماتش يخلص — مش بيتغير أبداً.</p></div>
 </div>
-<p class="gwarn" id="gWarn">⚠️ التوقعات إحصائية ومدروسة ومتطابقة على كل الأجهزة — لا ضمان مطلق.</p>
+<p class="gwarn" id="gWarn">⚠️ التوقعات إحصائية ومدروسة — لا ضمان مطلق.</p>
 <button id="guideOk" class="gbtn"><span id="gBtn">يلا نبدأ ⚽</span></button>
 <div class="gcredit">تصميم وتطوير: <b>Ahmed Bebo</b></div>
 </div></div>
@@ -260,7 +260,7 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 <section id="view-accum" class="view hidden"><div id="accumContent"></div></section>
 <section id="view-notifications" class="view hidden"><div id="notifContent"></div></section>
 </main>
-<footer class="disclaimer">التوقعات إحصائية ومدروسة ومتطابقة على كل الأجهزة — لا ضمان مطلق.<br>تصميم وتطوير: <b>Ahmed Bebo</b></footer>
+<footer class="disclaimer">التوقعات إحصائية ومدروسة وثابتة — لا ضمان مطلق.<br>تصميم وتطوير: <b>Ahmed Bebo</b></footer>
 <nav class="bottom-nav">
 <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small>الرئيسية</small></button>
 <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small>المفضلة</small></button>
@@ -294,8 +294,7 @@ let lastInboxShow=0;
 function showInbox(f){if(!(remoteCfg.inbox&&remoteCfg.inbox.active&&(remoteCfg.inbox.text||'').trim()))return;const m=$('#inboxModal');if(!m.classList.contains('hidden'))return;const n=Date.now();if(!f&&n-lastInboxShow<30000)return;lastInboxShow=n;$('#inboxText').textContent=remoteCfg.inbox.text;m.classList.remove('hidden');}
 function applyTelegram(){const fab=$('#tgFab'),tg=remoteCfg.telegram||{};if(!fab)return;if(tg.enabled===false||!tg.link){fab.classList.add('hidden');return;}fab.href=tg.link;$('#tgFabMain').textContent=tg.mainText||'انضم لقناتنا 🔔';$('#tgFabSub').innerHTML='<span class="dot-live"></span><span>'+(tg.subText||'+2.4K مشترك')+'</span>';fab.classList.remove('hidden');}
 function loadRemoteConfig(){db.collection('config').doc('settings').get().then(d=>{if(d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();applyTelegram();}else{db.collection('config').doc('settings').set(remoteCfg).catch(()=>{});applyTelegram();}}).catch(()=>{});}
-function applyRemoteConfig(){window.EB_EXTRAS=remoteCfg.extras||{};if(remoteCfg.maintenance){$('#maintenanceScreen').classList.remove('hidden');if(remoteCfg.maintenanceMsg)$('#maintenanceMsg').textContent=remoteCfg.maintenanceMsg;$('#splash').classList.add('fade');setTimeout(()=>$('#splash').classList.add('hidden'),500);return;}if(remoteCfg.banner){$('#bannerText').textContent=remoteCfg.banner;$('#bannerTop').classList.remove('hidden');}if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){remoteCfg.disabledMarkets.forEach(k=>state.markets[k]=false);syncMk();}showInbox(true);if(remoteCfg.vip)$('#vipRow').classList.remove('hidden');if(remoteCfg.support&&remoteCfg.support.enabled){const b=$('#supportBtn');b.textContent=remoteCfg.support.text||'💚 ادعمنا';b.classList.remove('hidden');b.onclick=()=>{try{window.open(remoteCfg.support.link,'_blank');}catch(e){}};}}
-function syncMk(){const g=$('#mkGoals');if(!g)return;g.checked=state.markets.goals;const s=$('#mkSafe');if(s)s.checked=state.markets.safe;const u1=$('#mkU15');if(u1)u1.checked=state.markets.u15;const u2=$('#mkU25');if(u2)u2.checked=state.markets.u25;}
+function applyRemoteConfig(){window.EB_EXTRAS=remoteCfg.extras||{};if(remoteCfg.maintenance){$('#maintenanceScreen').classList.remove('hidden');if(remoteCfg.maintenanceMsg)$('#maintenanceMsg').textContent=remoteCfg.maintenanceMsg;$('#splash').classList.add('fade');setTimeout(()=>$('#splash').classList.add('hidden'),500);return;}if(remoteCfg.banner){$('#bannerText').textContent=remoteCfg.banner;$('#bannerTop').classList.remove('hidden');}if(remoteCfg.disabledMarkets&&remoteCfg.disabledMarkets.length){remoteCfg.disabledMarkets.forEach(k=>state.markets[k]=false);}showInbox(true);if(remoteCfg.vip)$('#vipRow').classList.remove('hidden');if(remoteCfg.support&&remoteCfg.support.enabled){const b=$('#supportBtn');b.textContent=remoteCfg.support.text||'💚 ادعمنا';b.classList.remove('hidden');b.onclick=()=>{try{window.open(remoteCfg.support.link,'_blank');}catch(e){}};}}
 let suggRating=0;
 document.querySelectorAll('#suggStars .star').forEach(s=>{s.addEventListener('click',()=>{suggRating=+s.dataset.v;document.querySelectorAll('#suggStars .star').forEach((x,i)=>x.classList.toggle('active',i<suggRating));});});
 async function sendSuggestion(){const n=($('#suggName').value||'').trim()||'مجهول';const m=($('#suggMsg').value||'').trim();if(!m){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);color:#fca5a5">اكتب رسالتك!</div>';return;}$('#suggSend').disabled=true;try{await db.collection('suggestions').add({name:n,rating:suggRating,message:m,createdAt:Date.now(),status:'pending'});$('#suggResult').innerHTML='<div class="success-msg">✅ وصل!</div>';setTimeout(()=>{$('#suggModal').classList.add('hidden');$('#suggMsg').value='';suggRating=0;$('#suggResult').innerHTML='';$('#suggSend').disabled=false;},1500);}catch(e){$('#suggResult').innerHTML='<div class="success-msg" style="background:rgba(239,68,68,.15);color:#fca5a5">فشل الإرسال</div>';$('#suggSend').disabled=false;}}
@@ -328,7 +327,7 @@ let livePoolMap=new Map(),finishedMap=new Map(),upcomingPool=new Map(),todayPool
 let ADJ=lsGet('eb_adj')||{};let TEAMADJ=lsGet('eb_team')||{};let adjPend=false;
 function adjFor(s){return ADJ[s]||{lam:1,n:0};}
 function saveAdj(){if(adjPend)return;adjPend=true;setTimeout(()=>{adjPend=false;lsSet('eb_adj',ADJ);lsSet('eb_team',TEAMADJ);},1000);}
-const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,prevLive:null,finSpan:3,vip:false,markets:{goals:true,safe:true,u15:true,u25:true,dc1:true,dc2:true,corners:true,btts:true,safeCards:true,win:true}};
+const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,prevLive:null,finSpan:3,vip:false,markets:{goals:true,safe:true,u15:true,u25:true,dc1:true,dc2:true,corners:true,btts:true,win:true}};
 init();
 function init(){try{
 const th=lsGet('mv_theme');if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
@@ -365,7 +364,7 @@ if(i>=0){const om=state.matches[i];if(om.scoreHome!==nm.scoreHome||om.scoreAway!
 else if(nm.live&&state.mode!=='finished'&&!state.matches.some(m=>matchKey(m)===matchKey(nm))){state.matches.unshift(nm);ch=true;}
 else if(dn&&state.mode==='finished'){state.matches.unshift(nm);ch=true;}});
 lastFastOkTs=Date.now();
-if(ch){predCache.clear();state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});applyPinned();detectKickoffs();evalAccum();try{renderCurrent();}catch(e){}updateBell();window.scrollTo({top:sy,behavior:'auto'});}}
+if(ch){state.matches.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});applyPinned();detectKickoffs();evalAccum();try{renderCurrent();}catch(e){}updateBell();window.scrollTo({top:sy,behavior:'auto'});}}
 function secTick(){if(document.hidden||!appShell||appShell.classList.contains('hidden'))return;const b=Math.max(lastLoadTs,lastFastOkTs,lastCheckTs);const s=Math.max(0,Math.round((Date.now()-b)/1000));lastUpdated.textContent=s<60?`آخر تحديث: من ${s} ثانية`:`آخر تحديث: من ${Math.floor(s/60)} دقيقة`;}
 function bindEvents(){
 const cg=()=>{$('#guideModal').classList.add('hidden');lsSet('mv_guide_day',fmtDate(new Date()));};
@@ -396,7 +395,7 @@ const tb2=e.target.closest('[data-tab]');if(tb2)switchTab(tb2.dataset.tab);});
 $('#tgAuto').onchange=e=>state.autoRefresh=e.target.checked;
 $('#tgNotif').onchange=e=>{state.notifEnabled=e.target.checked;updateBell();};
 $('#notifPermBtn').onclick=()=>{try{if(!('Notification' in window)){alert('غير مدعوم');return;}Notification.requestPermission().then(p=>alert(p==='granted'?'✅':'❌'));}catch(e){alert('غير مدعوم');}};
-const rs=$('#resetStats');if(rs)rs.onclick=()=>{lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}});lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]});lsSet('eb_banker_saved',null);renderCurrent();};
+const rs=$('#resetStats');if(rs)rs.onclick=()=>{lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}});lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]});lsSet('eb_banker_saved',null);lsSet('eb_pred_frozen',{});predCache.clear();renderCurrent();};
 $('#clearFavBtn').onclick=()=>{favorites.clear();saveFavs();renderCurrent();};}
 function saveCache(l){try{localStorage.setItem('eb_cache',JSON.stringify({ts:Date.now(),list:l.slice(0,120).map(slimMatch)}));}catch(e){}}
 function slimMatch(m){return{id:m.id,date:m.date,leagueName:m.leagueName,leagueSlug:m.leagueSlug,statusState:m.statusState,statusCompleted:m.statusCompleted,live:m.live,minute:m.minute,scoreHome:m.scoreHome,scoreAway:m.scoreAway,sourceName:m.sourceName,home:m.home,away:m.away,venue:m.venue,homeForm:m.homeForm,awayForm:m.awayForm,fhHome:m.fhHome,fhAway:m.fhAway,hasHalf:m.hasHalf,oddsHome:m.oddsHome,oddsAway:m.oddsAway};}
@@ -427,7 +426,7 @@ if(state.mode==='live'){const ids=new Set(list.map(m=>m.id));const ex=[...livePo
 list.sort((a,b)=>{if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
 state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();
 if(state.mode==='all')upcomingPool=new Map(list.map(m=>[m.id,m]));
-predCache.clear();isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;
+isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;
 const sy=silent?window.scrollY:null;
 try{renderCurrent();}catch(e){console.error(e);}
 if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
@@ -447,7 +446,7 @@ let l=dedupe(list).filter(m=>(m.statusCompleted||m.statusState==='post')&&m.scor
 l.sort((a,b)=>new Date(b.date)-new Date(a.date));
 state.matches=l;state.source=(l.length===0)?'demo':'live';
 if(state.source==='demo'){state.matches=dedupe(demoMatches());state.sourcesOk=['تجريبي'];}else state.sourcesOk=['أرشيف'];
-predCache.clear();try{trackFinished(state.matches);}catch(e){}evalAccum();
+try{trackFinished(state.matches);}catch(e){}evalAccum();
 }catch(e){}
 finally{isLoading=false;finLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;const sy=silent?window.scrollY:null;try{renderCurrent();}catch(e){}if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});updateBell();updateSource();reportHealth(true);showInbox(false);}}
 function applyPinned(){const pk=(remoteCfg.pinnedKey||'').toLowerCase().replace(/\s+/g,'');if(!pk)return;const parts=pk.split('|').filter(Boolean);if(!parts.length)return;
@@ -483,12 +482,14 @@ function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/
 function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
-/* ===== تتبع يومي: صح/غلط لكل يوم ===== */
+/* ===== تتبع يومي + تعلم لكل فريق (بيت/بره) ===== */
 function trackFinished(list){try{const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}};if(!t.byMkt)t.byMkt={};if(!t.days)t.days={};let ch=false;
 list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
 const p=getPrediction(m);const sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
-const th=TEAMADJ[m.home.id]||(TEAMADJ[m.home.id]={gf:0,ga:0,n:0});th.gf+=sh;th.ga+=sa;th.n++;
-const ta=TEAMADJ[m.away.id]||(TEAMADJ[m.away.id]={gf:0,ga:0,n:0});ta.gf+=sa;ta.ga+=sh;ta.n++;
+const th=TEAMADJ[m.home.id]||(TEAMADJ[m.home.id]={gf:0,ga:0,n:0,hgf:0,hga:0,hn:0,agf:0,aga:0,an:0});
+th.gf+=sh;th.ga+=sa;th.n++;th.hgf+=sh;th.hga+=sa;th.hn++;
+const ta=TEAMADJ[m.away.id]||(TEAMADJ[m.away.id]={gf:0,ga:0,n:0,hgf:0,hga:0,hn:0,agf:0,aga:0,an:0});
+ta.gf+=sa;ta.ga+=sh;ta.n++;ta.agf+=sa;ta.aga+=sh;ta.an++;
 const df=buildDefs(m,p,true);df.forEach(d=>d.push(safetyScore(d[0],d[2].prob,p)));df.sort((a,b)=>b[3]-a[3]);const best=df[0];
 const hit=hitCheck(best[0],p,m,tot,sh,sa);t.evaluated++;
 const dayKey=fmtDate(new Date(m.date));
@@ -506,19 +507,43 @@ function poissonCdf(k,l){let s=0;for(let i=0;i<=k;i++)s+=poissonPmf(i,l);return 
 function leagueData(s){return LEAGUES.find(l=>l.slug===s)||DEF_LEAGUE;}
 function recToStrength(r){if(!r)return null;const p=r.split('-').map(Number);if(p.length<3||p.some(isNaN))return null;const g=p[0]+p[1]+p[2];return g?{pts:(p[0]*3+p[1])/(g*3),g}:null;}
 function formVal(s){if(!s)return null;const c=String(s).toUpperCase().split('').filter(c=>c==='W'||c==='D'||c==='L');if(!c.length)return null;let s2=0;c.forEach(c=>s2+=c==='W'?1:c==='D'?0.5:0);return s2/c.length;}
-function safetyScore(k,prob,p){const d=p.hasData?1:0.55;const st=1-(p.volIdx||0)*0.22;let s=0.60*(prob/100)+0.25*d+0.15*st;if(k==='u15'||k==='u25'||k==='cards55u'||k==='g15'||k==='ticket')s+=0.03;return clamp(s,0,1);}
+function safetyScore(k,prob,p){const d=p.hasData?1:0.55;const st=1-(p.volIdx||0)*0.22;let s=0.60*(prob/100)+0.25*d+0.15*st;if(k==='u15'||k==='u25'||k==='g15'||k==='ticket')s+=0.03;return clamp(s,0,1);}
 function shieldsFor(k,prob,p){return Math.max(1,Math.round(safetyScore(k,prob,p)*5));}
 function shieldStr(n){let s='';for(let i=0;i<n;i++)s+='🛡️';return s;}
-function getPrediction(m){if(predCache.has(m.id))return predCache.get(m.id);const p=calc(m);predCache.set(m.id,p);return p;}
-function calc(m){const ld=leagueData(m.leagueSlug),rng=mulberry32(hashCode(`${m.id}|${m.home.name}|${m.away.name}`));
-const hS=recToStrength(m.home.record),aS=recToStrength(m.away.record);const fH=formVal(m.homeForm),fA=formVal(m.awayForm);
+/* ===== توقع مثبّت: أول توقع بيظهر بيتحفظ ومش بيتغير أبداً ===== */
+function getPrediction(m){
+  if(predCache.has(m.id))return predCache.get(m.id);
+  const fz=lsGet('eb_pred_frozen')||{};
+  if(fz[m.id]){predCache.set(m.id,fz[m.id]);return fz[m.id];}
+  const p=calc(m);
+  fz[m.id]=p;
+  const keys=Object.keys(fz);if(keys.length>400){delete fz[keys[0]];}
+  try{lsSet('eb_pred_frozen',fz);}catch(e){}
+  predCache.set(m.id,p);
+  return p;}
+/* ===== تحليل عميق: أداء كل فريق بيت/بره + فورم + سجل ===== */
+function teamAttDef(id,isHome){
+  const t=TEAMADJ[id];if(!t)return null;
+  if(isHome){if(t.hn>=3)return{att:t.hgf/t.hn,def:t.hga/t.hn};}
+  else{if(t.an>=3)return{att:t.agf/t.an,def:t.aga/t.an};}
+  if(t.n>=3)return{att:t.gf/t.n,def:t.ga/t.n};
+  return null;}
+function calc(m){const ld=leagueData(m.leagueSlug);
+const hd=teamAttDef(m.home.id,true),ad=teamAttDef(m.away.id,false);
+const hS=recToStrength(m.home.record),aS=recToStrength(m.away.record);
+const fH=formVal(m.homeForm),fA=formVal(m.awayForm);
 let lh,la,hasData=false;
-if(hS&&aS&&hS.g>=3&&aS.g>=3){hasData=true;const fHv=fH==null?0.5:fH,fAv=fA==null?0.5:fA;
-const aH=clamp(0.55+1.05*hS.pts+0.8*(fHv-0.5),0.45,1.9),aA=clamp(0.55+1.05*aS.pts+0.8*(fAv-0.5),0.45,1.9);
-const vH=clamp(1.45-1.05*hS.pts-0.8*(fHv-0.5),0.5,1.9),vA=clamp(1.45-1.05*aS.pts-0.8*(fAv-0.5),0.5,1.9);
-lh=clamp(ld.home*clamp((aH+vA)/2,0.5,1.8),0.35,3.6);la=clamp(ld.away*clamp((aA+vH)/2,0.5,1.8),0.25,3.2);}
-else{lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2);la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8);}
-const lcorn=clamp(9+(lh+la-2.5)*0.8+rng()*1.2,6,13),lcard=clamp(3.9+rng()*1.5+Math.abs(lh-la)*0.6,2,7);
+if(hd&&ad){hasData=true;
+  lh=clamp(((hd.att+ad.def)/2)*1.10,0.3,3.6);
+  la=clamp(((ad.att+hd.def)/2)*0.92,0.25,3.2);
+  if(fH!=null)lh=clamp(lh*(0.85+0.30*fH),0.3,3.6);
+  if(fA!=null)la=clamp(la*(0.85+0.30*fA),0.25,3.2);}
+else if(hS&&aS&&hS.g>=3&&aS.g>=3){hasData=true;const fHv=fH==null?0.5:fH,fAv=fA==null?0.5:fA;
+  const aH=clamp(0.55+1.05*hS.pts+0.8*(fHv-0.5),0.45,1.9),aA=clamp(0.55+1.05*aS.pts+0.8*(fAv-0.5),0.45,1.9);
+  const vH=clamp(1.45-1.05*hS.pts-0.8*(fHv-0.5),0.5,1.9),vA=clamp(1.45-1.05*aS.pts-0.8*(fAv-0.5),0.5,1.9);
+  lh=clamp(ld.home*clamp((aH+vA)/2,0.5,1.8),0.35,3.6);la=clamp(ld.away*clamp((aA+vH)/2,0.5,1.8),0.25,3.2);}
+else{const rng=mulberry32(hashCode(`${m.id}|${m.home.name}|${m.away.name}`));lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2);la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8);}
+const lcorn=clamp(9+(lh+la-2.5)*0.8,6,13),lcard=clamp(3.9+Math.abs(lh-la)*0.6,2,7);
 const r=buildPred(lh,la,lcorn,lcard);r.hasData=hasData;r.formH=fH;r.formA=fA;
 r.learnN=(TEAMADJ[m.home.id]?TEAMADJ[m.home.id].n:0)+(TEAMADJ[m.away.id]?TEAMADJ[m.away.id].n:0);
 const csH=Math.exp(-la),csA=Math.exp(-lh);
@@ -553,7 +578,7 @@ const range={text:rw[0],prob:Math.round(rw[1]*100),tone:'info'};
 const cn={over25_btts:['أكثر من 2.5','الفريقين يسجل'],over25_home:['أكثر من 2.5','فوز المضيف'],over25_away:['أكثر من 2.5','فوز الضيف'],btts_home:['الفريقين يسجل','فوز المضيف'],btts_away:['الفريقين يسجل','فوز الضيف'],under25_home:['أقل من 2.5','فوز المضيف'],under25_away:['أقل من 2.5','فوز الضيف'],under25_one:['أقل من 2.5','كلين شيت']}[combos[sci][0]]||['',''];
 const safeTicket={text:cn[0]+' + '+cn[1],prob:Math.round(cs[sci]*100),tone:'good'};
 const bal=1-Math.min(1,Math.abs(lh-la)/Math.max(0.001,Math.max(lh,la)));const v=(lam/3.2)*0.6+bal*0.4;const volIdx=v<0.55?0:(v<0.75?1:2);
-const r={goals,g15,u15,u25,btts,win,dc1,dc2,h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'warn'},cards55u:u55>=0.5?{text:'أقل من 5.5 بطاقات',prob:Math.round(u55*100),tone:'good'}:{text:'أكثر من 5.5 بطاقات',prob:Math.round((1-u55)*100),tone:'hot'},firstGoal,bothHalves,range,safeTicket,volIdx,lh,la,lcorn,lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55)};
+const r={goals,g15,u15,u25,btts,win,dc1,dc2,h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'info'},firstGoal,bothHalves,range,safeTicket,volIdx,lh,la,lcorn,lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55)};
 r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.win.prob)/4);return r;}
 const VER=new Set(['goals','g15','u15','u25','win','dc1','dc2','btts','h1','range','cleanSheet']);
 function hitCheck(k,p,m,tot,sh,sa){switch(k){
@@ -654,7 +679,6 @@ else html+=list.map(m=>matchCard(m)).join('');
 homeContent.innerHTML=html;}
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const c={};state.matches.forEach(m=>c[m.leagueSlug]=(c[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${c[l.slug]||0}</small></button>`).join('');}
-/* ===== الإحصائيات + التقسيم اليومي ===== */
 function renderStats(){loading.hidden=true;const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}};const bm=t.byMkt||{};const days=t.days||{};
 const acc=t.evaluated?Math.round(t.wins/t.evaluated*100):0;const C=213.6;$('#ringFg').style.strokeDashoffset=C*(1-acc/100);$('#ringText').textContent=acc+'%';
 $('#ringLabel').textContent=t.evaluated?`دقة حقيقية: ${t.wins} كسب / ${t.evaluated}`:'لسه مفيش توقعات متقيمة';
@@ -679,7 +703,7 @@ if(state.markets.win!==false)d.push(['win','الفوز المباشر',p.win]);
 if(state.markets.dc1!==false)d.push(['dc1','فرصة مزدوجة 1',p.dc1]);
 if(state.markets.dc2!==false)d.push(['dc2','فرصة مزدوجة 2',p.dc2]);
 if(state.markets.btts)d.push(['btts','الفريقين يسجل',p.btts]);
-if(!fin){if(state.markets.corners)d.push(['corners','ركنيات 9.5',p.corners]);if(state.markets.safeCards)d.push(['cards55u','البطاقات',p.cards55u]);d.push(['firstGoal','نافذة الهدف الأول',p.firstGoal]);d.push(['bothHalves','أهداف في الشوطين',p.bothHalves]);d.push(['ticket','التذكرة الآمنة',p.safeTicket]);}
+if(!fin){if(state.markets.corners)d.push(['corners','ركنيات 9.5',p.corners]);d.push(['firstGoal','نافذة الهدف الأول',p.firstGoal]);d.push(['bothHalves','أهداف في الشوطين',p.bothHalves]);d.push(['ticket','التذكرة الآمنة',p.safeTicket]);}
 d.push(['h1','الشوط الأول',p.h1Goal]);d.push(['cleanSheet','كلين شيت',p.cleanSheet]);d.push(['range','نطاق الأهداف',p.range]);
 if(fin)return d.filter(x=>VER.has(x[0]));
 return d;}
