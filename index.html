@@ -67,8 +67,8 @@ button,input,select,textarea{font:inherit;color:inherit}.hidden{display:none!imp
 .team{display:grid;justify-items:center;gap:6px;text-align:center;min-width:0;direction:rtl}.team strong{font-size:13px}.team small{color:var(--muted);font-size:11px;min-height:15px}
 .logo{width:44px;height:44px;border-radius:16px;object-fit:contain;background:rgba(255,255,255,.06);padding:4px}
 .placeholder{width:44px;height:44px;border-radius:16px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:800}
-.vs{min-width:70px;display:grid;place-items:center;gap:2px;padding:9px 6px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line);direction:rtl}
-.vs span{font-size:11px;color:var(--accent);font-weight:800}.vs span.liveTxt{color:#fca5a5}.vs span.doneTxt{color:#cbd5e1}.vs strong{font-size:13px}.vs strong.score{font-size:17px;color:#fca5a5}.vs strong.scoreDone{font-size:17px;color:#e2e8f0}
+.vs{min-width:70px;display:grid;place-items:center;gap:2px;padding:9px 6px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line);direction:ltr}
+.vs span{font-size:11px;color:var(--accent);font-weight:800}.vs span.liveTxt{color:#fca5a5}.vs span.doneTxt{color:#cbd5e1}.vs strong{font-size:13px;direction:ltr}.vs strong.score{font-size:17px;color:#fca5a5}.vs strong.scoreDone{font-size:17px;color:#e2e8f0}
 .ha{display:inline-flex;gap:6px;align-items:center;font-size:10px;font-weight:800;padding:3px 10px 3px 4px;border-radius:99px;border:1px solid;margin-bottom:2px}
 .ha .num{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;color:#04120a}
 .ha.home{color:#86efac;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3)}.ha.home .num{background:#22c55e}
@@ -160,7 +160,19 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 <body>
 <script>
 window.addEventListener('error',function(e){try{window.__ebErr=String(e.message||'');}catch(x){}});
-setTimeout(function(){try{var s=document.getElementById('splash'),a=document.getElementById('appShell');if(s&&!s.classList.contains('hidden')){s.classList.add('fade');setTimeout(function(){s.classList.add('hidden');if(a)a.classList.remove('hidden');if(window.__ebErr){var em=document.getElementById('homeEmpty');if(em){em.hidden=false;em.textContent='⚠️ '+ (window.EB&&window.EB.err||'خطأ');}},500);}}catch(e){}},7000);
+setTimeout(function(){
+  try{
+    var s=document.getElementById('splash'),a=document.getElementById('appShell');
+    if(s&&!s.classList.contains('hidden')){
+      s.classList.add('fade');
+      setTimeout(function(){
+        s.classList.add('hidden');
+        if(a)a.classList.remove('hidden');
+        if(window.EB&&window.EB.boot){try{window.EB.boot();}catch(e){}}
+      },500);
+    }
+  }catch(e){}
+},7000);
 </script>
 <div id="kickBanner" class="kick hidden"></div>
 <a id="tgFab" class="tg-fab hidden" href="https://t.me/+P98t0SG-FJVlOWQ8" target="_blank" rel="noopener">
@@ -178,7 +190,7 @@ setTimeout(function(){try{var s=document.getElementById('splash'),a=document.get
 </div>
 <p class="gwarn" id="gWarn"></p>
 <button id="guideOk" class="gbtn"><span id="gBtn"></span></button>
-<div class="gcredit"><span data-i18n="credit">تصميم وتطوير:</b> <b>Ahmed Bebo</b></div>
+<div class="gcredit"><span data-i18n="credit">تصميم وتطوير:</span> <b>Ahmed Bebo</b></div>
 </div></div>
 <div id="inboxModal" class="gmodal hidden"><div class="gcard"><h2>📢 <span data-i18n="inbox">رسالة من الإدارة</span></h2><p id="inboxText" style="color:var(--text);font-size:14px;line-height:2;margin:10px 0 16px;text-align:right"></p><button id="inboxOk" class="gbtn" data-i18n="ok">تمام ✅</button></div></div>
 <div id="suggModal" class="gmodal hidden"><div class="gcard sugg-form">
@@ -271,14 +283,13 @@ function lsGet(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){retur
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function ssGet(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
 function ssSet(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
-/* ===== i18n ===== */
 let LANG=lsGet('eb_lang')||'ar';
 const I18N={
 ar:{sub:'قادمة • لايف • منتهية',src_loading:'جاري المصادر...',src_live:'مصادر: ',src_cache:'♻️ مخزن',src_demo:'تجريبي',
 mode_all:'🌐 الكل (قادمة)',mode_live:'🔴 لايف',mode_fin:'⚪ انتهت',
 d_today:'اليوم',d_tom:'غداً',d_after:'بعد غد',f_1:'أمس',f_3:'آخر 3 أيام',f_7:'آخر 7 أيام',
 search_ph:'ابحث عن فريق أو دوري...',all_leagues:'كل الدوريات',
-sb_match:'مباراة',sb_live:'مباراة مباشرة',sb_fin:'مباراة منتهية',sb_up:'مباراة قادمة',sb_avg:'متوسط الثقة:',sb_upd:'آخر تحديث: من',sec:'ثانية',min:'دقيقة',sb_upd_none:'لم يتم التحديث بعد',
+sb_match:'مباراة',sb_live:'مباراة مباشرة',sb_fin:'مباراة منتهية',sb_up:'مباراة قادمة',sb_avg:'متوسط الثقة:',sb_upd:'آخر تحديث: من',sec:'ثانية',min:'دقيقة',
 nav_home:'الرئيسية',nav_fav:'المفضلة',nav_leagues:'الدوريات',nav_stats:'الإحصائيات',nav_notif:'التنبيهات',
 host:'المضيف',away:'الضيف',not_started:'لم تبدأ',result:'النتيجة',live:'مباشر',finished:'انتهت',
 safest:'الأضمن 🛡️',extra_safe:'توقعات مضمونة إضافية:',volatility:'📊 تقلب:',vol_low:'منخفض',vol_mid:'متوسط',vol_high:'عالي',learned:'مدروس من',basic:'تحليل أساسي',attack:'⚔️ هجوم',
@@ -300,16 +311,16 @@ kick_start:'🔴 بدأت الآن:',banker_push:'🎯 توقع اليوم نز�
 won:'كسب',lost:'خسر',
 m_goals:'أهداف 2',m_g15:'أهداف 1.5',m_u15:'أقل من 1.5',m_u25:'أقل من 2.5',m_win:'الفوز المباشر',m_dc1:'فرصة مزدوجة 1',m_dc2:'فرصة مزدوجة 2',m_btts:'الفريقين يسجل',m_corners:'ركنيات 9.5',m_h1:'الشوط الأول',m_clean:'كلين شيت',m_range:'نطاق الأهداف',m_ticket:'التذكرة الآمنة',m_first:'نافذة الهدف الأول',m_both:'أهداف في الشوطين'},
 en:{sub:'Upcoming • Live • Finished',src_loading:'Loading sources...',src_live:'Sources: ',src_cache:'♻️ Cached',src_demo:'Demo',
-mode_all:'🌐 All (Upcoming)',mode_live:'🔴 Live',mode_fin:' Finished',
+mode_all:'🌐 All (Upcoming)',mode_live:'🔴 Live',mode_fin:'⚪ Finished',
 d_today:'Today',d_tom:'Tomorrow',d_after:'After',f_1:'Yesterday',f_3:'Last 3 days',f_7:'Last 7 days',
 search_ph:'Search team or league...',all_leagues:'All Leagues',
-sb_match:'matches',sb_live:'live matches',sb_fin:'finished matches',sb_up:'upcoming matches',sb_avg:'Avg confidence:',sb_upd:'Updated:',sec:'s ago',min:'m ago',sb_upd_none:'Not updated yet',
+sb_match:'matches',sb_live:'live matches',sb_fin:'finished matches',sb_up:'upcoming matches',sb_avg:'Avg confidence:',sb_upd:'Updated:',sec:'s ago',min:'m ago',
 nav_home:'Home',nav_fav:'Favorites',nav_leagues:'Leagues',nav_stats:'Stats',nav_notif:'Alerts',
 host:'Home',away:'Away',not_started:'Not started',result:'Result',live:'LIVE',finished:'FT',
 safest:'Safest 🛡️',extra_safe:'Extra safe picks:',volatility:'📊 Volatility:',vol_low:'Low',vol_mid:'Medium',vol_high:'High',learned:'Learned from',basic:'Basic analysis',attack:'⚔️ Attack',
 banker_title:'🎯 Pick of the Day',
 acc_title:'Prediction Accuracy',evaluated:'Evaluated picks',live_matches:'Live matches',stats_title:'📊 Prediction Stats:',market_dist:'Wins by market:',no_wins:'No winning picks yet',days_acc:'📅 Accuracy by day:',no_daily:'No daily data yet',reset:'Reset all stats',
-vip:'👑 VIP mode',set_smart:'Smart refresh',set_notif:'Favorite alerts',set_browser:' Enable browser notifications',sources:'Sources',color:'App color',clear_fav:'Clear all favorites',send_sugg:' Send feedback',
+vip:'👑 VIP mode',set_smart:'Smart refresh',set_notif:'Favorite alerts',set_browser:' Enable browser notifications',sources:'Sources',color:'App color',clear_fav:'Clear all favorites',send_sugg:'📝 Send feedback',
 det_stats:'Stats',det_h2h:'Head-to-Head',exp_goals:'Expected goals',exp_corners:'Expected corners',exp_cards:'Expected cards',attack2:'⚔️ Attack (1×2)',
 notif_live:'Live match',notif_soon:'Less than an hour',notif_hours:'hours',no_notif:'No notifications.',alerts_off:'Alerts are off.',
 empty_fin:'⚠️ Loading archive...',empty_live:'🔴 No live matches now.',empty_up:'No upcoming matches for this date.',empty_fav:'⭐ No favorites yet.',
@@ -319,9 +330,9 @@ admin_title:'Admin login',admin_sub:'Enter password to access admin panel',login
 inbox:'Message from admin',ok:'OK ✅',credit:'Design & Dev:',disclaimer:'Predictions are statistical and studied — no absolute guarantee.',
 mnt:'🔧 Maintenance mode',mnt_msg:'We are updating, back soon.',
 splash_sub:'Smart predictions based on real statistics',
-g_t1:'How to get ',g_t2:'the right pick',g1:'Every match has a green <b class="suremini">Safest 🛡️</b> box — a fixed, studied pick from both teams\' record, form and home/away performance.',g2:'On top: <b class="suremini">🎯 Pick of the Day</b> — today\'s safest pick, fixed all day.',g3:'Home 🏠 always on the left, Away ✈️ on the right in all predictions.',gwarn:'️ Predictions are statistical — no absolute guarantee.',gbtn:'Let\'s go ⚽',
+g_t1:'How to get ',g_t2:'the right pick',g1:'Every match has a green <b class="suremini">Safest 🛡️</b> box — a fixed, studied pick from both teams\' record, form and home/away performance.',g2:'On top: <b class="suremini">🎯 Pick of the Day</b> — today\'s safest pick, fixed all day.',g3:'Home 🏠 always on the left, Away ✈️ on the right in all predictions.',gwarn:'⚠️ Predictions are statistical — no absolute guarantee.',gbtn:'Let\'s go ⚽',
 over2:'Over 2',under2:'Under 2',over15:'Over 1.5',under15g:'Under 1.5 goals',under25g:'Under 2.5 goals',yes:'Yes',no:'No',win_home:'Home win (1)',win_away:'Away win (2)',dc1:'1X (Home or draw)',dc2:'X2 (Draw or away)',firstgoal:'First goal in',h1goal:'1st-half goal',bothhalves:'Goals in both halves',range01:'0-1 goals',range23:'2-3 goals',range4:'4+ goals',cleansheet:'Clean sheet',corn_over:'Over 9.5 corners',corn_under:'Under 9.5 corners',
-kick_start:'🔴 Started now:',banker_push:' Pick of the Day is out!',
+kick_start:'🔴 Started now:',banker_push:'🎯 Pick of the Day is out!',
 won:'Won',lost:'Lost',
 m_goals:'Goals 2',m_g15:'Goals 1.5',m_u15:'Under 1.5',m_u25:'Under 2.5',m_win:'Match winner',m_dc1:'Double chance 1',m_dc2:'Double chance 2',m_btts:'BTTS',m_corners:'Corners 9.5',m_h1:'1st half',m_clean:'Clean sheet',m_range:'Goals range',m_ticket:'Safe ticket',m_first:'1st goal window',m_both:'Both halves goals'}
 };
@@ -332,10 +343,13 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'));});
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});
   const lb=$('#langBtn');if(lb)lb.textContent=LANG==='ar'?'EN':'ع';
-  $('#gTitle').innerHTML=t('g_t1')+'<span>'+t('g_t2')+'</span>';
-  $('#gS1').innerHTML=t('g1');$('#gS2').innerHTML=t('g2');$('#gS3').innerHTML=t('g3');$('#gWarn').textContent=t('gwarn');$('#gBtn').textContent=t('gbtn');
-  $('#suggHero').innerHTML=t('sugg_hero');
-  renderCurrent();
+  const gt=$('#gTitle');if(gt)gt.innerHTML=t('g_t1')+'<span>'+t('g_t2')+'</span>';
+  const g1=$('#gS1');if(g1)g1.innerHTML=t('g1');
+  const g2=$('#gS2');if(g2)g2.innerHTML=t('g2');
+  const g3=$('#gS3');if(g3)g3.innerHTML=t('g3');
+  const gw=$('#gWarn');if(gw)gw.textContent=t('gwarn');
+  const gb=$('#gBtn');if(gb)gb.textContent=t('gbtn');
+  const sh=$('#suggHero');if(sh)sh.innerHTML=t('sugg_hero');
 }
 const FIREBASE_CONFIG={apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2"};
 let db=null;try{firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore();}catch(e){db=null;}
@@ -375,7 +389,7 @@ const newCfg={telegram:{enabled:$('#ad_tg_show').checked,mainText:$('#ad_tg_main
 const np=$('#ad_newpass').value.trim();if(np)newCfg.adminPass=np;
 try{await db.collection('config').doc('settings').set(newCfg,{merge:true});remoteCfg.telegram=newCfg.telegram;if(np)remoteCfg.adminPass=np;applyTelegram();st.className='ad-status ok';st.textContent=LANG==='ar'?'✅ تم الحفظ!':'✅ Saved!';setTimeout(()=>$('#adminPanel').classList.add('hidden'),1500);}catch(e){st.className='ad-status err';st.textContent=(LANG==='ar'?'❌ فشل: ':'❌ Failed: ')+e.message;}}
 const LEAGUES=[
-{slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},{slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},{slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},{slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},{slug:'mar.1',name:'الدوري المغربي',em:'🇲',home:1.35,away:1.00},{slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},{slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},{slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},{slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},{slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},{slug:'caf.confederation',name:'الكونفدرالية',em:'🌍',home:1.30,away:0.95},{slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},{slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},{slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},{slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},{slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},{slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},{slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},{slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},{slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},{slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},{slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},{slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},{slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},{slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},{slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},{slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},{slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},{slug:'cro.1',name:'الدوري الكرواتي',em:'🇭🇷',home:1.50,away:1.10},{slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},{slug:'cze.1',name:'الدوري التشيكي',em:'🇨',home:1.50,away:1.20},{slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},{slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},{slug:'uefa.europa.conf',name:'دوري المؤتمر',em:'🎖️',home:1.58,away:1.32},{slug:'uefa.nations',name:'دوري الأمم',em:'🇪',home:1.45,away:1.15},{slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},{slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},{slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},{slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},{slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},{slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},{slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},{slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},{slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},{slug:'conmebol.libertadores',name:'ليبرتادوريس',em:'🌎',home:1.40,away:1.10},{slug:'conmebol.sudamericana',name:'سودامريكانا',em:'🌎',home:1.35,away:1.05},{slug:'concacaf.champions',name:'أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},{slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},{slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},{slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},{slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},{slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},{slug:'afc.champions',name:'أبطال آسيا',em:'🌏',home:1.45,away:1.10},{slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},{slug:'fifa.friendly',name:'وديات دولية',em:'🤝',home:1.45,away:1.15}];
+{slug:'egy.1',name:'الدوري المصري',em:'🇪🇬',home:1.35,away:0.95},{slug:'ksa.1',name:'دوري روشن السعودي',em:'🌴',home:1.55,away:1.20},{slug:'uae.1',name:'دوري أدنوك الإماراتي',em:'🏜️',home:1.50,away:1.15},{slug:'qat.1',name:'دوري نجوم قطر',em:'🏟️',home:1.50,away:1.20},{slug:'mar.1',name:'الدوري المغربي',em:'🇲',home:1.35,away:1.00},{slug:'tun.1',name:'الدوري التونسي',em:'🇹',home:1.35,away:0.95},{slug:'alg.1',name:'الدوري الجزائري',em:'🇩',home:1.40,away:1.00},{slug:'rsa.1',name:'دوري جنوب أفريقيا',em:'🇿',home:1.35,away:1.00},{slug:'nga.1',name:'الدوري النيجيري',em:'🇳',home:1.30,away:0.95},{slug:'caf.champions',name:'دوري أبطال أفريقيا',em:'🌍',home:1.35,away:0.95},{slug:'caf.confederation',name:'الكونفدرالية',em:'🌍',home:1.30,away:0.95},{slug:'eng.1',name:'الدوري الإنجليزي',em:'🦁',home:1.58,away:1.27},{slug:'esp.1',name:'الدوري الإسباني',em:'👑',home:1.52,away:1.13},{slug:'ita.1',name:'الدوري الإيطالي',em:'🛡️',home:1.55,away:1.20},{slug:'ger.1',name:'الدوري الألماني',em:'🦅',home:1.72,away:1.43},{slug:'fra.1',name:'الدوري الفرنسي',em:'🗼',home:1.50,away:1.20},{slug:'ned.1',name:'الدوري الهولندي',em:'🌷',home:1.68,away:1.37},{slug:'por.1',name:'الدوري البرتغالي',em:'⛵',home:1.48,away:1.12},{slug:'tur.1',name:'الدوري التركي',em:'🌙',home:1.55,away:1.20},{slug:'sco.1',name:'الدوري الاسكتلندي',em:'🏴',home:1.55,away:1.25},{slug:'bel.1',name:'الدوري البلجيكي',em:'🍫',home:1.58,away:1.27},{slug:'gre.1',name:'الدوري اليوناني',em:'🏛️',home:1.45,away:1.05},{slug:'swi.1',name:'الدوري السويسري',em:'🏔️',home:1.55,away:1.25},{slug:'den.1',name:'الدوري الدنماركي',em:'🇩',home:1.55,away:1.25},{slug:'nor.1',name:'الدوري النرويجي',em:'❄️',home:1.60,away:1.25},{slug:'swe.1',name:'الدوري السويدي',em:'🌲',home:1.55,away:1.25},{slug:'pol.1',name:'الدوري البولندي',em:'🇵',home:1.50,away:1.20},{slug:'aut.1',name:'الدوري النمساوي',em:'🇦',home:1.60,away:1.30},{slug:'cro.1',name:'الدوري الكرواتي',em:'🇭',home:1.50,away:1.10},{slug:'ukr.1',name:'الدوري الأوكراني',em:'🇺',home:1.50,away:1.15},{slug:'cze.1',name:'الدوري التشيكي',em:'🇨',home:1.50,away:1.20},{slug:'uefa.champions',name:'دوري أبطال أوروبا',em:'⭐',home:1.65,away:1.40},{slug:'uefa.europa',name:'الدوري الأوروبي',em:'🏆',home:1.55,away:1.25},{slug:'uefa.europa.conf',name:'دوري المؤتمر',em:'🎖️',home:1.58,away:1.32},{slug:'uefa.nations',name:'دوري الأمم',em:'🇪',home:1.45,away:1.15},{slug:'bra.1',name:'الدوري البرازيلي',em:'💛',home:1.40,away:1.05},{slug:'arg.1',name:'الدوري الأرجنتيني',em:'🩵',home:1.38,away:1.02},{slug:'mex.1',name:'الدوري المكسيكي',em:'🌮',home:1.48,away:1.12},{slug:'usa.1',name:'الدوري الأمريكي',em:'🗽',home:1.60,away:1.35},{slug:'col.1',name:'الدوري الكولومبي',em:'🇨',home:1.40,away:1.05},{slug:'chi.1',name:'الدوري التشيلي',em:'🇨',home:1.40,away:1.05},{slug:'uru.1',name:'الدوري الأوروغواياني',em:'🇺',home:1.40,away:1.00},{slug:'ecu.1',name:'الدوري الإكوادوري',em:'🇪',home:1.40,away:1.05},{slug:'per.1',name:'الدوري البيروفي',em:'🇵',home:1.35,away:1.00},{slug:'conmebol.libertadores',name:'ليبرتادوريس',em:'🌎',home:1.40,away:1.10},{slug:'conmebol.sudamericana',name:'سودامريكانا',em:'🌎',home:1.35,away:1.05},{slug:'concacaf.champions',name:'أبطال كونكاكاف',em:'🌋',home:1.45,away:1.10},{slug:'jpn.1',name:'الدوري الياباني',em:'🎌',home:1.45,away:1.15},{slug:'kor.1',name:'الدوري الكوري',em:'🇰🇷',home:1.45,away:1.15},{slug:'chn.1',name:'الدوري الصيني',em:'🇨',home:1.45,away:1.15},{slug:'aus.1',name:'الدوري الأسترالي',em:'🦘',home:1.50,away:1.20},{slug:'ind.1',name:'الدوري الهندي',em:'🇮',home:1.45,away:1.10},{slug:'afc.champions',name:'أبطال آسيا',em:'🌏',home:1.45,away:1.10},{slug:'fifa.world',name:'كأس العالم/التصفيات',em:'🌍',home:1.45,away:1.05},{slug:'fifa.friendly',name:'وديات دولية',em:'🤝',home:1.45,away:1.15}];
 const LEAGUES_EN={'egy.1':'Egyptian League','ksa.1':'Saudi Pro League','uae.1':'UAE League','qat.1':'Qatar Stars','mar.1':'Morocco Botola','tun.1':'Tunisia League','alg.1':'Algeria League','rsa.1':'South Africa','nga.1':'Nigeria League','caf.champions':'CAF Champions','caf.confederation':'CAF Confederation','eng.1':'Premier League','esp.1':'La Liga','ita.1':'Serie A','ger.1':'Bundesliga','fra.1':'Ligue 1','ned.1':'Eredivisie','por.1':'Primeira Liga','tur.1':'Süper Lig','sco.1':'Scottish Prem','bel.1':'Pro League','gre.1':'Super League','swi.1':'Super League','den.1':'Superliga','nor.1':'Eliteserien','swe.1':'Allsvenskan','pol.1':'Ekstraklasa','aut.1':'Bundesliga','cro.1':'HNL','ukr.1':'Premier Liga','cze.1':'Fortuna Liga','uefa.champions':'Champions League','uefa.europa':'Europa League','uefa.europa.conf':'Conference League','uefa.nations':'Nations League','bra.1':'Brasileirão','arg.1':'Liga Profesional','mex.1':'Liga MX','usa.1':'MLS','col.1':'Categoría Primera','chi.1':'Primera Chile','uru.1':'Primera Uruguay','ecu.1':'Liga Ecuador','per.1':'Liga 1','conmebol.libertadores':'Libertadores','conmebol.sudamericana':'Sudamericana','concacaf.champions':'Concacaf Champions','jpn.1':'J1 League','kor.1':'K League','chn.1':'Super League','aus.1':'A-League','ind.1':'ISL','afc.champions':'ACL','fifa.world':'World Cup','fifa.friendly':'Internationals'};
 function leagueName(slug,fallback){return LANG==='en'?(LEAGUES_EN[slug]||fallback):fallback;}
 const CORE_SLUGS=['egy.1','ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','ned.1','por.1','tur.1','bra.1','arg.1','sco.1','bel.1'];
@@ -391,15 +405,25 @@ let ADJ=lsGet('eb_adj')||{};let TEAMADJ=lsGet('eb_team')||{};let adjPend=false;
 function adjFor(s){return ADJ[s]||{lam:1,n:0};}
 function saveAdj(){if(adjPend)return;adjPend=true;setTimeout(()=>{adjPend=false;lsSet('eb_adj',ADJ);lsSet('eb_team',TEAMADJ);},1000);}
 const state={date:fmtDate(addDays(new Date(),1)),league:'all',query:'',view:'home',prevView:'home',mode:'all',matches:[],source:'loading',sourcesOk:[],autoRefresh:true,notifEnabled:true,detailsId:null,prevLive:null,finSpan:3,vip:false,markets:{goals:true,safe:true,u15:true,u25:true,dc1:true,dc2:true,corners:true,btts:true,win:true}};
+function bootApp(){
+  try{applyLang();}catch(e){}
+  try{populateLeagueSelect();}catch(e){}
+  try{datePicker.value=state.date;setDateChipsActive();}catch(e){}
+  try{bindEvents();}catch(e){}
+  try{setupAdmin();}catch(e){}
+  try{countVisit();}catch(e){}
+  try{loadRemoteConfig();}catch(e){}
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);});
+  loadMatches();showView('home');maybeShowGuide();
+  setInterval(tick,10000);setInterval(fastTick,4000);setInterval(secTick,1000);
+  setInterval(()=>{if(isLoading&&Date.now()-loadStartTs>20000){isLoading=false;loading.hidden=true;try{renderCurrent();}catch(e){}updateSource();}},5000);
+}
+window.EB={state:state,db:null,boot:bootApp};
 init();
-function init(){try{
-const th=lsGet('mv_theme');if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
-applyLang();populateLeagueSelect();datePicker.value=state.date;setDateChipsActive();bindEvents();setupAdmin();countVisit();loadRemoteConfig();
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);});
-setTimeout(()=>{splash.classList.add('fade');setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);},1600);
-setInterval(tick,10000);setInterval(fastTick,4000);setInterval(secTick,1000);
-setInterval(()=>{if(isLoading&&Date.now()-loadStartTs>20000){isLoading=false;loading.hidden=true;try{renderCurrent();}catch(e){}updateSource();}},5000);
-}catch(e){setTimeout(()=>{splash.classList.add('fade');setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');},500);},800);}}
+function init(){
+  const th=lsGet('mv_theme');if(th&&th!=='green')document.documentElement.setAttribute('data-theme',th);
+  setTimeout(()=>{splash.classList.add('fade');setTimeout(()=>{splash.classList.add('hidden');appShell.classList.remove('hidden');try{bootApp();}catch(e){}},500);},1600);
+}
 function maybeShowGuide(){if(remoteCfg.disableGuide)return;const t2=fmtDate(new Date());if(lsGet('mv_guide_day')===t2)return;$('#guideModal').classList.remove('hidden');}
 function soonKickoff(m){const d=new Date(m.date);if(isNaN(d)||m.live||isFinished(m))return false;const df=d-Date.now();return df>0&&df<1200000;}
 function tick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;if(state.mode==='finished'){if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true);else lastCheckTs=Date.now();return;}const s=Date.now()-lastLoadTs;const u=state.matches.some(m=>m.live||soonKickoff(m));if(s>=(u?25000:45000))loadMatches(true);else lastCheckTs=Date.now();}
@@ -438,7 +462,7 @@ const os=()=>$('#suggModal').classList.remove('hidden');
 $('#openSuggBtn').onclick=os;$('#suggHero').onclick=os;$('#suggCancel').onclick=()=>$('#suggModal').classList.add('hidden');$('#suggSend').onclick=sendSuggestion;
 $('#tgVip').onchange=e=>{state.vip=e.target.checked;renderCurrent();};
 $('#refreshBtn').onclick=()=>loadMatches();
-$('#langBtn').onclick=()=>{LANG=LANG==='ar'?'en':'ar';lsSet('eb_lang',LANG);applyLang();populateLeagueSelect();};
+$('#langBtn').onclick=()=>{LANG=LANG==='ar'?'en':'ar';lsSet('eb_lang',LANG);applyLang();populateLeagueSelect();renderCurrent();};
 $('#bellBtn').onclick=()=>{lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
 $('#backBtn').onclick=()=>showView(state.prevView||'home');
 $('#toTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
@@ -492,7 +516,7 @@ state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickof
 if(state.mode==='all')upcomingPool=new Map(list.map(m=>[m.id,m]));
 isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;
 const sy=silent?window.scrollY:null;
-try{renderCurrent();}catch(e){console.error(e);}
+try{renderCurrent();}catch(e){}
 if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
 updateBell();updateSource();reportHealth(state.source==='live');showInbox(false);maybeBankerPush();
 if(state.matches.length===0&&Date.now()-lastEmptyRetry>20000){lastEmptyRetry=Date.now();setTimeout(()=>{if(state.matches.length===0&&!isLoading&&state.mode!=='finished')loadMatches(true);},8000);}}
@@ -763,7 +787,7 @@ function fmtDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(
 function fmtDT(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat(LANG==='ar'?'ar-EG':'en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d);}
 function timeOnly(iso){const d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat(LANG==='ar'?'ar-EG':'en-GB',{hour:'2-digit',minute:'2-digit'}).format(d);}
 function esc(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));}
-window.EB={state,db,remoteCfg};
+window.EB.db=db;
 </script>
 </body>
 </html>
