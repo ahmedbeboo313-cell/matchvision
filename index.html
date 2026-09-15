@@ -341,7 +341,6 @@ setInterval(()=>{if(isLoading&&Date.now()-loadStartTs>20000){isLoading=false;loa
 function maybeShowGuide(){if(remoteCfg.disableGuide)return;const t=fmtDate(new Date());if(lsGet('mv_guide_day')===t)return;$('#guideModal').classList.remove('hidden');}
 function soonKickoff(m){const d=new Date(m.date);if(isNaN(d)||m.live||isFinished(m))return false;const df=d-Date.now();return df>0&&df<1200000;}
 function tick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;evalAccum();if(state.view==='accum')renderAccum();if(state.mode==='finished'){if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true);else lastCheckTs=Date.now();return;}const s=Date.now()-lastLoadTs;const u=state.matches.some(m=>m.live||soonKickoff(m));if(s>=(u?25000:45000))loadMatches(true);else lastCheckTs=Date.now();}
-/* ===== مسح لايف شامل كل 10 ثواني في وضع اللايف (يكتشف أي ماتش جديد يبدأ تلقائي) ===== */
 function fastTick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;if(state.mode==='finished')return;
 const isLiveMode=(state.mode==='live');
 const hl=state.matches.some(m=>m.live);const hs=state.matches.some(m=>soonKickoff(m));
@@ -397,7 +396,7 @@ const tb2=e.target.closest('[data-tab]');if(tb2)switchTab(tb2.dataset.tab);});
 $('#tgAuto').onchange=e=>state.autoRefresh=e.target.checked;
 $('#tgNotif').onchange=e=>{state.notifEnabled=e.target.checked;updateBell();};
 $('#notifPermBtn').onclick=()=>{try{if(!('Notification' in window)){alert('غير مدعوم');return;}Notification.requestPermission().then(p=>alert(p==='granted'?'✅':'❌'));}catch(e){alert('غير مدعوم');}};
-const rs=$('#resetStats');if(rs)rs.onclick=()=>{lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}});lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]});lsSet('eb_banker_saved',null);renderCurrent();};
+const rs=$('#resetStats');if(rs)rs.onclick=()=>{lsSet('mv_track_v2',{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}});lsSet('mv_accum',{b:{w:0,l:0},g:{w:0,l:0},h1:{w:0,l:0},snap:{},history:[]});lsSet('eb_banker_saved',null);renderCurrent();};
 $('#clearFavBtn').onclick=()=>{favorites.clear();saveFavs();renderCurrent();};}
 function saveCache(l){try{localStorage.setItem('eb_cache',JSON.stringify({ts:Date.now(),list:l.slice(0,120).map(slimMatch)}));}catch(e){}}
 function slimMatch(m){return{id:m.id,date:m.date,leagueName:m.leagueName,leagueSlug:m.leagueSlug,statusState:m.statusState,statusCompleted:m.statusCompleted,live:m.live,minute:m.minute,scoreHome:m.scoreHome,scoreAway:m.scoreAway,sourceName:m.sourceName,home:m.home,away:m.away,venue:m.venue,homeForm:m.homeForm,awayForm:m.awayForm,fhHome:m.fhHome,fhAway:m.fhAway,hasHalf:m.hasHalf,oddsHome:m.oddsHome,oddsAway:m.oddsAway};}
@@ -484,14 +483,18 @@ function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/
 function dedupe(a){const m=new Map();a.forEach(x=>{const k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){const d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
-function trackFinished(list){try{const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};if(!t.byMkt)t.byMkt={};let ch=false;
+/* ===== تتبع يومي: صح/غلط لكل يوم ===== */
+function trackFinished(list){try{const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}};if(!t.byMkt)t.byMkt={};if(!t.days)t.days={};let ch=false;
 list.forEach(m=>{if(!isFinished(m)||m.scoreHome==null||t.ids.includes(m.id))return;
 const p=getPrediction(m);const sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
 const th=TEAMADJ[m.home.id]||(TEAMADJ[m.home.id]={gf:0,ga:0,n:0});th.gf+=sh;th.ga+=sa;th.n++;
 const ta=TEAMADJ[m.away.id]||(TEAMADJ[m.away.id]={gf:0,ga:0,n:0});ta.gf+=sa;ta.ga+=sh;ta.n++;
 const df=buildDefs(m,p,true);df.forEach(d=>d.push(safetyScore(d[0],d[2].prob,p)));df.sort((a,b)=>b[3]-a[3]);const best=df[0];
 const hit=hitCheck(best[0],p,m,tot,sh,sa);t.evaluated++;
-if(hit===true){t.wins++;t.byMkt[best[1]]=(t.byMkt[best[1]]||0)+1;t.winsList.unshift({mkt:best[1],match:m.home.name+' × '+m.away.name,prob:best[2].prob,ts:Date.now()});if(t.winsList.length>30)t.winsList.pop();}
+const dayKey=fmtDate(new Date(m.date));
+if(!t.days[dayKey])t.days[dayKey]={c:0,w:0};
+if(hit===true){t.wins++;t.days[dayKey].c++;t.byMkt[best[1]]=(t.byMkt[best[1]]||0)+1;t.winsList.unshift({mkt:best[1],match:m.home.name+' × '+m.away.name,prob:best[2].prob,ts:Date.now()});if(t.winsList.length>30)t.winsList.pop();}
+else if(hit===false){t.days[dayKey].w++;}
 const pl=(p.lh+p.la)||1;const ra=clamp(tot/pl,0.4,2.5);const a=adjFor(m.leagueSlug);a.lam=a.n?(a.lam*0.7+ra*0.3):ra;a.n=(a.n||0)+1;ADJ[m.leagueSlug]=a;saveAdj();
 t.ids.push(m.id);if(t.ids.length>600)t.ids.shift();ch=true;});
 if(ch)lsSet('mv_track_v2',t);}catch(e){}}
@@ -651,12 +654,16 @@ else html+=list.map(m=>matchCard(m)).join('');
 homeContent.innerHTML=html;}
 function renderFavs(){loading.hidden=true;const list=filtered().filter(m=>favorites.has(m.id));updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(m=>matchCard(m)).join('');}
 function renderLeagues(){loading.hidden=true;const c={};state.matches.forEach(m=>c[m.leagueSlug]=(c[m.leagueSlug]||0)+1);leaguesContent.innerHTML=`<button class="league-card ${state.league==='all'?'active':''}" data-league="all"><span class="em">🌍</span>كل الدوريات<small>${state.matches.length}</small></button>`+LEAGUES.map(l=>`<button class="league-card ${state.league===l.slug?'active':''}" data-league="${l.slug}"><span class="em">${l.em}</span>${l.name}<small>${c[l.slug]||0}</small></button>`).join('');}
-function renderStats(){loading.hidden=true;const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{}};const bm=t.byMkt||{};
+/* ===== الإحصائيات + التقسيم اليومي ===== */
+function renderStats(){loading.hidden=true;const t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}};const bm=t.byMkt||{};const days=t.days||{};
 const acc=t.evaluated?Math.round(t.wins/t.evaluated*100):0;const C=213.6;$('#ringFg').style.strokeDashoffset=C*(1-acc/100);$('#ringText').textContent=acc+'%';
 $('#ringLabel').textContent=t.evaluated?`دقة حقيقية: ${t.wins} كسب / ${t.evaluated}`:'لسه مفيش توقعات متقيمة';
 const mr=Object.keys(bm).length?`<div class="safe-others-label">توزيع الكسب حسب السوق:</div>`+Object.keys(bm).map(k=>`<div class="stat-row"><span>📊 ${esc(k)}</span><b>${bm[k]} كسب</b></div>`).join(''):'';
 const wr=t.winsList.length?t.winsList.map(w=>`<div class="stat-row"><span>✅ ${esc(w.mkt)} — ${esc(w.match)}</span><b>${w.prob}%</b></div>`).join(''):`<div class="stat-row"><span>لسه مفيش توقعات كسبت</span><b>-</b></div>`;
-$('#trackRows').innerHTML=mr+wr;$('#statAnalyzed').textContent=t.evaluated;$('#statToday').textContent=state.matches.filter(m=>m.live).length;}
+const dayKeys=Object.keys(days).sort().reverse().slice(0,10);
+const daysHtml=dayKeys.map(k=>{const d=days[k];const tot=(d.c||0)+(d.w||0);const dacc=tot?Math.round((d.c||0)/tot*100):0;const dl=dayLabel(new Date(k+'T00:00:00'));return `<div class="stat-row"><span>📅 ${dl}</span><b>✅ ${d.c||0} / ❌ ${d.w||0} • ${dacc}%</b></div>`;}).join('');
+$('#trackRows').innerHTML=mr+wr+`<div class="safe-others-label">📅 الدقة حسب الأيام:</div>`+(daysHtml||`<div class="stat-row"><span>لسه مفيش بيانات يومية</span><b>-</b></div>`);
+$('#statAnalyzed').textContent=t.evaluated;$('#statToday').textContent=state.matches.filter(m=>m.live).length;}
 function renderNotifs(){loading.hidden=true;const now=Date.now(),it=[];
 state.matches.forEach(m=>{if(m.live){it.push({ic:'🔴',t:'مباراة مباشرة',s:`${m.home.name} × ${m.away.name} — ${m.scoreHome??0}-${m.scoreAway??0}`});return;}const h=(new Date(m.date)-now)/36e5;if(h>0&&h<=36)it.push({ic:'⏰',t:`${m.home.name} × ${m.away.name}`,s:h<1?'أقل من ساعة':Math.round(h)+' ساعة'});});
 if(!state.notifEnabled&&!it.length){notifContent.innerHTML='<div class="empty">التنبيهات متوقفة.</div>';return;}
