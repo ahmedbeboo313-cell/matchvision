@@ -419,9 +419,9 @@ function saveCache(l){try{localStorage.setItem('eb_cache',JSON.stringify({ts:Dat
 function slimMatch(m){return{id:m.id,date:m.date,leagueName:m.leagueName,leagueSlug:m.leagueSlug,statusState:m.statusState,statusCompleted:m.statusCompleted,live:m.live,minute:m.minute,scoreHome:m.scoreHome,scoreAway:m.scoreAway,sourceName:m.sourceName,home:m.home,away:m.away,venue:m.venue,homeForm:m.homeForm,awayForm:m.awayForm,fhHome:m.fhHome,fhAway:m.fhAway,hasHalf:m.hasHalf,oddsHome:m.oddsHome,oddsAway:m.oddsAway};}
 function loadCache(){try{return JSON.parse(localStorage.getItem('eb_cache'));}catch(e){return null;}}
 function finDayKey(d){return 'eb_finday_'+d;}
-function readDayCache(d){try{var c=JSON.parse(localStorage.getItem(finDayKey(d))||'null');if(c&&c.list&&c.list.length&&Date.now()-c.ts<10*86400000)return c.list;}catch(e){return null;}}
+function readDayCache(d){try{var c=JSON.parse(localStorage.getItem(finDayKey(d))||'null');if(!c||!c.list||!c.list.length)return null;var age=Date.now()-c.ts;var diff=Math.round((new Date(fmtDate(new Date()))-new Date(d))/86400000);var maxAge=(diff<=3)?(5*60*1000):(10*86400000);if(age<maxAge)return c.list;}catch(e){}return null;}
 function writeDayCache(d,l){try{localStorage.setItem(finDayKey(d),JSON.stringify({ts:Date.now(),list:l.slice(0,250).map(slimMatch)}));}catch(e){}}
-function finDays(){var n=state.finSpan||3,o=[];for(var i=1;i<=n;i++)o.push(fmtDate(addDays(new Date(),-i)));return o;}
+function finDays(){var n=state.finSpan||3,o=[];for(var i=0;i<n;i++)o.push(fmtDate(addDays(new Date(),-i)));return o;}
 function fetchT(u,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||9000);return fetch(u,{cache:'no-store',signal:c.signal}).finally(function(){clearTimeout(t);});}
 function loadMatches(silent){
 if(state.mode==='finished'){loadFinishedFlow(silent);return;}
