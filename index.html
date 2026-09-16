@@ -214,6 +214,11 @@ setTimeout(function(){
 <div class="ad-row"><label>نص زرار التليجرام</label><input id="ad_tg_main" type="text" maxlength="40"></div>
 <div class="ad-row"><label>لينك التليجرام</label><input id="ad_tg_link" type="text" maxlength="200"></div>
 </div>
+<div style="background:rgba(34,197,94,.10);border:1px solid rgba(34,197,94,.35);border-radius:16px;padding:14px;margin-bottom:14px">
+<div style="font-weight:900;color:#86efac;margin-bottom:8px">🔄 تحديث كامل عن بُعد</div>
+<div style="color:var(--muted);font-size:11.5px;margin-bottom:10px">بيوصل فوراً لكل المستخدمين وهم جوه التطبيق ويعمل ريفرش كامل للمباريات والبيانات من غير ما حد يخرج.</div>
+<button id="ad_refresh" class="ad-btn" style="background:linear-gradient(135deg,#38bdf8,#22c55e);color:#04120a">🔄 فرض تحديث كامل الآن</button>
+</div>
 <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:16px;padding:14px;margin-bottom:14px">
 <div style="font-weight:900;color:#fde68a;margin-bottom:10px">🔒 تغيير كلمة السر</div>
 <div class="ad-row"><label>كلمة السر الجديدة</label><input id="ad_newpass" type="password" maxlength="40"></div>
@@ -295,11 +300,14 @@ function countBetView(){try{var d=new Date().toISOString().slice(0,10);db.collec
 function countMatchView(m){try{db.collection('matchViews').doc(matchKey(m)).set({count:FIELD_INC,title:m.home.name+' × '+m.away.name,ts:Date.now()},{merge:true}).catch(function(){});}catch(e){}}
 function countTgClick(){try{var d=new Date().toISOString().slice(0,10);db.collection('counters').doc('tgClicks').set({total:FIELD_INC,last:Date.now()},{merge:true}).catch(function(){});db.collection('daily').doc(d).set({tgClicks:FIELD_INC},{merge:true}).catch(function(){});}catch(e){}}
 function reportHealth(ok){try{var n=Date.now();if(n-(+ssGet('eb_h')||0)<300000)return;ssSet('eb_h',String(n));db.collection('counters').doc('sourcesHealth').set({status:ok?'ok':'down',ts:n},{merge:true}).catch(function(){});}catch(e){}}
-var remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{},telegram:{enabled:true,mainText:'انضم لقناتنا 🔔',subText:'+2.4K',link:'https://t.me/+P98t0SG-FJVlOWQ8'},adminPass:'bebo2026'};
+var remoteCfg={maintenance:false,banner:'',disabledMarkets:[],disableGuide:false,pinnedKey:'',hiddenMatches:[],hiddenLeagues:[],inbox:{active:false,id:'',text:''},vip:false,support:{enabled:false,text:'',link:''},extras:{},telegram:{enabled:true,mainText:'انضم لقناتنا 🔔',subText:'+2.4K',link:'https://t.me/+P98t0SG-FJVlOWQ8'},adminPass:'bebo2026',refreshSignal:0};
 var lastInboxShow=0;
+var lastRefreshSignal=lsGet('eb_refresh_sig')||0;
+function checkRefreshSignal(){var sig=remoteCfg.refreshSignal||0;if(sig&&sig!==lastRefreshSignal){lastRefreshSignal=sig;lsSet('eb_refresh_sig',sig);forceFullRefresh();}}
+function forceFullRefresh(){try{localStorage.removeItem('eb_cache');for(var i=0;i<8;i++){localStorage.removeItem(finDayKey(fmtDate(addDays(new Date(),-i))));}}catch(e){}try{livePoolMap.clear();}catch(e){}loadMatches(true);try{renderCurrent();}catch(e){}}
 function showInbox(f){try{if(!(remoteCfg.inbox&&remoteCfg.inbox.active&&(remoteCfg.inbox.text||'').trim()))return;var m=document.getElementById('inboxModal');if(!m.classList.contains('hidden'))return;var n=Date.now();if(!f&&n-lastInboxShow<30000)return;lastInboxShow=n;document.getElementById('inboxText').textContent=remoteCfg.inbox.text;m.classList.remove('hidden');}catch(e){}}
 function loadRemoteConfig(){try{db.collection('config').doc('settings').get().then(function(d){if(d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();applyTelegram();try{renderCurrent();}catch(e){}}else{db.collection('config').doc('settings').set(remoteCfg).catch(function(){});applyTelegram();}}).catch(function(){});}catch(e){}}
-function applyRemoteConfig(){try{window.EB_EXTRAS=remoteCfg.extras||{};if(remoteCfg.maintenance){document.getElementById('maintenanceScreen').classList.remove('hidden');if(remoteCfg.maintenanceMsg)document.getElementById('maintenanceMsg').textContent=remoteCfg.maintenanceMsg;var sp=document.getElementById('splash');sp.classList.add('fade');setTimeout(function(){sp.classList.add('hidden');},500);return;}if(remoteCfg.banner){document.getElementById('bannerText').textContent=remoteCfg.banner;document.getElementById('bannerTop').classList.remove('hidden');}showInbox(true);if(remoteCfg.vip)document.getElementById('vipRow').classList.remove('hidden');if(remoteCfg.support&&remoteCfg.support.enabled){var b=document.getElementById('supportBtn');b.textContent=remoteCfg.support.text||'💚 ادعمنا';b.classList.remove('hidden');b.onclick=function(){try{window.open(remoteCfg.support.link,'_blank');}catch(e){}};}}catch(e){}}
+function applyRemoteConfig(){try{checkRefreshSignal();window.EB_EXTRAS=remoteCfg.extras||{};if(remoteCfg.maintenance){document.getElementById('maintenanceScreen').classList.remove('hidden');if(remoteCfg.maintenanceMsg)document.getElementById('maintenanceMsg').textContent=remoteCfg.maintenanceMsg;var sp=document.getElementById('splash');sp.classList.add('fade');setTimeout(function(){sp.classList.add('hidden');},500);return;}if(remoteCfg.banner){document.getElementById('bannerText').textContent=remoteCfg.banner;document.getElementById('bannerTop').classList.remove('hidden');}showInbox(true);if(remoteCfg.vip)document.getElementById('vipRow').classList.remove('hidden');if(remoteCfg.support&&remoteCfg.support.enabled){var b=document.getElementById('supportBtn');b.textContent=remoteCfg.support.text||'💚 ادعمنا';b.classList.remove('hidden');b.onclick=function(){try{window.open(remoteCfg.support.link,'_blank');}catch(e){}};}}catch(e){}}
 function applyTelegram(){try{var fab=document.getElementById('tgFab'),tg=remoteCfg.telegram||{};if(!fab)return;if(tg.enabled===false||!tg.link){fab.classList.add('hidden');return;}fab.href=tg.link;document.getElementById('tgFabMain').textContent=tg.mainText||'انضم لقناتنا 🔔';document.getElementById('tgFabSub').innerHTML='<span class="dot-live"></span><span>'+(tg.subText||'+2.4K')+'</span>';fab.classList.remove('hidden');}catch(e){}}
 var suggRating=0;
 document.querySelectorAll('#suggStars .star').forEach(function(s){s.addEventListener('click',function(){suggRating=+s.dataset.v;document.querySelectorAll('#suggStars .star').forEach(function(x,i){x.classList.toggle('active',i<suggRating);});});});
@@ -312,6 +320,7 @@ document.getElementById('adminLoginBtn').onclick=doAdminLogin;
 document.getElementById('adminPass').addEventListener('keydown',function(e){if(e.key==='Enter')doAdminLogin();});
 document.getElementById('ad_close').onclick=function(){document.getElementById('adminPanel').classList.add('hidden');};
 document.getElementById('ad_save').onclick=saveAdminSettings;
+document.getElementById('ad_refresh').onclick=function(){var st=document.getElementById('ad_status');st.className='ad-status';st.textContent='جاري إرسال إشارة التحديث...';db.collection('config').doc('settings').set({refreshSignal:Date.now()},{merge:true}).then(function(){st.className='ad-status ok';st.textContent='✅ تم إرسال إشارة التحديث لكل المستخدمين!';}).catch(function(e){st.className='ad-status err';st.textContent='❌ فشل: '+e.message;});};
 document.getElementById('tgFab').addEventListener('click',function(){countTgClick();});}
 function openAdminLogin(){document.getElementById('adminPass').value='';document.getElementById('adminLoginErr').textContent='';document.getElementById('adminLogin').classList.remove('hidden');setTimeout(function(){document.getElementById('adminPass').focus();},200);}
 function doAdminLogin(){var p=document.getElementById('adminPass').value;var pass=remoteCfg.adminPass||'bebo2026';if(p===pass){document.getElementById('adminLogin').classList.add('hidden');openAdminPanel();}else{document.getElementById('adminLoginErr').textContent='❌ كلمة السر غلط';}}
@@ -351,6 +360,7 @@ function init(){
   try{setupAdmin();}catch(e){}
   try{countVisit();}catch(e){}
   try{loadRemoteConfig();}catch(e){}
+  try{db.collection('config').doc('settings').onSnapshot(function(d){if(d&&d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();applyTelegram();}});}catch(e){}
   try{document.addEventListener('visibilitychange',function(){if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);});}catch(e){}
   setTimeout(function(){splash.classList.add('fade');setTimeout(function(){splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);},1600);
   setInterval(tick,10000);setInterval(fastTick,4000);setInterval(secTick,1000);
