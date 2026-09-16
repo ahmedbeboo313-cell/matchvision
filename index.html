@@ -679,7 +679,7 @@ var safeTicket={text:cn[0]+' + '+cn[1],prob:Math.round(cs[sci]*100),tone:'good'}
 var bal=1-Math.min(1,Math.abs(lh-la)/Math.max(0.001,Math.max(lh,la)));var v=(lam/3.2)*0.6+bal*0.4;var volIdx=v<0.55?0:(v<0.75?1:2);
 var r={goals:goals,g15:g15,u15:u15,u25:u25,btts:btts,win:win,dc1:dc1,dc2:dc2,h1Goal:h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'info'},firstGoal:firstGoal,bothHalves:bothHalves,range:range,safeTicket:safeTicket,volIdx:volIdx,lh:lh,la:la,lcorn:lcorn,lcard:lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55),mktAg:mktAg,lam1:L1};
 r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.win.prob)/4);return r;}
-var VER=['goals','g15','u15','u25','win','dc1','dc2','btts','h1','range','cleanSheet'];
+var VER=['goals','g15','u15','u25','win','dc1','dc2','range','cleanSheet'];
 function hitCheck(k,p,m,tot,sh,sa){switch(k){
 case 'goals':if(tot===2)return null;return p.goals.text==='أكثر من 2'?tot>=3:tot<=1;
 case 'g15':return tot>=2;case 'u15':return tot<=1;case 'u25':return tot<=2;
@@ -816,25 +816,27 @@ if(!fin){if(state.markets.corners)d.push(['corners','ركنيات 9.5',p.corners
 d.push(['h1','الشوط الأول',p.h1Goal]);d.push(['cleanSheet','كلين شيت',p.cleanSheet]);d.push(['range','نطاق الأهداف',p.range]);
 if(fin)return d.filter(function(x){return VER.indexOf(x[0])>=0;});
 return d;}
-function safeBlock(m,p,fin){var df=buildDefs(m,p,fin,m.oddsHome,m.oddsAway,null);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});df.sort(function(a,b){return b[3]-a[3];});
-var best=df[0];var others=df.slice(1).filter(function(d){return d[2].prob>=75;}).slice(0,4);
-var sh=m.scoreHome||0,sa=m.scoreAway||0,tot=sh+sa;
-var hOf=function(d){return fin?hitCheck(d[0],p,m,tot,sh,sa):null;};
-var bH=hOf(best);var bSh=shieldsFor(best[0],best[2].prob,p);
-var h1SafeBox='';
-if(p.h1Goal&&p.h1Goal.prob>=H1_SAFE_MIN){
-  h1SafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>⏱️ هدف في الشوط الأول</span><span class="safe-badge">آمن بنسبة كبيرة ✅</span></div><div class="safe-val good">نعم — هدف في الشوط الأول</div><div class="meter big"><span style="width:'+p.h1Goal.prob+'%"></span></div><div class="prob">'+p.h1Goal.prob+'% • ⏱️ شوط أول نشط</div></div>';
+function safeBlock(m,p,fin){
+  var df=buildDefs(m,p,fin,m.oddsHome,m.oddsAway,null);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});df.sort(function(a,b){return b[3]-a[3];});
+  var best=df[0];var others=df.slice(1).filter(function(d){return d[2].prob>=75;}).slice(0,4);
+  var sh=m.scoreHome||0,sa=m.scoreAway||0,tot=sh+sa;
+  var hOf=function(d){return fin?hitCheck(d[0],p,m,tot,sh,sa):null;};
+  var bH=hOf(best);var bSh=shieldsFor(best[0],best[2].prob,p);
+  var h1SafeBox='';
+  if(!fin&&p.h1Goal&&p.h1Goal.prob>=H1_SAFE_MIN){
+    h1SafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>⏱️ هدف في الشوط الأول</span><span class="safe-badge">آمن بنسبة كبيرة ✅</span></div><div class="safe-val good">نعم — هدف في الشوط الأول</div><div class="meter big"><span style="width:'+p.h1Goal.prob+'%"></span></div><div class="prob">'+p.h1Goal.prob+'% • ⏱️ شوط أول</div></div>';
+  }
+  var btSafeBox='';
+  if(!fin&&p.btts&&p.btts.text==='نعم'&&p.btts.prob>=BTTS_SAFE_MIN){
+    btSafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>🎯 كلا الفريقين يسجلان</span><span class="safe-badge">آمن بنسبة كبيرة ✅</span></div><div class="safe-val good">نعم — الفريقان يسجلان</div><div class="meter big"><span style="width:'+p.btts.prob+'%"></span></div><div class="prob">'+p.btts.prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
+  }
+  var sb='<div class="safe-box"><div class="safe-head"><span>'+best[1]+'</span><span class="safe-badge">الأضمن 🛡️ '+shieldStr(bSh)+'</span></div><div class="safe-val '+(fin?(bH===true?'good':(bH===false?'hot':'')):best[2].tone)+'">'+(fin?best[2].text+(bH===true?' ✔':(bH===false?' ✘':'')):best[2].text)+'</div><div class="meter big"><span style="width:'+best[2].prob+'%"></span></div><div class="prob">'+best[2].prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
+  var chps=others.map(function(d){var h=hOf(d);return '<span class="schip '+(fin?(h===true?'hit':(h===false?'miss':'')):'')+'">'+(fin?d[2].text+(h===true?' ✔':(h===false?' ✘':'')):d[2].text)+' <span class="sp">'+d[2].prob+'%</span></span>';}).join('');
+  var ow=others.length?('<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">'+chps+'</div>'):'';
+  var learnTxt=(p.learnN)?('مدروس من '+p.learnN+' مباراة'):'تحليل أساسي';
+  var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+learnTxt+'</span></div>';
+  return h1SafeBox+btSafeBox+sb+ow+ft;
 }
-var btSafeBox='';
-if(p.btts&&p.btts.text==='نعم'&&p.btts.prob>=BTTS_SAFE_MIN){
-  btSafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>🎯 كلا الفريقين يسجلان</span><span class="safe-badge">آمن بنسبة كبيرة ✅</span></div><div class="safe-val good">نعم — الفريقان يسجلان</div><div class="meter big"><span style="width:'+p.btts.prob+'%"></span></div><div class="prob">'+p.btts.prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
-}
-var sb='<div class="safe-box"><div class="safe-head"><span>'+best[1]+'</span><span class="safe-badge">الأضمن 🛡️ '+shieldStr(bSh)+'</span></div><div class="safe-val '+(fin?(bH===true?'good':(bH===false?'hot':'')):best[2].tone)+'">'+(fin?best[2].text+(bH===true?' ✔':(bH===false?' ✘':'')):best[2].text)+'</div><div class="meter big"><span style="width:'+best[2].prob+'%"></span></div><div class="prob">'+best[2].prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
-var chps=others.map(function(d){var h=hOf(d);return '<span class="schip '+(fin?(h===true?'hit':(h===false?'miss':'')):'')+'">'+(fin?d[2].text+(h===true?' ✔':(h===false?' ✘':'')):d[2].text)+' <span class="sp">'+d[2].prob+'%</span></span>';}).join('');
-var ow=others.length?('<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">'+chps+'</div>'):'';
-var learnTxt=(p.learnN)?('مدروس من '+p.learnN+' مباراة'):'تحليل أساسي';
-var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+learnTxt+'</span></div>';
-return h1SafeBox+btSafeBox+sb+ow+ft;}
 function matchCard(m){var p=getPrediction(m),fv=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
 var hr=m.live?('<span class="live-pill"><span class="live-dot"></span>مباشر '+esc(m.minute||'')+'</span>'):(fin?'<span class="done-pill">انتهت</span>':('<span class="date-text">'+fmtDT(m.date)+'</span>'));
 var pb=m.pinned?'<span class="pin-badge">⭐ مباراة اليوم</span>':'';
