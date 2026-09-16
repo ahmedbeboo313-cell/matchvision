@@ -365,7 +365,7 @@ function init(){
   setTimeout(function(){splash.classList.add('fade');setTimeout(function(){splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);},1600);
   setInterval(tick,10000);setInterval(fastTick,4000);setInterval(secTick,1000);
   setInterval(function(){if(!document.hidden){loadRemoteConfig();}},60000);
-  setInterval(function(){if(isLoading&&Date.now()-loadStartTs>20000){isLoading=false;loading.hidden=true;try{renderCurrent();}catch(e){}updateSource();}},5000);
+  setInterval(function(){if(isLoading&&Date.now()-loadStartTs>25000){isLoading=false;loading.hidden=true;try{renderCurrent();}catch(e){}updateSource();}},5000);
 }
 function maybeShowGuide(){try{if(remoteCfg.disableGuide)return;var t2=fmtDate(new Date());if(lsGet('mv_guide_day')===t2)return;$('#guideModal').classList.remove('hidden');}catch(e){}}
 function soonKickoff(m){var d=new Date(m.date);if(isNaN(d)||m.live||isFinished(m))return false;var df=d-Date.now();return df>0&&df<1200000;}
@@ -440,17 +440,16 @@ function finDayKey(d){return 'eb_finday_'+d;}
 function readDayCache(d){try{var c=JSON.parse(localStorage.getItem(finDayKey(d))||'null');if(!c||!c.list||!c.list.length)return null;var age=Date.now()-c.ts;var diff=Math.round((new Date(fmtDate(new Date()))-new Date(d))/86400000);var maxAge=(diff<=3)?(5*60*1000):(10*86400000);if(age<maxAge)return c.list;}catch(e){}return null;}
 function writeDayCache(d,l){try{localStorage.setItem(finDayKey(d),JSON.stringify({ts:Date.now(),list:l.slice(0,250).map(slimMatch)}));}catch(e){}}
 function finDays(){var n=state.finSpan||3,o=[];for(var i=0;i<n;i++)o.push(fmtDate(addDays(new Date(),-i)));return o;}
-function fetchT(u,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||9000);return fetch(u,{cache:'no-store',signal:c.signal}).finally(function(){clearTimeout(t);});}
+function fetchT(u,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||12000);return fetch(u,{cache:'no-store',signal:c.signal}).finally(function(){clearTimeout(t);});}
 function loadMatches(silent){
 if(state.mode==='finished'){loadFinishedFlow(silent);return;}
 if(isLoading)return;isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
 if(!silent)showLoading();else loading.hidden=true;
-fetchSet(buildRequests()).then(function(items){
-  if(!items.length)return fetchSet(buildRequests());return items;
-}).then(function(items){
+var attempt=function(n){return fetchSet(buildRequests()).then(function(items){if(items&&items.length)return items;if(n>0)return attempt(n-1);return [];});};
+attempt(2).then(function(items){
   if(items&&items.length){var ok=new Set(items.map(function(i){return i.sourceName;}));state.sourcesOk=[...ok];state.source='live';saveCache(items);syncLivePool(items);finishLoad(items,silent);}
-  else{var c=loadCache();if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){state.source='cache';state.sourcesOk=['مخزن'];finishLoad(c.list,silent);}else{state.source='demo';state.sourcesOk=['demo'];finishLoad(demoMatches(),silent);}}
-}).catch(function(){var c=loadCache();if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<6*3600*1000){state.source='cache';state.sourcesOk=['مخزن'];finishLoad(c.list,silent);}else{state.source='demo';state.sourcesOk=['demo'];finishLoad(demoMatches(),silent);}});
+  else{var c=loadCache();if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<24*3600*1000){state.source='cache';state.sourcesOk=['مخزن'];finishLoad(c.list,silent);}else{state.source='demo';state.sourcesOk=['demo'];finishLoad(demoMatches(),silent);}}
+}).catch(function(){var c=loadCache();if(c&&c.list&&c.list.length&&(Date.now()-c.ts)<24*3600*1000){state.source='cache';state.sourcesOk=['مخزن'];finishLoad(c.list,silent);}else{state.source='demo';state.sourcesOk=['demo'];finishLoad(demoMatches(),silent);}});
 }
 function finishLoad(items,silent){
 items.forEach(function(m){if(isFinished(m)&&m.scoreHome!=null&&new Date(m.date)<=new Date())finishedMap.set(m.id,m);});
@@ -459,7 +458,7 @@ todayPool=items.filter(function(m){return fmtDate(new Date(m.date))===td;});
 var list=dedupe(items).filter(isKnown);
 var hm=new Set(remoteCfg.hiddenMatches||[]),hl=new Set(remoteCfg.hiddenLeagues||[]);
 list=list.filter(function(m){return !hm.has(matchKey(m))&&!hl.has(m.leagueSlug);});
-if(state.source!=='cache'){if(state.mode==='live')list=list.filter(function(m){return m.live;});else list=list.filter(function(m){return isUpcoming(m);});}
+if(state.source!=='cache'){if(state.mode==='live')list=list.filter(function(m){return m.live;});else list=list.filter(function(m){return isUpcoming(m)||m.live;});}
 if(state.mode==='live'){var ids=new Set(list.map(function(m){return m.id;}));var ex=[...livePoolMap.values()].filter(function(m){return !ids.has(m.id)&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug);});if(ex.length)list=ex.concat(list);}
 list.sort(function(a,b){if(a.live!==b.live)return a.live?-1:1;return new Date(a.date)-new Date(b.date);});
 state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickoffs();
