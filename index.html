@@ -321,6 +321,9 @@ var CORE_SLUGS=['ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions'
 var LIVE_SLUGS=['ksa.1','eng.1','esp.1','ita.1','ger.1','fra.1','uefa.champions','uefa.europa','uefa.europa.conf','ned.1','por.1','tur.1','sco.1','bel.1','gre.1','swi.1','den.1','nor.1','swe.1','pol.1','aut.1','cro.1','ukr.1','cze.1','bra.1','arg.1','mex.1','usa.1','col.1','chi.1','uru.1','ecu.1','per.1','jpn.1','kor.1','chn.1','aus.1','ind.1','uae.1','qat.1','mar.1','tun.1','alg.1','rsa.1','nga.1','caf.champions','caf.confederation','afc.champions','conmebol.libertadores','conmebol.sudamericana','concacaf.champions','uefa.nations','fifa.world','fifa.friendly'];
 var AMER_SLUGS=['usa.1','mex.1','bra.1','arg.1'];
 var TSDB_LEAGUES={'4328':'الدوري الإنجليزي','4335':'الدوري الإسباني','4332':'الدوري الإيطالي','4331':'الدوري الألماني','4334':'الدوري الفرنسي','4480':'دوري أبطال أوروبا','4481':'الدوري الأوروبي'};
+var TSDB_SLUG={'4328':'eng.1','4335':'esp.1','4332':'ita.1','4331':'ger.1','4334':'fra.1','4480':'uefa.champions','4481':'uefa.europa'};
+var KNOWN={};LEAGUES.forEach(function(l){KNOWN[l.slug]=1;});
+function isKnown(m){return !!KNOWN[m.leagueSlug];}
 var DEF_LEAGUE={home:1.50,away:1.20};
 function $(s){return document.querySelector(s);}
 var splash=$('#splash'),appShell=$('#appShell'),homeContent=$('#homeContent'),homeEmpty=$('#homeEmpty'),favContent=$('#favContent'),favEmpty=$('#favEmpty'),leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),notifContent=$('#notifContent'),loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCount'),avgConfidence=$('#avgConfidence'),lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search'),bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),finRow=$('#finRow'),kickBanner=$('#kickBanner');
@@ -366,10 +369,14 @@ fetchSet(rq).then(function(it){
   if(it&&it.length){liveFailStreak=0;syncLivePool(it);mergeLive(it);}else{liveFailStreak++;if(liveFailStreak>=3){liveFailStreak=0;loadMatches(true);}}
 }).catch(function(){liveFailStreak++;if(liveFailStreak>=3){liveFailStreak=0;loadMatches(true);}})
 .finally(function(){pollingFast=false;showInbox(false);});}
-function syncLivePool(it){it.forEach(function(m){if(m.live)livePoolMap.set(m.id,m);else if(livePoolMap.has(m.id))livePoolMap.delete(m.id);});}
+function syncLivePool(it){it.forEach(function(m){if(!isKnown(m))return;if(m.live)livePoolMap.set(m.id,m);else if(livePoolMap.has(m.id)&&!(m.statusCompleted||m.statusState==='post'))livePoolMap.delete(m.id);});}
 function mergeLive(it){var sy=window.scrollY;var ch=false;
-it.forEach(function(nm){var dn=(nm.statusCompleted||nm.statusState==='post');
+it.forEach(function(nm){
+if(!isKnown(nm))return;
+var dn=(nm.statusCompleted||nm.statusState==='post');
 if(dn&&nm.scoreHome!=null){finishedMap.set(nm.id,nm);livePoolMap.delete(nm.id);}
+else if(nm.live){livePoolMap.set(nm.id,nm);}
+else if(livePoolMap.has(nm.id)){nm.live=true;}
 var i=state.matches.findIndex(function(m){return m.id===nm.id;});
 if(i>=0){var om=state.matches[i];if(om.scoreHome!==nm.scoreHome||om.scoreAway!==nm.scoreAway||om.minute!==nm.minute||om.live!==nm.live||om.statusState!==nm.statusState||om.statusCompleted!==nm.statusCompleted){state.matches[i]=Object.assign({},om,nm);ch=true;}}
 else if(nm.live&&state.mode!=='finished'&&!state.matches.some(function(m){return matchKey(m)===matchKey(nm);})){state.matches.unshift(nm);ch=true;}
@@ -431,7 +438,7 @@ function finishLoad(items,silent){
 items.forEach(function(m){if(isFinished(m)&&m.scoreHome!=null&&new Date(m.date)<=new Date())finishedMap.set(m.id,m);});
 var td=fmtDate(new Date());
 todayPool=items.filter(function(m){return fmtDate(new Date(m.date))===td;});
-var list=dedupe(items);
+var list=dedupe(items).filter(isKnown);
 var hm=new Set(remoteCfg.hiddenMatches||[]),hl=new Set(remoteCfg.hiddenLeagues||[]);
 list=list.filter(function(m){return !hm.has(matchKey(m))&&!hl.has(m.leagueSlug);});
 if(state.source!=='cache'){if(state.mode==='live')list=list.filter(function(m){return m.live;});else list=list.filter(function(m){return isUpcoming(m);});}
@@ -459,7 +466,7 @@ chain.then(function(){
 }).then(function(){
   finishedMap.forEach(function(v,k){if(!list.some(function(m){return m.id===k;}))list.push(v);});
   var hm=new Set(remoteCfg.hiddenMatches||[]),hl=new Set(remoteCfg.hiddenLeagues||[]);
-  var l=dedupe(list).filter(function(m){return(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null&&new Date(m.date)<=new Date()&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug);});
+  var l=dedupe(list).filter(function(m){return isKnown(m)&&(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null&&new Date(m.date)<=new Date()&&!hm.has(matchKey(m))&&!hl.has(m.leagueSlug);});
   l.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
   state.matches=l;state.source=(l.length===0)?'demo':'live';
   if(state.source==='demo'){state.matches=dedupe(demoMatches());state.sourcesOk=['demo'];}else state.sourcesOk=['أرشيف'];
@@ -498,7 +505,7 @@ function parseTSDB(e,live){var dt=new Date();if(e.strDate){var p=new Date(e.strD
 var fin=!live&&(e.strStatus==='Match Finished'||e.strStatus==='FT')&&e.intHomeScore!=null;
 var liveSet={'1H':1,'2H':1,'HT':1,'ET':1,'BT':1,'INT':1,'SUSP':1,'LIVE':1,'1ST':1,'2ND':1};
 var isLive=live||(!fin&&!!liveSet[e.strStatus]);
-return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:(TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري'),leagueSlug:'tsdb-'+(e.idLeague||'x'),statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||e.strStatus||''):'',homeForm:'',awayForm:'',fhHome:0,fhAway:0,hasHalf:false,oddsHome:null,oddsAway:null,scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idHomeTeam+'.png'):'',record:''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idAwayTeam+'.png'):'',record:''},venue:e.strVenue||''};}
+return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:(TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري'),leagueSlug:(TSDB_SLUG[e.idLeague]||('tsdb-'+(e.idLeague||'x'))),statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||e.strStatus||''):'',homeForm:'',awayForm:'',fhHome:0,fhAway:0,hasHalf:false,oddsHome:null,oddsAway:null,scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idHomeTeam+'.png'):'',record:''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idAwayTeam+'.png'):'',record:''},venue:e.strVenue||''};}
 function demoMatches(){var fx=[['الهلال','4-2-0','النصر','3-2-1','20:00','ksa.1'],['مانشستر سيتي','4-1-1','ليفربول','4-2-0','19:00','eng.1'],['ريال مدريد','5-0-1','برشلونة','4-1-1','21:00','esp.1']];
 return fx.map(function(f,i){var d=new Date(state.date+'T'+f[4]+':00');if(isNaN(d))d=addDays(new Date(),1);if(d<=new Date())d.setDate(d.getDate()+1);var lg=LEAGUES.find(function(x){return x.slug===f[5];});return{id:'demo-'+state.date+'-'+i,date:d.toISOString(),leagueName:lg?lg.name:'دوري',leagueSlug:f[5],statusState:'pre',statusCompleted:false,live:false,minute:'',scoreHome:null,scoreAway:null,sourceName:'demo',homeForm:f[1],awayForm:f[3],fhHome:0,fhAway:0,hasHalf:false,oddsHome:null,oddsAway:null,home:{id:'',name:f[0],abbr:f[0].slice(0,3),logo:'',record:f[1]},away:{id:'',name:f[2],abbr:f[2].slice(0,3),logo:'',record:f[3]},venue:''};});}
 function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/\s+/g,'');}
@@ -645,14 +652,14 @@ function showView(v){state.view=v;['home','details','favorites','leagues','stats
 function renderCurrent(){updateSource();var sy=window.scrollY;var fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];if(fn)fn();window.scrollTo({top:sy,behavior:'auto'});}
 function filtered(){var l=state.matches.slice();if(state.league!=='all')l=l.filter(function(m){return m.leagueSlug===state.league;});if(state.query.trim()){var q=state.query.trim().toLowerCase();l=l.filter(function(m){return[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().indexOf(q)>=0;});}return l;}
 function dayLabel(iso){var d=new Date(iso);if(isNaN(d))return'';return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long'}).format(d);}
-function renderHome(){loading.hidden=true;var list=filtered();updateStats(list);
+function renderHome(){loading.hidden=true;var list=filtered();if(state.mode==='live')list=list.filter(function(m){return m.live;});updateStats(list);
 if(!list.length){homeContent.innerHTML='';homeEmpty.hidden=false;homeEmpty.innerHTML=state.mode==='finished'?'⚠️ لسه بنحمّل الأرشيف...':(state.mode==='live'?'🔴 لا توجد مباريات مباشرة الآن.':'لا توجد مباريات قادمة للتاريخ ده.');return;}
 homeEmpty.hidden=true;var html='';
 if(state.mode==='all')html+=renderBanker();
 if(state.mode==='finished'){var g=new Map();list.forEach(function(m){var k=fmtDate(new Date(m.date));if(!g.has(k))g.set(k,[]);g.get(k).push(m);});g.forEach(function(it){html+='<div class="day-head">📅 '+dayLabel(it[0].date)+' ('+it.length+')</div>'+it.map(function(m){return matchCard(m);}).join('');});}
 else html+=list.map(function(m){return matchCard(m);}).join('');
 homeContent.innerHTML=html;}
-function renderFavs(){loading.hidden=true;var list=filtered().filter(function(m){return favorites.has(m.id);});updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(function(m){return matchCard(m);}).join('');}
+function renderFavs(){loading.hidden=true;var list=filtered().filter(function(m){return favorites.has(m.id);});if(state.mode==='live')list=list.filter(function(m){return m.live;});updateStats(list);if(!list.length){favContent.innerHTML='';favEmpty.hidden=false;return;}favEmpty.hidden=true;favContent.innerHTML=list.map(function(m){return matchCard(m);}).join('');}
 function renderLeagues(){loading.hidden=true;var c={};state.matches.forEach(function(m){c[m.leagueSlug]=(c[m.leagueSlug]||0)+1;});leaguesContent.innerHTML='<button class="league-card '+(state.league==='all'?'active':'')+'" data-league="all"><span class="em">🌍</span>كل الدوريات<small>'+state.matches.length+'</small></button>'+LEAGUES.map(function(l){return '<button class="league-card '+(state.league===l.slug?'active':'')+'" data-league="'+l.slug+'"><span class="em">'+l.em+'</span>'+l.name+'<small>'+(c[l.slug]||0)+'</small></button>';}).join('');}
 function renderStats(){loading.hidden=true;var t2=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}};var bm=t2.byMkt||{};var days=t2.days||{};
 var acc=t2.evaluated?Math.round(t2.wins/t2.evaluated*100):0;var C=213.6;$('#ringFg').style.strokeDashoffset=C*(1-acc/100);$('#ringText').textContent=acc+'%';
