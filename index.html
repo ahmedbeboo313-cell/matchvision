@@ -182,7 +182,7 @@ setTimeout(function(){
 <div class="gsteps">
 <div class="gstep"><span>1</span><p>كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — توقع ثابت مدروس من سجل الفريقين والفورم وأداء البيت/البره.</p></div>
 <div class="gstep"><span>2</span><p>فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده، وثابت طول اليوم.</p></div>
-<div class="gstep"><span>3</span><p>قسم <b class="suremini">🎯 كلا الفريقين يسجلان</b> — مباريات مختارة بتحليل عميق ومعلّمة "آمن بنسبة كبيرة".</p></div>
+<div class="gstep"><span>3</span><p>قسم <b class="suremini">🎯 كلا الفريقين يسجلان</b> — أقرب المباريات للفريقين يسجلان، والآمن منها معلّم "آمن بنسبة كبيرة".</p></div>
 </div>
 <p class="gwarn">⚠️ التوقعات إحصائية ومدروسة — لا ضمان مطلق.</p>
 <button id="guideOk" class="gbtn">يلا نبدأ ⚽</button>
@@ -329,7 +329,7 @@ var TSDB_SLUG={'4328':'eng.1','4335':'esp.1','4332':'ita.1','4331':'ger.1','4334
 var KNOWN={};LEAGUES.forEach(function(l){KNOWN[l.slug]=1;});
 function isKnown(m){return !!KNOWN[m.leagueSlug];}
 var DEF_LEAGUE={home:1.50,away:1.20};
-var BTTS_SAFE_MIN=70;
+var BTTS_SAFE_MIN=65;
 function $(s){return document.querySelector(s);}
 var splash=$('#splash'),appShell=$('#appShell'),homeContent=$('#homeContent'),homeEmpty=$('#homeEmpty'),favContent=$('#favContent'),favEmpty=$('#favEmpty'),leaguesContent=$('#leaguesContent'),detailsContent=$('#detailsContent'),notifContent=$('#notifContent'),loading=$('#loading'),sourceBadge=$('#sourceBadge'),matchCount=$('#matchCount'),avgConfidence=$('#avgConfidence'),lastUpdated=$('#lastUpdated'),datePicker=$('#datePicker'),leagueSelect=$('#leagueSelect'),search=$('#search'),bellBadge=$('#bellBadge'),dateRow=$('#dateRow'),finRow=$('#finRow'),kickBanner=$('#kickBanner');
 var favorites=loadFavs(),predCache=new Map(),isLoading=false,lastLoadTs=0,loadStartTs=0,lastEmptyRetry=0,lastFastTs=0,lastFastOkTs=0,lastCheckTs=0,pollingFast=false,liveFailStreak=0,finLoading=false;
@@ -653,29 +653,30 @@ function renderBanker(){var b=getBanker();if(!b)return'';var sh=shieldsFor(b.mkt
   return '<div class="banker-card" data-match="'+esc(b.m.id)+'"><div class="banker-head"><span>🎯 توقع اليوم</span><span class="banker-prob">'+b.pred.prob+'%</span></div><div class="banker-teams">'+esc(b.m.home.name)+' × '+esc(b.m.away.name)+'</div><div class="banker-pick">'+esc(b.name)+' — '+esc(b.pred.text)+'</div><div class="banker-foot"><span>'+esc(b.m.leagueName)+' • '+timeOnly(b.m.date)+' • '+shieldStr(sh)+'</span></div></div>';}
 function maybeBankerPush(){var b=getBanker();if(!b)return;var today=fmtDate(new Date());if(lsGet('banker_day')===today)return;lsSet('banker_day',today);
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('🎯 توقع اليوم نزل!',{body:b.m.home.name+' × '+b.m.away.name+' — '+b.pred.text+' ('+b.pred.prob+'%)'});}catch(e){}}
-/* ===== 🎯 كلا الفريقين يسجلان — الاختيار الآمن ===== */
-function bttsSafeList(){
+/* ===== 🎯 كلا الفريقين يسجلان — بيظهر دايماً ===== */
+function bttsTopList(){
   var out=[];
   state.matches.forEach(function(m){
     if(isFinished(m))return;
     var p=getPrediction(m);
-    if(p.btts&&p.btts.text==='نعم'&&p.btts.prob>=BTTS_SAFE_MIN)out.push({m:m,p:p,prob:p.btts.prob});
+    if(p.btts&&p.btts.text==='نعم')out.push({m:m,p:p,prob:p.btts.prob});
   });
   out.sort(function(a,b){return b.prob-a.prob;});
   return out.slice(0,6);
 }
 function renderBtts(){
-  var list=bttsSafeList();
+  var list=bttsTopList();
   if(!list.length)return'';
   var cards=list.map(function(x){
+    var safe=x.prob>=BTTS_SAFE_MIN;
     return '<div class="banker-card btts-card" data-match="'+esc(x.m.id)+'">'+
       '<div class="banker-head"><span>🎯 كلا الفريقين يسجلان</span><span class="banker-prob">'+x.prob+'%</span></div>'+
       '<div class="banker-teams">'+esc(x.m.home.name)+' × '+esc(x.m.away.name)+'</div>'+
-      '<div class="banker-pick">كلا الفريقين يسجلان: نعم — <b>آمن بنسبة كبيرة ✅</b></div>'+
+      '<div class="banker-pick">كلا الفريقين يسجلان: نعم — '+(safe?'<b>آمن بنسبة كبيرة ✅</b>':'<span style="color:var(--muted)">محتمل</span>')+'</div>'+
       '<div class="banker-foot"><span>'+esc(x.m.leagueName)+' • '+timeOnly(x.m.date)+'</span></div>'+
     '</div>';
   }).join('');
-  return '<div class="day-head">🎯 كلا الفريقين يسجلان — الآمنون</div>'+cards;
+  return '<div class="day-head">🎯 كلا الفريقين يسجلان — الأقرب</div>'+cards;
 }
 function showView(v){state.view=v;['home','details','favorites','leagues','stats','notifications'].forEach(function(x){var el=document.getElementById('view-'+x);if(el)el.classList.toggle('hidden',x!==v);});document.querySelectorAll('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});renderCurrent();}
 function renderCurrent(){updateSource();var sy=window.scrollY;var fn={home:renderHome,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];if(fn)fn();window.scrollTo({top:sy,behavior:'auto'});}
