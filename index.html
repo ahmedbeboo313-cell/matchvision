@@ -180,9 +180,9 @@ setTimeout(function(){
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgG)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgG)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <h2>إزاي تاخد <span>التوقع الصح</span>؟</h2>
 <div class="gsteps">
-<div class="gstep"><span>1</span><p>كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — توقع ثابت مدروس من سجل الفريقين والفورم وأداء البيت/البره.</p></div>
+<div class="gstep"><span>1</span><p>كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — توقع ثابت مدروس بتعلم ذاتي عميق (تقييم هجوم/دفاع بيت/بره + تصحيح Dixon-Coles + دمج السوق).</p></div>
 <div class="gstep"><span>2</span><p>فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده، وثابت طول اليوم.</p></div>
-<div class="gstep"><span>3</span><p>قسم <b class="suremini">🎯 كلا الفريقين يسجلان</b> — أقرب المباريات للفريقين يسجلان، والآمن منها معلّم "آمن بنسبة كبيرة".</p></div>
+<div class="gstep"><span>3</span><p>قسم <b class="suremini">🎯 كلا الفريقين يسجلان</b> — أقرب المباريات، والآمن منها معلّم "آمن بنسبة كبيرة".</p></div>
 </div>
 <p class="gwarn">⚠️ التوقعات إحصائية ومدروسة — لا ضمان مطلق.</p>
 <button id="guideOk" class="gbtn">يلا نبدأ ⚽</button>
@@ -517,13 +517,19 @@ function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/
 function dedupe(a){var m=new Map();a.forEach(function(x){var k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){var d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
 function isFinished(m){return m.statusCompleted||m.statusState==='post';}
+function updTeam(t,scored,conceded,isHome){
+  t.n=(t.n||0)+1;
+  var alpha=(t.n>1)?0.30:1;
+  t.att=(t.att==null)?scored:(t.att+alpha*(scored-t.att));
+  t.def=(t.def==null)?conceded:(t.def+alpha*(conceded-t.def));
+  if(isHome){t.hn=(t.hn||0)+1;t.hatt=(t.hatt==null)?scored:(t.hatt+alpha*(scored-t.hatt));t.hdef=(t.hdef==null)?conceded:(t.hdef+alpha*(conceded-t.hdef));}
+  else{t.an=(t.an||0)+1;t.aatt=(t.aatt==null)?scored:(t.aatt+alpha*(scored-t.aatt));t.adef=(t.adef==null)?conceded:(t.adef+alpha*(conceded-t.adef));}
+}
 function trackFinished(list){try{var t=lsGet('mv_track_v2')||{ids:[],evaluated:0,wins:0,winsList:[],byMkt:{},days:{}};if(!t.byMkt)t.byMkt={};if(!t.days)t.days={};var ch=false;
 list.forEach(function(m){if(!isFinished(m)||m.scoreHome==null||t.ids.indexOf(m.id)>=0)return;
 var p=getPrediction(m);var sh=m.scoreHome,sa=m.scoreAway,tot=sh+sa;
-var th=TEAMADJ[m.home.id]||(TEAMADJ[m.home.id]={gf:0,ga:0,n:0,hgf:0,hga:0,hn:0,agf:0,aga:0,an:0});
-th.gf+=sh;th.ga+=sa;th.n++;th.hgf+=sh;th.hga+=sa;th.hn++;
-var ta=TEAMADJ[m.away.id]||(TEAMADJ[m.away.id]={gf:0,ga:0,n:0,hgf:0,hga:0,hn:0,agf:0,aga:0,an:0});
-ta.gf+=sa;ta.ga+=sh;ta.n++;ta.agf+=sa;ta.aga+=sh;ta.an++;
+var th=TEAMADJ[m.home.id]||(TEAMADJ[m.home.id]={});updTeam(th,sh,sa,true);
+var ta=TEAMADJ[m.away.id]||(TEAMADJ[m.away.id]={});updTeam(ta,sa,sh,false);
 var df=buildDefs(m,p,true);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});df.sort(function(a,b){return b[3]-a[3];});var best=df[0];
 var hit=hitCheck(best[0],p,m,tot,sh,sa);t.evaluated++;
 var dayKey=fmtDate(new Date(m.date));
@@ -541,7 +547,16 @@ function poissonCdf(k,l){var s=0;for(var i=0;i<=k;i++)s+=poissonPmf(i,l);return 
 function leagueData(s){return LEAGUES.find(function(l){return l.slug===s;})||DEF_LEAGUE;}
 function recToStrength(r){if(!r)return null;var p=r.split('-').map(Number);if(p.length<3||p.some(isNaN))return null;var g=p[0]+p[1]+p[2];return g?{pts:(p[0]*3+p[1])/(g*3),g:g}:null;}
 function formVal(s){if(!s)return null;var c=String(s).toUpperCase().split('').filter(function(c){return c==='W'||c==='D'||c==='L';});if(!c.length)return null;var s2=0;c.forEach(function(c){s2+=c==='W'?1:(c==='D'?0.5:0);});return s2/c.length;}
-function safetyScore(k,prob,p){var d=p.hasData?1:0.55;var st=1-(p.volIdx||0)*0.22;var s=0.60*(prob/100)+0.25*d+0.15*st;if(k==='u15'||k==='u25'||k==='g15'||k==='ticket')s+=0.03;return clamp(s,0,1);}
+function formValDecay(s){if(!s)return null;var c=String(s).toUpperCase().split('').filter(function(c){return c==='W'||c==='D'||c==='L';}).slice(-5);if(!c.length)return null;var w=[0.2,0.4,0.6,0.8,1.0];var sum=0,ws=0;c.forEach(function(ch,i){var ww=w[i]||0.5;var v=ch==='W'?1:(ch==='D'?0.5:0);sum+=v*ww;ws+=ww;});return ws?sum/ws:null;}
+function safetyScore(k,prob,p){
+  var d=p.hasData?1:0.55;
+  var st=1-(p.volIdx||0)*0.22;
+  var vol=p.learnN?Math.min(1,p.learnN/8):0.3;
+  var ag=(p.mktAg==null)?0.6:clamp(1-p.mktAg*2,0,1);
+  var s=0.50*(prob/100)+0.18*d+0.12*st+0.10*vol+0.10*ag;
+  if(k==='u15'||k==='u25'||k==='g15'||k==='ticket')s+=0.03;
+  return clamp(s,0,1);
+}
 function shieldsFor(k,prob,p){return Math.max(1,Math.round(safetyScore(k,prob,p)*5));}
 function shieldStr(n){var s='';for(var i=0;i<n;i++)s+='🛡️';return s;}
 function getPrediction(m){
@@ -556,14 +571,17 @@ function getPrediction(m){
   return p;}
 function teamAttDef(id,isHome){
   var t=TEAMADJ[id];if(!t)return null;
-  if(isHome){if(t.hn>=3)return{att:t.hgf/t.hn,def:t.hga/t.hn};}
-  else{if(t.an>=3)return{att:t.agf/t.an,def:t.aga/t.an};}
+  if(isHome){if(t.hn>=2&&t.hatt!=null)return{att:t.hatt,def:t.hdef};}
+  else{if(t.an>=2&&t.aatt!=null)return{att:t.aatt,def:t.adef};}
+  if(t.n>=2&&t.att!=null)return{att:t.att,def:t.def};
+  if(isHome&&t.hn>=3)return{att:t.hgf/t.hn,def:t.hga/t.hn};
+  if(!isHome&&t.an>=3)return{att:t.agf/t.an,def:t.aga/t.an};
   if(t.n>=3)return{att:t.gf/t.n,def:t.ga/t.n};
   return null;}
 function calc(m){var ld=leagueData(m.leagueSlug);
 var hd=teamAttDef(m.home.id,true),ad=teamAttDef(m.away.id,false);
 var hS=recToStrength(m.home.record),aS=recToStrength(m.away.record);
-var fH=formVal(m.homeForm),fA=formVal(m.awayForm);
+var fH=formValDecay(m.homeForm),fA=formValDecay(m.awayForm);
 var lh,la,hasData=false;
 if(hd&&ad){hasData=true;
   lh=clamp(((hd.att+ad.def)/2)*1.10,0.3,3.6);
@@ -576,17 +594,29 @@ else if(hS&&aS&&hS.g>=3&&aS.g>=3){hasData=true;var fHv=fH==null?0.5:fH,fAv=fA==n
   lh=clamp(ld.home*clamp((aH+vA)/2,0.5,1.8),0.35,3.6);la=clamp(ld.away*clamp((aA+vH)/2,0.5,1.8),0.25,3.2);}
 else{var rng=mulberry32(hashCode(m.id+'|'+m.home.name+'|'+m.away.name));lh=clamp(ld.home*(0.88+rng()*0.28),0.4,3.2);la=clamp(ld.away*(0.85+rng()*0.32),0.3,2.8);}
 var lcorn=clamp(9+(lh+la-2.5)*0.8,6,13),lcard=clamp(3.9+Math.abs(lh-la)*0.6,2,7);
-var r=buildPred(lh,la,lcorn,lcard);r.hasData=hasData;r.formH=fH;r.formA=fA;
+var r=buildPred(lh,la,lcorn,lcard,m.oddsHome,m.oddsAway);r.hasData=hasData;r.formH=fH;r.formA=fA;
 r.learnN=(TEAMADJ[m.home.id]?TEAMADJ[m.home.id].n:0)+(TEAMADJ[m.away.id]?TEAMADJ[m.away.id].n:0);
 var csH=Math.exp(-la),csA=Math.exp(-lh);
 r.cleanSheet=csH>=csA?{text:'كلين شيت: '+m.home.name+' (1)',prob:Math.round(csH*100),tone:'info'}:{text:'كلين شيت: '+m.away.name+' (2)',prob:Math.round(csA*100),tone:'info'};
 return r;}
-function buildPred(lh,la,lcorn,lcard){var mx=7,ph=[],pa=[];for(var i=0;i<=mx;i++){ph[i]=poissonPmf(i,lh);pa[i]=poissonPmf(i,la);}
+function dcTau(i,j,rho,lh,la){
+  if(i===0&&j===0)return 1-lh*la*rho;
+  if(i===0&&j===1)return 1+lh*rho;
+  if(i===1&&j===0)return 1+la*rho;
+  if(i===1&&j===1)return 1-rho;
+  return 1;
+}
+function buildPred(lh,la,lcorn,lcard,oddsH,oddsA){var mx=7,ph=[],pa=[];for(var i=0;i<=mx;i++){ph[i]=poissonPmf(i,lh);pa[i]=poissonPmf(i,la);}
+var rho=-0.08;
 var t0=0,t1=0,t2=0,t3=0,hw=0,dr=0,aw=0;
 var combos=[['over25_btts',function(i,j){return i+j>=3&&i>=1&&j>=1;}],['over25_home',function(i,j){return i+j>=3&&i>j;}],['over25_away',function(i,j){return i+j>=3&&i<j;}],['btts_home',function(i,j){return i>=1&&j>=1&&i>j;}],['btts_away',function(i,j){return i>=1&&j>=1&&i<j;}],['under25_home',function(i,j){return i+j<=2&&i>j;}],['under25_away',function(i,j){return i+j<=2&&i<j;}],['under25_one',function(i,j){return i+j<=2&&(i===0||j===0);}]];
 var cs=combos.map(function(){return 0;});
-for(var i2=0;i2<=mx;i2++)for(var j=0;j<=mx;j++){var p=ph[i2]*pa[j],t=i2+j;if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;else if(t===3)t3+=p;if(i2>j)hw+=p;else if(i2===j)dr+=p;else aw+=p;for(var c=0;c<combos.length;c++)if(combos[c][1](i2,j))cs[c]+=p;}
+for(var i2=0;i2<=mx;i2++)for(var j=0;j<=mx;j++){var p=ph[i2]*pa[j]*dcTau(i2,j,rho,lh,la);var t=i2+j;if(t===0)t0+=p;else if(t===1)t1+=p;else if(t===2)t2+=p;else if(t===3)t3+=p;if(i2>j)hw+=p;else if(i2===j)dr+=p;else aw+=p;for(var c=0;c<combos.length;c++)if(combos[c][1](i2,j))cs[c]+=p;}
 var sci=0;for(var c2=1;c2<cs.length;c2++)if(cs[c2]>cs[sci])sci=c2;
+var mktAg=null;
+if(oddsH&&oddsA&&oddsH>1&&oddsA>1){var ih=1/oddsH,ia=1/oddsA;var pm=ih/(ih+ia);var model=hw/((hw+aw)||1);mktAg=Math.abs(model-pm);
+  var blended=clamp(0.5*model+0.5*pm,0.05,0.95);
+  var hwaw=hw+aw;hw=blended*hwaw;aw=(1-blended)*hwaw;}
 var o15=1-(t0+t1),o2=1-(t0+t1+t2),u2=t0+t1,u15P=t0+t1,u25P=t0+t1+t2;
 var pS1=1-Math.exp(-lh),pS2=1-Math.exp(-la);var bttsRaw=Math.min(0.95,pS1*pS2*1.08);
 var o95=1-poissonCdf(9,lcorn),u55=poissonCdf(5,lcard);
@@ -611,7 +641,7 @@ var cnMap={over25_btts:['أكثر من 2.5','الفريقين يسجل'],over25_
 var cn=cnMap[combos[sci][0]]||['',''];
 var safeTicket={text:cn[0]+' + '+cn[1],prob:Math.round(cs[sci]*100),tone:'good'};
 var bal=1-Math.min(1,Math.abs(lh-la)/Math.max(0.001,Math.max(lh,la)));var v=(lam/3.2)*0.6+bal*0.4;var volIdx=v<0.55?0:(v<0.75?1:2);
-var r={goals:goals,g15:g15,u15:u15,u25:u25,btts:btts,win:win,dc1:dc1,dc2:dc2,h1Goal:h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'info'},firstGoal:firstGoal,bothHalves:bothHalves,range:range,safeTicket:safeTicket,volIdx:volIdx,lh:lh,la:la,lcorn:lcorn,lcard:lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55)};
+var r={goals:goals,g15:g15,u15:u15,u25:u25,btts:btts,win:win,dc1:dc1,dc2:dc2,h1Goal:h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'info'},firstGoal:firstGoal,bothHalves:bothHalves,range:range,safeTicket:safeTicket,volIdx:volIdx,lh:lh,la:la,lcorn:lcorn,lcard:lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55),mktAg:mktAg};
 r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.win.prob)/4);return r;}
 var VER=['goals','g15','u15','u25','win','dc1','dc2','btts','h1','range','cleanSheet'];
 function hitCheck(k,p,m,tot,sh,sa){switch(k){
@@ -635,7 +665,7 @@ function getBanker(){
     if(m0){
       var p0=getPrediction(m0);
       var fin0=isFinished(m0)&&m0.scoreHome!=null;
-      var df0=buildDefs(m0,p0,fin0);
+      var df0=buildDefs(m0,p0,fin0,m0.oddsHome,m0.oddsAway);
       df0.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p0));});
       df0.sort(function(a,b){return b[3]-a[3];});
       var best0=df0.find(function(d){return d[0]===saved.mk;})||df0[0];
@@ -644,7 +674,7 @@ function getBanker(){
   }
   var pool=state.matches.filter(function(m){return !isFinished(m)&&!m.live&&fmtDate(new Date(m.date))===today;});
   var best=null;
-  pool.forEach(function(m){var p=getPrediction(m);var df=buildDefs(m,p,false);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});
+  pool.forEach(function(m){var p=getPrediction(m);var df=buildDefs(m,p,false,m.oddsHome,m.oddsAway);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});
     df.forEach(function(d){var prob=d[2].prob;if(prob<55)return;var sc=d[3];
       if(!best||sc>best.sc)best={m:m,p:p,mkt:d[0],name:d[1],pred:d[2],sc:sc};});});
   if(best)lsSet('eb_banker_saved',{day:today,mid:best.m.id,mk:best.mkt});
@@ -653,7 +683,6 @@ function renderBanker(){var b=getBanker();if(!b)return'';var sh=shieldsFor(b.mkt
   return '<div class="banker-card" data-match="'+esc(b.m.id)+'"><div class="banker-head"><span>🎯 توقع اليوم</span><span class="banker-prob">'+b.pred.prob+'%</span></div><div class="banker-teams">'+esc(b.m.home.name)+' × '+esc(b.m.away.name)+'</div><div class="banker-pick">'+esc(b.name)+' — '+esc(b.pred.text)+'</div><div class="banker-foot"><span>'+esc(b.m.leagueName)+' • '+timeOnly(b.m.date)+' • '+shieldStr(sh)+'</span></div></div>';}
 function maybeBankerPush(){var b=getBanker();if(!b)return;var today=fmtDate(new Date());if(lsGet('banker_day')===today)return;lsSet('banker_day',today);
   try{if('Notification' in window&&Notification.permission==='granted')new Notification('🎯 توقع اليوم نزل!',{body:b.m.home.name+' × '+b.m.away.name+' — '+b.pred.text+' ('+b.pred.prob+'%)'});}catch(e){}}
-/* ===== 🎯 كلا الفريقين يسجلان — بيظهر دايماً ===== */
 function bttsTopList(){
   var out=[];
   state.matches.forEach(function(m){
@@ -706,7 +735,7 @@ if(!state.notifEnabled&&!it.length){notifContent.innerHTML='<div class="empty">�
 notifContent.innerHTML=it.map(function(n){return '<div class="notif"><span class="ic">'+n.ic+'</span><div><b>'+esc(n.t)+'</b><small>'+esc(n.s)+'</small></div></div>';}).join('')||'<div class="empty">لا توجد إشعارات.</div>';updateBell();}
 function bellCount(){return state.notifEnabled?state.matches.filter(function(m){return m.live||(new Date(m.date)-Date.now())/36e5<=24;}).length:0;}
 function updateBell(){var n=bellCount();var r=lsGet('mv_bell_read');var s=n>0&&n!==r;bellBadge.textContent=n;bellBadge.classList.toggle('hidden',!s);}
-function buildDefs(m,p,fin){var d=[];
+function buildDefs(m,p,fin,oddsH,oddsA){var d=[];
 if(state.markets.goals)d.push(['goals','أهداف 2',p.goals]);
 if(state.markets.safe)d.push(['g15','أهداف 1.5',p.g15]);
 if(state.markets.u15!==false)d.push(['u15','أقل من 1.5',p.u15]);
@@ -719,7 +748,7 @@ if(!fin){if(state.markets.corners)d.push(['corners','ركنيات 9.5',p.corners
 d.push(['h1','الشوط الأول',p.h1Goal]);d.push(['cleanSheet','كلين شيت',p.cleanSheet]);d.push(['range','نطاق الأهداف',p.range]);
 if(fin)return d.filter(function(x){return VER.indexOf(x[0])>=0;});
 return d;}
-function safeBlock(m,p,fin){var df=buildDefs(m,p,fin);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});df.sort(function(a,b){return b[3]-a[3];});
+function safeBlock(m,p,fin){var df=buildDefs(m,p,fin,m.oddsHome,m.oddsAway);df.forEach(function(d){d.push(safetyScore(d[0],d[2].prob,p));});df.sort(function(a,b){return b[3]-a[3];});
 var best=df[0];var others=df.slice(1).filter(function(d){return d[2].prob>=75;}).slice(0,4);
 var sh=m.scoreHome||0,sa=m.scoreAway||0,tot=sh+sa;
 var hOf=function(d){return fin?hitCheck(d[0],p,m,tot,sh,sa):null;};
@@ -731,7 +760,8 @@ if(p.btts&&p.btts.text==='نعم'&&p.btts.prob>=BTTS_SAFE_MIN){
 var sb='<div class="safe-box"><div class="safe-head"><span>'+best[1]+'</span><span class="safe-badge">الأضمن 🛡️ '+shieldStr(bSh)+'</span></div><div class="safe-val '+(fin?(bH===true?'good':(bH===false?'hot':'')):best[2].tone)+'">'+(fin?best[2].text+(bH===true?' ✔':(bH===false?' ✘':'')):best[2].text)+'</div><div class="meter big"><span style="width:'+best[2].prob+'%"></span></div><div class="prob">'+best[2].prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
 var chps=others.map(function(d){var h=hOf(d);return '<span class="schip '+(fin?(h===true?'hit':(h===false?'miss':'')):'')+'">'+(fin?d[2].text+(h===true?' ✔':(h===false?' ✘':'')):d[2].text)+' <span class="sp">'+d[2].prob+'%</span></span>';}).join('');
 var ow=others.length?('<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">'+chps+'</div>'):'';
-var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+(p.learnN?('مدروس من '+p.learnN):'تحليل أساسي')+'</span></div>';
+var learnTxt=(p.learnN)?('مدروس من '+p.learnN+' مباراة'):'تحليل أساسي';
+var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+learnTxt+'</span></div>';
 return btSafeBox+sb+ow+ft;}
 function matchCard(m){var p=getPrediction(m),fv=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
 var hr=m.live?('<span class="live-pill"><span class="live-dot"></span>مباشر '+esc(m.minute||'')+'</span>'):(fin?'<span class="done-pill">انتهت</span>':('<span class="date-text">'+fmtDT(m.date)+'</span>'));
@@ -742,10 +772,19 @@ function teamVis(t2){return t2.logo?('<img class="logo" src="'+esc(t2.logo)+'" a
 function openDetails(id){var m=state.matches.find(function(x){return x.id===id;});if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){var m=state.matches.find(function(x){return x.id===state.detailsId;});if(!m){showView('home');return;}
 var p=getPrediction(m),fin=isFinished(m)&&m.scoreHome!=null;$('#detailsTitle').textContent=m.leagueName;
+var hd=teamAttDef(m.home.id,true),ad=teamAttDef(m.away.id,false);
+var fH=p.formH,fA=p.formA;
 var vb=m.live?('<div class="vs"><span class="liveTxt">مباشر</span><strong class="score">'+(m.scoreHome||0)+' - '+(m.scoreAway||0)+'</strong></div>'):(fin?('<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">'+m.scoreHome+' - '+m.scoreAway+'</strong></div>'):('<div class="vs"><span>لم تبدأ</span><strong>'+timeOnly(m.date)+'</strong></div>'));
 detailsContent.innerHTML='<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">'+esc(m.leagueName)+'</span>'+(m.live?'<span class="live-pill"><span class="live-dot"></span>مباشر</span>':(fin?'<span class="done-pill">انتهت</span>':('<span class="date-text">'+fmtDT(m.date)+'</span>')))+'</div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠</span>'+teamVis(m.home)+'<strong>'+esc(m.home.name)+'</strong><div class="dots">'+formDots(m.id+'h',m.homeForm)+'</div></div>'+vb+'<div class="team"><span class="ha away"><span class="num">2</span>✈️</span>'+teamVis(m.away)+'<strong>'+esc(m.away.name)+'</strong><div class="dots">'+formDots(m.id+'a',m.awayForm)+'</div></div></div>'+safeBlock(m,p,fin)+'</div>'+
 '<div class="tabs"><button class="tab active" data-tab="stats">الإحصائيات</button><button class="tab" data-tab="h2h">المواجهات</button></div>'+
-'<div id="tab-stats">'+(fin?('<div class="stat-row"><span>النتيجة</span><b>'+m.scoreHome+' - '+m.scoreAway+'</b></div>'):'')+'<div class="stat-row"><span>⚔️ هجوم (1×2)</span><b>'+p.attHp+'% × '+p.attAp+'%</b></div><div class="stat-row"><span>أهداف متوقعة</span><b>'+((p.lh+p.la).toFixed(1))+'</b></div><div class="stat-row"><span>ركنيات متوقعة</span><b>'+p.lcorn.toFixed(1)+'</b></div><div class="stat-row"><span>بطاقات متوقعة</span><b>'+p.lcard.toFixed(1)+'</b></div></div>'+
+'<div id="tab-stats">'+(fin?('<div class="stat-row"><span>النتيجة</span><b>'+m.scoreHome+' - '+m.scoreAway+'</b></div>'):'')+
+'<div class="stat-row"><span>🏠 هجوم/دفاع المضيف</span><b>'+(hd?(hd.att.toFixed(2)+' / '+hd.def.toFixed(2)):'—')+'</b></div>'+
+'<div class="stat-row"><span>✈️ هجوم/دفاع الضيف</span><b>'+(ad?(ad.att.toFixed(2)+' / '+ad.def.toFixed(2)):'—')+'</b></div>'+
+'<div class="stat-row"><span>📈 فورم (مُثقّل بالأحدثية)</span><b>'+((fH!=null?Math.round(fH*100)+'%':'—')+' / '+(fA!=null?Math.round(fA*100)+'%':'—'))+'</b></div>'+
+'<div class="stat-row"><span>🤝 توافق السوق</span><b>'+(p.mktAg==null?'—':Math.round(clamp(1-Math.min(1,p.mktAg*2),0,1)*100)+'%')+'</b></div>'+
+'<div class="stat-row"><span>⚔️ هجوم (1×2)</span><b>'+p.attHp+'% × '+p.attAp+'%</b></div>'+
+'<div class="stat-row"><span>أهداف متوقعة</span><b>'+((p.lh+p.la).toFixed(1))+'</b></div>'+
+'<div class="stat-row"><span>ركنيات متوقعة</span><b>'+p.lcorn.toFixed(1)+'</b></div></div>'+
 '<div id="tab-h2h" class="hidden">'+h2hRows(m)+'</div>';}
 function switchTab(t2){document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('active',b.dataset.tab===t2);});['stats','h2h'].forEach(function(x){var e=document.getElementById('tab-'+x);if(e)e.classList.toggle('hidden',x!==t2);});}
 function formDots(seed,real){if(real){var c=String(real).toUpperCase().split('').filter(function(c){return c==='W'||c==='D'||c==='L';}).slice(-5);if(c.length)return c.map(function(c){return '<span class="dot '+(c==='W'?'w':(c==='D'?'d':'l'))+'"></span>';}).join('');}
