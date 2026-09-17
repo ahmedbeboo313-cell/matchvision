@@ -580,6 +580,7 @@ function beep(){try{var a=new(window.AudioContext||window.webkitAudioContext)();
 function poissonPmf(k,l){var p=Math.exp(-l);for(var i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){var s=0;for(var i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function leagueData(s){return LEAGUES.find(function(l){return l.slug===s;})||DEF_LEAGUE;}
+function leaguePriorHomeWin(m){var ld=leagueData(m.leagueSlug);var mx=7,hw=0;for(var i=0;i<=mx;i++)for(var j=0;j<=mx;j++){var pp=poissonPmf(i,ld.home)*poissonPmf(j,ld.away);if(i>j)hw+=pp;}return hw;}
 function recToStrength(r){if(!r)return null;var p=r.split('-').map(Number);if(p.length<3||p.some(isNaN))return null;var g=p[0]+p[1]+p[2];return g?{pts:(p[0]*3+p[1])/(g*3),g:g}:null;}
 function formVal(s){if(!s)return null;var c=String(s).toUpperCase().split('').filter(function(c){return c==='W'||c==='D'||c==='L';});if(!c.length)return null;var s2=0;c.forEach(function(c){s2+=c==='W'?1:(c==='D'?0.5:0);});return s2/c.length;}
 function formValDecay(s){if(!s)return null;var c=String(s).toUpperCase().split('').filter(function(c){return c==='W'||c==='D'||c==='L';}).slice(-5);if(!c.length)return null;var w=[0.2,0.4,0.6,0.8,1.0];var sum=0,ws=0;c.forEach(function(ch,i){var ww=w[i]||0.5;var v=ch==='W'?1:(ch==='D'?0.5:0);sum+=v*ww;ws+=ww;});return ws?sum/ws:null;}
@@ -690,7 +691,7 @@ var cnMap={over25_btts:['أكثر من 2.5','الفريقين يسجل'],over25_
 var cn=cnMap[combos[sci][0]]||['',''];
 var safeTicket={text:cn[0]+' + '+cn[1],prob:Math.round(cs[sci]*100),tone:'good'};
 var bal=1-Math.min(1,Math.abs(lh-la)/Math.max(0.001,Math.max(lh,la)));var v=(lam/3.2)*0.6+bal*0.4;var volIdx=v<0.55?0:(v<0.75?1:2);
-var r={goals:goals,g15:g15,u15:u15,u25:u25,btts:btts,win:win,dc1:dc1,dc2:dc2,h1Goal:h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'info'},firstGoal:firstGoal,bothHalves:bothHalves,range:range,safeTicket:safeTicket,volIdx:volIdx,lh:lh,la:la,lcorn:lcorn,lcard:lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55),mktAg:mktAg,lam1:L1};
+var r={goals:goals,g15:g15,u15:u15,u25:u25,btts:btts,win:win,dc1:dc1,dc2:dc2,h1Goal:h1Goal,corners:o95>=0.5?{text:'أكثر من 9.5 ركنية',prob:Math.round(o95*100),tone:'info'}:{text:'أقل من 9.5 ركنية',prob:Math.round((1-o95)*100),tone:'info'},firstGoal:firstGoal,bothHalves:bothHalves,range:range,safeTicket:safeTicket,volIdx:volIdx,lh:lh,la:la,lcorn:lcorn,lcard:lcard,attHp:Math.round(pS1*100),attAp:Math.round(pS2*100),bothAtt:(pS1>=0.6&&pS2>=0.6),bothWeak:(pS1<0.55&&pS2<0.55),mktAg:mktAg,hw:hw/((hw+aw)||1),lam1:L1};
 r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.win.prob)/4);return r;}
 var VER=['goals','g15','u15','u25','win','dc1','dc2','range','cleanSheet'];
 function hitCheck(k,p,m,tot,sh,sa){switch(k){
@@ -890,16 +891,20 @@ function teamVis(t2){return t2.logo?('<img class="logo" src="'+esc(t2.logo)+'" a
 function openDetails(id){var m=state.matches.find(function(x){return x.id===id;});if(!m)return;state.prevView=state.view;state.detailsId=id;showView('details');countBetView();countMatchView(m);}
 function renderDetails(){var m=state.matches.find(function(x){return x.id===state.detailsId;});if(!m){showView('home');return;}
 var p=getPrediction(m),fin=isFinished(m)&&m.scoreHome!=null;$('#detailsTitle').textContent=m.leagueName;
-var hd=teamAttDef(m.home.id,true),ad=teamAttDef(m.away.id,false);
+var hd=teamAttDef(m.home.id,true)||{att:p.lh,def:p.la};
+var ad=teamAttDef(m.away.id,false)||{att:p.la,def:p.lh};
 var fH=p.formH,fA=p.formA;
+var hwModel=(p.hw!=null)?p.hw:0.5;
+var hwPrior=leaguePriorHomeWin(m);
+var mktVal=(p.mktAg!=null)?Math.round(clamp(1-Math.min(1,p.mktAg*2),0,1)*100):Math.round(clamp(1-Math.min(1,Math.abs(hwModel-hwPrior)*2),0,1)*100);
 var vb=m.live?('<div class="vs"><span class="liveTxt">مباشر</span><strong class="score">'+(m.scoreHome||0)+' - '+(m.scoreAway||0)+'</strong></div>'):(fin?('<div class="vs"><span class="doneTxt">انتهت</span><strong class="scoreDone">'+m.scoreHome+' - '+m.scoreAway+'</strong></div>'):('<div class="vs"><span>لم تبدأ</span><strong>'+timeOnly(m.date)+'</strong></div>'));
 detailsContent.innerHTML='<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">'+esc(m.leagueName)+'</span>'+(m.live?'<span class="live-pill"><span class="live-dot"></span>مباشر</span>':(fin?'<span class="done-pill">انتهت</span>':('<span class="date-text">'+fmtDT(m.date)+'</span>')))+'</div><div class="teams"><div class="team"><span class="ha home"><span class="num">1</span>🏠</span>'+teamVis(m.home)+'<strong>'+esc(m.home.name)+'</strong><div class="dots">'+formDots(m.id+'h',m.homeForm)+'</div></div>'+vb+'<div class="team"><span class="ha away"><span class="num">2</span>✈️</span>'+teamVis(m.away)+'<strong>'+esc(m.away.name)+'</strong><div class="dots">'+formDots(m.id+'a',m.awayForm)+'</div></div></div>'+safeBlock(m,p,fin)+'</div>'+
 '<div class="tabs"><button class="tab active" data-tab="stats">الإحصائيات</button><button class="tab" data-tab="h2h">المواجهات</button></div>'+
 '<div id="tab-stats">'+(fin?('<div class="stat-row"><span>النتيجة</span><b>'+m.scoreHome+' - '+m.scoreAway+'</b></div>'):'')+
-'<div class="stat-row"><span>🏠 هجوم/دفاع المضيف</span><b>'+(hd?(hd.att.toFixed(2)+' / '+hd.def.toFixed(2)):'—')+'</b></div>'+
-'<div class="stat-row"><span>✈️ هجوم/دفاع الضيف</span><b>'+(ad?(ad.att.toFixed(2)+' / '+ad.def.toFixed(2)):'—')+'</b></div>'+
+'<div class="stat-row"><span>🏠 هجوم/دفاع المضيف</span><b>'+hd.att.toFixed(2)+' / '+hd.def.toFixed(2)+'</b></div>'+
+'<div class="stat-row"><span>✈️ هجوم/دفاع الضيف</span><b>'+ad.att.toFixed(2)+' / '+ad.def.toFixed(2)+'</b></div>'+
 '<div class="stat-row"><span>📈 فورم (مُثقّل بالأحدثية)</span><b>'+((fH!=null?Math.round(fH*100)+'%':'—')+' / '+(fA!=null?Math.round(fA*100)+'%':'—'))+'</b></div>'+
-'<div class="stat-row"><span>🤝 توافق السوق</span><b>'+(p.mktAg==null?'—':Math.round(clamp(1-Math.min(1,p.mktAg*2),0,1)*100)+'%')+'</b></div>'+
+'<div class="stat-row"><span>🤝 توافق السوق</span><b>'+mktVal+'%</b></div>'+
 '<div class="stat-row"><span>⚔️ هجوم (1×2)</span><b>'+p.attHp+'% × '+p.attAp+'%</b></div>'+
 '<div class="stat-row"><span>أهداف متوقعة</span><b>'+((p.lh+p.la).toFixed(1))+'</b></div>'+
 '<div class="stat-row"><span>ركنيات متوقعة</span><b>'+p.lcorn.toFixed(1)+'</b></div></div>'+
