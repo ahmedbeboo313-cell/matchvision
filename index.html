@@ -376,7 +376,7 @@ function fastTick(){if(!state.autoRefresh||document.hidden||appShell.classList.c
 var isLiveMode=(state.mode==='live');
 var hl=state.matches.some(function(m){return m.live;});var hs=state.matches.some(function(m){return soonKickoff(m);});
 if(!isLiveMode&&!hl&&!hs)return;
-var interval=isLiveMode?10000:5000;
+var interval=5000;
 if(Date.now()-lastFastTs<interval||pollingFast)return;
 lastFastTs=Date.now();liveFastPoll();}
 function liveFastPoll(){pollingFast=true;
@@ -441,7 +441,7 @@ function saveCache(l){try{localStorage.setItem('eb_cache',JSON.stringify({ts:Dat
 function slimMatch(m){return{id:m.id,date:m.date,leagueName:m.leagueName,leagueSlug:m.leagueSlug,statusState:m.statusState,statusCompleted:m.statusCompleted,live:m.live,minute:m.minute,scoreHome:m.scoreHome,scoreAway:m.scoreAway,sourceName:m.sourceName,home:m.home,away:m.away,venue:m.venue,homeForm:m.homeForm,awayForm:m.awayForm,fhHome:m.fhHome,fhAway:m.fhAway,hasHalf:m.hasHalf,oddsHome:m.oddsHome,oddsAway:m.oddsAway};}
 function loadCache(){try{return JSON.parse(localStorage.getItem('eb_cache'));}catch(e){return null;}}
 function finDayKey(d){return 'eb_finday_'+d;}
-function readDayCache(d,all){try{var c=JSON.parse(localStorage.getItem(finDayKey(d))||'null');if(!c||!c.list||!c.list.length)return null;var age=Date.now()-c.ts;var diff=Math.round((new Date(fmtDate(new Date()))-new Date(d))/86400000);var maxAge=(diff<=3)?(5*60*1000):(10*86400000);if(age<maxAge)return c.list;}catch(e){}return null;}
+function readDayCache(d,all){try{var c=JSON.parse(localStorage.getItem(finDayKey(d))||'null');if(!c||!c.list||!c.list.length)return null;var age=Date.now()-c.ts;var diff=Math.round((new Date(fmtDate(new Date()))-new Date(d))/86400000);var maxAge=(diff<=0)?(60*1000):((diff<=3)?(5*60*1000):(10*86400000));if(age<maxAge)return c.list;}catch(e){}return null;}
 function writeDayCache(d,l){try{localStorage.setItem(finDayKey(d),JSON.stringify({ts:Date.now(),list:l.slice(0,250).map(slimMatch)}));}catch(e){}}
 function finDays(){var n=state.finSpan||3,o=[];for(var i=0;i<n;i++)o.push(fmtDate(addDays(new Date(),-i)));return o;}
 function fetchT(u,ms){var c=new AbortController();var t=setTimeout(function(){c.abort();},ms||12000);return fetch(u,{cache:'no-store',signal:c.signal}).finally(function(){clearTimeout(t);});}
@@ -469,13 +469,14 @@ state.matches=list;applyPinned();try{trackFinished(list);}catch(e){}detectKickof
 if(state.mode==='all')upcomingPool=new Map(list.map(function(m){return[m.id,m];}));
 if(state.mode!=='finished'){comboPool=list.filter(function(m){return !isFinished(m);});}
 isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;
+try{populateLeagueSelect();leagueSelect.value=state.league;}catch(e){}
 var sy=silent?window.scrollY:null;
 try{renderCurrent();}catch(e){}
 if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
 updateBell();updateSource();reportHealth(state.source==='live');showInbox(false);maybeBankerPush();
 if(state.matches.length===0&&Date.now()-lastEmptyRetry>20000){lastEmptyRetry=Date.now();setTimeout(function(){if(state.matches.length===0&&!isLoading&&state.mode!=='finished')loadMatches(true);},8000);}
 }
-function fetchFinishedDay(d,all){var src=all?LEAGUES:LEAGUES.filter(function(l){return CORE_SLUGS.indexOf(l.slug)>=0;});var rq=src.map(function(l){return fetchESPN(l,d.replace(/-/g,''));});rq.push(fetchTSDBDay(d));return fetchSet(rq).then(function(it){return it.filter(function(m){return(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null;});});}
+function fetchFinishedDay(d,all){var src=all?LEAGUES:LEAGUES.filter(function(l){return CORE_SLUGS.indexOf(l.slug)>=0;});var rq=src.map(function(l){return fetchESPN(l,d.replace(/-/g,''));});rq.push(fetchTSDBDay(d));return fetchSet(rq).then(function(it){return it.filter(function(m){return m&&(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null;});});}
 function loadFinishedFlow(silent){
 if(finLoading)return;finLoading=true;isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
 if(!silent)showLoading();else loading.hidden=true;
@@ -487,7 +488,7 @@ days.forEach(function(d){var c=readDayCache(d,all);if(c&&c.length)list=list.conc
 var chain=Promise.resolve();
 miss.forEach(function(d){chain=chain.then(function(){if(document.hidden)return;return fetchFinishedDay(d,all).then(function(it){writeDayCache(d,it);list=list.concat(it);}).catch(function(){});});});
 chain.then(function(){
-  return fetchSet([fetchTSDBLive(),fetchTSDBDay(fmtDate(new Date()))]).then(function(li){li.forEach(function(m){if((m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&new Date(m.date)<=new Date())finishedMap.set(m.id,m);});}).catch(function(){});
+  return fetchSet([fetchTSDBLive(),fetchTSDBDay(fmtDate(new Date()))]).then(function(li){li.forEach(function(m){if(m&&(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&new Date(m.date)<=new Date())finishedMap.set(m.id,m);});}).catch(function(){});
 }).then(function(){
   finishedMap.forEach(function(v,k){if(!list.some(function(m){return m.id===k;}))list.push(v);});
   var hm=new Set(remoteCfg.hiddenMatches||[]),hl=new Set(remoteCfg.hiddenLeagues||[]);
@@ -499,6 +500,7 @@ chain.then(function(){
   try{trackFinished(state.matches);}catch(e){}
 }).catch(function(){}).finally(function(){
   finLoading=false;isLoading=false;lastLoadTs=Date.now();lastCheckTs=Date.now();loading.hidden=true;
+  try{populateLeagueSelect();leagueSelect.value=state.league;}catch(e){}
   var sy=silent?window.scrollY:null;try{renderCurrent();}catch(e){}if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
   updateBell();updateSource();reportHealth(true);showInbox(false);
 });}
@@ -524,10 +526,10 @@ var hl=h.linescores||[],al=a.linescores||[];var fhH=0,fhA=0,hasHalf=false;
 if(hl.length>=1&&e.status&&e.status.type&&e.status.type.completed){hasHalf=true;fhH=Number(hl[0].displayValue||hl[0].value||0)||0;fhA=Number((al[0]||{}).displayValue||(al[0]||{}).value||0)||0;}
 return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:(e.status&&e.status.type&&e.status.type.state)||'pre',statusCompleted:!!(e.status&&e.status.type&&e.status.type.completed),live:lv,minute:lv?((e.status&&e.status.type&&e.status.type.detail)||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',homeForm:String(h.form||''),awayForm:String(a.form||''),fhHome:fhH,fhAway:fhA,hasHalf:hasHalf,oddsHome:oH,oddsAway:oA,home:{id:(h.team&&h.team.id)||'',name:(h.team&&h.team.displayName)||'فريق',abbr:(h.team&&h.team.abbreviation)||'',logo:(h.team&&h.team.logo)||'',record:getRec(h)},away:{id:(a.team&&a.team.id)||'',name:(a.team&&a.team.displayName)||'فريق',abbr:(a.team&&a.team.abbreviation)||'',logo:(a.team&&a.team.logo)||'',record:getRec(a)},venue:(c.venue&&c.venue.fullName)||''};}
 function getRec(c){var r=c.records||[];if(!r.length)return'';var t=r.find(function(x){return x.type==='total'||x.name==='overall';});return(t&&t.summary)||'';}
-function fetchTSDB(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);});}).catch(function(){return[];});}
-function fetchTSDBDay(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);});}).catch(function(){return[];});}
-function fetchTSDBLive(){return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,true);});}).catch(function(){return[];});}
-function parseTSDB(e,live){var dt=new Date();if(e.strDate){var p=new Date(e.strDate+'T'+(e.strTime||'00:00:00')+'Z');if(!isNaN(p))dt=p;}
+function fetchTSDB(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDBDay(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDBLive(){return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,true);}).filter(Boolean);}).catch(function(){return[];});}
+function parseTSDB(e,live){if(!e||!e.idEvent)return null;var dt=new Date();if(e.strDate){var p=new Date(e.strDate+'T'+(e.strTime||'00:00:00')+'Z');if(!isNaN(p))dt=p;}
 var fin=!live&&(e.strStatus==='Match Finished'||e.strStatus==='FT')&&e.intHomeScore!=null;
 var liveSet={'1H':1,'2H':1,'HT':1,'ET':1,'BT':1,'INT':1,'SUSP':1,'LIVE':1,'1ST':1,'2ND':1};
 var isLive=live||(!fin&&!!liveSet[e.strStatus]);
@@ -535,7 +537,7 @@ var slug=TSDB_SLUG[e.idLeague];
 var name=TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري';
 if(!slug){var ln=(e.strLeague||'').toLowerCase();
   if(ln.indexOf('swiss')>=0||ln.indexOf('switzerland')>=0){slug='sui.1';name='الدوري السويسري';}
-  else slug='tsdb-'+(e.idLeague||'x');
+  else return null;
 }
 return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:name,leagueSlug:slug,statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||e.strStatus||''):'',homeForm:'',awayForm:'',fhHome:0,fhAway:0,hasHalf:false,oddsHome:null,oddsAway:null,scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idHomeTeam+'.png'):'',record:''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idAwayTeam+'.png'):'',record:''},venue:e.strVenue||''};}
 function demoMatches(){var fx=[['الهلال','4-2-0','النصر','3-2-1','20:00','ksa.1'],['مانشستر سيتي','4-1-1','ليفربول','4-2-0','19:00','eng.1'],['ريال مدريد','5-0-1','برشلونة','4-1-1','21:00','esp.1']];
