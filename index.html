@@ -157,7 +157,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .ad-status{padding:10px;border-radius:12px;margin-top:10px;font-size:12px;text-align:center;font-weight:700}
 .ad-status.ok{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .ad-status.err{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
-@media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}}
+@media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}.nav-item small{font-size:8px}}
 </style>
 </head>
 <body>
@@ -234,7 +234,7 @@ setTimeout(function(){
 <div id="bannerTop" class="banner hidden"><span id="bannerText"></span></div>
 <header class="topbar">
 <div class="brandrow" id="brandRow"><svg viewBox="0 0 64 64"><defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgC)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgC)" stroke-width="4.5" stroke-linecap="round"/></svg>
-<div><div class="brand">Egypt <span>Bet</span></div><div class="sub">قادمة • لايف • منتهية</div></div></div>
+<div><div class="brand">Egypt <span>Bet</span></div><div class="sub">قدم • سلة • لايف • منتهية</div></div></div>
 <div class="top-actions"><span id="sourceBadge" class="badge loading">جاري المصادر...</span><button id="bellBtn" class="icon-btn">🔔<span id="bellBadge" class="count hidden">0</span></button><button id="refreshBtn" class="icon-btn">⟳</button></div>
 </header>
 <section class="controls">
@@ -251,6 +251,7 @@ setTimeout(function(){
 <section id="view-details" class="view hidden"><div class="back-row"><button id="backBtn" class="icon-btn">→</button><b id="detailsTitle"></b></div><div id="detailsContent"></div></section>
 <section id="view-favorites" class="view hidden"><div id="favContent"></div><div id="favEmpty" class="empty" hidden>⭐ لا توجد مفضلة بعد.</div></section>
 <section id="view-leagues" class="view hidden"><div id="leaguesContent" class="leagues-grid"></div></section>
+<section id="view-bball" class="view hidden"><div id="bbContent"></div></section>
 <section id="view-stats" class="view hidden">
 <div class="ring-card"><div class="ring"><svg width="86" height="86"><circle class="bgc" cx="43" cy="43" r="34"/><circle id="ringFg" class="fgc" cx="43" cy="43" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="ringText">0%</b></div><div><div style="font-weight:800">دقة التوقعات</div><small id="ringLabel" style="color:var(--muted)">لسه مفيش توقعات متقيمة</small></div></div>
 <div class="mini-grid"><div class="mini">توقعات متقيمة<b id="statAnalyzed">0</b></div><div class="mini">مباريات مباشرة<b id="statToday">0</b></div></div>
@@ -273,6 +274,7 @@ setTimeout(function(){
 <nav class="bottom-nav">
 <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small>الرئيسية</small></button>
 <button class="nav-item" data-view="combo"><span class="nic">🎯</span><small>الآمنون</small></button>
+<button class="nav-item" data-view="bball"><span class="nic">🏀</span><small>السلة</small></button>
 <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small>المفضلة</small></button>
 <button class="nav-item" data-view="leagues"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 5H4.5A2.5 2.5 0 007 9.5"/><path d="M17 5h2.5A2.5 2.5 0 0117 9.5"/><path d="M12 14v4"/><path d="M8.5 20h7"/></svg></span><small>الدوريات</small></button>
 <button class="nav-item" data-view="stats"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg></span><small>الإحصائيات</small></button>
@@ -364,7 +366,7 @@ function init(){
   try{loadRemoteConfig();}catch(e){}
   try{db.collection('config').doc('settings').onSnapshot(function(d){if(d&&d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();applyTelegram();}});}catch(e){}
   try{document.addEventListener('visibilitychange',function(){if(!document.hidden&&appShell&&!appShell.classList.contains('hidden')&&Date.now()-lastLoadTs>20000)loadMatches(true);});}catch(e){}
-  setTimeout(function(){splash.classList.add('fade');setTimeout(function(){splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();showView('home');maybeShowGuide();},500);},1600);
+  setTimeout(function(){splash.classList.add('fade');setTimeout(function(){splash.classList.add('hidden');appShell.classList.remove('hidden');loadMatches();loadBB();showView('home');maybeShowGuide();},500);},1600);
   setInterval(tick,10000);setInterval(fastTick,4000);setInterval(secTick,1000);
   setInterval(function(){if(!document.hidden){loadRemoteConfig();}},60000);
   setInterval(function(){if(!document.hidden&&state.matches.some(isFinished)){try{trackFinished(state.matches);}catch(e){}}},60000);
@@ -372,8 +374,11 @@ function init(){
 }
 function maybeShowGuide(){try{if(remoteCfg.disableGuide)return;var t2=fmtDate(new Date());if(lsGet('mv_guide_day')===t2)return;$('#guideModal').classList.remove('hidden');}catch(e){}}
 function soonKickoff(m){var d=new Date(m.date);if(isNaN(d)||m.live||isFinished(m))return false;var df=d-Date.now();return df>0&&df<1200000;}
-function tick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;if(state.mode==='finished'){if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true);else lastCheckTs=Date.now();return;}var s=Date.now()-lastLoadTs;var u=state.matches.some(function(m){return m.live||soonKickoff(m);});if(s>=(u?25000:45000))loadMatches(true);else lastCheckTs=Date.now();}
+function tick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;
+if(Date.now()-(window.__lastBB||0)>30000){window.__lastBB=Date.now();loadBB();}
+if(state.mode==='finished'){if(Date.now()-lastLoadTs>10000)loadFinishedFlow(true);else lastCheckTs=Date.now();return;}var s=Date.now()-lastLoadTs;var u=state.matches.some(function(m){return m.live||soonKickoff(m);});if(s>=(u?25000:45000))loadMatches(true);else lastCheckTs=Date.now();}
 function fastTick(){if(!state.autoRefresh||document.hidden||appShell.classList.contains('hidden'))return;if(state.mode==='finished')return;
+if(state.view==='bball'&&Date.now()-(window.__lastBB||0)>15000){window.__lastBB=Date.now();loadBB();}
 var isLiveMode=(state.mode==='live');
 var hl=state.matches.some(function(m){return m.live;});var hs=state.matches.some(function(m){return soonKickoff(m);});
 if(!isLiveMode&&!hl&&!hs)return;
@@ -414,7 +419,7 @@ $('#inboxModal').addEventListener('click',function(e){if(e.target===e.currentTar
 var os=function(){$('#suggModal').classList.remove('hidden');};
 $('#openSuggBtn').onclick=os;$('#suggHero').onclick=os;$('#suggCancel').onclick=function(){$('#suggModal').classList.add('hidden');};$('#suggSend').onclick=sendSuggestion;
 $('#tgVip').onchange=function(e){state.vip=e.target.checked;renderCurrent();};
-$('#refreshBtn').onclick=function(){loadRemoteConfig();loadMatches();};
+$('#refreshBtn').onclick=function(){loadRemoteConfig();loadMatches();loadBB();};
 $('#bellBtn').onclick=function(){lsSet('mv_bell_read',bellCount());updateBell();showView('notifications');};
 $('#backBtn').onclick=function(){showView(state.prevView||'home');};
 $('#toTop').onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
@@ -423,7 +428,7 @@ datePicker.onchange=function(){state.date=datePicker.value||fmtDate(new Date());
 document.querySelectorAll('.date-chip').forEach(function(c){c.onclick=function(){state.date=fmtDate(addDays(new Date(),+c.dataset.offset));datePicker.value=state.date;setDateChipsActive();loadMatches();};});
 document.querySelectorAll('.fin-chip').forEach(function(c){c.onclick=function(){state.finSpan=+c.dataset.span;state.finDatePicked=false;document.querySelectorAll('.fin-chip').forEach(function(x){x.classList.toggle('active',x===c);});loadMatches();};});
 if(finDate)finDate.onchange=function(){state.finDate=finDate.value||fmtDate(new Date());state.finDatePicked=true;document.querySelectorAll('.fin-chip').forEach(function(x){x.classList.remove('active');});loadMatches();};
-document.querySelectorAll('.mode-chip').forEach(function(c){c.onclick=function(){state.mode=c.dataset.mode;document.querySelectorAll('.mode-chip').forEach(function(x){x.classList.toggle('active',x===c);});dateRow.style.display=state.mode==='all'?'flex':'none';finRow.style.display=state.mode==='finished'?'flex':'none';loadMatches();};});
+document.querySelectorAll('.mode-chip').forEach(function(c){c.onclick=function(){state.mode=c.dataset.mode;document.querySelectorAll('.mode-chip').forEach(function(x){x.classList.toggle('active',x===c);});dateRow.style.display=state.mode==='all'?'flex':'none';finRow.style.display=state.mode==='finished'?'flex':'none';loadMatches();loadBB();};});
 leagueSelect.onchange=function(){state.league=leagueSelect.value;loadMatches();};
 search.oninput=function(){state.query=search.value;renderCurrent();};
 document.querySelectorAll('.nav-item').forEach(function(b){b.onclick=function(){showView(b.dataset.view);window.scrollTo({top:0,behavior:'auto'});};});
@@ -592,7 +597,7 @@ t.ids.push(m.id);if(t.ids.length>600)t.ids.shift();ch=true;});
 if(ch)lsSet('mv_track_v2',t);}catch(e){}}
 function detectKickoffs(){var ln=state.matches.filter(function(m){return m.live;});var ids=new Set(ln.map(function(m){return m.id;}));if(state.prevLive&&state.notifEnabled)ln.forEach(function(m){if(!state.prevLive.has(m.id)&&favorites.has(m.id))kickNotify(m);});state.prevLive=ids;}
 function kickNotify(m){try{if(navigator.vibrate)navigator.vibrate([300,100,300]);}catch(e){}beep();kickBanner.innerHTML='🔴 بدأت الآن: <b>'+esc(m.home.name)+' × '+esc(m.away.name)+'</b>';kickBanner.classList.remove('hidden');setTimeout(function(){kickBanner.classList.add('hidden');},8000);try{if('Notification' in window&&Notification.permission==='granted')new Notification('⚽',{body:m.home.name+' × '+m.away.name});}catch(e){}}
-function beep(){try{var a=new(window.AudioContext||window.webkitAudioContext());[0,.2].forEach(function(t){var o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.2,a.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.15);o.start(a.currentTime+t);o.stop(a.currentTime+t+.16);});}catch(e){}}
+function beep(){try{var a=new(window.AudioContext||window.webkitAudioContext)();[0,.2].forEach(function(t){var o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.2,a.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.15);o.start(a.currentTime+t);o.stop(a.currentTime+t+.16);});}catch(e){}}
 function poissonPmf(k,l){var p=Math.exp(-l);for(var i=1;i<=k;i++)p=p*l/i;return p;}
 function poissonCdf(k,l){var s=0;for(var i=0;i<=k;i++)s+=poissonPmf(i,l);return s;}
 function erf(x){var s=x<0?-1:1;x=Math.abs(x);var a1=0.254829592,a2=-0.3275911,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;var t=1/(1+p*x);var y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;}
@@ -689,7 +694,7 @@ r.corners=cornOver>=0.5?r.cornersOver:r.cornersUnder;
 var mH=(tH&&tH.margin!=null)?tH.margin:0;
 var mA=(tA&&tA.margin!=null)?tA.margin:0;
 var marginEff=0.5*(r.lh-r.la)+0.3*((mH-mA)/2)+0.2*(aL.marginR||0);
-var sd=Math.sqrt(r.lh+r.la)||1;
+var sd=Math.sqrt(r.lh+r.la)||1.6;
 var hcap;
 if(marginEff>=1.2){hcap={type:'h-1',text:'هانديكاب: المضيف -1',prob:Math.round((1-normCdf((1.5-marginEff)/sd))*100)};}
 else if(marginEff<=-1.2){hcap={type:'a-1',text:'هانديكاب: الضيف -1',prob:Math.round(normCdf((-1.5-marginEff)/sd)*100)};}
@@ -699,6 +704,10 @@ hcap.prob=clamp(hcap.prob,2,98);hcap.tone=hcap.prob>=50?'good':'warn';
 r.handicap=hcap;
 r.confidence=Math.round((r.goals.prob+r.corners.prob+r.btts.prob+r.win.prob)/4);
 }catch(e){}
+if(!r.handicap)r.handicap={type:'h+0.5',text:'هانديكاب: المضيف +0.5',prob:50,tone:'warn'};
+if(!r.cornersOver)r.cornersOver={text:'ركنيات أكثر من 9.5',prob:50,tone:'info'};
+if(!r.cornersUnder)r.cornersUnder={text:'ركنيات أقل من 9.5',prob:50,tone:'info'};
+if(!r.corners)r.corners=r.cornersOver;
 r.learnN=(TEAMADJ[m.home.id]?TEAMADJ[m.home.id].n:0)+(TEAMADJ[m.away.id]?TEAMADJ[m.away.id].n:0);
 var csH=Math.exp(-la),csA=Math.exp(-lh);
 r.cleanSheet=csH>=csA?{text:'كلين شيت: '+m.home.name+' (1)',prob:Math.round(csH*100),tone:'info'}:{text:'كلين شيت: '+m.away.name+' (2)',prob:Math.round(csA*100),tone:'info'};
@@ -767,6 +776,54 @@ default:return null;}}
 function hashCode(s){var h=0;for(var i=0;i<s.length;i++){h=Math.imul(31,h)+s.charCodeAt(i);h|=0;}return h>>>0;}
 function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(n,a,b){return Math.min(b,Math.max(a,n));}
+// ================= BASKETBALL MODULE =================
+var BB_LEAGUES=[{slug:'nba',name:'NBA 🇺'},{slug:'mens-college-basketball',name:'سلة الجامعات الأمريكية'},{slug:'wnba',name:'WNBA 🇺'}];
+var bbMatches=[];var BBADJ=lsGet('eb_bb_adj')||{};var bbAvg=lsGet('eb_bb_avg')||108;var bbPend=false;
+function bbSave(){if(bbPend)return;bbPend=true;setTimeout(function(){bbPend=false;lsSet('eb_bb_adj',BBADJ);lsSet('eb_bb_avg',bbAvg);},1000);}
+function parseBB(e,l){try{var c=e.competitions&&e.competitions[0]||{},cs=c.competitors||[];var h=cs.find(function(x){return x.homeAway==='home';})||cs[0]||{},a=cs.find(function(x){return x.homeAway==='away';})||cs[1]||{};var st=e.status&&e.status.type?e.status.type:{};var lv=st.state==='in';var fin=!!st.completed;return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:'bb.'+l.slug,statusState:st.state||'pre',statusCompleted:fin,live:lv,minute:lv?(st.detail||''):'',scoreHome:h.score!=null?+h.score:null,scoreAway:a.score!=null?+a.score:null,home:{id:(h.team&&h.team.id)||'',name:(h.team&&h.team.displayName)||'فريق',abbr:(h.team&&h.team.abbreviation)||'',logo:(h.team&&h.team.logo)||''},away:{id:(a.team&&a.team.id)||'',name:(a.team&&a.team.displayName)||'فريق',abbr:(a.team&&a.team.abbreviation)||'',logo:(a.team&&a.team.logo)||''}};}catch(e2){return null;}}
+function parseBBTS(e){try{if(!e||!e.idEvent)return null;var dt=new Date();if(e.strDate){var p=new Date(e.strDate+'T'+(e.strTime||'00:00:00')+'Z');if(!isNaN(p))dt=p;}var fin=(e.strStatus==='Match Finished'||e.strStatus==='FT')&&e.intHomeScore!=null;var live=!fin&&!!{'1H':1,'2H':1,'HT':1,'ET':1,'Q1':1,'Q2':1,'Q3':1,'Q4':1,'OT':1}[e.strStatus];return{id:'bbts-'+e.idEvent,date:dt.toISOString(),leagueName:e.strLeague||'كرة سلة',leagueSlug:'bb.'+(e.idLeague||'x'),statusState:live?'in':(fin?'post':'pre'),statusCompleted:fin,live:live,minute:live?(e.strProgress||e.strStatus||''):'',scoreHome:(live||fin)?+e.intHomeScore:null,scoreAway:(live||fin)?+e.intAwayScore:null,home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idHomeTeam+'.png'):''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idAwayTeam+'.png'):''}};}catch(e2){return null;}}
+function fetchBBESPN(l,ds){return fetchT('https://site.api.espn.com/apis/site/v2/sports/basketball/'+l.slug+'/scoreboard?dates='+ds).then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseBB(e,l);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchBBLive(){return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
+function fetchBBDay(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
+function loadBB(){var td=fmtDate(new Date());var yd=fmtDate(addDays(new Date(),-1));var rq=BB_LEAGUES.map(function(l){return fetchBBESPN(l,td.replace(/-/g,''));});
+if(state.mode==='finished'){BB_LEAGUES.forEach(function(l){rq.push(fetchBBESPN(l,yd.replace(/-/g,'')));});rq.push(fetchBBDay(yd));}
+rq.push(fetchBBLive());rq.push(fetchBBDay(td));
+return fetchSet(rq).then(function(list){var byKey={};list.forEach(function(g){if(!g)return;var k=(g.home.name+'|'+g.away.name).toLowerCase().replace(/\s+/g,'');var prev=byKey[k];if(!prev){byKey[k]=g;return;}var prevTs=prev.id.indexOf('bbts-')===0;var curTs=g.id.indexOf('bbts-')===0;if(prevTs&&!curTs){byKey[k]=g;}else if(prevTs&&curTs){if((g.live||g.statusCompleted)&&!(prev.live||prev.statusCompleted))byKey[k]=g;}});var out=[];Object.keys(byKey).forEach(function(k){out.push(byKey[k]);});bbMatches=out;bbTrack();if(state.view==='bball')renderBB();});}
+function bbRating(id){var t=BBADJ[id];if(t&&t.n>=2)return t;return null;}
+function bbPredict(g){var h=bbRating(g.home.id),a=bbRating(g.away.id);var L=bbAvg||108;var muH,muA;
+if(h&&a){muH=(h.pf*0.5+(L-a.pa)*0.5)+3;muA=(a.pf*0.5+(L-h.pa)*0.5);}
+else{muH=L/2+3;muA=L/2;}
+var sd=13,sdT=18,diff=muH-muA,T=muH+muA;
+var pWin=clamp(normCdf(diff/sd),0.05,0.95);
+var spreadLine=diff>=0?-3.5:3.5;
+var spreadText=diff>=0?'هانديكاب: المضيف -3.5':'هانديكاب: المضيف +3.5';
+var pSpread=diff>=0?clamp(normCdf((diff-3.5)/sd),0.05,0.95):clamp(normCdf((diff+3.5)/sd),0.05,0.95);
+var totLine=Math.round(T)-0.5;
+var pOver=clamp(normCdf((T-L)/sdT),0.05,0.95);
+return{muH:Math.round(muH),muA:Math.round(muA),pWin:pWin,spreadLine:spreadLine,spreadText:spreadText,pSpread:pSpread,totLine:totLine,pOver:pOver};}
+function bbTrack(){bbMatches.forEach(function(g){if(!g.statusCompleted||g.scoreHome==null)return;var dk='bbdone_'+g.id;if(BBADJ[dk])return;BBADJ[dk]=1;
+var h=BBADJ[g.home.id]||(BBADJ[g.home.id]={pf:0,pa:0,n:0});var a=BBADJ[g.away.id]||(BBADJ[g.away.id]={pf:0,pa:0,n:0});
+var up=function(t,pf,pa){t.n=(t.n||0)+1;var al=t.n>1?0.3:1;t.pf=t.pf?t.pf+al*(pf-t.pf):pf;t.pa=t.pa?t.pa+al*(pa-t.pa):pa;};
+up(h,g.scoreHome,g.scoreAway);up(a,g.scoreAway,g.scoreHome);
+bbAvg=bbAvg?bbAvg*0.8+(g.scoreHome+g.scoreAway)*0.2:(g.scoreHome+g.scoreAway);
+bbSave();});}
+function renderBB(){var el=document.getElementById('bbContent');if(!el)return;
+var nowTs=Date.now();
+var live=bbMatches.filter(function(g){return g.live;});
+var up=bbMatches.filter(function(g){return !g.statusCompleted&&!g.live&&(new Date(g.date).getTime()-nowTs)>-45*60000;}).sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+var fin=bbMatches.filter(function(g){return g.statusCompleted&&g.scoreHome!=null&&g.scoreAway!=null;}).sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+var list=(state.mode==='live'?live:(state.mode==='finished'?fin:up)).slice(0,40);
+var head=state.mode==='live'?'🔴 كرة السلة — مباشر الآن':(state.mode==='finished'?'📅 كرة السلة — نتائج منتهية':'🏀 كرة السلة — القادمة');
+var html='<div class="day-head">'+head+'</div>';
+if(!list.length){var msg=state.mode==='live'?'🔴 لا توجد مباريات سلة مباشرة الآن.':(state.mode==='finished'?'📅 لا توجد نتائج سلة منتهية.':'🏀 لا توجد مباريات سلة قادمة.');html+='<div class="empty">'+msg+'</div>';el.innerHTML=html;return;}
+html+=list.map(function(g){var pr=bbPredict(g);
+if(state.mode==='finished'){var wWin=g.scoreHome>g.scoreAway;var predHome=pr.pWin>=0.5;var ok=(wWin===predHome);
+return '<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">'+esc(g.leagueName)+'</span><span class="done-pill">انتهت</span></div><div class="teams"><div class="team">'+teamVis(g.home)+'<strong>'+esc(g.home.name)+'</strong></div><div class="vs"><strong class="scoreDone">'+g.scoreHome+' - '+g.scoreAway+'</strong></div><div class="team">'+teamVis(g.away)+'<strong>'+esc(g.away.name)+'</strong></div></div><div class="safe-box"><div class="safe-head"><span>🏀 الفائز المتوقع</span><span class="safe-badge">'+Math.round(pr.pWin*100)+'%</span></div><div class="safe-val '+(ok?'good':'hot')+'">'+(predHome?esc(g.home.name):esc(g.away.name))+' '+(ok?'✔':'✘')+'</div></div></div>';}
+var score=g.live?((g.scoreHome!=null?g.scoreHome:0)+' - '+(g.scoreAway!=null?g.scoreAway:0)):timeOnly(g.date);
+return '<div class="card" style="cursor:default"><div class="match-head"><span class="league-pill">'+esc(g.leagueName)+'</span>'+(g.live?'<span class="live-pill"><span class="live-dot"></span>مباشر '+esc(g.minute||'')+'</span>':'<span class="date-text">'+fmtDT(g.date)+'</span>')+'</div><div class="teams"><div class="team">'+teamVis(g.home)+'<strong>'+esc(g.home.name)+'</strong></div><div class="vs"><strong>'+score+'</strong></div><div class="team">'+teamVis(g.away)+'<strong>'+esc(g.away.name)+'</strong></div></div><div class="safe-box"><div class="safe-head"><span>🏀 الفائز المتوقع</span><span class="safe-badge">'+Math.round(pr.pWin*100)+'%</span></div><div class="safe-val good">'+(pr.pWin>=0.5?esc(g.home.name):esc(g.away.name))+'</div><div class="meter big"><span style="width:'+Math.round(pr.pWin*100)+'%"></span></div></div><div class="safe-others"><span class="schip">'+esc(pr.spreadText)+' <span class="sp">'+Math.round(pr.pSpread*100)+'%</span></span><span class="schip">أكثر من '+pr.totLine+' <span class="sp">'+Math.round(pr.pOver*100)+'%</span></span><span class="schip">أقل من '+pr.totLine+' <span class="sp">'+Math.round((1-pr.pOver)*100)+'%</span></span></div><div class="match-foot"><span>📊 النقاط المتوقعة: '+pr.muH+' - '+pr.muA+'</span></div></div>';
+}).join('');
+el.innerHTML=html;}
+// =============== END BASKETBALL ===============
 function getBanker(){
   var today=fmtDate(new Date());
   var saved=lsGet('eb_banker_saved');
@@ -875,8 +932,8 @@ function renderCombo(){
   if(!html)html='<div class="empty">🎯 لا توجد مباريات كافية حالياً — جرّب بعد ما تتحمّل مباريات.</div>';
   comboContent.innerHTML=html;
 }
-function showView(v){state.view=v;['home','combo','details','favorites','leagues','stats','notifications'].forEach(function(x){var el=document.getElementById('view-'+x);if(el)el.classList.toggle('hidden',x!==v);});document.querySelectorAll('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});renderCurrent();}
-function renderCurrent(){updateSource();var sy=window.scrollY;var fn={home:renderHome,combo:renderCombo,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails}[state.view];if(fn)fn();window.scrollTo({top:sy,behavior:'auto'});}
+function showView(v){state.view=v;['home','combo','details','favorites','leagues','stats','notifications','bball'].forEach(function(x){var el=document.getElementById('view-'+x);if(el)el.classList.toggle('hidden',x!==v);});document.querySelectorAll('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});renderCurrent();}
+function renderCurrent(){updateSource();var sy=window.scrollY;var fn={home:renderHome,combo:renderCombo,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails,bball:renderBB}[state.view];if(fn)fn();window.scrollTo({top:sy,behavior:'auto'});}
 function filtered(){var l=state.matches.slice();if(state.league!=='all')l=l.filter(function(m){return m.leagueSlug===state.league;});if(state.query.trim()){var q=state.query.trim().toLowerCase();l=l.filter(function(m){return[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().indexOf(q)>=0;});}return l;}
 function dayLabel(iso){var d=new Date(iso);if(isNaN(d))return'';return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long'}).format(d);}
 function renderHome(){loading.hidden=true;var list=filtered();if(state.mode==='live')list=list.filter(function(m){return m.live;});updateStats(list);
