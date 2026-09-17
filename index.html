@@ -182,7 +182,7 @@ setTimeout(function(){
 <div class="gsteps">
 <div class="gstep"><span>1</span><p>كل مباراة ليها صندوق أخضر <b class="suremini">الأضمن 🛡️</b> — توقع ثابت مدروس بتعلم ذاتي عميق (تقييم هجوم/دفاع بيت/بره + تصحيح Dixon-Coles + دمج السوق).</p></div>
 <div class="gstep"><span>2</span><p>فوق الكل <b class="suremini">🎯 توقع اليوم</b> — أضمن توقع النهارده، وثابت طول اليوم.</p></div>
-<div class="gstep"><span>3</span><p>تاب <b class="suremini">🎯 الآمنون</b> — أفضل 5 ثابتين لكل سوق، ولما يخلصوا تظهر نتائجهم هنا وينزل غيرهم.</p></div>
+<div class="gstep"><span>3</span><p>تاب <b class="suremini">🎯 الآمنون</b> — أفضل 5 ثابتين لكل سوق، ولما يخلصوا تظهر نتائجهم ✔/✘ وينزل غيرهم.</p></div>
 </div>
 <p class="gwarn">⚠️ التوقعات إحصائية ومدروسة — لا ضمان مطلق.</p>
 <button id="guideOk" class="gbtn">يلا نبدأ ⚽</button>
@@ -863,17 +863,17 @@ function safeBlock(m,p,fin){
   var hOf=function(d){return fin?hitCheck(d[0],p,m,tot,sh,sa):null;};
   var bH=hOf(best);var bSh=shieldsFor(best[0],best[2].prob,p);
   var h1SafeBox='';
-  if(p.h1Goal&&p.h1Goal.prob>=H1_SAFE_MIN){
+  if(fin&&p.h1Goal&&p.h1Goal.prob>=H1_SAFE_MIN){
     var h1PredYes=p.h1Goal.prob>=50;
     var h1Mark='';var h1Cls='good';
-    if(fin&&m.hasHalf){var h1Actual=((m.fhHome||0)+(m.fhAway||0))>=1;var h1Win=(h1PredYes===h1Actual);h1Mark=h1Win?' ✔':' ✘';h1Cls=h1Win?'good':'hot';}
-    h1SafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>⏱️ هدف في الشوط الأول</span><span class="safe-badge">'+(fin?'نتيجة التحقق':'آمن بنسبة كبيرة ✅')+'</span></div><div class="safe-val '+h1Cls+'">'+(h1PredYes?'نعم — هدف في الشوط الأول':'لا — مفيش هدف في الشوط الأول')+h1Mark+'</div><div class="meter big"><span style="width:'+p.h1Goal.prob+'%"></span></div><div class="prob">'+p.h1Goal.prob+'% • ⏱️ شوط أول</div></div>';
+    if(m.hasHalf){var h1Actual=((m.fhHome||0)+(m.fhAway||0))>=1;var h1Win=(h1PredYes===h1Actual);h1Mark=h1Win?' ✔':' ✘';h1Cls=h1Win?'good':'hot';}
+    h1SafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>⏱️ هدف في الشوط الأول</span><span class="safe-badge">نتيجة التحقق</span></div><div class="safe-val '+h1Cls+'">'+(h1PredYes?'نعم — هدف في الشوط الأول':'لا — مفيش هدف في الشوط الأول')+h1Mark+'</div><div class="meter big"><span style="width:'+p.h1Goal.prob+'%"></span></div><div class="prob">'+p.h1Goal.prob+'% • ⏱️ شوط أول</div></div>';
   }
   var btSafeBox='';
-  if(p.btts&&p.btts.text==='نعم'&&p.btts.prob>=BTTS_SAFE_MIN){
+  if(fin&&p.btts&&p.btts.text==='نعم'&&p.btts.prob>=BTTS_SAFE_MIN){
     var btMark='';var btCls='good';
-    if(fin){var btActual=((m.scoreHome||0)>0&&(m.scoreAway||0)>0);var btWin=btActual;btMark=btWin?' ✔':' ✘';btCls=btWin?'good':'hot';}
-    btSafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>🎯 كلا الفريقين يسجلان</span><span class="safe-badge">'+(fin?'نتيجة التحقق':'آمن بنسبة كبيرة ✅')+'</span></div><div class="safe-val '+btCls+'">نعم — الفريقان يسجلان'+btMark+'</div><div class="meter big"><span style="width:'+p.btts.prob+'%"></span></div><div class="prob">'+p.btts.prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
+    var btActual=((m.scoreHome||0)>0&&(m.scoreAway||0)>0);var btWin=btActual;btMark=btWin?' ✔':' ✘';btCls=btWin?'good':'hot';
+    btSafeBox='<div class="safe-box btts-box"><div class="safe-head"><span>🎯 كلا الفريقين يسجلان</span><span class="safe-badge">نتيجة التحقق</span></div><div class="safe-val '+btCls+'">نعم — الفريقان يسجلان'+btMark+'</div><div class="meter big"><span style="width:'+p.btts.prob+'%"></span></div><div class="prob">'+p.btts.prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
   }
   var sb='<div class="safe-box"><div class="safe-head"><span>'+best[1]+'</span><span class="safe-badge">الأضمن 🛡️ '+shieldStr(bSh)+'</span></div><div class="safe-val '+(fin?(bH===true?'good':(bH===false?'hot':'')):best[2].tone)+'">'+(fin?best[2].text+(bH===true?' ✔':(bH===false?' ✘':'')):best[2].text)+'</div><div class="meter big"><span style="width:'+best[2].prob+'%"></span></div><div class="prob">'+best[2].prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
   var chps=others.map(function(d){var h=hOf(d);return '<span class="schip '+(fin?(h===true?'hit':(h===false?'miss':'')):'')+'">'+(fin?d[2].text+(h===true?' ✔':(h===false?' ✘':'')):d[2].text)+' <span class="sp">'+d[2].prob+'%</span></span>';}).join('');
