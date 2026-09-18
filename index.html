@@ -160,6 +160,20 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .ad-status{padding:10px;border-radius:12px;margin-top:10px;font-size:12px;text-align:center;font-weight:700}
 .ad-status.ok{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .ad-status.err{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.soc-card{background:linear-gradient(160deg,rgba(124,58,237,.12),rgba(34,211,238,.06));border:1px solid rgba(124,58,237,.4);border-radius:20px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(124,58,237,.15)}
+.soc-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.soc-av{width:42px;height:42px;border-radius:50%;border:2px solid rgba(124,58,237,.6)}
+.soc-user b{display:block;font-size:14px}
+.soc-user small{color:var(--muted);font-size:11px}
+.soc-match{background:rgba(0,0,0,.3);border:1px solid rgba(34,211,238,.25);border-radius:14px;padding:10px;display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.soc-odds{background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.4);border-radius:10px;padding:6px 10px;font-weight:900;font-size:15px}
+.soc-m{flex:1;min-width:0}.soc-m b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.soc-m small{color:var(--muted);font-size:11px}
+.soc-pred{background:rgba(124,58,237,.2);color:#c4b5fd;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700}
+.soc-actions{display:flex;gap:8px;justify-content:flex-end}
+.soc-btn{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:99px;padding:7px 14px;font-size:13px;font-weight:800;color:var(--muted);cursor:pointer}
+.soc-btn.on{color:#f472b6;border-color:rgba(244,114,182,.5);background:rgba(244,114,182,.1)}
+.soc-cmt{display:flex;gap:8px;margin-bottom:8px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:8px}
+.soc-cmt b{font-size:12px}.soc-cmt small{color:var(--muted);font-size:12px;display:block}
 @media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}.nav-item small{font-size:8px}}
 </style>
 </head>
@@ -230,6 +244,9 @@ setTimeout(function(){
 <div id="ad_status"></div>
 </div>
 </div>
+<div id="profileModal" class="gmodal hidden"><div class="gcard"><h2>👤 <span>ملفك الاجتماعي</span></h2><p style="color:var(--muted);font-size:13px;margin-bottom:12px">اختار اسمك مرة واحدة — هيظهر مع كل منشوراتك</p><input id="socName" type="text" maxlength="20" placeholder="اسمك المستعار" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px;color:var(--text);text-align:center"><button id="socSaveProfile" class="gbtn">حفظ ومتابعة ✅</button></div></div>
+<div id="postModal" class="gmodal hidden"><div class="gcard"><h2>✍️ <span>انشر توقعك</span></h2><select id="socMatch" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:10px;color:var(--text)"></select><input id="socPred" type="text" maxlength="60" placeholder="توقعك (مثال: فوز الريال / أكثر من 2.5)" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:10px;color:var(--text)"><input id="socOdds" type="number" step="0.01" min="1" placeholder="الأودز (اختياري)" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px;color:var(--text)"><button id="socSubmit" class="gbtn">نشر 🚀</button><button id="socCancelPost" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button></div></div>
+<div id="commentsModal" class="gmodal hidden"><div class="gcard"><h2>💬 <span>التعليقات</span></h2><div id="socComments" style="max-height:300px;overflow-y:auto;margin-bottom:12px;text-align:right"></div><div style="display:flex;gap:8px"><input id="socCmtText" type="text" maxlength="140" placeholder="اكتب تعليق..." style="flex:1;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;color:var(--text)"><button id="socCmtSend" class="gbtn" style="width:auto;padding:12px 18px">إرسال</button></div><button id="socCloseComments" style="margin-top:10px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إغلاق</button></div></div>
 <div id="splash" class="splash"><div class="splash-box">
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgA)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <h1>Egypt <span>Bet</span></h1><p>توقعات ذكية مبنية على إحصائيات حقيقية</p><div class="splash-bar"><span></span></div></div></div>
@@ -255,6 +272,14 @@ setTimeout(function(){
 <section id="view-favorites" class="view hidden"><div id="favContent"></div><div id="favEmpty" class="empty" hidden>⭐ لا توجد مفضلة بعد.</div></section>
 <section id="view-leagues" class="view hidden"><div id="leaguesContent" class="leagues-grid"></div></section>
 <section id="view-bball" class="view hidden"><div id="bbContent"></div></section>
+<section id="view-social" class="view hidden">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<img id="socMyAv" class="soc-av" src="">
+<div style="flex:1"><b id="socMyName" style="font-size:14px">ضيف</b><small style="color:var(--muted);display:block;font-size:11px">شارك توقعك مع المجتمع</small></div>
+<button id="socNewPost" class="gbtn" style="width:auto;padding:10px 16px">＋ انشر</button>
+</div>
+<div id="socialFeed"></div>
+</section>
 <section id="view-stats" class="view hidden">
 <div class="ring-card"><div class="ring"><svg width="86" height="86"><circle class="bgc" cx="43" cy="43" r="34"/><circle id="ringFg" class="fgc" cx="43" cy="43" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg><b id="ringText">0%</b></div><div><div style="font-weight:800">دقة التوقعات</div><small id="ringLabel" style="color:var(--muted)">لسه مفيش توقعات متقيمة</small></div></div>
 <div class="mini-grid"><div class="mini">توقعات متقيمة<b id="statAnalyzed">0</b></div><div class="mini">مباريات مباشرة<b id="statToday">0</b></div></div>
@@ -278,10 +303,10 @@ setTimeout(function(){
 <button class="nav-item active" data-view="home"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5V20a1 1 0 01-1 1h-4.5v-6h-5v6H5a1 1 0 01-1-1z"/></svg></span><small>الرئيسية</small></button>
 <button class="nav-item" data-view="combo"><span class="nic">🎯</span><small>الآمنون</small></button>
 <button class="nav-item" data-view="bball"><span class="nic">🏀</span><small>السلة</small></button>
+<button class="nav-item" data-view="social"><span class="nic">👥</span><small>السوشيال</small></button>
 <button class="nav-item" data-view="favorites"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.9l-5.3 2.7 1.1-5.8-4.3-4.1 5.9-.8z"/></svg></span><small>المفضلة</small></button>
 <button class="nav-item" data-view="leagues"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 5H4.5A2.5 2.5 0 007 9.5"/><path d="M17 5h2.5A2.5 2.5 0 0117 9.5"/><path d="M12 14v4"/><path d="M8.5 20h7"/></svg></span><small>الدوريات</small></button>
 <button class="nav-item" data-view="stats"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg></span><small>الإحصائيات</small></button>
-<button class="nav-item" data-view="notifications"><span class="nic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15v-4.5a5.5 5.5 0 0111 0V15l1.8 2.2H4.7z"/><path d="M10 19.5a2 2 0 004 0"/></svg></span><small>التنبيهات</small></button>
 </nav>
 <button id="toTop">⬆</button>
 </div>
@@ -346,7 +371,7 @@ var TSDB_NAME=[['caf champions','caf.champions'],['afc champions','afc.champions
 ['bolivia','bol.1'],['colombia','col.1'],['venezuela','ven.1'],['ecuador','ecu.1'],['peru','per.1'],['uruguay','uru.1'],['chile','chi.1'],['argentina','arg.1'],['brazil','bra.1'],['liga mx','mex.1'],['mexico','mex.1'],['mls','usa.1'],['usa','usa.1'],['canadian','can.1'],['canada','can.1'],
 ['saudi','ksa.1'],['emirates','uae.1'],['uae','uae.1'],['qatar','qat.1'],['morocco','mar.1'],['botola','mar.1'],['tunisia','tun.1'],['algeria','alg.1'],['south africa','rsa.1'],['nigeria','nga.1'],
 ['english premier','eng.1'],['english football league championship','eng.2'],['efl championship','eng.2'],['fa cup','eng.fa_cup'],['carabao','eng.league_cup'],['efl cup','eng.league_cup'],
-['la liga','esp.1'],['spain','esp.1'],['copa del rey','esp.copa_del_rey'],['austria','aut.1'],['bundesliga','ger.1'],['germany','ger.1'],['serie a','ita.1'],['italy','ita.1'],['ligue 1','fra.1'],['france','fra.1'],['eredivisie','ned.1'],['netherlands','ned.1'],['portugal','por.1'],['super lig','tur.1'],['turkey','tur.1'],['scotland','sco.1'],['belgium','bel.1'],['greece','gre.1'],['switzerland','sui.1'],['denmark','den.1'],['norway','nor.1'],['sweden','swe.1'],['poland','pol.1'],['croatia','cro.1'],['ukraine','ukr.1'],['czech','cze.1'],
+['la liga','esp.1'],['spain','esp.1'],['copa del rey','esp.copa_del_rey'],['austria','aut.1'],['bundesliga','ger.1'],['germany','ger.1'],['serie a','ita.1'],['italy','ita.1'],['ligue 1','fra.1'],['france','fra.1'],['eredivisie','ned.1'],['netherlands','ned.1'],['portugal','por.1'],['turkey','tur.1'],['scotland','sco.1'],['belgium','bel.1'],['greece','gre.1'],['switzerland','sui.1'],['denmark','den.1'],['norway','nor.1'],['sweden','swe.1'],['poland','pol.1'],['croatia','cro.1'],['ukraine','ukr.1'],['czech','cze.1'],
 ['japan','jpn.1'],['korea','kor.1'],['china','chn.1'],['australia','aus.1'],['india','ind.1'],
 ['world cup','fifa.world'],['friendlies','fifa.friendly'],['friendly','fifa.friendly']];
 function tsdbNameSlug(s){if(!s)return null;var ln=String(s).toLowerCase();for(var i=0;i<TSDB_NAME.length;i++){if(ln.indexOf(TSDB_NAME[i][0])>=0)return TSDB_NAME[i][1];}return null;}
@@ -394,6 +419,7 @@ function init(){
   try{populateLeagueSelect();datePicker.value=state.date;setDateChipsActive();if(finDate)finDate.value=state.finDate;}catch(e){}
   try{bindEvents();}catch(e){}
   try{setupAdmin();}catch(e){}
+  try{socBind();}catch(e){}
   try{countVisit();}catch(e){}
   try{loadRemoteConfig();}catch(e){}
   try{db.collection('config').doc('settings').onSnapshot(function(d){if(d&&d.exists){remoteCfg=Object.assign(remoteCfg,d.data());applyRemoteConfig();applyTelegram();}});}catch(e){}
@@ -464,12 +490,6 @@ document.querySelectorAll('.mode-chip').forEach(function(c){c.onclick=function()
 leagueSelect.onchange=function(){state.league=leagueSelect.value;loadMatches();};
 search.oninput=function(){state.query=search.value;renderCurrent();};
 document.querySelectorAll('.nav-item').forEach(function(b){b.onclick=function(){showView(b.dataset.view);window.scrollTo({top:0,behavior:'auto'});};});
-document.addEventListener('click',function(e){
-var f=e.target.closest('[data-fav]');if(f){e.stopPropagation();toggleFav(f.dataset.fav);return;}
-var lg=e.target.closest('[data-league]');if(lg){state.league=lg.dataset.league;leagueSelect.value=state.league;showView('home');loadMatches();return;}
-var mc=e.target.closest('[data-match]');if(mc){openDetails(mc.dataset.match);return;}
-var tb=e.target.closest('[data-theme-set]');if(tb){var t2=tb.dataset.themeSet;if(t2==='green')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t2);lsSet('mv_theme',t2);}
-var tb2=e.target.closest('[data-tab]');if(tb2)switchTab(tb2.dataset.tab);});
 $('#tgAuto').onchange=function(e){state.autoRefresh=e.target.checked;};
 $('#tgNotif').onchange=function(e){state.notifEnabled=e.target.checked;updateBell();};
 $('#notifPermBtn').onclick=function(){try{if(!('Notification' in window)){alert('غير مدعوم');return;}Notification.requestPermission().then(function(p){alert(p==='granted'?'✅':'❌');});}catch(e){alert('غير مدعوم');}};
@@ -944,6 +964,41 @@ return '<div class="card" style="cursor:default"><div class="match-head"><span c
 }).join('');
 el.innerHTML=html;}
 // =============== END BASKETBALL ===============
+// ================= SOCIAL MODULE =================
+var AVATARS=['😎','🦁','','⚽','','️','👑','⚡','',''];
+var COLORS=['#7c3aed','#0891b2','#db2777','#059669','#d97706','#4f46e5'];
+var SOC_PROFILE=lsGet('eb_soc_profile')||null;
+var SOC_MYLIKES=lsGet('eb_soc_mylikes')||{};
+var SOC_MYHANDS=lsGet('eb_soc_myhands')||{};
+var socPosts=[];var socUnsub=null;var socCmtUnsub=null;var socCmtPost=null;
+function socAvatarURI(color,emoji){var svg='<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"><rect width="44" height="44" rx="22" fill="'+color+'"/><text x="22" y="30" text-anchor="middle" font-size="20">'+(emoji||'😎')+'</text></svg>';return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);}
+function ensureProfile(cb){if(SOC_PROFILE){cb();return;}$('#profileModal').classList.remove('hidden');window.__socCb=cb;}
+function populateSocMatches(){var sel=$('#socMatch');if(!sel)return;sel.innerHTML=state.matches.slice(0,60).map(function(m,i){return '<option value="'+i+'">'+esc(m.home.name+' × '+m.away.name)+' — '+esc(m.leagueName)+'</option>';}).join('');}
+function socListen(){if(socUnsub||!db)return;try{socUnsub=db.collection('social_posts').orderBy('createdAt','desc').limit(50).onSnapshot(function(snap){socPosts=[];snap.forEach(function(d){socPosts.push(Object.assign({id:d.id},d.data()));});renderSocial();},function(){renderSocial();});}catch(e){renderSocial();}}
+function renderSocial(){var el=$('#socialFeed');if(!el)return;
+ var av=$('#socMyAv');if(av)av.src=SOC_PROFILE?socAvatarURI(SOC_PROFILE.color,SOC_PROFILE.emoji):socAvatarURI('#7c3aed','👤');
+ var nm=$('#socMyName');if(nm)nm.textContent=SOC_PROFILE?SOC_PROFILE.name:'ضيف';
+ if(!socPosts.length){el.innerHTML='<div class="empty">📭 لسه مفيش منشورات — كن أول من ينشر!</div>';return;}
+ el.innerHTML=socPosts.map(function(p){return '<div class="soc-card">'+
+ '<div class="soc-head"><img class="soc-av" src="'+socAvatarURI(p.avatarColor||'#7c3aed',p.avatarEmoji||'😎')+'"><div class="soc-user"><b>'+esc(p.userName||'مجهول')+'</b><small>'+fmtDT(new Date(p.createdAt||Date.now()).toISOString())+'</small></div></div>'+
+ '<div class="soc-match"><span class="soc-odds">'+esc(p.odds||'—')+'</span><div class="soc-m"><b>'+esc(p.matchTitle||'')+'</b><small>'+esc(p.leagueName||'')+'</small></div><span class="soc-pred">'+esc(p.predictionText||'')+'</span></div>'+
+ '<div class="soc-actions"><button class="soc-btn '+(SOC_MYHANDS[p.id]?'on':'')+'" data-hand="'+p.id+'">🤝 '+(p.hands||0)+'</button><button class="soc-btn" data-cmt="'+p.id+'">💬 '+(p.comments||0)+'</button><button class="soc-btn '+(SOC_MYLIKES[p.id]?'on':'')+'" data-like="'+p.id+'">❤️ '+(p.likes||0)+'</button></div></div>';}).join('');}
+function socToggle(postId,field,myset,lskey){var doc=db.collection('social_posts').doc(postId);if(myset[postId]){delete myset[postId];try{doc.update(field,firebase.firestore.FieldValue.increment(-1));}catch(e){}}else{myset[postId]=1;try{doc.update(field,firebase.firestore.FieldValue.increment(1));}catch(e){}}lsSet(lskey,myset);renderSocial();}
+function socOpenComments(postId){socCmtPost=postId;$('#commentsModal').classList.remove('hidden');if(socCmtUnsub){try{socCmtUnsub();}catch(e){}}try{socCmtUnsub=db.collection('social_posts').doc(postId).collection('comments').orderBy('createdAt','asc').limit(100).onSnapshot(function(snap){var box=$('#socComments');box.innerHTML='';snap.forEach(function(d){var c=d.data();box.innerHTML+='<div class="soc-cmt"><div><b>'+esc(c.userName||'')+'</b><small>'+esc(c.text||'')+'</small></div></div>';});if(!snap.size)box.innerHTML='<div class="empty" style="padding:16px">💬 مفيش تعليقات — كن أول من يعلق</div>';},function(){});}catch(e){}}
+function socBind(){
+ $('#socSaveProfile').onclick=function(){var n=($('#socName').value||'').trim();if(!n){$('#socName').focus();return;}SOC_PROFILE={id:SID,name:n,emoji:AVATARS[Math.floor(Math.random()*AVATARS.length)],color:COLORS[Math.floor(Math.random()*COLORS.length)]};lsSet('eb_soc_profile',SOC_PROFILE);$('#profileModal').classList.add('hidden');var cb=window.__socCb;window.__socCb=null;if(cb)cb();renderSocial();};
+ $('#socNewPost').onclick=function(){ensureProfile(function(){populateSocMatches();$('#postModal').classList.remove('hidden');});};
+ $('#socCancelPost').onclick=function(){$('#postModal').classList.add('hidden');};
+ $('#socSubmit').onclick=function(){ensureProfile(function(){var sel=$('#socMatch');var m=state.matches[+sel.value];var pred=($('#socPred').value||'').trim();if(!m||!pred)return;var odds=($('#socOdds').value||'').trim();db.collection('social_posts').add({userId:SOC_PROFILE.id,userName:SOC_PROFILE.name,avatarEmoji:SOC_PROFILE.emoji,avatarColor:SOC_PROFILE.color,matchTitle:m.home.name+' × '+m.away.name,leagueName:m.leagueName,matchId:m.id,predictionText:pred,odds:odds||'',likes:0,hands:0,comments:0,createdAt:Date.now()}).then(function(){$('#postModal').classList.add('hidden');$('#socPred').value='';$('#socOdds').value='';});});};
+ $('#socCloseComments').onclick=function(){$('#commentsModal').classList.add('hidden');if(socCmtUnsub){try{socCmtUnsub();}catch(e){}socCmtUnsub=null;}};
+ $('#socCmtSend').onclick=function(){ensureProfile(function(){var t=($('#socCmtText').value||'').trim();if(!t||!socCmtPost)return;db.collection('social_posts').doc(socCmtPost).collection('comments').add({userId:SOC_PROFILE.id,userName:SOC_PROFILE.name,text:t,createdAt:Date.now()}).then(function(){try{db.collection('social_posts').doc(socCmtPost).update('comments',firebase.firestore.FieldValue.increment(1));}catch(e){}$('#socCmtText').value='';});});};
+ document.addEventListener('click',function(e){
+   var lk=e.target.closest('[data-like]');if(lk){ensureProfile(function(){socToggle(lk.getAttribute('data-like'),'likes',SOC_MYLIKES,'eb_soc_mylikes');});return;}
+   var hd=e.target.closest('[data-hand]');if(hd){ensureProfile(function(){socToggle(hd.getAttribute('data-hand'),'hands',SOC_MYHANDS,'eb_soc_myhands');});return;}
+   var cm=e.target.closest('[data-cmt]');if(cm){ensureProfile(function(){socOpenComments(cm.getAttribute('data-cmt'));});return;}
+ });
+}
+// =============== END SOCIAL ===============
 function getBanker(){
   var today=fmtDate(new Date());
   var saved=lsGet('eb_banker_saved');
@@ -1064,8 +1119,8 @@ function renderCombo(){
   if(!html)html='<div class="empty">🎯 لا توجد مباريات كافية حالياً — جرّب بعد ما تتحمّل مباريات.</div>';
   comboContent.innerHTML=html;
 }
-function showView(v){state.view=v;['home','combo','details','favorites','leagues','stats','notifications','bball'].forEach(function(x){var el=document.getElementById('view-'+x);if(el)el.classList.toggle('hidden',x!==v);});document.querySelectorAll('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});renderCurrent();}
-function renderCurrent(){updateSource();var sy=window.scrollY;var fn={home:renderHome,combo:renderCombo,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails,bball:renderBB}[state.view];if(fn)fn();window.scrollTo({top:sy,behavior:'auto'});}
+function showView(v){state.view=v;['home','combo','details','favorites','leagues','stats','notifications','bball','social'].forEach(function(x){var el=document.getElementById('view-'+x);if(el)el.classList.toggle('hidden',x!==v);});document.querySelectorAll('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});renderCurrent();if(v==='social'){socListen();populateSocMatches();}}
+function renderCurrent(){updateSource();var sy=window.scrollY;var fn={home:renderHome,combo:renderCombo,favorites:renderFavs,leagues:renderLeagues,stats:renderStats,notifications:renderNotifs,details:renderDetails,bball:renderBB,social:renderSocial}[state.view];if(fn)fn();window.scrollTo({top:sy,behavior:'auto'});}
 function filtered(){var l=state.matches.slice();if(state.league!=='all')l=l.filter(function(m){return m.leagueSlug===state.league;});if(state.query.trim()){var q=state.query.trim().toLowerCase();l=l.filter(function(m){return[m.home.name,m.away.name,m.leagueName].join(' ').toLowerCase().indexOf(q)>=0;});}return l;}
 function dayLabel(iso){var d=new Date(iso);if(isNaN(d))return'';return new Intl.DateTimeFormat('ar-EG',{weekday:'long',day:'numeric',month:'long'}).format(d);}
 function renderHome(){loading.hidden=true;var list=filtered();if(state.mode==='live')list=list.filter(function(m){return m.live;});updateStats(list);
