@@ -1206,11 +1206,19 @@ function __addon__(name, fn){
   try{ fn(); window.__ADDONS__[name] = 'ok'; }
   catch(e){ window.__ADDONS__[name] = 'error: ' + (e && e.message); }
 }
-/* قالب أي إضافة جديدة (هنبعتلك الإضافات جاهزة بالشكل ده):
-__addon__('اسم-الميزة', function(){
-    // كود الميزة هنا — معزول تماماً عن الأساس
+__addon__('leagues-fin-pol-ned2', function(){
+  var add=function(slug,name,em,home,away){
+    if(!KNOWN[slug]){ LEAGUES.push({slug:slug,name:name,em:em,home:home,away:away}); KNOWN[slug]=1; }
+    if(LIVE_SLUGS.indexOf(slug)<0){ LIVE_SLUGS.push(slug); }
+    if(CORE_SLUGS.indexOf(slug)<0){ CORE_SLUGS.push(slug); }
+  };
+  add('fin.1','الدوري الفلندي','🇫🇮',1.55,1.25);
+  add('pol.1','الدوري البولندي','🇵🇱',1.50,1.20);
+  add('ned.2','\u0627\u0644\u062f\u0648\u0631\u064a \u0627\u0644\u0647\u0648\u0644\u0646\u062f\u064a \u0627\u0644\u062f\u0631\u062c\u0629 \u0627\u0644\u0623\u0648\u0644\u0649','🌷',1.60,1.30);
+  TSDB_NAME.push(['finland','fin.1'],['poland','pol.1'],['eerste divisie','ned.2']);
+  try{ populateLeagueSelect(); leagueSelect.value=state.league; }catch(e){}
+  try{ loadMatches(true); }catch(e){}
 });
-*/
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
