@@ -162,6 +162,7 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .ad-status.err{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
 @media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}.nav-item small{font-size:8px}}
 </style>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});});}if(window.caches){caches.keys().then(function(k){k.forEach(function(x){caches.delete(x);});});}</script>
 </head>
 <body>
 <script>
@@ -1193,7 +1194,24 @@ function fmtDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2
 function fmtDT(iso){var d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(d);}
 function timeOnly(iso){var d=new Date(iso);return isNaN(d)?'':new Intl.DateTimeFormat('ar-EG',{hour:'2-digit',minute:'2-digit'}).format(d);}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(s){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s];});}
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
 </script>
+<!-- =====================================================================
+     🧩 منطقة الإضافات المعزولة (ADDONS ZONE)
+     القاعدة الذهبية: أي ميزة جديدة تُضاف هنا فقط، داخل بلوك مستقل.
+     ممنوع نهائياً تعديل أي سطر فوق هذا البلوك.
+     ===================================================================== -->
+<script>
+window.__ADDONS__ = window.__ADDONS__ || {};
+function __addon__(name, fn){
+  try{ fn(); window.__ADDONS__[name] = 'ok'; }
+  catch(e){ window.__ADDONS__[name] = 'error: ' + (e && e.message); }
+}
+/* قالب أي إضافة جديدة (هنبعتلك الإضافات جاهزة بالشكل ده):
+__addon__('اسم-الميزة', function(){
+    // كود الميزة هنا — معزول تماماً عن الأساس
+});
+*/
+</script>
+<!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
