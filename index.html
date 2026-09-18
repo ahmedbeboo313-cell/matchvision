@@ -1222,14 +1222,15 @@ __addon__('leagues-fin-pol-ned2', function(){
 __addon__('addons-status-checker', function(){
   setTimeout(function(){
     var st = window.__ADDONS__ || {};
-    var lines = [];
-    for (var k in st){ lines.push(k + ': ' + st[k]); }
+    var bad = [];
+    for (var k in st){ if (String(st[k]).indexOf('error') === 0){ bad.push(k + ': ' + st[k]); } }
+    if (!bad.length) return;
     var d = document.createElement('div');
-    d.style.cssText = 'position:fixed;bottom:110px;right:10px;z-index:999;background:#0b1020ee;color:#86efac;border:1px solid #22c55e66;border-radius:12px;padding:8px 10px;font-size:11px;max-width:75vw;white-space:pre-line;';
-    d.textContent = lines.join('\n') || 'مفيش إضافات';
+    d.style.cssText = 'position:fixed;bottom:110px;right:10px;z-index:999;background:#2a0b0bee;color:#fca5a5;border:1px solid #ef444466;border-radius:12px;padding:8px 10px;font-size:11px;max-width:75vw;white-space:pre-line;';
+    d.textContent = '⚠️ خطأ في إضافة:\n' + bad.join('\n');
     d.onclick = function(){ d.remove(); };
     document.body.appendChild(d);
-    setTimeout(function(){ d.remove(); }, 8000);
+    setTimeout(function(){ d.remove(); }, 10000);
   }, 3000);
 });
 </script>
