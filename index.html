@@ -1220,18 +1220,37 @@ __addon__('leagues-fin-pol-ned2', function(){
   try{ loadMatches(true); }catch(e){}
 });
 __addon__('addons-status-checker', function(){
-  setTimeout(function(){
+  window.__ERRS__ = window.__ERRS__ || [];
+  var box = null, ack = 0;
+  function collect(){
+    var lines = [];
     var st = window.__ADDONS__ || {};
-    var bad = [];
-    for (var k in st){ if (String(st[k]).indexOf('error') === 0){ bad.push(k + ': ' + st[k]); } }
-    if (!bad.length) return;
-    var d = document.createElement('div');
-    d.style.cssText = 'position:fixed;bottom:110px;right:10px;z-index:999;background:#2a0b0bee;color:#fca5a5;border:1px solid #ef444466;border-radius:12px;padding:8px 10px;font-size:11px;max-width:75vw;white-space:pre-line;';
-    d.textContent = '⚠️ خطأ في إضافة:\n' + bad.join('\n');
-    d.onclick = function(){ d.remove(); };
-    document.body.appendChild(d);
-    setTimeout(function(){ d.remove(); }, 10000);
-  }, 3000);
+    for (var k in st){ if (String(st[k]).indexOf('error') === 0){ lines.push('[إضافة] ' + k + ' → ' + String(st[k]).replace('error: ','')); } }
+    for (var i=0;i<window.__ERRS__.length;i++){ var e = window.__ERRS__[i]; lines.push('[كود] ' + e.msg + (e.file && e.file!=='promise' ? ' @ ' + e.file + ':' + e.line : ' (promise)')); }
+    return lines;
+  }
+  function render(){
+    var lines = collect();
+    if (!lines.length || lines.length <= ack){ if (box){ box.remove(); box=null; } return; }
+    if (!box){
+      box = document.createElement('div');
+      box.style.cssText = 'position:fixed;bottom:110px;right:10px;z-index:999;background:#2a0b0bee;color:#fca5a5;border:1px solid #ef444466;border-radius:12px;padding:10px 12px;font-size:11px;max-width:80vw;max-height:40vh;overflow:auto;white-space:pre-line;';
+      box.onclick = function(){ ack = collect().length; box.remove(); box=null; };
+      document.body.appendChild(box);
+    }
+    box.textContent = '⚠️ أخطاء محتاجة حل — ابعتلي سكرين:\n' + lines.slice(0,8).join('\n');
+  }
+  window.addEventListener('error', function(e){
+    try{
+      if (e.target && e.target !== window && e.target.tagName) return;
+      window.__ERRS__.push({msg: e.message||'خطأ غير معروف', file:(e.filename||'').split('/').pop(), line: e.lineno||0}); render();
+    }catch(x){}
+  }, true);
+  window.addEventListener('unhandledrejection', function(ev){
+    try{ var r=ev.reason; window.__ERRS__.push({msg:(r&&r.message)||String(r)||'Promise فشل', file:'promise', line:0}); render(); }catch(x){}
+  });
+  setTimeout(render, 3000);
+  setInterval(render, 15000);
 });
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
