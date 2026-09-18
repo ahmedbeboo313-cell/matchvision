@@ -35,7 +35,7 @@ button,input,select,textarea{font:inherit;color:inherit}.hidden{display:none!imp
 .banner{margin:0 0 10px;padding:12px;border-radius:18px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:13px;font-weight:800;text-align:center}
 .day-head{margin:16px 4px 8px;font-size:13px;font-weight:800;color:var(--accent);display:flex;gap:8px;align-items:center}.day-head:after{content:"";flex:1;height:1px;background:var(--line)}
 .gmodal{position:fixed;inset:0;z-index:300;display:flex;overflow-y:auto;background:rgba(3,6,12,.72);backdrop-filter:blur(8px);padding:18px}
-.gcard{margin:auto;width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);border:1px solid rgba(251,191,36,.35);border-radius:26px;padding:22px;text-align:center}
+.gcard{margin:auto;width:min(420px,100%);background:linear-gradient(180deg,#0c1526,#070d18);border:1px solid rgba(251,191,36,.35);border-radius:26px;padding:22px;text-align:center;position:relative}
 .gcard svg{width:62px;height:62px}.gcard h2{font-size:19px;margin:8px 0 12px;font-weight:800}.gcard h2 span{color:#fbbf24}
 .gsteps{display:grid;gap:9px;text-align:right;margin-bottom:12px}.gstep{display:flex;gap:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:10px;font-size:12.5px;line-height:1.9}
 .gstep span{flex:none;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#fde68a,#f59e0b);color:#04120a;font-weight:800;display:grid;place-items:center}
@@ -160,20 +160,28 @@ select{flex:1 1 150px}input[type=search]{flex:2 1 170px}input[type=date]{min-wid
 .ad-status{padding:10px;border-radius:12px;margin-top:10px;font-size:12px;text-align:center;font-weight:700}
 .ad-status.ok{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3)}
 .ad-status.err{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
-.soc-card{background:linear-gradient(160deg,rgba(124,58,237,.12),rgba(34,211,238,.06));border:1px solid rgba(124,58,237,.4);border-radius:20px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(124,58,237,.15)}
-.soc-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.soc-av{width:42px;height:42px;border-radius:50%;border:2px solid rgba(124,58,237,.6)}
-.soc-user b{display:block;font-size:14px}
-.soc-user small{color:var(--muted);font-size:11px}
-.soc-match{background:rgba(0,0,0,.3);border:1px solid rgba(34,211,238,.25);border-radius:14px;padding:10px;display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-.soc-odds{background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.4);border-radius:10px;padding:6px 10px;font-weight:900;font-size:15px}
-.soc-m{flex:1;min-width:0}.soc-m b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.soc-m small{color:var(--muted);font-size:11px}
-.soc-pred{background:rgba(124,58,237,.2);color:#c4b5fd;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700}
-.soc-actions{display:flex;gap:8px;justify-content:flex-end}
-.soc-btn{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:99px;padding:7px 14px;font-size:13px;font-weight:800;color:var(--muted);cursor:pointer}
-.soc-btn.on{color:#f472b6;border-color:rgba(244,114,182,.5);background:rgba(244,114,182,.1)}
+.soc-card{position:relative;background:linear-gradient(#0b1020,#0b1020) padding-box,linear-gradient(90deg,#22d3ee,#a855f7) border-box;border:2px solid transparent;border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 8px 26px rgba(0,0,0,.4)}
+.soc-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;direction:ltr}
+.soc-av{width:44px;height:44px;border-radius:50%;border:2px solid rgba(34,211,238,.5);flex:none}
+.soc-user{flex:1;min-width:0;font-size:15px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.soc-date{flex:none;display:flex;align-items:center;gap:6px;border:1px solid rgba(34,211,238,.4);background:rgba(34,211,238,.08);color:#7dd3fc;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700}
+.soc-del{flex:none;border:0;background:transparent;color:#94a3b8;font-size:18px;cursor:pointer}
+.soc-match{position:relative;background:#0a0f1c;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;margin-bottom:10px;overflow:hidden;direction:ltr}
+.soc-match::before{content:'';position:absolute;top:10px;bottom:10px;right:6px;width:4px;border-radius:4px;background:linear-gradient(180deg,#22d3ee,#a855f7)}
+.soc-row1{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.soc-title{flex:1;min-width:0;font-size:17px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.soc-odds{flex:none;min-width:52px;text-align:center;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.5);color:#22d3ee;border-radius:10px;padding:8px 10px;font-weight:900;font-size:16px}
+.soc-row2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.soc-pred{display:flex;align-items:center;gap:8px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.5);border-radius:10px;padding:8px 12px}
+.soc-pred b{color:#fff;font-size:14px;font-weight:800}
+.soc-pred span{color:#c084fc;font-size:11px;font-weight:800;letter-spacing:1px}
+.soc-league{display:flex;align-items:center;gap:6px;color:#94a3b8;font-size:13px;font-weight:600}
+.soc-actions{display:flex;gap:10px;justify-content:center;margin-top:4px;direction:ltr}
+.soc-btn{background:#1e2433;border:1px solid rgba(255,255,255,.08);border-radius:99px;padding:8px 18px;font-size:14px;font-weight:800;color:#cbd5e1;cursor:pointer;display:flex;align-items:center;gap:8px}
+.soc-btn.on{color:#f472b6;border-color:rgba(244,114,182,.5);background:rgba(244,114,182,.12)}
 .soc-cmt{display:flex;gap:8px;margin-bottom:8px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:8px}
 .soc-cmt b{font-size:12px}.soc-cmt small{color:var(--muted);font-size:12px;display:block}
+.modal-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--muted);font-size:16px;cursor:pointer;z-index:5}
 @media(max-width:520px){.mini-grid{grid-template-columns:1fr}.brand{font-size:16px}.nav-item small{font-size:8px}}
 </style>
 </head>
@@ -205,7 +213,7 @@ setTimeout(function(){
 <button id="guideOk" class="gbtn">يلا نبدأ ⚽</button>
 <div class="gcredit">تصميم وتطوير: <b>Ahmed Bebo</b></div>
 </div></div>
-<div id="inboxModal" class="gmodal hidden"><div class="gcard"><h2>📢 <span>رسالة من الإدارة</span></h2><p id="inboxText" style="color:var(--text);font-size:14px;line-height:2;margin:10px 0 16px;text-align:right"></p><button id="inboxOk" class="gbtn">تمام ✅</button></div></div>
+<div id="inboxModal" class="gmodal hidden"><div class="gcard"><button class="modal-x" onclick="document.getElementById('inboxModal').classList.add('hidden')">✕</button><h2>📢 <span>رسالة من الإدارة</span></h2><p id="inboxText" style="color:var(--text);font-size:14px;line-height:2;margin:10px 0 16px;text-align:right"></p><button id="inboxOk" class="gbtn">تمام ✅</button></div></div>
 <div id="suggModal" class="gmodal hidden"><div class="gcard sugg-form">
 <h2>📝 <span>ابعتلي رأيك</span></h2><p style="color:var(--muted);font-size:13px;margin-bottom:14px">اقتراحك بيروح للأحمد مباشرة.</p>
 <label>الاسم (اختياري)</label><input id="suggName" type="text" maxlength="50">
@@ -244,9 +252,9 @@ setTimeout(function(){
 <div id="ad_status"></div>
 </div>
 </div>
-<div id="profileModal" class="gmodal hidden"><div class="gcard"><h2>👤 <span>ملفك الاجتماعي</span></h2><p style="color:var(--muted);font-size:13px;margin-bottom:12px">اختار اسمك مرة واحدة — هيظهر مع كل منشوراتك</p><input id="socName" type="text" maxlength="20" placeholder="اسمك المستعار" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px;color:var(--text);text-align:center"><button id="socSaveProfile" class="gbtn">حفظ ومتابعة ✅</button></div></div>
-<div id="postModal" class="gmodal hidden"><div class="gcard"><h2>✍️ <span>انشر توقعك</span></h2><select id="socMatch" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:10px;color:var(--text)"></select><input id="socPred" type="text" maxlength="60" placeholder="توقعك (مثال: فوز الريال / أكثر من 2.5)" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:10px;color:var(--text)"><input id="socOdds" type="number" step="0.01" min="1" placeholder="الأودز (اختياري)" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px;color:var(--text)"><button id="socSubmit" class="gbtn">نشر 🚀</button><button id="socCancelPost" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button></div></div>
-<div id="commentsModal" class="gmodal hidden"><div class="gcard"><h2>💬 <span>التعليقات</span></h2><div id="socComments" style="max-height:300px;overflow-y:auto;margin-bottom:12px;text-align:right"></div><div style="display:flex;gap:8px"><input id="socCmtText" type="text" maxlength="140" placeholder="اكتب تعليق..." style="flex:1;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;color:var(--text)"><button id="socCmtSend" class="gbtn" style="width:auto;padding:12px 18px">إرسال</button></div><button id="socCloseComments" style="margin-top:10px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إغلاق</button></div></div>
+<div id="profileModal" class="gmodal hidden"><div class="gcard"><button id="socCloseProfile" class="modal-x">✕</button><h2>👤 <span>ملفك الاجتماعي</span></h2><p style="color:var(--muted);font-size:13px;margin-bottom:12px">اختار اسمك مرة واحدة — هيظهر مع كل منشوراتك</p><input id="socName" type="text" maxlength="20" placeholder="اسمك المستعار" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px;color:var(--text);text-align:center"><button id="socSaveProfile" class="gbtn">حفظ ومتابعة ✅</button></div></div>
+<div id="postModal" class="gmodal hidden"><div class="gcard"><button class="modal-x" onclick="document.getElementById('postModal').classList.add('hidden')">✕</button><h2>✍️ <span>انشر توقعك</span></h2><div id="socMatchList" style="max-height:200px;overflow-y:auto;margin-bottom:10px;text-align:right"></div><input id="socPred" type="text" maxlength="60" placeholder="توقعك (مثال: فوز الريال / أكثر من 2.5)" style="width:100%;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:12px;color:var(--text)"><button id="socSubmit" class="gbtn">نشر 🚀</button><button id="socCancelPost" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إلغاء</button></div></div>
+<div id="commentsModal" class="gmodal hidden"><div class="gcard"><button class="modal-x" onclick="document.getElementById('commentsModal').classList.add('hidden')">✕</button><h2>💬 <span>التعليقات</span></h2><div id="socComments" style="max-height:300px;overflow-y:auto;margin-bottom:12px;text-align:right"></div><div style="display:flex;gap:8px"><input id="socCmtText" type="text" maxlength="140" placeholder="اكتب تعليق..." style="flex:1;padding:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;color:var(--text)"><button id="socCmtSend" class="gbtn" style="width:auto;padding:12px 18px">إرسال</button></div><button id="socCloseComments" style="margin-top:10px;background:transparent;border:1px solid var(--line);color:var(--muted);width:100%;padding:11px;border-radius:16px;cursor:pointer">إغلاق</button></div></div>
 <div id="splash" class="splash"><div class="splash-box">
 <svg viewBox="0 0 64 64"><defs><linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgA)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgA)" stroke-width="4.5" stroke-linecap="round"/></svg>
 <h1>Egypt <span>Bet</span></h1><p>توقعات ذكية مبنية على إحصائيات حقيقية</p><div class="splash-bar"><span></span></div></div></div>
@@ -353,7 +361,7 @@ document.getElementById('ad_save').onclick=saveAdminSettings;
 document.getElementById('ad_refresh').onclick=function(){var st=document.getElementById('ad_status');st.className='ad-status';st.textContent='جاري إرسال إشارة التحديث...';db.collection('config').doc('settings').set({refreshSignal:Date.now()},{merge:true}).then(function(){st.className='ad-status ok';st.textContent='✅ تم إرسال إشارة التحديث لكل المستخدمين!';}).catch(function(e){st.className='ad-status err';st.textContent='❌ فشل: '+e.message;});};
 document.getElementById('tgFab').addEventListener('click',function(){countTgClick();});}
 function openAdminLogin(){document.getElementById('adminPass').value='';document.getElementById('adminLoginErr').textContent='';document.getElementById('adminLogin').classList.remove('hidden');setTimeout(function(){document.getElementById('adminPass').focus();},200);}
-function doAdminLogin(){var p=document.getElementById('adminPass').value;var pass=remoteCfg.adminPass||'bebo2026';if(p===pass){document.getElementById('adminLogin').classList.add('hidden');openAdminPanel();}else{document.getElementById('adminLoginErr').textContent='❌ كلمة السر غلط';}}
+function doAdminLogin(){var p=document.getElementById('adminPass').value;var pass=remoteCfg.adminPass||'bebo2026';if(p===pass){ssSet('eb_admin','1');IS_ADMIN=true;document.getElementById('adminLogin').classList.add('hidden');openAdminPanel();}else{document.getElementById('adminLoginErr').textContent='❌ كلمة السر غلط';}}
 function openAdminPanel(){var tg=remoteCfg.telegram||{};document.getElementById('ad_tg_show').checked=tg.enabled!==false;document.getElementById('ad_tg_main').value=tg.mainText||'';document.getElementById('ad_tg_link').value=tg.link||'';document.getElementById('ad_newpass').value='';document.getElementById('ad_status').innerHTML='';document.getElementById('adminPanel').classList.remove('hidden');}
 function saveAdminSettings(){var st=document.getElementById('ad_status');st.className='ad-status';st.textContent='جاري الحفظ...';
 var newCfg={telegram:{enabled:document.getElementById('ad_tg_show').checked,mainText:document.getElementById('ad_tg_main').value.trim(),subText:(remoteCfg.telegram&&remoteCfg.telegram.subText)||'+2.4K',link:document.getElementById('ad_tg_link').value.trim()||'https://t.me/+P98t0SG-FJVlOWQ8'}};
@@ -965,34 +973,52 @@ return '<div class="card" style="cursor:default"><div class="match-head"><span c
 el.innerHTML=html;}
 // =============== END BASKETBALL ===============
 // ================= SOCIAL MODULE =================
-var AVATARS=['😎','🦁','','⚽','','️','👑','⚡','',''];
+var AVATARS=['😎','','🐯','','🔥','️','👑','⚡','🐺',''];
 var COLORS=['#7c3aed','#0891b2','#db2777','#059669','#d97706','#4f46e5'];
 var SOC_PROFILE=lsGet('eb_soc_profile')||null;
 var SOC_MYLIKES=lsGet('eb_soc_mylikes')||{};
 var SOC_MYHANDS=lsGet('eb_soc_myhands')||{};
+var IS_ADMIN=(ssGet('eb_admin')==='1');
 var socPosts=[];var socUnsub=null;var socCmtUnsub=null;var socCmtPost=null;
 function socAvatarURI(color,emoji){var svg='<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"><rect width="44" height="44" rx="22" fill="'+color+'"/><text x="22" y="30" text-anchor="middle" font-size="20">'+(emoji||'😎')+'</text></svg>';return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);}
 function ensureProfile(cb){if(SOC_PROFILE){cb();return;}$('#profileModal').classList.remove('hidden');window.__socCb=cb;}
-function populateSocMatches(){var sel=$('#socMatch');if(!sel)return;sel.innerHTML=state.matches.slice(0,60).map(function(m,i){return '<option value="'+i+'">'+esc(m.home.name+' × '+m.away.name)+' — '+esc(m.leagueName)+'</option>';}).join('');}
+function populateSocMatches(){var box=$('#socMatchList');if(!box)return;box.innerHTML=state.matches.slice(0,60).map(function(m,i){return '<label style="display:flex;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;cursor:pointer"><input type="checkbox" class="soc-mchk" value="'+i+'"><span style="font-size:12px;flex:1">'+esc(m.home.name+' × '+m.away.name)+' — '+esc(m.leagueName)+'</span></label>';}).join('');}
 function socListen(){if(socUnsub||!db)return;try{socUnsub=db.collection('social_posts').orderBy('createdAt','desc').limit(50).onSnapshot(function(snap){socPosts=[];snap.forEach(function(d){socPosts.push(Object.assign({id:d.id},d.data()));});renderSocial();},function(){renderSocial();});}catch(e){renderSocial();}}
 function renderSocial(){var el=$('#socialFeed');if(!el)return;
  var av=$('#socMyAv');if(av)av.src=SOC_PROFILE?socAvatarURI(SOC_PROFILE.color,SOC_PROFILE.emoji):socAvatarURI('#7c3aed','👤');
  var nm=$('#socMyName');if(nm)nm.textContent=SOC_PROFILE?SOC_PROFILE.name:'ضيف';
  if(!socPosts.length){el.innerHTML='<div class="empty">📭 لسه مفيش منشورات — كن أول من ينشر!</div>';return;}
- el.innerHTML=socPosts.map(function(p){return '<div class="soc-card">'+
- '<div class="soc-head"><img class="soc-av" src="'+socAvatarURI(p.avatarColor||'#7c3aed',p.avatarEmoji||'😎')+'"><div class="soc-user"><b>'+esc(p.userName||'مجهول')+'</b><small>'+fmtDT(new Date(p.createdAt||Date.now()).toISOString())+'</small></div></div>'+
- '<div class="soc-match"><span class="soc-odds">'+esc(p.odds||'—')+'</span><div class="soc-m"><b>'+esc(p.matchTitle||'')+'</b><small>'+esc(p.leagueName||'')+'</small></div><span class="soc-pred">'+esc(p.predictionText||'')+'</span></div>'+
- '<div class="soc-actions"><button class="soc-btn '+(SOC_MYHANDS[p.id]?'on':'')+'" data-hand="'+p.id+'">🤝 '+(p.hands||0)+'</button><button class="soc-btn" data-cmt="'+p.id+'">💬 '+(p.comments||0)+'</button><button class="soc-btn '+(SOC_MYLIKES[p.id]?'on':'')+'" data-like="'+p.id+'">❤️ '+(p.likes||0)+'</button></div></div>';}).join('');}
+ el.innerHTML=socPosts.map(function(p){
+   var mList=(p.matches&&p.matches.length)?p.matches:(p.matchTitle?[{t:p.matchTitle,l:p.leagueName,le:'',o:p.odds}]:[]);
+   var d=new Date(p.createdAt||Date.now());
+   var dateStr=d.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'});
+   var timeStr=d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+   var delBtn=IS_ADMIN?('<button class="soc-del" data-del="'+p.id+'" title="حذف">🗑</button>'):'';
+   var matchesHtml=mList.map(function(mm){
+     var odds=(mm.o&&mm.o>1)?('<span class="soc-odds">'+(+mm.o).toFixed(2)+'</span>'):'';
+     return '<div class="soc-match">'+
+       '<div class="soc-row1">'+odds+'<span class="soc-title">'+esc(mm.t||'')+'</span></div>'+
+       '<div class="soc-row2"><span class="soc-league">'+(mm.le||'')+' '+esc(mm.l||'')+'</span><span class="soc-pred"><b>'+esc(p.predictionText||'')+'</b><span>PREDICTION =</span></span></div>'+
+     '</div>';
+   }).join('');
+   return '<div class="soc-card">'+
+     '<div class="soc-head"><span class="soc-date">🕐 '+dateStr+' • '+timeStr+'</span>'+delBtn+'<span class="soc-user">'+esc(p.userName||'مجهول')+'</span><img class="soc-av" src="'+socAvatarURI(p.avatarColor||'#7c3aed',p.avatarEmoji||'😎')+'"></div>'+
+     matchesHtml+
+     '<div class="soc-actions"><button class="soc-btn '+(SOC_MYHANDS[p.id]?'on':'')+'" data-hand="'+p.id+'">🤝 <b>'+(p.hands||0)+'</b></button><button class="soc-btn" data-cmt="'+p.id+'">💬 <b>'+(p.comments||0)+'</b></button><button class="soc-btn '+(SOC_MYLIKES[p.id]?'on':'')+'" data-like="'+p.id+'">❤️ <b>'+(p.likes||0)+'</b></button></div>'+
+   '</div>';}).join('');}
 function socToggle(postId,field,myset,lskey){var doc=db.collection('social_posts').doc(postId);if(myset[postId]){delete myset[postId];try{doc.update(field,firebase.firestore.FieldValue.increment(-1));}catch(e){}}else{myset[postId]=1;try{doc.update(field,firebase.firestore.FieldValue.increment(1));}catch(e){}}lsSet(lskey,myset);renderSocial();}
 function socOpenComments(postId){socCmtPost=postId;$('#commentsModal').classList.remove('hidden');if(socCmtUnsub){try{socCmtUnsub();}catch(e){}}try{socCmtUnsub=db.collection('social_posts').doc(postId).collection('comments').orderBy('createdAt','asc').limit(100).onSnapshot(function(snap){var box=$('#socComments');box.innerHTML='';snap.forEach(function(d){var c=d.data();box.innerHTML+='<div class="soc-cmt"><div><b>'+esc(c.userName||'')+'</b><small>'+esc(c.text||'')+'</small></div></div>';});if(!snap.size)box.innerHTML='<div class="empty" style="padding:16px">💬 مفيش تعليقات — كن أول من يعلق</div>';},function(){});}catch(e){}}
+function socDelete(postId){if(!IS_ADMIN)return;if(!confirm('متأكد إنك عايز تمسح البوست ده نهائياً؟'))return;var ref=db.collection('social_posts').doc(postId);try{ref.collection('comments').get().then(function(snap){var batch=db.batch();snap.forEach(function(d){batch.delete(d.ref);});batch.delete(ref);return batch.commit();}).catch(function(){return ref.delete();});}catch(e){try{ref.delete();}catch(e2){}}}
 function socBind(){
+ $('#socCloseProfile').onclick=function(){$('#profileModal').classList.add('hidden');window.__socCb=null;};
  $('#socSaveProfile').onclick=function(){var n=($('#socName').value||'').trim();if(!n){$('#socName').focus();return;}SOC_PROFILE={id:SID,name:n,emoji:AVATARS[Math.floor(Math.random()*AVATARS.length)],color:COLORS[Math.floor(Math.random()*COLORS.length)]};lsSet('eb_soc_profile',SOC_PROFILE);$('#profileModal').classList.add('hidden');var cb=window.__socCb;window.__socCb=null;if(cb)cb();renderSocial();};
  $('#socNewPost').onclick=function(){ensureProfile(function(){populateSocMatches();$('#postModal').classList.remove('hidden');});};
  $('#socCancelPost').onclick=function(){$('#postModal').classList.add('hidden');};
- $('#socSubmit').onclick=function(){ensureProfile(function(){var sel=$('#socMatch');var m=state.matches[+sel.value];var pred=($('#socPred').value||'').trim();if(!m||!pred)return;var odds=($('#socOdds').value||'').trim();db.collection('social_posts').add({userId:SOC_PROFILE.id,userName:SOC_PROFILE.name,avatarEmoji:SOC_PROFILE.emoji,avatarColor:SOC_PROFILE.color,matchTitle:m.home.name+' × '+m.away.name,leagueName:m.leagueName,matchId:m.id,predictionText:pred,odds:odds||'',likes:0,hands:0,comments:0,createdAt:Date.now()}).then(function(){$('#postModal').classList.add('hidden');$('#socPred').value='';$('#socOdds').value='';});});};
+ $('#socSubmit').onclick=function(){ensureProfile(function(){var sel=[];document.querySelectorAll('.soc-mchk:checked').forEach(function(c){var m=state.matches[+c.value];if(m){var lg=null;for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].name===m.leagueName){lg=LEAGUES[i];break;}}sel.push({t:m.home.name+' × '+m.away.name,l:m.leagueName,le:(lg?lg.em:''),o:(m.oddsHome||'')});}});var pred=($('#socPred').value||'').trim();if(!sel.length||!pred){alert('اختار مباراة واحدة على الأقل واكتب توقعك');return;}db.collection('social_posts').add({userId:SOC_PROFILE.id,userName:SOC_PROFILE.name,avatarEmoji:SOC_PROFILE.emoji,avatarColor:SOC_PROFILE.color,matches:sel,predictionText:pred,likes:0,hands:0,comments:0,createdAt:Date.now()}).then(function(){$('#postModal').classList.add('hidden');$('#socPred').value='';document.querySelectorAll('.soc-mchk').forEach(function(c){c.checked=false;});});});};
  $('#socCloseComments').onclick=function(){$('#commentsModal').classList.add('hidden');if(socCmtUnsub){try{socCmtUnsub();}catch(e){}socCmtUnsub=null;}};
  $('#socCmtSend').onclick=function(){ensureProfile(function(){var t=($('#socCmtText').value||'').trim();if(!t||!socCmtPost)return;db.collection('social_posts').doc(socCmtPost).collection('comments').add({userId:SOC_PROFILE.id,userName:SOC_PROFILE.name,text:t,createdAt:Date.now()}).then(function(){try{db.collection('social_posts').doc(socCmtPost).update('comments',firebase.firestore.FieldValue.increment(1));}catch(e){}$('#socCmtText').value='';});});};
  document.addEventListener('click',function(e){
+   var dl=e.target.closest('[data-del]');if(dl){socDelete(dl.getAttribute('data-del'));return;}
    var lk=e.target.closest('[data-like]');if(lk){ensureProfile(function(){socToggle(lk.getAttribute('data-like'),'likes',SOC_MYLIKES,'eb_soc_mylikes');});return;}
    var hd=e.target.closest('[data-hand]');if(hd){ensureProfile(function(){socToggle(hd.getAttribute('data-hand'),'hands',SOC_MYHANDS,'eb_soc_myhands');});return;}
    var cm=e.target.closest('[data-cmt]');if(cm){ensureProfile(function(){socOpenComments(cm.getAttribute('data-cmt'));});return;}
