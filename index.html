@@ -1219,6 +1219,19 @@ __addon__('leagues-fin-pol-ned2', function(){
   try{ populateLeagueSelect(); leagueSelect.value=state.league; }catch(e){}
   try{ loadMatches(true); }catch(e){}
 });
+__addon__('addons-status-checker', function(){
+  setTimeout(function(){
+    var st = window.__ADDONS__ || {};
+    var lines = [];
+    for (var k in st){ lines.push(k + ': ' + st[k]); }
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;bottom:110px;right:10px;z-index:999;background:#0b1020ee;color:#86efac;border:1px solid #22c55e66;border-radius:12px;padding:8px 10px;font-size:11px;max-width:75vw;white-space:pre-line;';
+    d.textContent = lines.join('\n') || 'مفيش إضافات';
+    d.onclick = function(){ d.remove(); };
+    document.body.appendChild(d);
+    setTimeout(function(){ d.remove(); }, 8000);
+  }, 3000);
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
