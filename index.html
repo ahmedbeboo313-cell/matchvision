@@ -365,7 +365,7 @@ var thrPend=false;
 function thrSave(){if(thrPend)return;thrPend=true;setTimeout(function(){thrPend=false;lsSet('eb_thr',THR);lsSet('eb_mkt_t',MKT_T);lsSet('eb_safe_cnt',SAFE_CNT);},1200);}
 function mktWeight(k){var s=MKT_T[k];if(!s||s.t<6)return 1;var acc=s.w/s.t;return clamp(0.6+acc*0.8,0.6,1.4);}
 function mktHidden(k){var s=MKT_T[k];if(!s||s.t<8)return false;return (s.w/s.t)<0.35;}
-function isCupSlug(sl){return /cup|copa|champions|libertadores|sudamericana|concacaf|afc|caf|world|nations|friendly|super/i.test(sl||'');}
+function isCupSlug(sl){return /cup|copa|champions|libertadores|sudamericana|concacaf|afc|caf|world|nations|friendly/i.test(sl||'');}
 function learnBoost(n){return 0.85+0.15*Math.min(1,(n||0)/8);}
 function blendW(items){var sv=0,sw=0;for(var i=0;i<items.length;i++){var it=items[i];if(it&&it.v!=null&&isFinite(it.v)&&it.w>0){sv+=it.v*it.w;sw+=it.w;}}return sw>0?sv/sw:null;}
 function $(s){return document.querySelector(s);}
@@ -876,9 +876,9 @@ var fin=(e.strStatus==='Match Finished'||e.strStatus==='FT')&&e.intHomeScore!=nu
 function fetchBBESPN(l,ds){return fetchT('https://site.api.espn.com/apis/site/v2/sports/basketball/'+l.slug+'/scoreboard?dates='+ds).then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseBB(e,l);}).filter(Boolean);}).catch(function(){return[];});}
 function fetchBBLive(){return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
 function fetchBBDay(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
-function loadBB(){var td=fmtDate(new Date());var yd=fmtDate(addDays(new Date(),-1));var rq=BB_LEAGUES.map(function(l){return fetchBBESPN(l,td.replace(/-/g,''));});
-if(state.mode==='finished'){BB_LEAGUES.forEach(function(l){rq.push(fetchBBESPN(l,yd.replace(/-/g,'')));});rq.push(fetchBBDay(yd));}
-rq.push(fetchBBLive());rq.push(fetchBBDay(td));
+function loadBB(){var td=fmtDate(new Date());var yd=fmtDate(addDays(new Date(),-1));var rq=[];
+BB_LEAGUES.forEach(function(l){rq.push(fetchBBESPN(l,td.replace(/-/g,'')));rq.push(fetchBBESPN(l,yd.replace(/-/g,'')));});
+rq.push(fetchBBLive());rq.push(fetchBBDay(td));rq.push(fetchBBDay(yd));
 return fetchSet(rq).then(function(list){var byKey={};list.forEach(function(g){if(!g)return;var k=(g.home.name+'|'+g.away.name).toLowerCase().replace(/\s+/g,'');var prev=byKey[k];if(!prev){byKey[k]=g;return;}var prevTs=prev.id.indexOf('bbts-')===0;var curTs=g.id.indexOf('bbts-')===0;if(prevTs&&!curTs){byKey[k]=g;}else if(prevTs&&curTs){if((g.live||g.statusCompleted)&&!(prev.live||prev.statusCompleted))byKey[k]=g;}});var out=[];Object.keys(byKey).forEach(function(k){out.push(byKey[k]);});bbMatches=out;bbTrack();if(state.view==='bball')renderBB();});}
 function bbRating(id){var t=BBADJ[id];if(t&&t.n>=2)return t;return null;}
 function bbPredict(g){var h=bbRating(g.home.id),a=bbRating(g.away.id);var L=bbAvg||108;
