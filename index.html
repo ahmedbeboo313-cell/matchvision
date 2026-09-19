@@ -1593,14 +1593,17 @@ __addon__('ai-coupon-builder', function(){
    + '#aiModal .aic-chip{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;color:var(--muted)}'
    + '#aiModal .aic-chip.on{background:linear-gradient(135deg,rgba(34,211,238,.25),rgba(168,85,247,.25));color:var(--text);border-color:#a855f7}'
    + '#aiModal .aic-pick{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px;text-align:right}'
-   + '#aiModal .aic-sum{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(56,189,248,.12));border:1px solid rgba(34,197,94,.4);border-radius:14px;padding:10px;margin-top:10px;text-align:right;font-weight:900}';
+   + '#aiModal .aic-sum{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(56,189,248,.12));border:1px solid rgba(34,197,94,.4);border-radius:14px;padding:10px;margin-top:10px;text-align:right;font-weight:900}'
+   + '#aiModal .aic-trust{background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(34,197,94,.12));border:1px solid rgba(251,191,36,.4);border-radius:14px;padding:10px;margin-bottom:10px;text-align:right;font-size:11px;font-weight:800;color:#fde68a}';
   document.head.appendChild(st);
   var fab = document.createElement('button');
   fab.id = 'aiFab'; fab.textContent = '🎫 قسيمة AI';
   document.body.appendChild(fab);
   var modal = document.createElement('div');
   modal.className = 'gmodal hidden'; modal.id = 'aiModal';
-  modal.innerHTML = '<div class="gcard"><button class="modal-x" id="aiClose">✕</button>'
+  modal.innerHTML = '<div class="gcard">'
+    + '<button id="aiClose" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(239,68,68,.18);color:#fca5a5;font-size:17px;font-weight:900;cursor:pointer;z-index:6">✕</button>'
+    + '<div style="display:grid;justify-items:center;margin-bottom:4px"><svg width="62" height="62" viewBox="0 0 64 64"><defs><linearGradient id="lgAIc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path d="M8 19Q32 7 56 19" fill="none" stroke="url(#lgAIc)" stroke-width="4.5" stroke-linecap="round"/><path d="M10 31Q32 13 54 31Q32 49 10 31Z" fill="none" stroke="url(#lgAIc)" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="31" r="8.5" fill="url(#lgAIc)"/><path d="M32 24.5l2.6 3.4-1 4h-3.2l-1-4Z" fill="#050810"/><path d="M24 45v9" stroke="url(#lgAIc)" stroke-width="4.5" stroke-linecap="round"/><path d="M42 45q3 8-6 10" fill="none" stroke="url(#lgAIc)" stroke-width="4.5" stroke-linecap="round"/></svg></div>'
     + '<h2>🤖 <span>منشئ قسائم الذكاء الاصطناعي</span></h2>'
     + '<div class="aic-row" id="aiCount"></div>'
     + '<div class="aic-row" id="aiStrat"></div>'
@@ -1610,7 +1613,8 @@ __addon__('ai-coupon-builder', function(){
   document.body.appendChild(modal);
   var count = 3, strat = 'BEST';
   var COUNTS = [2,3,4,5];
-  var STRATS = [['BEST','🔥 الأفضل'],['RESULT','🏆 نتيجة'],['GOALS','⚽ أهداف'],['HT','⏱️ شوط أول'],['BTTS','🎯 فريقين يسجلان']];
+  var STRATS = [['BEST','🔥 الأفضل'],['DC','🏆 فوز أو تعادل'],['GOALS','⚽ أهداف'],['HT','⏱️ شوط أول'],['BTTS','🎯 فريقين يسجلان']];
+  var MINP = 60;
   function chips(){
     var c = document.getElementById('aiCount');
     c.innerHTML = '<span style="width:100%;color:var(--muted);font-size:12px;font-weight:800">عدد المباريات:</span>' + COUNTS.map(function(n){ return '<button class="aic-chip '+(n===count?'on':'')+'" data-n="'+n+'">'+n+'</button>'; }).join('');
@@ -1626,16 +1630,18 @@ __addon__('ai-coupon-builder', function(){
     var p = getPrediction(m);
     var list = [];
     function add(k, label, obj){ if(obj && obj.prob) list.push({k:k, label:label, prob:obj.prob, text:obj.text}); }
-    if (strat==='BEST'){ add('goals','أهداف 2',p.goals); add('g15','أكثر من 1.5',p.g15); add('o25','أكثر من 2.5',p.o25); add('u25','أقل من 2.5',p.u25); add('win','فوز',p.win); add('dc1','1X',p.dc1); add('dc2','X2',p.dc2); add('btts','فريقين يسجلان',p.btts); add('h1','هدف بالشوط الأول',p.h1Goal); }
-    else if (strat==='RESULT'){ add('win','فوز',p.win); add('dc1','1X',p.dc1); add('dc2','X2',p.dc2); }
+    if (strat==='BEST'){ add('dc1','1X (فوز أو تعادل)',p.dc1); add('dc2','X2 (فوز أو تعادل)',p.dc2); add('goals','أهداف 2',p.goals); add('g15','أكثر من 1.5',p.g15); add('o25','أكثر من 2.5',p.o25); add('u25','أقل من 2.5',p.u25); add('win','فوز',p.win); add('btts','فريقين يسجلان',p.btts); add('h1','هدف بالشوط الأول',p.h1Goal); }
+    else if (strat==='DC'){ add('dc1','1X (فوز أو تعادل)',p.dc1); add('dc2','X2 (فوز أو تعادل)',p.dc2); }
     else if (strat==='GOALS'){ add('g15','أكثر من 1.5',p.g15); add('o25','أكثر من 2.5',p.o25); add('u25','أقل من 2.5',p.u25); }
     else if (strat==='HT'){ add('h1','هدف بالشوط الأول',p.h1Goal); }
     else { add('btts','فريقين يسجلان',p.btts); }
     return list.map(function(x){
-      x.score = safetyScore(x.k, x.prob, p) * (0.6 + 0.4 * ((p.consensus||50)/100)) * learnBoost(p.learnN||0);
-      x.cons = p.consensus||0;
+      var s = safetyScore(x.k, x.prob, p) * (0.5 + 0.5 * ((p.consensus||50)/100)) * learnBoost(p.learnN||0);
+      if (x.k==='dc1'||x.k==='dc2') s *= 1.08;
+      if (x.prob >= 70) s *= 1.05;
+      x.score = s; x.cons = p.consensus||0; x.p = p;
       return x;
-    }).filter(function(x){ return x.prob >= 55; });
+    }).filter(function(x){ return x.prob >= MINP; });
   }
   document.getElementById('aiGo').onclick = function(){
     var out = document.getElementById('aiOut');
@@ -1651,13 +1657,14 @@ __addon__('ai-coupon-builder', function(){
         if (used[c.m.id]) continue;
         used[c.m.id] = 1; picked.push(c);
       }
-      if (!picked.length){ out.innerHTML = '<div class="empty">مفيش مباريات قادمة كافية حالياً — جرّب بعد شوية</div>'; return; }
-      var totP = 1, totO = 1;
-      var html = picked.map(function(c){
-        var pr = c.prob/100; totP *= pr; var od = +(1/pr).toFixed(2); totO *= od;
-        return '<div class="aic-pick"><b>'+esc(c.m.home.name)+' × '+esc(c.m.away.name)+'</b><div style="color:var(--muted);font-size:11px">'+esc(c.m.leagueName)+' • '+matchTimeLabel(c.m)+'</div><div style="margin-top:6px;color:#86efac;font-weight:900">'+esc(c.text)+' — '+c.prob+'% <span style="color:var(--muted);font-weight:700">(أودز تقديري '+od+')</span></div><div style="color:var(--muted);font-size:10px;margin-top:4px">🤝 توافق النماذج: '+c.cons+'%</div></div>';
+      if (!picked.length){ out.innerHTML = '<div class="empty">مفيش مباريات قادمة كافية بنسبة آمنة حالياً — جرّب بعد شوية</div>'; return; }
+      var totP = 1;
+      var html = '<div class="aic-trust">🛡️ قسيمة مدروسة: إجماع 4 نماذج + معايرة ذاتية من نتائج حقيقية — كل اختيار ≥ '+MINP+'%</div>';
+      html += picked.map(function(c){
+        totP *= c.prob/100;
+        return '<div class="aic-pick"><b>'+esc(c.m.home.name)+' × '+esc(c.m.away.name)+'</b><div style="color:var(--muted);font-size:11px">'+esc(c.m.leagueName)+' • '+matchTimeLabel(c.m)+'</div><div style="margin-top:6px;color:#86efac;font-weight:900">'+esc(c.text)+' — '+c.prob+'% '+shieldStr(shieldsFor(c.k,c.prob,c.p))+'</div><div style="color:var(--muted);font-size:10px;margin-top:4px">🤝 توافق النماذج: '+c.cons+'%</div></div>';
       }).join('');
-      html += '<div class="aic-sum">🎫 ثقة القسيمة المجمعة: '+Math.round(totP*100)+'% • الأودز التقديري الكلي: '+totO.toFixed(2)+'</div>';
+      html += '<div class="aic-sum">🎫 ثقة القسيمة المجمعة: '+Math.round(totP*100)+'%</div>';
       out.innerHTML = html;
     }catch(e){ out.innerHTML = '<div class="empty">⚠️ تعذر بناء القسيمة حالياً</div>'; }
   };
