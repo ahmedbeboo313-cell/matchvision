@@ -1490,6 +1490,102 @@ __addon__('prediction-ensemble', function(){
     };
   }
 });
+__addon__('auto-calibration', function(){
+  var LOG = lsGet('eb_calib_log') || { btts: [], o25: [], h1: [], win: [] };
+  window.__CALIB__ = window.__CALIB__ || {};
+  function stats(mk){
+    var a = LOG[mk] || [];
+    if (a.length < 12) return { n: a.length, bias: 0 };
+    var sp = 0, so = 0;
+    for (var i = 0; i < a.length; i++){ sp += a[i].p; so += a[i].o; }
+    var bias = (so / a.length) - (sp / a.length);
+    var w = Math.min(1, a.length / 40);
+    return { n: a.length, bias: bias * w };
+  }
+  function refresh(){
+    window.__CALIB__ = { btts: stats('btts'), o25: stats('o25'), h1: stats('h1'), win: stats('win') };
+  }
+  refresh();
+  function push(mk, p, o){
+    if (o == null) return;
+    var a = LOG[mk] || (LOG[mk] = []);
+    a.push({ p: p, o: o });
+    if (a.length > 150) a.splice(0, a.length - 150);
+  }
+  function logResults(list){
+    var fz = lsGet('eb_pred_frozen') || {};
+    var dirty = false;
+    (list || []).forEach(function(m){
+      if (!m || !isFinished(m) || m.scoreHome == null) return;
+      var flag = 'callogged_' + m.id;
+      if (lsGet(flag)) return;
+      var f = fz[m.id];
+      if (!f) return;
+      var sh = m.scoreHome, sa = m.scoreAway;
+      if (f.btts && f.btts.prob != null) push('btts', f.btts.prob / 100, (sh > 0 && sa > 0) ? 1 : 0);
+      if (f.o25 && f.o25.prob != null) push('o25', f.o25.prob / 100, (sh + sa >= 3) ? 1 : 0);
+      if (f.h1Goal && f.h1Goal.prob != null && m.hasHalf) push('h1', f.h1Goal.prob / 100, ((m.fhHome || 0) + (m.fhAway || 0)) >= 1 ? 1 : 0);
+      if (f.win && f.win.prob != null){
+        var homeWin = String(f.win.text).indexOf('فوز المضيف') === 0;
+        push('win', f.win.prob / 100, homeWin ? (sh > sa ? 1 : 0) : (sa > sh ? 1 : 0));
+      }
+      lsSet(flag, 1);
+      dirty = true;
+    });
+    if (dirty){ lsSet('eb_calib_log', LOG); refresh(); }
+  }
+  var origTF = window.trackFinished;
+  if (typeof origTF === 'function'){
+    window.trackFinished = function(list){ var r = origTF(list); try{ logResults(list); }catch(e){} return r; };
+  }
+  var origGP = window.getPrediction;
+  if (typeof origGP === 'function'){
+    window.getPrediction = function(m){
+      var q = origGP(m);
+      try{
+        if (!q || q.__cal) return q;
+        var c = window.__CALIB__ || {};
+        var r = {}; for (var k in q){ r[k] = q[k]; }
+        function adj(prob, mk){
+          var s = c[mk];
+          if (!s || !s.bias) return prob;
+          return Math.round(clamp(prob / 100 + s.bias, 0.02, 0.98) * 100);
+        }
+        if (r.btts && r.btts.prob != null) r.btts = { text: r.btts.text, prob: adj(r.btts.prob, 'btts'), tone: r.btts.tone };
+        if (r.o25 && r.o25.prob != null){
+          var oN = adj(r.o25.prob, 'o25');
+          r.o25 = { text: r.o25.text, prob: oN, tone: r.o25.tone };
+          if (r.u25) r.u25 = { text: r.u25.text, prob: 100 - oN, tone: r.u25.tone };
+          if (r.goals) r.goals = oN >= 50 ? { text: 'أكثر من 2', prob: oN, tone: 'good' } : { text: 'أقل من 2', prob: 100 - oN, tone: 'warn' };
+        }
+        if (r.h1Goal && r.h1Goal.prob != null) r.h1Goal = { text: r.h1Goal.text, prob: adj(r.h1Goal.prob, 'h1'), tone: r.h1Goal.tone };
+        if (r.win && r.win.prob != null) r.win = { text: r.win.text, prob: adj(r.win.prob, 'win'), tone: r.win.tone };
+        r.__cal = 1;
+        return r;
+      }catch(e){ return q; }
+    };
+  }
+  var origSB = window.safeBlock;
+  if (typeof origSB === 'function'){
+    window.safeBlock = function(m, p, fin){
+      var html = origSB(m, p, fin);
+      try{
+        var c = window.__CALIB__ || {};
+        var parts = [];
+        ['btts','o25','h1','win'].forEach(function(mk){
+          var s = c[mk];
+          if (s && s.n >= 12){
+            parts.push(mk + ': ' + (s.bias >= 0 ? '+' : '') + Math.round(s.bias * 100) + '%');
+          }
+        });
+        if (parts.length && !fin){
+          html += '<div class="match-foot"><span>📐 معايرة ذاتية من ' + ((c.btts && c.btts.n) || 0) + ' نتيجة حقيقية</span><span>' + parts.join(' • ') + '</span></div>';
+        }
+      }catch(e){}
+      return html;
+    };
+  }
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
