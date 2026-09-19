@@ -1903,6 +1903,52 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: إصلاح زرار التليجرام v2 ===== -->
+<!-- ===== إضافة: اللوجو الجديد في الشاشة والهيدر | 2026-09-20 ===== -->
+<style>
+.egb-logo-splash{width:min(240px,62vw);height:auto;border-radius:26px;display:block;margin:0 auto 16px;box-shadow:0 12px 44px rgba(0,0,0,.55)}
+.egb-logo-header{width:48px;height:48px;border-radius:12px;object-fit:cover;box-shadow:0 4px 14px rgba(0,0,0,.45);flex:0 0 auto}
+</style>
+<script>
+(function(){
+'use strict';
+try{
+  var SRC='./logo.png';
+  function classify(svg){
+    for(var p=svg;p&&p!==document.body;p=p.parentElement){
+      var tx=p.textContent||'';
+      if(tx.indexOf('توقعات ذكية مبنية')>=0) return 'splash';
+      if(tx.indexOf('منتهية')>=0&&tx.indexOf('قدم')>=0&&tx.indexOf('لايف')>=0) return 'header';
+    }
+    return null;
+  }
+  function swap(){
+    var svgs=document.querySelectorAll('svg');
+    for(var i=0;i<svgs.length;i++){
+      var s=svgs[i];
+      if(s.dataset.egb) continue;
+      var kind=classify(s);
+      if(!kind) continue;
+      s.dataset.egb='1';
+      var img=document.createElement('img');
+      img.src=SRC; img.alt='Egypt Bet';
+      img.className=(kind==='splash')?'egb-logo-splash':'egb-logo-header';
+      s.parentNode.replaceChild(img,s);
+      if(kind==='splash'){
+        /* نخفي عنوان سبلاتش القديم لأن اللوجو نفسه كاتب Egypt Bet */
+        var el=img.nextElementSibling;
+        if(el){
+          var t=(el.textContent||'').trim().replace(/\s+/g,' ');
+          if(/^Egypt Bet$/i.test(t)) el.style.display='none';
+        }
+      }
+    }
+  }
+  swap();
+  setInterval(swap,700);
+}catch(err){console.warn('[EgyptBet Addon] logo:',err);}
+})();
+</script>
+<!-- ===== نهاية إضافة: اللوجو الجديد ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
