@@ -1787,127 +1787,103 @@ __addon__('trust-badge', function(){
     };
   }
 });
-__addon__('dup-sync-guard', function(){
-  function rank(x){ return (isFinished(x) || x.statusState==='post') ? 2 : (x.live ? 1 : 0); }
-  function syncDups(){
-    var byKey = {};
-    (state.matches||[]).forEach(function(m){
-      var k = matchKey(m); var cur = byKey[k];
-      if (!cur || rank(m) > rank(cur)) byKey[k] = m;
-    });
-    var changed = false;
-    (state.matches||[]).forEach(function(m){
-      var best = byKey[matchKey(m)];
-      if (!best || best === m) return;
-      if (rank(m) !== rank(best)){
-        m.live = best.live; m.statusCompleted = best.statusCompleted; m.statusState = best.statusState;
-        m.scoreHome = best.scoreHome; m.scoreAway = best.scoreAway; m.minute = best.minute;
-        changed = true;
-      } else if (best.live && (m.scoreHome !== best.scoreHome || m.scoreAway !== best.scoreAway)){
-        m.scoreHome = best.scoreHome; m.scoreAway = best.scoreAway; m.minute = best.minute; changed = true;
-      }
-    });
-    return changed;
-  }
-  function findAny(id){
-    var i, m = null;
-    for (i=0;i<(state.matches||[]).length;i++){ if (state.matches[i].id===id){ m = state.matches[i]; break; } }
-    if (!m){ for (i=0;i<(comboPool||[]).length;i++){ if (comboPool[i].id===id){ m = comboPool[i]; break; } } }
-    if (!m){ try{ m = finishedMap.get(id)||null; }catch(e){ m=null; } }
+__addon__('safe-sections-fix', function(){
+  function findM(id){
+    var i,m=null;
+    for(i=0;i<(state.matches||[]).length;i++){ if(state.matches[i].id===id){ m=state.matches[i]; break; } }
+    if(!m){ for(i=0;i<(comboPool||[]).length;i++){ if(comboPool[i].id===id){ m=comboPool[i]; break; } } }
+    if(!m){ try{ m=finishedMap.get(id)||null; }catch(e){ m=null; } }
+    if(!m){ try{ m=livePoolMap.get(id)||null; }catch(e){ m=null; } }
     return m;
   }
-  function dedupeLock(){
-    var lock = lsGet('eb_safe_lock'); if (!lock) return false;
-    var changed = false;
-    ['btts','h1'].forEach(function(kk){
-      var ids = lock[kk] || []; var seen = {}; var out = [];
-      ids.forEach(function(id){
-        var m = findAny(id); var key = m ? matchKey(m) : id;
-        if (seen[key]) { changed = true; return; }
-        seen[key] = 1; out.push(id);
-      });
-      lock[kk] = out;
-    });
-    if (changed) lsSet('eb_safe_lock', lock);
-    return changed;
+  function twinOf(m){
+    if(!m) return null;
+    var k=matchKey(m); var i,e;
+    for(i=0;i<(state.matches||[]).length;i++){ e=state.matches[i]; if(e.id!==m.id && matchKey(e)===k && (e.live||isFinished(e))) return e; }
+    for(i=0;i<(comboPool||[]).length;i++){ e=comboPool[i]; if(e.id!==m.id && matchKey(e)===k && (e.live||isFinished(e))) return e; }
+    return null;
   }
-  function run(){
-    var c1 = syncDups(); var c2 = dedupeLock();
-    return c1 || c2;
-  }
-  var origMerge = window.mergeLive;
-  if (typeof origMerge === 'function'){
-    window.mergeLive = function(it){ var r = origMerge(it); try{ if (run()) renderCurrent(); }catch(e){} return r; };
-  }
-  setInterval(function(){ try{ if (!document.hidden && run()) renderCurrent(); }catch(e){} }, 4000);
-});
-__addon__('stale-dup-cleaner', function(){
-  function norm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g,''); }
-  function toks(s){ return String(s||'').toLowerCase().split(/[^a-z0-9\u0600-\u06FF]+/).filter(function(t){ return t.length>=4; }); }
-  function share(x,y){ for(var i=0;i<x.length;i++){ for(var j=0;j<y.length;j++){ if(x[i]===y[j]||x[i].indexOf(y[j])===0||y[j].indexOf(x[i])===0) return true; } } return false; }
-  function sameMatch(a,b){
-    if(!a||!b) return false;
-    if(a.id===b.id) return true;
-    if(norm(a.home.name)+'|'+norm(a.away.name) === norm(b.home.name)+'|'+norm(b.away.name)) return true;
-    var ta=toks(a.home.name), tb=toks(b.home.name), ua=toks(a.away.name), ub=toks(b.away.name);
-    if(!ta.length||!tb.length||!ua.length||!ub.length) return false;
-    return (share(ta,tb)&&share(ua,ub))||(share(ta,ub)&&share(ua,tb));
-  }
-  function swapLock(oldId,newId){
+  function sanitizeLock(){
     var lock=lsGet('eb_safe_lock'); if(!lock) return;
     var ch=false;
-    ['btts','h1'].forEach(function(k){
-      var a=lock[k]||[]; var seen={}; var out=[];
-      for(var i=0;i<a.length;i++){ var id=(a[i]===oldId)?newId:a[i]; if(seen[id])continue; seen[id]=1; out.push(id); if(id!==a[i])ch=true; }
-      lock[k]=out;
+    ['btts','h1'].forEach(function(kk){
+      var ids=lock[kk]||[]; var out=[]; var seen={};
+      for(var i=0;i<ids.length;i++){
+        var id=ids[i]; var m=findM(id);
+        if(!m){ ch=true; continue; }
+        var k=matchKey(m);
+        if(seen[k]){ ch=true; continue; }
+        seen[k]=1; out.push(id);
+      }
+      lock[kk]=out;
     });
     if(ch) lsSet('eb_safe_lock',lock);
   }
-  function removeFrom(arr,id){ for(var i=arr.length-1;i>=0;i--){ if(arr[i]&&arr[i].id===id) arr.splice(i,1); } }
-  function run(){
-    var now=Date.now(); var changed=false;
-    var finList=[]; try{ finishedMap.forEach(function(v){ finList.push(v); }); }catch(e){}
-    for (var i=state.matches.length-1;i>=0;i--){
-      var m=state.matches[i];
-      if (m.live || isFinished(m) || m.statusState==='post') continue;
-      var k=new Date(m.date).getTime();
-      if (isNaN(k) || k > now-3*60000) continue;
-      var twin=null, twinFin=null;
-      for (var j=0;j<state.matches.length;j++){ var e=state.matches[j]; if(e.id!==m.id && sameMatch(m,e) && (e.live||isFinished(e))){ twin=e; break; } }
-      if (!twin){ for (var f=0;f<finList.length;f++){ var e2=finList[f]; if(sameMatch(m,e2)){ twinFin=e2; break; } } }
-      if (twin){
-        removeFrom(state.matches,m.id); removeFrom(comboPool,m.id); swapLock(m.id,twin.id); changed=true;
-      } else if (twinFin){
-        removeFrom(state.matches,m.id); removeFrom(comboPool,m.id);
-        try{ finishedMap.set(m.id,twinFin); }catch(e3){}
-        changed=true;
-      } else if (now-k>140*60000){
-        m.statusCompleted=true; m.statusState='post'; m.live=false;
-        try{ finishedMap.set(m.id,m); }catch(e4){}
-        changed=true;
-      } else {
-        m.live=true; changed=true;
-      }
-    }
-    for (var a=0;a<state.matches.length;a++){
-      var done=false;
-      for (var b=state.matches.length-1;b>a;b--){
-        var x=state.matches[a], y=state.matches[b];
-        if (x && y && x.id!==y.id && sameMatch(x,y)){
-          var rx=(isFinished(x)||x.statusState==='post')?2:(x.live?1:0);
-          var ry=(isFinished(y)||y.statusState==='post')?2:(y.live?1:0);
-          if (rx>=ry){ removeFrom(state.matches,y.id); removeFrom(comboPool,y.id); swapLock(y.id,x.id); }
-          else { removeFrom(state.matches,x.id); removeFrom(comboPool,x.id); swapLock(x.id,y.id); }
-          changed=true; done=true; break;
-        }
-      }
-      if(done) a=-1;
-    }
-    return changed;
+  function classify(m){
+    if(!m) return null;
+    if(isFinished(m)||m.statusState==='post') return 'fin';
+    if(m.live) return 'live';
+    var t=twinOf(m);
+    if(t){ return isFinished(t)?'fin':'live'; }
+    return 'up';
   }
-  var origMerge=window.mergeLive;
-  if(typeof origMerge==='function'){ window.mergeLive=function(it){ var r=origMerge(it); try{ if(run()) renderCurrent(); }catch(e){} return r; }; }
-  setInterval(function(){ try{ if(!document.hidden && run()) renderCurrent(); }catch(e){} }, 5000);
+  function dataFor(m,cls){
+    if(cls==='fin'||cls==='live'){
+      var t=twinOf(m);
+      if(t && (cls==='fin'?isFinished(t):t.live)) return t;
+      if(cls==='fin'&&!isFinished(m)){ var f=null; try{ f=finishedMap.get(m.id)||null; }catch(e){} if(f) return f; }
+    }
+    return m;
+  }
+  function card(it,key){
+    var m=it.m,p=it.p,pr=it.pred,cls=it.cls;
+    var head='<div class="banker-head"><span>'+esc(m.home.name)+' × '+esc(m.away.name)+'</span><span class="banker-prob">'+(pr.prob||0)+'%</span></div>';
+    var status;
+    if(cls==='fin'){ status='<span class="done-pill">انتهت '+((m.scoreHome!=null)?(m.scoreHome+' - '+m.scoreAway):'')+'</span>'; }
+    else if(cls==='live'){ status='<span class="live-pill"><span class="live-dot"></span>مباشر '+esc(m.minute||'')+' • '+m.scoreHome+'-'+m.scoreAway+'</span>'; }
+    else { status='<span class="date-text">🌐 لم تبدأ • '+matchTimeLabel(m)+'</span>'; }
+    var mark='';
+    if(cls==='fin'){
+      var win=null;
+      if(key==='btts'){ win=(m.scoreHome>0&&m.scoreAway>0)===(pr.text==='نعم'); }
+      else { win=(m.hasHalf)?(((m.fhHome||0)+(m.fhAway||0))>=1):null; }
+      mark=(win===true)?' ✔ كسب':(win===false)?' ✘ خسر':' ⏳';
+    }
+    var pick='<div class="banker-pick">'+esc(pr.text||'')+mark+' — '+(key==='btts'?'كلا الفريقين يسجلان':'هدف في الشوط الأول')+'</div>';
+    var foot='<div class="banker-foot"><span>'+esc(m.leagueName)+'</span><span>'+shieldStr(shieldsFor(key,pr.prob||0,p))+'</span></div>';
+    return '<div class="banker-card btts-card" data-match="'+esc(m.id)+'">'+head+'<div style="margin-bottom:8px">'+status+'</div>'+pick+foot+'</div>';
+  }
+  function market(key,title){
+    var lock=lsGet('eb_safe_lock'); if(!lock) return '';
+    var ids=lock[key]||[]; if(!ids.length) return '';
+    var live=[],up=[],fin=[],seenK={};
+    for(var i=0;i<ids.length;i++){
+      var m0=findM(ids[i]); if(!m0) continue;
+      var cls=classify(m0); if(!cls) continue;
+      var md=dataFor(m0,cls);
+      var k=matchKey(md);
+      if(seenK[k]) continue; seenK[k]=1;
+      var p=getPrediction(md);
+      var it={m:md,p:p,pred:(key==='btts')?(p.btts||{}):(p.h1Goal||{}),cls:cls};
+      if(cls==='live') live.push(it); else if(cls==='fin') fin.push(it); else up.push(it);
+    }
+    var out='<div class="day-head">'+title+' — 🔒 ثابتين اليوم ('+lock.day+')</div>';
+    if(live.length) out+='<div class="safe-others-label">🔴 لايف الآن</div>'+live.map(function(x){return card(x,key);}).join('');
+    if(up.length) out+='<div class="safe-others-label">🌐 قادمة (لم تبدأ)</div>'+up.map(function(x){return card(x,key);}).join('');
+    if(fin.length) out+='<div class="safe-others-label">⚪ انتهت — النتيجة والتحقق</div>'+fin.map(function(x){return card(x,key);}).join('');
+    return out;
+  }
+  window.renderCombo=function(){
+    try{
+      loading.hidden=true;
+      sanitizeLock();
+      var html=market('btts','🎯 كلا الفريقين يسجلان')+market('h1','⏱️ هدف في الشوط الأول');
+      comboContent.innerHTML=html||'<div class="empty">🎯 لسه بنحمّل مباريات اليوم — الآمنون هظهروا خلال ثواني</div>';
+    }catch(e){ comboContent.innerHTML='<div class="empty">⚠️ خطأ في عرض الآمنون</div>'; }
+  };
+  setInterval(function(){
+    try{ if(!document.hidden && state.view==='combo'){ window.renderCombo(); } }catch(e){}
+  },10000);
 });
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
