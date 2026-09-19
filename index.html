@@ -1822,11 +1822,30 @@ __addon__('safe-day-lock-v2', function(){
   setInterval(function(){ try{ if(!document.hidden&&state.view==='combo') window.renderCombo(); }catch(e){} },10000);
 });
 __addon__('privacy-link', function(){
-  var d = document.createElement('div');
-  d.style.cssText = 'text-align:center;padding:16px 0 95px;font-size:11px';
-  d.innerHTML = '<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:underline">🔒 سياسة الخصوصية — Privacy Policy</a>';
-  var home = document.getElementById('home');
-  if (home) home.appendChild(d);
+  function inject(){
+    try{
+      if (document.getElementById('privacyLinkRow')) return;
+      var els = document.querySelectorAll('div,p,footer');
+      var cand = null;
+      for (var i=0;i<els.length;i++){
+        var t = els[i].textContent || '';
+        if (t.indexOf('التوقعات إحصائية') >= 0 && t.length < 400) cand = els[i];
+      }
+      if (!cand) return;
+      var d = document.createElement('div');
+      d.id = 'privacyLinkRow';
+      d.style.cssText = 'text-align:center;padding:14px 0 8px;font-size:11px';
+      d.innerHTML = '<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:underline">🔒 سياسة الخصوصية — Privacy Policy</a>';
+      var host = cand.parentNode || cand;
+      host.appendChild(d);
+    }catch(e){}
+  }
+  var origRH = window.renderHome;
+  if (typeof origRH === 'function'){
+    window.renderHome = function(){ var r = origRH.apply(this, arguments); try{ inject(); }catch(e){} return r; };
+  }
+  setInterval(function(){ try{ if (!document.hidden) inject(); }catch(e){} }, 5000);
+  inject();
 });
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
