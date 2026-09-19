@@ -1796,12 +1796,30 @@ __addon__('safe-sections-fix', function(){
     return out;
   }
   function rank(x){ return (isFinished(x)||x.statusState==='post')?2:(x.live?1:0); }
-  function bestFor(key){
-    var list=pools(); var best=null;
+  function norm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g,''); }
+  function toks(s){ return String(s||'').toLowerCase().split(/[^a-z0-9\u0600-\u06FF]+/).filter(function(t){ return t.length>=3; }); }
+  function nameMatch(a,b){
+    var na=norm(a), nb=norm(b);
+    if(!na||!nb) return false;
+    if(na===nb) return true;
+    if(na.indexOf(nb)>=0 || nb.indexOf(na)>=0) return true;
+    var ta=toks(a), tb=toks(b);
+    for(var i=0;i<ta.length;i++){ for(var j=0;j<tb.length;j++){ if(ta[i]===tb[j]) return true; } }
+    return false;
+  }
+  function samePhys(a,b){
+    if(!a||!b) return false;
+    if(a.id===b.id) return true;
+    if((a.leagueSlug||'')!==(b.leagueSlug||'')) return false;
+    return (nameMatch(a.home.name,b.home.name)&&nameMatch(a.away.name,b.away.name)) || (nameMatch(a.home.name,b.away.name)&&nameMatch(a.away.name,b.home.name));
+  }
+  function bestLoose(m){
+    var list=pools(); var best=m;
     for(var i=0;i<list.length;i++){
       var e=list[i];
-      if(matchKey(e)!==key) continue;
-      if(!best || rank(e)>rank(best)) best=e;
+      if(e.id===best.id) continue;
+      if(!samePhys(m,e)) continue;
+      if(rank(e)>rank(best)) best=e;
     }
     return best;
   }
@@ -1847,8 +1865,8 @@ __addon__('safe-sections-fix', function(){
     var live=[],up=[],fin=[],seenK={};
     for(var i=0;i<ids.length;i++){
       var m0=findM(ids[i]); if(!m0) continue;
-      var best=bestFor(matchKey(m0))||m0;
-      var k=matchKey(best);
+      var best=bestLoose(m0);
+      var k=best.id;
       if(seenK[k]) continue; seenK[k]=1;
       var cls=rank(best)===2?'fin':(rank(best)===1?'live':'up');
       var p=getPrediction(best);
