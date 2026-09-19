@@ -1949,15 +1949,16 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: اللوجو الجديد ===== -->
-<!-- ===== إضافة: مثبّت الإعدادات v6.1 | 2026-09-20 ===== -->
+<!-- ===== إضافة: مثبّت الإعدادات v7 (محلي + نشر للجميع) | 2026-09-20 ===== -->
 <script>
 (function(){
 'use strict';
 try{
-  var KEY='egb_cfg_v61', lastM=null;
-  function cfg(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+  var KEY='egb_cfg_v61', remote=null, lastM=null;
+  function local(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+  function cfg(){return local()||remote;}
   function vis(el){return el&&el.getClientRects&&el.getClientRects().length>0;}
-  function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
+  function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},3400);}
   function modalOf(el){for(var p=el;p&&p!==document.body;p=p.parentElement){if(p.querySelector&&p.querySelector('input'))return p;}return null;}
   function readInputs(m){
     var ins=m.querySelectorAll('input'),c={show:true,text:'',link:''},ti=0;
@@ -1967,6 +1968,14 @@ try{
       else{if(ti===0)c.text=el.value;else if(ti===1)c.link=el.value;ti++;}
     }
     return c;
+  }
+  function loadRemote(){
+    try{
+      fetch('./config.json?ts='+Date.now(),{cache:'no-store'})
+        .then(function(r){return r.ok?r.json():null;})
+        .then(function(j){if(j&&typeof j==='object')remote=j;})
+        .catch(function(){});
+    }catch(e){}
   }
   function labelEl(a){
     var els=a.querySelectorAll('*');
@@ -1978,20 +1987,6 @@ try{
     return null;
   }
   function fixedBox(a){var el=a;while(el&&el!==document.body){if(getComputedStyle(el).position==='fixed')return el;el=el.parentElement;}return null;}
-  function hookSave(){
-    var bs=document.querySelectorAll('button');
-    for(var i=0;i<bs.length;i++){var b=bs[i];
-      if(b.dataset.egb61)continue;
-      if((b.textContent||'').indexOf('حفظ التغييرات')>=0){
-        b.dataset.egb61='1';
-        b.addEventListener('click',function(ev){
-          var m=modalOf(ev.currentTarget);if(!m)return;
-          localStorage.setItem(KEY,JSON.stringify(readInputs(m)));
-          setTimeout(function(){toast('تم الحفظ الثابت ✅');},60);
-        });
-      }
-    }
-  }
   function apply(){
     var c=cfg();if(!c)return;
     var as=document.querySelectorAll('a[href*="t.me"]');
@@ -2006,7 +2001,6 @@ try{
       var box=fixedBox(a);
       if(box&&typeof c.show==='boolean')box.style.display=c.show?'':'none';
     }
-    /* لما تفتح لوحة التحكم، الحقول تعرض المحفوظ مش الافتراضي */
     var pw=document.querySelectorAll('input[type="password"]');
     for(var p=0;p<pw.length;p++){
       if(vis(pw[p])){
@@ -2024,12 +2018,41 @@ try{
     }
     if(lastM&&!vis(lastM)){delete lastM.dataset.r61;lastM=null;}
   }
+  function hookSave(){
+    var bs=document.querySelectorAll('button');
+    for(var i=0;i<bs.length;i++){var b=bs[i];
+      if(b.dataset.egb7)continue;
+      if((b.textContent||'').indexOf('حفظ التغييرات')>=0){
+        b.dataset.egb7='1';
+        b.addEventListener('click',function(ev){
+          var m=modalOf(ev.currentTarget);if(!m)return;
+          localStorage.setItem(KEY,JSON.stringify(readInputs(m)));
+          setTimeout(function(){toast('تم الحفظ على جهازك ✅ — وللنشر للجميع دوس 📤');},60);
+        });
+        var pb=document.createElement('button');
+        pb.type='button';
+        pb.textContent='📤 نشر للجميع';
+        pb.style.cssText='display:block;width:100%;margin-top:8px;padding:12px;border:0;border-radius:12px;background:#fbbf24;color:#111827;font-weight:800;font-size:15px;cursor:pointer';
+        pb.addEventListener('click',function(ev){
+          ev.stopPropagation();
+          var m=modalOf(ev.currentTarget);if(!m)return;
+          var c=readInputs(m);
+          var json=JSON.stringify({show:c.show,text:c.text,link:c.link},null,1);
+          function done(){localStorage.removeItem(KEY);toast('تم النسخ ✅ افتح config.json على GitHub → الصق → Commit');}
+          if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(json).then(done,done);
+          else{var ta=document.createElement('textarea');ta.value=json;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();}
+        });
+        b.parentNode.insertBefore(pb,b.nextSibling);
+      }
+    }
+  }
   function tick(){hookSave();apply();}
+  loadRemote();setInterval(loadRemote,300000);
   tick();setInterval(tick,700);
-}catch(e){console.warn('[EgyptBet Addon] cfg-v61:',e);}
+}catch(e){console.warn('[EgyptBet Addon] cfg-v7:',e);}
 })();
 </script>
-<!-- ===== نهاية إضافة: مثبّت الإعدادات v6.1 ===== -->
+<!-- ===== نهاية إضافة: مثبّت الإعدادات v7 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
