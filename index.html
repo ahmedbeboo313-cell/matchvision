@@ -1401,6 +1401,32 @@ __addon__('finished-lock-guard', function(){
     try{ if(!document.hidden && enforce()) renderCurrent(); }catch(e){}
   }, 3000);
 });
+__addon__('future-match-guard', function(){
+  function clean(){
+    var changed=false;
+    var now=Date.now();
+    (state.matches||[]).forEach(function(m){
+      var k=new Date(m.date).getTime();
+      if(isNaN(k)) return;
+      if(k>now){
+        if(m.statusCompleted||m.statusState==='post'||m.live){
+          m.statusCompleted=false; m.statusState='pre'; m.live=false; m.scoreHome=null; m.scoreAway=null;
+          changed=true;
+        }
+        try{ if(finishedMap.has(m.id)){ finishedMap.delete(m.id); changed=true; } }catch(e){}
+        try{ if(window.__FINISHED_IDS__&&window.__FINISHED_IDS__[m.id]){ delete window.__FINISHED_IDS__[m.id]; changed=true; } }catch(e){}
+      }
+    });
+    return changed;
+  }
+  var origMerge=window.mergeLive;
+  if(typeof origMerge==='function'){
+    window.mergeLive=function(it){ var r=origMerge(it); try{ clean(); }catch(e){} return r; };
+  }
+  setInterval(function(){
+    try{ if(!document.hidden && clean()) renderCurrent(); }catch(e){}
+  }, 3000);
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
