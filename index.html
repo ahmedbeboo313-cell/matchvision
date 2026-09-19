@@ -1787,6 +1787,60 @@ __addon__('trust-badge', function(){
     };
   }
 });
+__addon__('dup-sync-guard', function(){
+  function rank(x){ return (isFinished(x) || x.statusState==='post') ? 2 : (x.live ? 1 : 0); }
+  function syncDups(){
+    var byKey = {};
+    (state.matches||[]).forEach(function(m){
+      var k = matchKey(m); var cur = byKey[k];
+      if (!cur || rank(m) > rank(cur)) byKey[k] = m;
+    });
+    var changed = false;
+    (state.matches||[]).forEach(function(m){
+      var best = byKey[matchKey(m)];
+      if (!best || best === m) return;
+      if (rank(m) !== rank(best)){
+        m.live = best.live; m.statusCompleted = best.statusCompleted; m.statusState = best.statusState;
+        m.scoreHome = best.scoreHome; m.scoreAway = best.scoreAway; m.minute = best.minute;
+        changed = true;
+      } else if (best.live && (m.scoreHome !== best.scoreHome || m.scoreAway !== best.scoreAway)){
+        m.scoreHome = best.scoreHome; m.scoreAway = best.scoreAway; m.minute = best.minute; changed = true;
+      }
+    });
+    return changed;
+  }
+  function findAny(id){
+    var i, m = null;
+    for (i=0;i<(state.matches||[]).length;i++){ if (state.matches[i].id===id){ m = state.matches[i]; break; } }
+    if (!m){ for (i=0;i<(comboPool||[]).length;i++){ if (comboPool[i].id===id){ m = comboPool[i]; break; } } }
+    if (!m){ try{ m = finishedMap.get(id)||null; }catch(e){ m=null; } }
+    return m;
+  }
+  function dedupeLock(){
+    var lock = lsGet('eb_safe_lock'); if (!lock) return false;
+    var changed = false;
+    ['btts','h1'].forEach(function(kk){
+      var ids = lock[kk] || []; var seen = {}; var out = [];
+      ids.forEach(function(id){
+        var m = findAny(id); var key = m ? matchKey(m) : id;
+        if (seen[key]) { changed = true; return; }
+        seen[key] = 1; out.push(id);
+      });
+      lock[kk] = out;
+    });
+    if (changed) lsSet('eb_safe_lock', lock);
+    return changed;
+  }
+  function run(){
+    var c1 = syncDups(); var c2 = dedupeLock();
+    return c1 || c2;
+  }
+  var origMerge = window.mergeLive;
+  if (typeof origMerge === 'function'){
+    window.mergeLive = function(it){ var r = origMerge(it); try{ if (run()) renderCurrent(); }catch(e){} return r; };
+  }
+  setInterval(function(){ try{ if (!document.hidden && run()) renderCurrent(); }catch(e){} }, 4000);
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
