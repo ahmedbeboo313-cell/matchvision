@@ -1949,64 +1949,87 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: اللوجو الجديد ===== -->
-<!-- ===== إضافة: مثبّت الإعدادات v6 | 2026-09-20 ===== -->
+<!-- ===== إضافة: مثبّت الإعدادات v6.1 | 2026-09-20 ===== -->
 <script>
 (function(){
 'use strict';
 try{
-  var KEY='egb_cfg_v6';
+  var KEY='egb_cfg_v61', lastM=null;
   function cfg(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+  function vis(el){return el&&el.getClientRects&&el.getClientRects().length>0;}
   function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
-  function firstText(a){for(var i=0;i<a.childNodes.length;i++){var n=a.childNodes[i];if(n.nodeType===3&&n.nodeValue.trim())return n;}return null;}
-  function fixedBox(a){var el=a;while(el&&el!==document.body){if(getComputedStyle(el).position==='fixed')return el;el=el.parentElement;}return null;}
-  function bubbleAnchor(){
-    var c=cfg(),as=document.querySelectorAll('a[href*="t.me"]');
-    for(var i=0;i<as.length;i++){
-      var t=as[i].textContent||'';
-      if(t.indexOf('2.4K')>=0||t.indexOf('انضم')>=0||(c&&c.text&&t.indexOf(c.text)>=0))return as[i];
+  function modalOf(el){for(var p=el;p&&p!==document.body;p=p.parentElement){if(p.querySelector&&p.querySelector('input'))return p;}return null;}
+  function readInputs(m){
+    var ins=m.querySelectorAll('input'),c={show:true,text:'',link:''},ti=0;
+    for(var i=0;i<ins.length;i++){var el=ins[i];
+      if(el.type==='checkbox')c.show=!!el.checked;
+      else if(el.type==='password'){}
+      else{if(ti===0)c.text=el.value;else if(ti===1)c.link=el.value;ti++;}
     }
+    return c;
+  }
+  function labelEl(a){
+    var els=a.querySelectorAll('*');
+    for(var i=0;i<els.length;i++){
+      var t=(els[i].textContent||'').trim();
+      if(t&&t.indexOf('2.4K')<0&&t.indexOf('+2.4')<0&&!els[i].querySelector('*'))return els[i];
+    }
+    for(var n=0;n<a.childNodes.length;n++){if(a.childNodes[n].nodeType===3&&a.childNodes[n].nodeValue.trim())return a.childNodes[n];}
     return null;
   }
-  /* امسك زرار حفظ التغييرات وصوّر الحالة بعد ما الكود الأصلي ينفذ */
+  function fixedBox(a){var el=a;while(el&&el!==document.body){if(getComputedStyle(el).position==='fixed')return el;el=el.parentElement;}return null;}
   function hookSave(){
-    var els=document.querySelectorAll('button');
-    for(var i=0;i<els.length;i++){
-      var b=els[i];
-      if(b.dataset.egb6)continue;
+    var bs=document.querySelectorAll('button');
+    for(var i=0;i<bs.length;i++){var b=bs[i];
+      if(b.dataset.egb61)continue;
       if((b.textContent||'').indexOf('حفظ التغييرات')>=0){
-        b.dataset.egb6='1';
-        b.addEventListener('click',function(){
-          setTimeout(function(){
-            var a=bubbleAnchor();if(!a)return;
-            var box=fixedBox(a);
-            var c={link:a.getAttribute('href')||'',text:(firstText(a)?firstText(a).nodeValue.trim():''),show:box?getComputedStyle(box).display!=='none':true};
-            localStorage.setItem(KEY,JSON.stringify(c));
-            toast('تم تثبيت الإعدادات ✅ هتفضل محفوظة بعد الريفريش');
-          },120);
+        b.dataset.egb61='1';
+        b.addEventListener('click',function(ev){
+          var m=modalOf(ev.currentTarget);if(!m)return;
+          localStorage.setItem(KEY,JSON.stringify(readInputs(m)));
+          setTimeout(function(){toast('تم الحفظ الثابت ✅');},60);
         });
       }
     }
   }
-  /* طبّق الإعدادات المحفوظة فوق أي افتراضي */
   function apply(){
     var c=cfg();if(!c)return;
     var as=document.querySelectorAll('a[href*="t.me"]');
     for(var i=0;i<as.length;i++){
-      if(c.link)as[i].setAttribute('href',c.link);
-      var t=as[i].textContent||'';
-      if(c.text&&(t.indexOf('2.4K')>=0||t.indexOf(c.text)>=0||t.indexOf('انضم')>=0)){
-        var n=firstText(as[i]);if(n)n.nodeValue=' '+c.text+' ';
+      var a=as[i], t=a.textContent||'';
+      if(c.link)a.setAttribute('href',c.link);
+      if(c.text&&(t.indexOf('2.4K')>=0||t.indexOf('انضم')>=0||t.indexOf(c.text)>=0)){
+        var L=labelEl(a);
+        if(L){if(L.nodeType===3){if(L.nodeValue.trim()!==c.text)L.nodeValue=' '+c.text+' ';}
+              else if(L.textContent.trim()!==c.text){L.textContent=c.text;}}
       }
-      var box=fixedBox(as[i]);
+      var box=fixedBox(a);
       if(box&&typeof c.show==='boolean')box.style.display=c.show?'':'none';
     }
+    /* لما تفتح لوحة التحكم، الحقول تعرض المحفوظ مش الافتراضي */
+    var pw=document.querySelectorAll('input[type="password"]');
+    for(var p=0;p<pw.length;p++){
+      if(vis(pw[p])){
+        var m2=modalOf(pw[p]);
+        if(m2&&!m2.dataset.r61){
+          m2.dataset.r61='1';lastM=m2;
+          var ins=m2.querySelectorAll('input'),ti2=0;
+          for(var q=0;q<ins.length;q++){var el2=ins[q];
+            if(el2.type==='checkbox')el2.checked=!!c.show;
+            else if(el2.type==='password'){}
+            else{if(ti2===0&&c.text)el2.value=c.text;else if(ti2===1&&c.link)el2.value=c.link;ti2++;}
+          }
+        }
+      }
+    }
+    if(lastM&&!vis(lastM)){delete lastM.dataset.r61;lastM=null;}
   }
   function tick(){hookSave();apply();}
-  tick();setInterval(tick,800);
-}catch(err){console.warn('[EgyptBet Addon] cfg-v6:',err);}
+  tick();setInterval(tick,700);
+}catch(e){console.warn('[EgyptBet Addon] cfg-v61:',e);}
 })();
 </script>
-<!-- ===== نهاية إضافة: مثبّت الإعدادات v6 ===== -->
+<!-- ===== نهاية إضافة: مثبّت الإعدادات v6.1 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
