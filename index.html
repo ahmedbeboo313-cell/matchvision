@@ -1253,6 +1253,37 @@ __addon__('addons-status-checker', function(){
   setInterval(render, 15000);
 });
 __addon__('live-instant-sync', function(){
+  window.__FINISHED_IDS__ = window.__FINISHED_IDS__ || {};
+  function markFinished(m){
+    window.__FINISHED_IDS__[m.id] = 1;
+    m.live = false;
+    m.statusCompleted = true;
+    m.statusState = 'post';
+  }
+  function isReallyFinished(m){
+    if (m.statusCompleted || m.statusState === 'post') return true;
+    var min = String(m.minute||'');
+    if (/FT|Full\s*Time|انتهت|Ended/i.test(min)) return true;
+    var k = new Date(m.date).getTime();
+    if (!isNaN(k) && (Date.now() - k) > 140*60000) return true;
+    return false;
+  }
+  function sweep(){
+    try{
+      if (document.hidden) return;
+      var changed = false;
+      (state.matches||[]).forEach(function(m){
+        if (window.__FINISHED_IDS__[m.id]){
+          if (m.live || !m.statusCompleted){ markFinished(m); changed = true; }
+        } else if (m.live && isReallyFinished(m)){
+          markFinished(m); changed = true;
+          try{ finishedMap.set(m.id, m); livePoolMap.delete(m.id); }catch(e){}
+        }
+      });
+      if (changed) renderCurrent();
+    }catch(e){}
+  }
+  setInterval(sweep, 4000);
   setInterval(function(){
     try{
       if (document.hidden) return;
@@ -1263,16 +1294,6 @@ __addon__('live-instant-sync', function(){
       }
     }catch(e){}
   }, 12000);
-  setInterval(function(){
-    try{
-      if (document.hidden) return;
-      var changed = false;
-      (state.matches||[]).forEach(function(m){
-        if (m.live && (m.statusCompleted || m.statusState === 'post')) { m.live = false; changed = true; }
-      });
-      if (changed) renderCurrent();
-    }catch(e){}
-  }, 4000);
 });
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
