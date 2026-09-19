@@ -1788,52 +1788,41 @@ __addon__('trust-badge', function(){
   }
 });
 __addon__('safe-sections-fix', function(){
-  function findM(id){
-    var i,m=null;
-    for(i=0;i<(state.matches||[]).length;i++){ if(state.matches[i].id===id){ m=state.matches[i]; break; } }
-    if(!m){ for(i=0;i<(comboPool||[]).length;i++){ if(comboPool[i].id===id){ m=comboPool[i]; break; } } }
-    if(!m){ try{ m=finishedMap.get(id)||null; }catch(e){ m=null; } }
-    if(!m){ try{ m=livePoolMap.get(id)||null; }catch(e){ m=null; } }
-    return m;
+  function pools(){
+    var out=(state.matches||[]).slice(); var i;
+    for(i=0;i<(comboPool||[]).length;i++){ out.push(comboPool[i]); }
+    try{ finishedMap.forEach(function(v){ out.push(v); }); }catch(e){}
+    try{ livePoolMap.forEach(function(v){ out.push(v); }); }catch(e){}
+    return out;
   }
-  function twinOf(m){
-    if(!m) return null;
-    var k=matchKey(m); var i,e;
-    for(i=0;i<(state.matches||[]).length;i++){ e=state.matches[i]; if(e.id!==m.id && matchKey(e)===k && (e.live||isFinished(e))) return e; }
-    for(i=0;i<(comboPool||[]).length;i++){ e=comboPool[i]; if(e.id!==m.id && matchKey(e)===k && (e.live||isFinished(e))) return e; }
+  function rank(x){ return (isFinished(x)||x.statusState==='post')?2:(x.live?1:0); }
+  function bestFor(key){
+    var list=pools(); var best=null;
+    for(var i=0;i<list.length;i++){
+      var e=list[i];
+      if(matchKey(e)!==key) continue;
+      if(!best || rank(e)>rank(best)) best=e;
+    }
+    return best;
+  }
+  function findM(id){
+    var list=pools();
+    for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
     return null;
   }
-  function sanitizeLock(){
-    var lock=lsGet('eb_safe_lock'); if(!lock) return;
-    var ch=false;
-    ['btts','h1'].forEach(function(kk){
-      var ids=lock[kk]||[]; var out=[]; var seen={};
-      for(var i=0;i<ids.length;i++){
-        var id=ids[i]; var m=findM(id);
-        if(!m){ ch=true; continue; }
-        var k=matchKey(m);
-        if(seen[k]){ ch=true; continue; }
-        seen[k]=1; out.push(id);
-      }
-      lock[kk]=out;
-    });
-    if(ch) lsSet('eb_safe_lock',lock);
-  }
-  function classify(m){
-    if(!m) return null;
-    if(isFinished(m)||m.statusState==='post') return 'fin';
-    if(m.live) return 'live';
-    var t=twinOf(m);
-    if(t){ return isFinished(t)?'fin':'live'; }
-    return 'up';
-  }
-  function dataFor(m,cls){
-    if(cls==='fin'||cls==='live'){
-      var t=twinOf(m);
-      if(t && (cls==='fin'?isFinished(t):t.live)) return t;
-      if(cls==='fin'&&!isFinished(m)){ var f=null; try{ f=finishedMap.get(m.id)||null; }catch(e){} if(f) return f; }
-    }
-    return m;
+  function rebuildLockIfNeeded(){
+    var today=fmtDate(new Date());
+    var lock=lsGet('eb_safe_lock')||null;
+    if(lock && lock.day===today && (lock.btts||[]).length>=3 && (lock.h1||[]).length>=3) return lock;
+    var pool=(state.matches||[]).filter(function(m){ return !isFinished(m) && fmtDate(new Date(m.date))===today; });
+    if(pool.length<3) return lock;
+    var b=[],h=[];
+    pool.map(function(m){ var p=getPrediction(m); return {id:m.id, b:(p.btts&&p.btts.text==='نعم')?p.btts.prob:0, h:(p.h1Goal)?p.h1Goal.prob:0, ln:p.learnN||0}; })
+      .forEach(function(x){ b.push({id:x.id,s:comboScore(x.b,'btts',x.ln)}); h.push({id:x.id,s:comboScore(x.h,'h1',x.ln)}); });
+    b=b.filter(function(x){return x.s>0;}).sort(function(a,c){return c.s-a.s;}).slice(0,5).map(function(x){return x.id;});
+    h=h.filter(function(x){return x.s>0;}).sort(function(a,c){return c.s-a.s;}).slice(0,5).map(function(x){return x.id;});
+    if(b.length||h.length){ lock={day:today,btts:b,h1:h}; lsSet('eb_safe_lock',lock); }
+    return lock;
   }
   function card(it,key){
     var m=it.m,p=it.p,pr=it.pred,cls=it.cls;
@@ -1853,18 +1842,17 @@ __addon__('safe-sections-fix', function(){
     var foot='<div class="banker-foot"><span>'+esc(m.leagueName)+'</span><span>'+shieldStr(shieldsFor(key,pr.prob||0,p))+'</span></div>';
     return '<div class="banker-card btts-card" data-match="'+esc(m.id)+'">'+head+'<div style="margin-bottom:8px">'+status+'</div>'+pick+foot+'</div>';
   }
-  function market(key,title){
-    var lock=lsGet('eb_safe_lock'); if(!lock) return '';
+  function market(key,title,lock){
     var ids=lock[key]||[]; if(!ids.length) return '';
     var live=[],up=[],fin=[],seenK={};
     for(var i=0;i<ids.length;i++){
       var m0=findM(ids[i]); if(!m0) continue;
-      var cls=classify(m0); if(!cls) continue;
-      var md=dataFor(m0,cls);
-      var k=matchKey(md);
+      var best=bestFor(matchKey(m0))||m0;
+      var k=matchKey(best);
       if(seenK[k]) continue; seenK[k]=1;
-      var p=getPrediction(md);
-      var it={m:md,p:p,pred:(key==='btts')?(p.btts||{}):(p.h1Goal||{}),cls:cls};
+      var cls=rank(best)===2?'fin':(rank(best)===1?'live':'up');
+      var p=getPrediction(best);
+      var it={m:best,p:p,pred:(key==='btts')?(p.btts||{}):(p.h1Goal||{}),cls:cls};
       if(cls==='live') live.push(it); else if(cls==='fin') fin.push(it); else up.push(it);
     }
     var out='<div class="day-head">'+title+' — 🔒 ثابتين اليوم ('+lock.day+')</div>';
@@ -1876,8 +1864,8 @@ __addon__('safe-sections-fix', function(){
   window.renderCombo=function(){
     try{
       loading.hidden=true;
-      sanitizeLock();
-      var html=market('btts','🎯 كلا الفريقين يسجلان')+market('h1','⏱️ هدف في الشوط الأول');
+      var lock=rebuildLockIfNeeded();
+      var html=lock? market('btts','🎯 كلا الفريقين يسجلان',lock)+market('h1','⏱️ هدف في الشوط الأول',lock) : '';
       comboContent.innerHTML=html||'<div class="empty">🎯 لسه بنحمّل مباريات اليوم — الآمنون هظهروا خلال ثواني</div>';
     }catch(e){ comboContent.innerHTML='<div class="empty">⚠️ خطأ في عرض الآمنون</div>'; }
   };
