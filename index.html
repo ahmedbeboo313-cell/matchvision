@@ -1378,6 +1378,29 @@ __addon__('safe-day-lock', function(){
     }catch(e){}
   },10000);
 });
+__addon__('finished-lock-guard', function(){
+  function isLocked(id){
+    return (window.__FINISHED_IDS__||{})[id] || finishedMap.has(id);
+  }
+  function enforce(){
+    var changed=false;
+    (state.matches||[]).forEach(function(m){
+      if(m.live && isLocked(m.id)){ m.live=false; m.statusCompleted=true; m.statusState='post'; changed=true; }
+    });
+    return changed;
+  }
+  var origMerge = window.mergeLive;
+  if (typeof origMerge === 'function'){
+    window.mergeLive = function(it){
+      var r = origMerge(it);
+      try{ if(enforce()) renderCurrent(); }catch(e){}
+      return r;
+    };
+  }
+  setInterval(function(){
+    try{ if(!document.hidden && enforce()) renderCurrent(); }catch(e){}
+  }, 3000);
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
