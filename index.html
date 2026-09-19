@@ -1884,12 +1884,10 @@ try{
       +'<p class="egb-tg-title">🔔 الانضمام لقناة Egypt Bet</p>'
       +'<p class="egb-tg-desc">التطبيق مش بيسيبنا نفتح تليجرام من جوه نفسه.<br><b style="color:#fbbf24">أسهل طريقة:</b> انسخ الرابط، افتح تليجرام، الصقه في "المحفوظات" أو أي شات، ودوس عليه — هتلاقي زرار الانضمام جاهز ✔</p>'
       +'<button class="egb-tg-btn egb-tg-open" id="egbTgCopy">📋 نسخ رابط الدعوة</button>'
-      +'<button class="egb-tg-btn egb-tg-copy" id="egbTgOpen">🌐 محاولة الفتح في المتصفح</button>'
       +'<button class="egb-tg-btn egb-tg-close" id="egbTgClose">إلغاء</button>'
       +'</div>';
     document.body.appendChild(o);
     document.getElementById('egbTgCopy').onclick=function(){copyLink();o.remove();};
-    document.getElementById('egbTgOpen').onclick=function(){o.remove();window.open(TG,'_blank');};
     document.getElementById('egbTgClose').onclick=function(){o.remove();};
     o.addEventListener('click',function(e){if(e.target===o)o.remove();});
   }
