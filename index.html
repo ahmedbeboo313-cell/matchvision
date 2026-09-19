@@ -1821,6 +1821,13 @@ __addon__('safe-day-lock-v2', function(){
   };
   setInterval(function(){ try{ if(!document.hidden&&state.view==='combo') window.renderCombo(); }catch(e){} },10000);
 });
+__addon__('privacy-link', function(){
+  var d = document.createElement('div');
+  d.style.cssText = 'text-align:center;padding:16px 0 95px;font-size:11px';
+  d.innerHTML = '<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:underline">🔒 سياسة الخصوصية — Privacy Policy</a>';
+  var home = document.getElementById('home');
+  if (home) home.appendChild(d);
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
