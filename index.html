@@ -1949,6 +1949,64 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: اللوجو الجديد ===== -->
+<!-- ===== إضافة: مثبّت الإعدادات v6 | 2026-09-20 ===== -->
+<script>
+(function(){
+'use strict';
+try{
+  var KEY='egb_cfg_v6';
+  function cfg(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+  function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
+  function firstText(a){for(var i=0;i<a.childNodes.length;i++){var n=a.childNodes[i];if(n.nodeType===3&&n.nodeValue.trim())return n;}return null;}
+  function fixedBox(a){var el=a;while(el&&el!==document.body){if(getComputedStyle(el).position==='fixed')return el;el=el.parentElement;}return null;}
+  function bubbleAnchor(){
+    var c=cfg(),as=document.querySelectorAll('a[href*="t.me"]');
+    for(var i=0;i<as.length;i++){
+      var t=as[i].textContent||'';
+      if(t.indexOf('2.4K')>=0||t.indexOf('انضم')>=0||(c&&c.text&&t.indexOf(c.text)>=0))return as[i];
+    }
+    return null;
+  }
+  /* امسك زرار حفظ التغييرات وصوّر الحالة بعد ما الكود الأصلي ينفذ */
+  function hookSave(){
+    var els=document.querySelectorAll('button');
+    for(var i=0;i<els.length;i++){
+      var b=els[i];
+      if(b.dataset.egb6)continue;
+      if((b.textContent||'').indexOf('حفظ التغييرات')>=0){
+        b.dataset.egb6='1';
+        b.addEventListener('click',function(){
+          setTimeout(function(){
+            var a=bubbleAnchor();if(!a)return;
+            var box=fixedBox(a);
+            var c={link:a.getAttribute('href')||'',text:(firstText(a)?firstText(a).nodeValue.trim():''),show:box?getComputedStyle(box).display!=='none':true};
+            localStorage.setItem(KEY,JSON.stringify(c));
+            toast('تم تثبيت الإعدادات ✅ هتفضل محفوظة بعد الريفريش');
+          },120);
+        });
+      }
+    }
+  }
+  /* طبّق الإعدادات المحفوظة فوق أي افتراضي */
+  function apply(){
+    var c=cfg();if(!c)return;
+    var as=document.querySelectorAll('a[href*="t.me"]');
+    for(var i=0;i<as.length;i++){
+      if(c.link)as[i].setAttribute('href',c.link);
+      var t=as[i].textContent||'';
+      if(c.text&&(t.indexOf('2.4K')>=0||t.indexOf(c.text)>=0||t.indexOf('انضم')>=0)){
+        var n=firstText(as[i]);if(n)n.nodeValue=' '+c.text+' ';
+      }
+      var box=fixedBox(as[i]);
+      if(box&&typeof c.show==='boolean')box.style.display=c.show?'':'none';
+    }
+  }
+  function tick(){hookSave();apply();}
+  tick();setInterval(tick,800);
+}catch(err){console.warn('[EgyptBet Addon] cfg-v6:',err);}
+})();
+</script>
+<!-- ===== نهاية إضافة: مثبّت الإعدادات v6 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
