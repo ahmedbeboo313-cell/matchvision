@@ -2053,6 +2053,43 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: مثبّت الإعدادات v7 ===== -->
+<!-- ===== إضافة: التحديث الحيّ الشامل v8 | 2026-09-20 ===== -->
+<script>
+(function(){
+'use strict';
+try{
+  var KEY='egb_live_ver', INTERVAL=60000;
+  function stored(){try{return localStorage.getItem(KEY)||'';}catch(e){return '';}}
+  function save(v){try{localStorage.setItem(KEY,v);}catch(e){}}
+  function busy(){
+    /* مينعش ريفرش والمستخدم بيكتب في لوحة التحكم أو الاقتراحات */
+    var els=document.querySelectorAll('input[type="password"],textarea');
+    for(var i=0;i<els.length;i++){if(els[i].getClientRects&&els[i].getClientRects().length>0)return true;}
+    return false;
+  }
+  function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},2500);}
+  function sig(r){return r.headers.get('etag')||r.headers.get('last-modified')||r.headers.get('content-length')||'';}
+  function check(){
+    if(busy())return;
+    fetch('./index.html?live='+Date.now(),{method:'HEAD',cache:'no-store'})
+      .then(function(r){
+        var v=sig(r); if(!v)return;
+        var old=stored();
+        if(!old){save(v);return;}
+        if(v!==old){
+          save(v);
+          toast('🔄 بيتم تحديث التطبيق…');
+          setTimeout(function(){location.reload();},900);
+        }
+      }).catch(function(){});
+  }
+  setTimeout(check,4000);
+  setInterval(check,INTERVAL);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(check,1500);});
+}catch(e){console.warn('[EgyptBet Addon] live-v8:',e);}
+})();
+</script>
+<!-- ===== نهاية إضافة: التحديث الحيّ الشامل v8 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
