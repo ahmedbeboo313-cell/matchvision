@@ -1738,6 +1738,55 @@ __addon__('modal-scroll-lock', function(){
   mo.observe(document.body, { subtree:true, attributes:true, attributeFilter:['class'], childList:true });
   apply();
 });
+__addon__('trust-badge', function(){
+  function badgeFor(c){
+    if (c >= 3) return '<span style="background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.5);color:#86efac;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:900">✅ موثوق جداً ('+c+'/5)</span>';
+    if (c === 2) return '<span style="background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);color:#fcd34d;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:900">🟡 موثوق ('+c+'/5)</span>';
+    return '<span style="background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.45);color:#fca5a5;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:900">⚠️ خد حذرك ('+c+'/5)</span>';
+  }
+  function countConds(key, prob, p){
+    var c = 0;
+    if (prob >= 75) c++;
+    if (shieldsFor(key, prob, p) >= 4) c++;
+    if ((p.consensus||0) >= 60) c++;
+    if ((p.learnN||0) >= 8) c++;
+    if ((p.volIdx||0) === 0) c++;
+    return c;
+  }
+  var origSB = window.safeBlock;
+  if (typeof origSB === 'function'){
+    window.safeBlock = function(m, p, fin){
+      var html = origSB(m, p, fin);
+      try{
+        if (fin || !p) return html;
+        var df = buildDefs(m, p, false);
+        df.forEach(function(d){ d.push(safetyScore(d[0], d[2].prob, p)); });
+        df.sort(function(a,b){ return b[3]-a[3]; });
+        var best = df[0];
+        if (!best) return html;
+        var badge = badgeFor(countConds(best[0], best[2].prob, p));
+        html = '<div style="display:flex;justify-content:flex-end;margin:-4px 0 8px">' + badge + '</div>' + html;
+      }catch(e){}
+      return html;
+    };
+  }
+  var origRB = window.renderBanker;
+  if (typeof origRB === 'function'){
+    window.renderBanker = function(){
+      var html = origRB();
+      try{
+        if (!html) return html;
+        var b = getBanker();
+        if (b){
+          var badge = badgeFor(countConds(b.mkt, b.pred.prob, b.p));
+          var idx = html.indexOf('>');
+          if (idx > -1) html = html.slice(0, idx+1) + '<div style="display:flex;justify-content:flex-end;margin:-4px 0 6px">' + badge + '</div>' + html.slice(idx+1);
+        }
+      }catch(e){}
+      return html;
+    };
+  }
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
