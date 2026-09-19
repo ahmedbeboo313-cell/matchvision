@@ -1664,7 +1664,21 @@ __addon__('ai-coupon-builder', function(){
         totP *= c.prob/100;
         return '<div class="aic-pick"><b>'+esc(c.m.home.name)+' × '+esc(c.m.away.name)+'</b><div style="color:var(--muted);font-size:11px">'+esc(c.m.leagueName)+' • '+matchTimeLabel(c.m)+'</div><div style="margin-top:6px;color:#86efac;font-weight:900">'+esc(c.text)+' — '+c.prob+'% '+shieldStr(shieldsFor(c.k,c.prob,c.p))+'</div><div style="color:var(--muted);font-size:10px;margin-top:4px">🤝 توافق النماذج: '+c.cons+'%</div></div>';
       }).join('');
-      html += '<div class="aic-sum">🎫 ثقة القسيمة المجمعة: '+Math.round(totP*100)+'%</div>';
+      var probsArr = picked.map(function(c){ return c.prob/100; });
+      var avg = 0; for (var a1=0;a1<probsArr.length;a1++){ avg += probsArr[a1]; } avg = avg/probsArr.length;
+      function atleast(probs, k){
+        var dp=[1];
+        for (var i=0;i<probs.length;i++){
+          var p=probs[i]; var nd=[]; for (var j=0;j<=dp.length;j++){ nd[j]=0; }
+          for (var j2=0;j2<dp.length;j2++){ nd[j2]+=dp[j2]*(1-p); nd[j2+1]+=dp[j2]*p; }
+          dp=nd;
+        }
+        var s=0; for (var j3=k;j3<dp.length;j3++){ s+=dp[j3]; }
+        return s;
+      }
+      var kMin = Math.max(1, count-1);
+      var pAt = atleast(probsArr, kMin);
+      html += '<div class="aic-sum">🎯 متوسط ثقة الاختيارات: '+Math.round(avg*100)+'%<br>✅ فرصة تحقيق '+kMin+'+ من '+count+' اختيارات: '+Math.round(pAt*100)+'%<br>🎫 فرصة الكسب الكامل (كل الاختيارات): '+Math.round(totP*100)+'%<br><span style="font-weight:700;font-size:10px;color:var(--muted)">النسبة المجمعة دايمًا أقل من نسب الاختيارات الفردية — ده طبيعي في أي قسيمة مركبة في العالم</span></div>';
       out.innerHTML = html;
     }catch(e){ out.innerHTML = '<div class="empty">⚠️ تعذر بناء القسيمة حالياً</div>'; }
   };
