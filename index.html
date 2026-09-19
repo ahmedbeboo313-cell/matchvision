@@ -1427,6 +1427,69 @@ __addon__('future-match-guard', function(){
     try{ if(!document.hidden && clean()) renderCurrent(); }catch(e){}
   }, 3000);
 });
+__addon__('prediction-ensemble', function(){
+  var orig = window.getPrediction;
+  if (typeof orig !== 'function') return;
+  window.getPrediction = function(m){
+    var p = orig(m);
+    try{
+      if (!p || p.__ens) return p;
+      var q = {}; for (var k in p){ q[k] = p[k]; }
+      var tH = TEAMADJ[m.home.id], tA = TEAMADJ[m.away.id];
+      var n = ((tH && tH.n) || 0) + ((tA && tA.n) || 0);
+      var cover = Math.min(1, 0.3 + n / 20);
+      var lrB = (tH && tA && tH.btts != null && tA.btts != null) ? (tH.btts + tA.btts) / 2 : null;
+      var lrO = (tH && tA && tH.o25 != null && tA.o25 != null) ? (tH.o25 + tA.o25) / 2 : null;
+      var lrH = (tH && tA && tH.h1r != null && tA.h1r != null) ? (tH.h1r + tA.h1r) / 2 : null;
+      var eDiff = eloGet(ELO, m.home.id) - eloGet(ELO, m.away.id);
+      var eloHome = 1 / (1 + Math.pow(10, -eDiff / 400));
+      if (q.btts && lrB != null){
+        var b0 = q.btts.prob / 100;
+        var bN = clamp(b0 * 0.55 + lrB * 0.45, 0.02, 0.98);
+        q.btts = { text: q.btts.text, prob: Math.round(bN * 100), tone: q.btts.tone };
+        q.consensus = Math.round(100 * (1 - Math.abs(b0 - lrB)) * cover);
+      }
+      if (q.o25 && lrO != null){
+        var o0 = q.o25.prob / 100;
+        var oN = clamp(o0 * 0.55 + lrO * 0.45, 0.02, 0.98);
+        q.o25 = { text: q.o25.text, prob: Math.round(oN * 100), tone: q.o25.tone };
+        q.u25 = { text: q.u25.text, prob: Math.round((1 - oN) * 100), tone: q.u25.tone };
+        q.goals = oN >= 0.5 ? { text: 'أكثر من 2', prob: Math.round(oN * 100), tone: 'good' } : { text: 'أقل من 2', prob: Math.round((1 - oN) * 100), tone: 'warn' };
+        if (!q.consensus) q.consensus = Math.round(100 * (1 - Math.abs(o0 - lrO)) * cover);
+      }
+      if (q.h1Goal && lrH != null){
+        var h0 = q.h1Goal.prob / 100;
+        var hN = clamp(h0 * 0.55 + lrH * 0.45, 0.02, 0.98);
+        q.h1Goal = { text: q.h1Goal.text, prob: Math.round(hN * 100), tone: q.h1Goal.tone };
+        if (!q.consensus) q.consensus = Math.round(100 * (1 - Math.abs(h0 - lrH)) * cover);
+      }
+      if (q.win && (ELO[m.home.id] || ELO[m.away.id])){
+        var w0 = q.win.prob / 100;
+        var homeWin = q.win.text.indexOf('فوز المضيف') === 0;
+        var eP = homeWin ? eloHome : (1 - eloHome);
+        var wN = clamp(w0 * 0.6 + eP * 0.4, 0.02, 0.98);
+        q.win = { text: q.win.text, prob: Math.round(wN * 100), tone: q.win.tone };
+        if (!q.consensus) q.consensus = Math.round(100 * (1 - Math.abs(w0 - eP)) * cover);
+      }
+      if (q.consensus == null) q.consensus = Math.round(50 * cover);
+      q.consensus = clamp(q.consensus, 5, 99);
+      q.__ens = 1;
+      return q;
+    }catch(e){ return p; }
+  };
+  var origSafe = window.safeBlock;
+  if (typeof origSafe === 'function'){
+    window.safeBlock = function(m, p, fin){
+      var html = origSafe(m, p, fin);
+      try{
+        if (p && p.consensus != null && !fin){
+          html += '<div class="match-foot"><span>🤝 توافق النماذج: ' + p.consensus + '%</span><span>📊 دقة مجمعة (4 نماذج)</span></div>';
+        }
+      }catch(e){}
+      return html;
+    };
+  }
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
