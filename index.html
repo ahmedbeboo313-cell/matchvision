@@ -1711,9 +1711,9 @@ __addon__('ai-coupon-builder', function(){
       var pool = (state.matches||[]).filter(function(m){ return !isFinished(m) && !m.live; });
       var rows = pool.map(function(m){ var p = getPrediction(m); var t = consistentScore(p); return t ? {m:m, s:t.s, pr:t.p, cons:p.consensus||0} : null; }).filter(Boolean);
       rows.sort(function(a,b){ return b.pr - a.pr; });
-      rows = rows.slice(0,3);
+      rows = rows.slice(0, count);
       if (!rows.length){ out.innerHTML = '<div class="empty">مفيش نتائج دقيقة كافية حالياً</div>'; return; }
-      out.innerHTML = '<div class="day-head">💎 Correct Score — PRO Picks</div>' + rows.map(function(r){
+      out.innerHTML = '<div class="day-head">💎 Correct Score — PRO Picks ('+count+' مباريات)</div>' + rows.map(function(r){
         return '<div class="aic-pick"><b>'+esc(r.m.home.name)+' × '+esc(r.m.away.name)+'</b><div style="color:var(--muted);font-size:11px">'+esc(r.m.leagueName)+' • '+matchTimeLabel(r.m)+'</div><div style="margin-top:6px;color:#fde68a;font-weight:900">النتيجة المتوقعة: '+esc(r.s)+' — '+r.pr+'%</div><div style="color:var(--muted);font-size:10px;margin-top:4px">🤝 توافق: '+r.cons+'%</div></div>';
       }).join('');
     }catch(e){ out.innerHTML = '<div class="empty">⚠️ تعذر عرض PRO حالياً</div>'; }
