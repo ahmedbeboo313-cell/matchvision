@@ -1914,8 +1914,8 @@ try{
 try{
   var SRC='./logo.png';
   function classify(svg){
-    for(var p=svg;p&&p!==document.body;p=p.parentElement){
-      var tx=p.textContent||'';
+    for(var p=svg,d=0;p&&p!==document.body&&d<6;p=p.parentElement,d++){
+      var tx=p.textContent||''; if(tx.length>400) continue;
       if(tx.indexOf('توقعات ذكية مبنية')>=0) return 'splash';
       if(tx.indexOf('منتهية')>=0&&tx.indexOf('قدم')>=0&&tx.indexOf('لايف')>=0) return 'header';
     }
