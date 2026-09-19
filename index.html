@@ -1719,6 +1719,25 @@ __addon__('ai-coupon-builder', function(){
     }catch(e){ out.innerHTML = '<div class="empty">⚠️ تعذر عرض PRO حالياً</div>'; }
   };
 });
+__addon__('modal-scroll-lock', function(){
+  var stl = document.createElement('style');
+  stl.textContent = 'html.locked,body.locked{overflow:hidden!important;overscroll-behavior:none!important;position:relative!important;height:100%!important}'
+    + '.gmodal{overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}';
+  document.head.appendChild(stl);
+  function anyOpen(){
+    var m = document.querySelectorAll('.gmodal, .admin-panel');
+    for (var i=0;i<m.length;i++){ if(!m[i].classList.contains('hidden')) return true; }
+    return false;
+  }
+  function apply(){
+    var open = anyOpen();
+    document.body.classList.toggle('locked', open);
+    document.documentElement.classList.toggle('locked', open);
+  }
+  var mo = new MutationObserver(function(){ apply(); });
+  mo.observe(document.body, { subtree:true, attributes:true, attributeFilter:['class'], childList:true });
+  apply();
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
