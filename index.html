@@ -1849,32 +1849,31 @@ __addon__('privacy-link', function(){
   inject();
 });
 </script>
-<!-- ===== إضافة: إصلاح زرار التليجرام داخل التطبيق | 2026-09-20 ===== -->
+<!-- ===== إضافة: إصلاح زرار التليجرام داخل التطبيق v2 | 2026-09-20 ===== -->
 <style>
 .egb-tg-overlay{position:fixed;inset:0;background:rgba(4,10,14,.72);backdrop-filter:blur(3px);z-index:99998;display:flex;align-items:center;justify-content:center;padding:18px}
 .egb-tg-card{width:100%;max-width:360px;background:#0e1520;border:1px solid rgba(251,191,36,.35);border-radius:18px;padding:18px 16px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 .egb-tg-title{color:#fbbf24;font-weight:800;font-size:18px;margin:0 0 6px}
-.egb-tg-desc{color:#cbd5e1;font-size:13px;line-height:1.7;margin:0 0 14px}
+.egb-tg-desc{color:#cbd5e1;font-size:13px;line-height:1.8;margin:0 0 14px}
 .egb-tg-btn{display:block;width:100%;border:0;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
 .egb-tg-open{background:#fbbf24;color:#111827}
 .egb-tg-copy{background:#1f2937;color:#e5e7eb}
 .egb-tg-close{background:transparent;color:#94a3b8;font-size:13px}
-.egb-tg-toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:99999}
+.egb-tg-toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:99999;max-width:86%;text-align:center}
 </style>
 <script>
 (function(){
 'use strict';
 try{
-  /* اشتغل بس جوه الـ WebView (التطبيق) وسيب المتصفح العادي زي ما هو */
   if(!/; wv\)|AppsGeyser/i.test(navigator.userAgent)) return;
   var TG='https://t.me/+P98t0SG-FJVlOWQ8';
 
-  function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
+  function toast(m){var t=document.createElement('div');t.className='egb-tg-toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove();},4200);}
 
   function copyLink(){
     try{
-      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(TG).then(function(){toast('تم نسخ الرابط ✅ افتحه في متصفح هاتفك');});}
-      else{var i=document.createElement('textarea');i.value=TG;i.style.position='fixed';i.style.opacity='0';document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();toast('تم نسخ الرابط ✅ افتحه في متصفح هاتفك');}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(TG).then(function(){toast('تم النسخ ✅ افتح تليجرام → المحفوظات → الصق ودوس على الرابط');});}
+      else{var i=document.createElement('textarea');i.value=TG;i.style.position='fixed';i.style.opacity='0';document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();toast('تم النسخ ✅ افتح تليجرام → المحفوظات → الصق ودوس على الرابط');}
     }catch(e){toast('الرابط: '+TG);}
   }
 
@@ -1883,19 +1882,18 @@ try{
     var o=document.createElement('div');o.id='egbTgOverlay';o.className='egb-tg-overlay';
     o.innerHTML='<div class="egb-tg-card">'
       +'<p class="egb-tg-title">🔔 الانضمام لقناة Egypt Bet</p>'
-      +'<p class="egb-tg-desc">التطبيق مش بيقدر يفتح تليجرام من جوه نفسه مباشرة.<br>دوس الزرار الأصفر وهيتفتح الرابط في متصفح هاتفك ومنه لتليجرام على طول.</p>'
-      +'<button class="egb-tg-btn egb-tg-open" id="egbTgOpen">🌐 فتح في المتصفح الخارجي</button>'
-      +'<button class="egb-tg-btn egb-tg-copy" id="egbTgCopy">📋 نسخ رابط الدعوة</button>'
+      +'<p class="egb-tg-desc">التطبيق مش بيسيبنا نفتح تليجرام من جوه نفسه.<br><b style="color:#fbbf24">أسهل طريقة:</b> انسخ الرابط، افتح تليجرام، الصقه في "المحفوظات" أو أي شات، ودوس عليه — هتلاقي زرار الانضمام جاهز ✔</p>'
+      +'<button class="egb-tg-btn egb-tg-open" id="egbTgCopy">📋 نسخ رابط الدعوة</button>'
+      +'<button class="egb-tg-btn egb-tg-copy" id="egbTgOpen">🌐 محاولة الفتح في المتصفح</button>'
       +'<button class="egb-tg-btn egb-tg-close" id="egbTgClose">إلغاء</button>'
       +'</div>';
     document.body.appendChild(o);
+    document.getElementById('egbTgCopy').onclick=function(){copyLink();o.remove();};
     document.getElementById('egbTgOpen').onclick=function(){o.remove();window.open(TG,'_blank');};
-    document.getElementById('egbTgCopy').onclick=copyLink;
     document.getElementById('egbTgClose').onclick=function(){o.remove();};
     o.addEventListener('click',function(e){if(e.target===o)o.remove();});
   }
 
-  /* امسك أي لينك t.me في الصفحة كلها (الزرار + الفقاعة العايمة) قبل ما ينفّذ */
   document.addEventListener('click',function(e){
     var el=e.target;
     while(el&&el!==document&&!(el.tagName==='A'&&el.getAttribute&&((el.getAttribute('href')||'').indexOf('t.me')>=0))){el=el.parentNode;}
@@ -1903,10 +1901,10 @@ try{
     e.preventDefault();e.stopPropagation();
     openModal();
   },true);
-}catch(err){console.warn('[EgyptBet Addon] tg-fix:',err);}
+}catch(err){console.warn('[EgyptBet Addon] tg-fix v2:',err);}
 })();
 </script>
-<!-- ===== نهاية إضافة: إصلاح زرار التليجرام ===== -->
+<!-- ===== نهاية إضافة: إصلاح زرار التليجرام v2 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
