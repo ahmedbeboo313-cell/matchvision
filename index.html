@@ -1252,6 +1252,28 @@ __addon__('addons-status-checker', function(){
   setTimeout(render, 3000);
   setInterval(render, 15000);
 });
+__addon__('live-instant-sync', function(){
+  setInterval(function(){
+    try{
+      if (document.hidden) return;
+      if (state.mode === 'finished'){
+        if (Date.now() - lastLoadTs > 15000) loadFinishedFlow(true);
+      } else {
+        if (!pollingFast) liveFastPoll();
+      }
+    }catch(e){}
+  }, 12000);
+  setInterval(function(){
+    try{
+      if (document.hidden) return;
+      var changed = false;
+      (state.matches||[]).forEach(function(m){
+        if (m.live && (m.statusCompleted || m.statusState === 'post')) { m.live = false; changed = true; }
+      });
+      if (changed) renderCurrent();
+    }catch(e){}
+  }, 4000);
+});
 </script>
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
