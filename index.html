@@ -2180,7 +2180,7 @@ try{
   function injectBtn(){
     if(document.getElementById('egbLinkRow'))return;
     var host=null,c=document.querySelectorAll('*');
-    for(var i=0;i<c.length;i++){var t=(c[i].textContent||'');if(c[i].children.length<=8&&t.indexOf('لون التطبيق')>=0&&t.length<500){host=c[i];break;}}
+    for(var i=0;i<c.length;i++){var t=(c[i].textContent||'');if(c[i].children.length<=8&&(t.indexOf('لون التطبيق')>=0||t.indexOf('جرّبت التطبيق')>=0)&&t.length<500){host=c[i];break;}}
     if(!host)return;
     var b=document.createElement('button');b.id='egbLinkRow';b.type='button';
     b.textContent='🔗 سجّل اسمك بتليجرام (اختياري)';
