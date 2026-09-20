@@ -2163,6 +2163,122 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: سجل المستخدمين v9 ===== -->
+<!-- ===== إضافة: بوابة الدخول v11 | 2026-09-20 ===== -->
+<style>
+html.egb-locked body>*:not(#egbLock){display:none!important}
+#egbLock{position:fixed;inset:0;z-index:999999;background:#0b1210;display:flex;align-items:center;justify-content:center;padding:20px}
+.egb-lk-card{width:100%;max-width:340px;background:#0e1520;border:1px solid rgba(251,191,36,.4);border-radius:20px;padding:22px 18px;text-align:center}
+.egb-lk-card img{width:96px;height:96px;border-radius:22px;margin:0 auto 10px;display:block}
+.egb-lk-t{color:#fbbf24;font-weight:800;font-size:19px;margin:0 0 4px}
+.egb-lk-d{color:#94a3b8;font-size:12px;margin:0 0 14px;line-height:1.7}
+.egb-lk-card input{width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #334155;color:#e5e7eb;border-radius:12px;padding:11px;margin-bottom:9px;font-size:14px;text-align:center}
+.egb-lk-btn{width:100%;border:0;border-radius:12px;padding:12px;background:#fbbf24;color:#111827;font-weight:800;font-size:15px;cursor:pointer}
+.egb-lk-err{color:#f87171;font-size:12px;min-height:16px;margin-top:7px}
+</style>
+<script>
+(function(){
+'use strict';
+try{
+  var BOT='8982379050:AAE4495vVGlrQ0PmHMykYkgTqYtjxTBYu1M', ADMIN='1138523347';
+  var SKEY='egb_session', CKEY='egb_gate_cfg';
+  function ls(k,v){try{return v===undefined?localStorage.getItem(k):(localStorage.setItem(k,v),v);}catch(e){return null;}}
+  function fnv(s){var h=0x811c9dc5;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('0000000'+h.toString(16)).slice(-8);}
+  function now(){var off=0;try{off=parseInt(localStorage.getItem('egb_toff')||'0',10)||0;}catch(e){}var d=new Date(Date.now()+off);return d.toLocaleDateString('ar-EG')+' '+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});}
+  function uid(){var u=ls('egb_uid');if(!u){u='u'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);ls('egb_uid',u);}return u;}
+  function bot(t){if(BOT.indexOf('هنا')>=0)return;try{fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ADMIN,text:t,disable_web_page_preview:true})}).catch(function(){});}catch(e){}}
+  function cfg(){try{return JSON.parse(ls(CKEY)||'null');}catch(e){return null;}}
+  function pullCfg(){
+    return fetch('./config.json?ts='+Date.now(),{cache:'no-store'})
+      .then(function(r){return r.ok?r.json():null;})
+      .then(function(j){if(j&&typeof j==='object'){ls(CKEY,JSON.stringify(j));refresh();}return j;})
+      .catch(function(){refresh();});
+  }
+  function session(){try{return JSON.parse(ls(SKEY)||'null');}catch(e){return null;}}
+  function validUser(u,h){var c=cfg();if(!c||!c.users)return null;for(var i=0;i<c.users.length;i++){if(c.users[i].u===u&&c.users[i].h===h)return c.users[i];}return null;}
+  function locked(){var c=cfg();return !!(c&&c.gate);}
+  function refresh(){
+    var s=session();
+    if(locked()){
+      var ok=s&&s.exp>Date.now()&&validUser(s.u,s.h);
+      if(!ok&&s){ls(SKEY,'');}
+      showLock(!ok);
+    } else { showLock(false); }
+  }
+  var fails=0;
+  function showLock(on){
+    var ex=document.getElementById('egbLock');
+    if(on){
+      document.documentElement.classList.add('egb-locked');
+      if(ex)return;
+      var d=document.createElement('div');d.id='egbLock';
+      d.innerHTML='<div class="egb-lk-card">'
+        +'<img src="./logo.png" alt="">'
+        +'<p class="egb-lk-t">🔐 Egypt Bet منطقة أعضاء</p>'
+        +'<p class="egb-lk-d">التطبيق متاح للأعضاء المسجلين فقط.<br>لو معندكش بيانات دخول، كلم الأدمن.</p>'
+        +'<input id="egbLU" placeholder="اسم المستخدم" autocomplete="username">'
+        +'<input id="egbLP" type="password" placeholder="كلمة السر" autocomplete="current-password">'
+        +'<button class="egb-lk-btn" id="egbLB">دخول 🔓</button>'
+        +'<p class="egb-lk-err" id="egbLE"></p>'
+        +'</div>';
+      document.body.appendChild(d);
+      document.getElementById('egbLB').onclick=function(){
+        var u=(document.getElementById('egbLU').value||'').trim();
+        var p=(document.getElementById('egbLP').value||'');
+        var rec=validUser(u,fnv(u+':'+p));
+        if(rec){
+          ls(SKEY,JSON.stringify({u:u,h:rec.h,exp:Date.now()+30*864e5}));
+          fails=0;
+          bot('🔑 دخول ناجح\n👤 المستخدم: '+u+'\n🆔 الجهاز: '+uid()+'\n🕐 '+now());
+          showLock(false);
+        }else{
+          fails++;
+          document.getElementById('egbLE').textContent='بيانات غلط — حاول تاني ('+fails+')';
+          if(fails>=3){bot('⛔ 3 محاولات فاشلة\n👤 حاول باسم: '+u+'\n🆔 الجهاز: '+uid()+'\n🕐 '+now());fails=0;}
+        }
+      };
+    }else{
+      document.documentElement.classList.remove('egb-locked');
+      if(ex)ex.remove();
+    }
+  }
+  function genCard(){
+    if(document.getElementById('egbGenCard'))return;
+    var bs=document.querySelectorAll('button'),anchor=null;
+    for(var i=0;i<bs.length;i++){if((bs[i].textContent||'').indexOf('حفظ التغييرات')>=0){anchor=bs[i];break;}}
+    if(!anchor||!anchor.getClientRects||!anchor.getClientRects().length)return;
+    var c=document.createElement('div');c.id='egbGenCard';
+    c.style.cssText='margin:12px 0;padding:14px;border:1px solid rgba(251,191,36,.4);border-radius:14px;background:#101826';
+    c.innerHTML='<p style="color:#fbbf24;font-weight:800;margin:0 0 8px">👤 إدارة المستخدمين (البوابة)</p>'
+      +'<input id="egbGU" placeholder="يوزر جديد" style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #334155;color:#e5e7eb;border-radius:10px;padding:9px;margin-bottom:7px">'
+      +'<input id="egbGP" placeholder="باسورد له" style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #334155;color:#e5e7eb;border-radius:10px;padding:9px;margin-bottom:7px">'
+      +'<button id="egbGB" style="width:100%;border:0;border-radius:10px;padding:11px;background:#fbbf24;color:#111827;font-weight:800;cursor:pointer">➕ توليد + نسخ ملف config جاهز</button>'
+      +'<p id="egbGL" style="color:#94a3b8;font-size:11px;margin:8px 0 0"></p>';
+    anchor.parentNode.insertBefore(c,anchor);
+    document.getElementById('egbGB').onclick=function(){
+      var u=(document.getElementById('egbGU').value||'').trim();
+      var p=(document.getElementById('egbGP').value||'');
+      if(!u||!p){document.getElementById('egbGL').textContent='اكتب يوزر وباسورد الأول';return;}
+      var j=cfg()||{show:true,text:'انضم لمتابعه كل جديد 🔔',link:'https://t.me/+P98t0SG-FJVlOWQ8'};
+      j.users=j.users||[];
+      for(var k=0;k<j.users.length;k++){if(j.users[k].u===u){document.getElementById('egbGL').textContent='اليوزر ده موجود قبل كده';return;}}
+      j.users.push({u:u,h:fnv(u+':'+p)});
+      j.gate=true;
+      var txt=JSON.stringify(j,null,1);
+      function ok(){document.getElementById('egbGL').textContent='تم النسخ ✅ افتح config.json على GitHub → امسح كله → الصق → Commit';}
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(ok,ok);
+      else{var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();ok();}
+      bot('👤 مستخدم جديد اتعمل: '+u+'\n🕐 '+now());
+    };
+    var c2=cfg();var list=(c2&&c2.users)?c2.users.map(function(x){return x.u;}).join('، '):'لا يوجد بعد';
+    document.getElementById('egbGL').textContent='المسجلين حالياً: '+list;
+  }
+  function tick(){genCard();}
+  pullCfg();setInterval(pullCfg,300000);
+  refresh();tick();setInterval(tick,1500);
+}catch(e){console.warn('[EgyptBet Addon] gate-v11:',e);}
+})();
+</script>
+<!-- ===== نهاية إضافة: بوابة الدخول v11 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
