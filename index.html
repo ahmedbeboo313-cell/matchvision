@@ -2371,6 +2371,36 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] ref-v14:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منعشة النتائج المنتهية v14 ===== -->
+<!-- ===== إضافة: حارس التصنيف v13 | 2026-09-21 ===== -->
+<script>
+(function(){
+'use strict';
+try{
+  var BOT='8982379050:AAE4495vVGlrQ0PmHMykYkgTqYtjxTBYu1M', ADMIN='1138523347';
+  var mem={};
+  function bot(t){if(BOT.indexOf('هنا')>=0)return;try{fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ADMIN,text:t,disable_web_page_preview:true})}).catch(function(){});}catch(e){}}
+  function cardOf(el){for(var p=el;p&&p!==document.body;p=p.parentElement){var t=p.textContent||'';if(t.indexOf('النتيجة')>=0&&t.length<2000)return p;}return el.parentElement;}
+  function tick(){
+    var pills=document.querySelectorAll('.done-pill');
+    for(var i=0;i<pills.length;i++){
+      var card=cardOf(pills[i]);if(!card)continue;
+      var t=card.textContent||'';
+      var sc=t.match(/(\d+)\s-\s(\d+)/);if(!sc)continue;
+      var key=t.replace(/\d+/g,'').slice(0,80);
+      var score=sc[0];
+      if(mem[key]&&mem[key]!==score){
+        pills[i].className='live-pill';
+        pills[i].textContent='مباشر 🔴';
+        bot('⚠️ حارس التصنيف: ماتش متعلم "انتهى" ونتيجته لسه بتتغير (غلطة مصدر)\n🏟 '+key.slice(0,60)+'\n🔢 النتيجة دلوقتي: '+score);
+      }
+      mem[key]=score;
+    }
+  }
+  setInterval(tick,30000);setTimeout(tick,5000);
+}catch(e){console.warn('[EgyptBet Addon] guard-v13:',e);}
+})();
+</script>
+<!-- ===== نهاية إضافة: حارس التصنيف v13 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
