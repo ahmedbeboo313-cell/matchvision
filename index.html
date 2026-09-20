@@ -685,6 +685,7 @@ function getPrediction(m){
   if(fz[m.id]){var pf=Object.assign({},fallbackPred(m),fz[m.id]);predCache.set(m.id,pf);return pf;}
   var p;
   try{p=calc(m);}catch(e){p=fallbackPred(m);}
+  try{var _th=TEAMADJ[m.home&&m.home.id],_ta=TEAMADJ[m.away&&m.away.id];p.learnN=Math.min((_th&&_th.n)||0,(_ta&&_ta.n)||0)||p.learnN||0;}catch(e){}
   fz[m.id]=p;
   var keys=Object.keys(fz);if(keys.length>400){delete fz[keys[0]];}
   try{lsSet('eb_pred_frozen',fz);}catch(e){}
@@ -692,6 +693,7 @@ function getPrediction(m){
   return p;}
 function teamAttDef(id,isHome){
   var t=TEAMADJ[id];if(!t)return null;
+  if(t.last&&(Date.now()-t.last)>10368000000)return null;
   if(isHome){if(t.hn>=2&&t.hatt!=null)return{att:t.hatt,def:t.hdef};}
   else{if(t.an>=2&&t.aatt!=null)return{att:t.aatt,def:t.adef};}
   if(t.n>=2&&t.att!=null)return{att:t.att,def:t.def};
@@ -2451,6 +2453,42 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] report-v17:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: تقرير التعلم وإنذار الانحراف v17 ===== -->
+<!-- ===== إضافة: المخ السحابي v18 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  var COLL='brain', DOC='snapshot', MIN_GAP=600000;
+  function db(){try{return firebase.app().firestore();}catch(e){return null;}}
+  function me(){try{var s=JSON.parse(localStorage.getItem('egb_session')||'null');return s&&s.u?s.u:'';}catch(e){return '';}}
+  function isAdmin(){return me().indexOf('Admin')===0;}
+  function keys(){var out=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('mv_')===0)out.push(k);}return out;}
+  function upload(){
+    if(!isAdmin())return;var d=db();if(!d)return;
+    if(Date.now()-(parseInt(localStorage.getItem('egb_brain_up')||'0',10)||0)<MIN_GAP)return;
+    var ks=keys();if(!ks.length)return;
+    var data={};ks.forEach(function(k){data[k]=localStorage.getItem(k);});
+    d.collection(COLL).doc(DOC).set({ts:Date.now(),by:me(),data:data}).then(function(){
+      localStorage.setItem('egb_brain_up',String(Date.now()));
+    }).catch(function(){});
+  }
+  function download(){
+    if(isAdmin())return;var d=db();if(!d)return;
+    d.collection(COLL).doc(DOC).get().then(function(doc){
+      if(!doc.exists)return;var s=doc.data();if(!s||!s.data||!s.ts)return;
+      var localHas=!!localStorage.getItem('mv_track_v2');
+      var last=parseInt(localStorage.getItem('egb_brain_ts')||'0',10)||0;
+      var need=(!localHas&&s.ts>last)||(s.ts-last>172800000);
+      if(!need)return;
+      for(var k in s.data){try{localStorage.setItem(k,s.data[k]);}catch(e){}}
+      localStorage.setItem('egb_brain_ts',String(s.ts));
+      if(!sessionStorage.getItem('egb_brain_rl')){sessionStorage.setItem('egb_brain_rl','1');setTimeout(function(){location.reload();},800);}
+    }).catch(function(){});
+  }
+  setTimeout(download,6000);
+  setInterval(upload,300000);setTimeout(upload,20000);
+  document.addEventListener('visibilitychange',function(){if(document.hidden)upload();});
+}catch(e){console.warn('[EgyptBet Addon] brain-v18:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: المخ السحابي v18 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
