@@ -685,7 +685,7 @@ function getPrediction(m){
   if(fz[m.id]){var pf=Object.assign({},fallbackPred(m),fz[m.id]);predCache.set(m.id,pf);return pf;}
   var p;
   try{p=calc(m);}catch(e){p=fallbackPred(m);}
-  try{var _th=TEAMADJ[m.home&&m.home.id],_ta=TEAMADJ[m.away&&m.away.id];p.learnN=Math.min((_th&&_th.n)||0,(_ta&&_ta.n)||0)||p.learnN||0;}catch(e){}
+  try{var _A=window.TEAMADJ||{},_E=window.ELO||{};var _nn=function(id){var a=_A[id],e=_E[id];return (a&&a.n)||(e&&e.n)||0;};p.learnN=Math.min(_nn(m.home&&m.home.id),_nn(m.away&&m.away.id))||p.learnN||0;}catch(e){}
   fz[m.id]=p;
   var keys=Object.keys(fz);if(keys.length>400){delete fz[keys[0]];}
   try{lsSet('eb_pred_frozen',fz);}catch(e){}
@@ -1137,7 +1137,7 @@ function safeBlock(m,p,fin){
   var sb='<div class="safe-box"><div class="safe-head"><span>'+best[1]+'</span><span class="safe-badge">الأضمن 🛡️ '+shieldStr(bSh)+'</span>'+valBadge+cupBadge+'</div><div class="safe-val '+(fin?(bH===true?'good':(bH===false?'hot':'')):best[2].tone)+'">'+(fin?best[2].text+(bH===true?' ✔':(bH===false?' ✘':'')):best[2].text)+'</div><div class="meter big"><span style="width:'+best[2].prob+'%"></span></div><div class="prob">'+best[2].prob+'% • ⚔️ هجوم (1) '+p.attHp+'% × (2) '+p.attAp+'%</div></div>';
   var chps=others.map(function(d){var h=hOf(d);return '<span class="schip '+(fin?(h===true?'hit':(h===false?'miss':'')):'')+'">'+(fin?d[2].text+(h===true?' ✔':(h===false?' ✘':'')):d[2].text)+' <span class="sp">'+d[2].prob+'%</span></span>';}).join('');
   var ow=others.length?('<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">'+chps+'</div>'):'';
-  var learnTxt=(function(){var A=window.TEAMADJ||{};var a=A[m.home&&m.home.id],b=A[m.away&&m.away.id];var x=(a&&a.n)||0,y=(b&&b.n)||0;if(x||y)return '🧠 مدروس من '+x+' و '+y+' مباراة';return (p.learnN)?('مدروس من '+p.learnN+' مباراة'):'تحليل أساسي';})();
+  var learnTxt=(function(){var A=window.TEAMADJ||{},E=window.ELO||{};var nn=function(id){var a=A[id],e=E[id];return (a&&a.n)||(e&&e.n)||0;};var x=nn(m.home&&m.home.id),y=nn(m.away&&m.away.id);if(x||y)return '🧠 مدروس من '+x+' و '+y+' مباراة';return (p.learnN)?('مدروس من '+p.learnN+' مباراة'):'تحليل أساسي';})();
   var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+learnTxt+'</span></div>';
   return h1SafeBox+btSafeBox+sb+ow+ft;
 }
