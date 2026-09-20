@@ -584,7 +584,7 @@ return fx.map(function(f,i){var d=new Date(state.date+'T'+f[4]+':00');if(isNaN(d
 function matchKey(m){return(m.home.name+'|'+m.away.name).toLowerCase().replace(/\s+/g,'');}
 function dedupe(a){var m=new Map();a.forEach(function(x){var k=matchKey(x);if(!m.has(k))m.set(k,x);});return[...m.values()];}
 function isUpcoming(m){var d=new Date(m.date);return!isNaN(d)&&d>new Date()&&!m.live&&m.statusState!=='post'&&!m.statusCompleted;}
-function isFinished(m){return m.statusCompleted||m.statusState==='post';}
+function isFinished(m){return !m.live&&(m.statusCompleted===true||m.status==='post'||m.status==='finished');}
 function updTeam(t,scored,conceded,isHome,ts,streakIn){
   t.n=(t.n||0)+1;
   var alpha=(t.n>1)?(2/(t.n+1)):1;
@@ -1303,7 +1303,7 @@ __addon__('finished-lock-guard', function(){
   function enforce(){
     var changed=false;
     (state.matches||[]).forEach(function(m){
-      if(m.live && isLocked(m.id)){ m.live=false; m.statusCompleted=true; m.statusState='post'; changed=true; }
+      if(m.live && isLocked(m.id)){ if(m.live===true&&(Date.now()-new Date(m.date))<6600000)return; m.live=false; m.statusCompleted=true; m.statusState='post'; changed=true; }
     });
     return changed;
   }
@@ -2363,6 +2363,14 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: شات الأعضاء v12 ===== -->
+<!-- ===== إضافة: منعشة النتائج المنتهية v14 | 2026-09-21 ===== -->
+<script>
+(function(){'use strict';try{
+  function rf(){try{if(document.querySelectorAll('.done-pill').length>0&&typeof window.loadFinishedFlow==='function')window.loadFinishedFlow(true);}catch(e){}}
+  setInterval(rf,240000);setTimeout(rf,20000);
+}catch(e){console.warn('[EgyptBet Addon] ref-v14:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: منعشة النتائج المنتهية v14 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
