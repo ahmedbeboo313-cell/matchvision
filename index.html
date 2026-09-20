@@ -2489,6 +2489,31 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] brain-v18:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: المخ السحابي v18 ===== -->
+<!-- ===== إضافة: ذاكرة الفرق وفك التجميد v19 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  if(!localStorage.getItem('egb_defroz_1')){
+    try{localStorage.removeItem('eb_pred_frozen');}catch(e){}
+    localStorage.setItem('egb_defroz_1','1');
+  }
+  try{
+    var saved=JSON.parse(localStorage.getItem('eb_teams_cloud')||'null');
+    if(saved&&window.TEAMADJ&&typeof window.TEAMADJ==='object'){
+      for(var k in saved){if(!window.TEAMADJ[k])window.TEAMADJ[k]=saved[k];}
+    }
+  }catch(e){}
+  function saveT(){
+    try{
+      if(window.TEAMADJ&&Object.keys(window.TEAMADJ).length){
+        localStorage.setItem('eb_teams_cloud',JSON.stringify(window.TEAMADJ));
+      }
+    }catch(e){}
+  }
+  setTimeout(saveT,15000);setInterval(saveT,120000);
+  document.addEventListener('visibilitychange',function(){if(document.hidden)saveT();});
+}catch(e){console.warn('[EgyptBet Addon] memory-v19:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: ذاكرة الفرق وفك التجميد v19 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
