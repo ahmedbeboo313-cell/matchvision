@@ -1,5 +1,12 @@
 {
  "show": true,
  "text": "انضم لمتابعه كل جديد 🔔",
- "link": "https://t.me/+P98t0SG-FJVlOWQ8"
+ "link": "https://t.me/+P98t0SG-FJVlOWQ8",
+ "users": [
+  {
+   "u": "Adminbebohamo",
+   "h": "ce741708"
+  }
+ ],
+ "gate": true
 }
