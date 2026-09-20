@@ -2279,6 +2279,90 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: بوابة الدخول v11 ===== -->
+<!-- ===== إضافة: شات الأعضاء v12 (Firebase) | 2026-09-20 ===== -->
+<style>
+#egbChatFab{position:fixed;left:12px;bottom:150px;z-index:60;border:1px solid rgba(34,211,238,.5);border-radius:999px;background:rgba(31,41,55,.95);color:#67e8f9;font-weight:700;font-size:13px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#egbChatPanel{position:fixed;inset:0;z-index:99998;background:rgba(4,10,14,.86);display:flex;align-items:stretch;justify-content:center;padding:10px}
+.egb-chat-card{width:100%;max-width:420px;background:#0e1520;border:1px solid rgba(103,232,249,.35);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;margin:8px 0}
+.egb-chat-head{padding:10px 12px;background:#101826;color:#67e8f9;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.egb-chat-msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.egb-msg{background:#1f2937;border-radius:12px;padding:8px 10px;font-size:13px;color:#e5e7eb;max-width:85%}
+.egb-msg b{color:#fbbf24;display:block;font-size:11px;margin-bottom:3px}
+.egb-msg .tm{color:#64748b;font-size:10px;display:block;margin-top:3px}
+.egb-chat-foot{display:flex;gap:8px;padding:8px;background:#101826}
+.egb-chat-foot input{flex:1;background:#1f2937;border:1px solid #334155;color:#e5e7eb;border-radius:10px;padding:10px;font-size:14px}
+.egb-chat-foot button{border:0;border-radius:10px;background:#22d3ee;color:#0b1210;font-weight:800;padding:0 14px;cursor:pointer}
+</style>
+<script>
+(function(){
+'use strict';
+try{
+  var CFG={
+  apiKey: "AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",
+  authDomain: "egypt-bet-dab93.firebaseapp.com",
+  projectId: "egypt-bet-dab93",
+  storageBucket: "egypt-bet-dab93.firebasestorage.app",
+  messagingSenderId: "851474057927",
+  appId: "1:851474057927:web:8ab164b85be6ab30854ce2",
+  measurementId: "G-VZN5E9C1VQ"
+};
+  function db(){
+    if(!window.firebase)return null;
+    try{return firebase.app().firestore();}catch(e){
+      if(CFG){firebase.initializeApp(CFG);return firebase.app().firestore();}
+      return null;
+    }
+  }
+  function me(){try{var s=JSON.parse(localStorage.getItem('egb_session')||'null');return s&&s.u?s.u:'زائر';}catch(e){return 'زائر';}}
+  function now(){var off=0;try{off=parseInt(localStorage.getItem('egb_toff')||'0',10)||0;}catch(e){}var d=new Date(Date.now()+off);return d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});}
+  var panel=null,unsub=null;
+  function openChat(){
+    if(panel)return;
+    var d=db();if(!d){alert('فايربيز مش جاهز — راجع سطر CFG');return;}
+    panel=document.createElement('div');panel.id='egbChatPanel';
+    panel.innerHTML='<div class="egb-chat-card">'
+      +'<div class="egb-chat-head"><span>💬 شات الأعضاء</span><button id="egbChatX" style="border:0;background:transparent;color:#94a3b8;font-size:16px;cursor:pointer">✖</button></div>'
+      +'<div class="egb-chat-msgs" id="egbChatMsgs"></div>'
+      +'<div class="egb-chat-foot"><input id="egbChatIn" placeholder="اكتب رسالة…"><button id="egbChatSend">إرسال</button></div>'
+      +'</div>';
+    document.body.appendChild(panel);
+    document.getElementById('egbChatX').onclick=closeChat;
+    document.getElementById('egbChatSend').onclick=sendMsg;
+    document.getElementById('egbChatIn').addEventListener('keydown',function(e){if(e.key==='Enter')sendMsg();});
+    var box=document.getElementById('egbChatMsgs');
+    unsub=d.collection('chat_messages').orderBy('ts','asc').limitToLast(60).onSnapshot(function(snap){
+      box.innerHTML='';
+      snap.forEach(function(doc){
+        var m=doc.data();
+        var el=document.createElement('div');el.className='egb-msg';
+        el.innerHTML='<b></b><p style="margin:0;white-space:pre-wrap"></p><span class="tm"></span>';
+        el.querySelector('b').textContent=m.u||'؟';
+        el.querySelector('p').textContent=m.t||'';
+        el.querySelector('.tm').textContent=m.tm||'';
+        box.appendChild(el);
+      });
+      box.scrollTop=box.scrollHeight;
+    },function(){box.innerHTML='<div class="egb-msg">مش قادر أوصل للشات دلوقتي</div>';});
+  }
+  function sendMsg(){
+    var inp=document.getElementById('egbChatIn');
+    var t=(inp.value||'').trim();if(!t)return;
+    inp.value='';
+    var d=db();if(!d)return;
+    d.collection('chat_messages').add({u:me(),t:t,tm:now(),ts:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  function closeChat(){if(unsub){try{unsub();}catch(e){}unsub=null;}if(panel){panel.remove();panel=null;}}
+  function fab(){
+    if(document.getElementById('egbChatFab'))return;
+    var b=document.createElement('button');b.id='egbChatFab';b.type='button';b.textContent='💬 شات الأعضاء';
+    b.onclick=openChat;
+    document.body.appendChild(b);
+  }
+  fab();setInterval(fab,1500);
+}catch(e){console.warn('[EgyptBet Addon] chat-v12:',e);}
+})();
+</script>
+<!-- ===== نهاية إضافة: شات الأعضاء v12 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
