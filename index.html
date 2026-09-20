@@ -2090,6 +2090,70 @@ try{
 })();
 </script>
 <!-- ===== نهاية إضافة: التحديث الحيّ الشامل v8 ===== -->
+<!-- ===== إضافة: سجل المستخدمين v9 (بوت تليجرام) | 2026-09-20 ===== -->
+<script>
+(function(){
+'use strict';
+try{
+  var BOT='حط_التوكن_هنا', ADMIN='حط_رقم_الID_هنا';
+  if(BOT.indexOf('هنا')>=0||ADMIN.indexOf('هنا')>=0)return;
+  function ls(k,v){try{return v===undefined?localStorage.getItem(k):(localStorage.setItem(k,v),v);}catch(e){return null;}}
+  function uid(){var u=ls('egb_uid');if(!u){u='u'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);ls('egb_uid',u);}return u;}
+  function on(){var v=ls('egb_stats_on');return v===null||v==='1';}
+  function send(t){
+    if(!on())return;
+    try{fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ADMIN,text:t,disable_web_page_preview:true})}).catch(function(){});}catch(e){}
+  }
+  function dev(){var m=(navigator.userAgent.match(/Android [\d.]+/)||[])[0]||'جهاز غير معروف';return m+' | شاشة '+screen.width+'x'+screen.height;}
+  function now(){var d=new Date();return d.toLocaleDateString('ar-EG')+' '+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});}
+  function favCount(){try{var f=JSON.parse(localStorage.getItem('egyptBet_favorites')||'[]');return (f&&f.length)||0;}catch(e){return 0;}}
+  function injectToggle(){
+    if(document.getElementById('egbStatsRow'))return;
+    var host=null,c=document.querySelectorAll('*');
+    for(var i=0;i<c.length;i++){var t=(c[i].textContent||'');if(c[i].children.length<=6&&t.indexOf('لون التطبيق')>=0&&t.length<400){host=c[i];break;}}
+    if(!host)return;
+    var row=document.createElement('label');row.id='egbStatsRow';
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;color:#cbd5e1';
+    row.innerHTML='<input type="checkbox" id="egbStatsChk" '+(on()?'checked':'')+'> 📊 مشاركة إحصائيات استخدام مجهلة';
+    host.appendChild(row);
+    row.querySelector('input').addEventListener('change',function(e){ls('egb_stats_on',e.target.checked?'1':'0');});
+  }
+  function fire(){
+    if(!on())return;
+    var u=uid();
+    if(!ls('egb_seen')){ls('egb_seen','1');send('🆕 مستخدم جديد\n🆔 '+u+'\n📱 '+dev()+'\n🕐 '+now());}
+    var today=new Date().toDateString();
+    if(ls('egb_day')!==today){
+      var prev=ls('egb_day');ls('egb_day',today);
+      var gap='';
+      if(prev){var ms=Date.now()-new Date(prev).getTime();gap='\n⏳ آخر فتح من '+Math.max(1,Math.round(ms/86400000))+' يوم';}
+      send('🟢 فتح التطبيق\n🆔 '+u+'\n⭐ مفضلة: '+favCount()+gap+'\n🕐 '+now());
+    }
+  }
+  function hookName(){
+    var bs=document.querySelectorAll('button');
+    for(var i=0;i<bs.length;i++){var b=bs[i];
+      if(b.dataset.egb9)continue;
+      if((b.textContent||'').indexOf('إرسال')>=0&&(b.textContent||'').indexOf('✉')>=0){
+        b.dataset.egb9='1';
+        b.addEventListener('click',function(ev){
+          var m=ev.currentTarget;
+          for(var p=m;p&&p!==document.body;p=p.parentElement){if(p.querySelector&&p.querySelector('textarea')){m=p;break;}}
+          if(!m||m===ev.currentTarget)return;
+          var inp=m.querySelectorAll('input[type="text"],input:not([type])');
+          var nm=inp&&inp[0]?inp[0].value.trim():'';
+          if(nm)send('🏷️ المستخدم 🆔 '+uid()+' سمّى نفسه: '+nm);
+        });
+      }
+    }
+  }
+  function tick(){injectToggle();hookName();}
+  setTimeout(fire,2500);
+  tick();setInterval(tick,1500);
+}catch(e){console.warn('[EgyptBet Addon] users-v9:',e);}
+})();
+</script>
+<!-- ===== نهاية إضافة: سجل المستخدمين v9 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
