@@ -2351,7 +2351,7 @@ try{
     var t=(inp.value||'').trim();if(!t)return;
     inp.value='';
     var d=db();if(!d)return;
-    d.collection('chat_messages').add({u:me(),t:t,tm:now(),ts:firebase.firestore.FieldValue.serverTimestamp()});
+    d.collection('chat_messages').add({u:me(),t:t,tm:now(),ts:firebase.firestore.FieldValue.serverTimestamp()}).catch(function(){});
   }
   function closeChat(){if(unsub){try{unsub();}catch(e){}unsub=null;}if(panel){panel.remove();panel=null;}}
   function fab(){
