@@ -2640,6 +2640,75 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] pulse-v24:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: نبض المصادر v24 ===== -->
+<!-- ===== إضافة: الشريط الذهبي المتحرك v25 | 2026-09-22 ===== -->
+<style>
+.egb-tick{margin:10px 2px 2px;overflow:hidden;border-radius:10px;background:linear-gradient(90deg,rgba(251,191,36,.16),rgba(251,191,36,.04));border:1px solid rgba(251,191,36,.4);}
+.egb-tk-in{display:inline-block;white-space:nowrap;padding-left:100%;padding-top:7px;padding-bottom:7px;animation:egbMarq 24s linear infinite;color:#fbbf24;font-weight:800;font-size:13px;}
+.egb-tk-in b{color:#fff;}
+.egb-sep{color:rgba(251,191,36,.55);padding:0 10px;}
+@keyframes egbMarq{to{transform:translateX(-100%)}}
+</style>
+<script>
+(function(){'use strict';try{
+  var SEG=function(){return ''
+    +'<span dir="rtl">⏳ أقرب انطلاق بعد <b class="egb-cd">--:--:--</b></span><span class="egb-sep">•</span>'
+    +'<span dir="rtl">🔴 لايف الآن: <b class="egb-lv">0</b></span><span class="egb-sep">•</span>'
+    +'<span dir="rtl">🎯 متوسط ثقة اليوم: <b class="egb-cf">--</b></span><span class="egb-sep">•</span>'
+    +'<span dir="rtl">📋 معروض: <b class="egb-ct">--</b> مباراة</span><span class="egb-sep">•</span>'
+    +'<span dir="rtl">🛡️ Egypt Bet — الأضمن بيجمعها الأخضر</span><span class="egb-sep">•</span>';};
+  var box=document.createElement('div');box.className='egb-tick';box.dir='ltr';
+  var inn=document.createElement('div');inn.className='egb-tk-in';
+  inn.innerHTML=SEG()+SEG();
+  box.appendChild(inn);
+  function mount(){
+    try{
+      if(box.parentElement)return;
+      var sub=null,els=document.querySelectorAll('p,div,span');
+      for(var i=0;i<els.length;i++){var e=els[i];if(e.children.length===0&&(e.textContent||'').indexOf('منتهية')>=0){sub=e;break;}}
+      if(!sub)return;
+      var card=sub;
+      for(var k=0;k<4&&card;k++){if(card.querySelector&&card.querySelector('#refreshBtn'))break;card=card.parentElement;}
+      if(card)card.appendChild(box);
+    }catch(e){}
+  }
+  function pad(n){return (n<10?'0':'')+n;}
+  function updCd(){
+    try{
+      var now=new Date(),best=null;
+      var ss=document.querySelectorAll('.card .vs strong');
+      for(var i=0;i<ss.length;i++){
+        var t=(ss[i].textContent||'').trim();var mm=t.match(/^(\d{1,2}):(\d{2})$/);
+        if(!mm)continue;
+        var d=new Date(now.getFullYear(),now.getMonth(),now.getDate(),+mm[1],+mm[2],0);
+        if(d>now&&(!best||d<best))best=d;
+      }
+      var txt='غداً إن شاء الله';
+      if(best){var s=Math.floor((best-now)/1000);var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),q=s%60;
+        txt=(h>0?pad(h)+':':'')+pad(m)+':'+pad(q);}
+      var cs=document.querySelectorAll('.egb-cd');
+      for(var j=0;j<cs.length;j++)cs[j].textContent=txt;
+    }catch(e){}
+  }
+  function updStats(){
+    try{
+      var lv=document.querySelectorAll('.live-pill').length;
+      var cf='--',ct='--';
+      var els=document.querySelectorAll('span,div,p');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'');
+        if(t.indexOf('متوسط الثقة')>=0&&t.length<60){var m1=t.match(/(\d+)\s*%/);if(m1)cf=m1[1]+'%';var m2=t.match(/(\d+)\s*مباراة/);if(m2)ct=m2[1];break;}}
+      var a=document.querySelectorAll('.egb-lv'),b=document.querySelectorAll('.egb-cf'),c=document.querySelectorAll('.egb-ct');
+      for(var j=0;j<a.length;j++)a[j].textContent=lv;
+      for(var j2=0;j2<b.length;j2++)b[j2].textContent=cf;
+      for(var j3=0;j3<c.length;j3++)c[j3].textContent=ct;
+    }catch(e){}
+  }
+  setTimeout(mount,1200);setInterval(mount,4000);
+  setInterval(updCd,1000);
+  setInterval(updStats,15000);
+  setTimeout(updStats,2500);setTimeout(updCd,2500);
+}catch(e){console.warn('[EgyptBet Addon] ticker-v25:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: الشريط الذهبي المتحرك v25 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
