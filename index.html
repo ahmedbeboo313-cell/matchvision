@@ -2531,16 +2531,18 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] dedupe-brain-v20:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منضف المخ المكرر v20 ===== -->
-<!-- ===== إضافة: كوبري الأعضاء v21b | 2026-09-22 ===== -->
+<!-- ===== إضافة: كوبري الأعضاء v21c | 2026-09-22 ===== -->
 <script>
 (function(){'use strict';try{
+  var REST='https://firestore.googleapis.com/v1/projects/egypt-bet-dab93/databases/(default)/documents/users?key=AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek';
   function fnv(s){var h=0x811c9dc5;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('0000000'+h.toString(16)).slice(-8);}
   function sync(){
     try{
-      if(!window.firebase)return;
-      var d=null;try{d=firebase.app().firestore();}catch(e){return;}
-      d.collection('users').get().then(function(snap){
-        var arr=[];snap.forEach(function(dc){var v=dc.data();if(v&&v.u&&v.h)arr.push({u:v.u,h:v.h});});
+      fetch(REST).then(function(r){return r.ok?r.json():null;}).then(function(j){
+        var arr=[];
+        if(j&&j.documents){for(var i=0;i<j.documents.length;i++){var f=j.documents[i].fields||{};
+          var u=f.u&&f.u.stringValue,h=f.h&&f.h.stringValue;
+          if(u&&h)arr.push({u:u,h:h});}}
         if(!arr.length)return;
         window.EGB_USERS=arr;window.EGB_OK=true;
         try{
@@ -2568,11 +2570,11 @@ try{
       err.dataset.dbg='1';
     }catch(e){}
   }
-  setTimeout(sync,3000);setInterval(sync,15000);
+  setTimeout(sync,2500);setInterval(sync,15000);
   setInterval(diag,800);
-}catch(e){console.warn('[EgyptBet Addon] bridge-v21b:',e);}})();
+}catch(e){console.warn('[EgyptBet Addon] bridge-v21c:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: كوبري الأعضاء v21b ===== -->
+<!-- ===== نهاية إضافة: كوبري الأعضاء v21c ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
