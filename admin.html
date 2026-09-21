@@ -69,6 +69,14 @@ body{font-family:'Cairo',sans-serif;background:#050810;color:#edf2ff;min-height:
 .ext-row input{flex:1;padding:8px 10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);border-radius:9px;color:#fff;outline:none;font-family:inherit;font-size:12px}
 .log-item{font-size:11.5px;color:#9aa8c7;padding:7px 10px;border-right:3px solid rgba(56,189,248,.4);background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px}
 .log-item b{color:#7dd3fc}
+.users-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.user-row{display:flex;justify-content:space-between;align-items:center;background:var(--card);padding:10px 12px;border-radius:10px;border:1px solid var(--border);}
+.user-row .uname{font-weight:700;color:var(--text);}
+.user-row .udate{font-size:11px;color:var(--muted);}
+.user-row .udel{background:#dc2626;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-weight:700;}
+.msg{margin-top:8px;padding:8px 12px;border-radius:8px;font-size:13px;display:none;}
+.msg.ok{display:block;background:#065f46;color:#d1fae5;}
+.msg.err{display:block;background:#7f1d1d;color:#fee2e2;}
 </style>
 </head>
 <body>
@@ -84,6 +92,16 @@ body{font-family:'Cairo',sans-serif;background:#050810;color:#edf2ff;min-height:
 </div>
 
 <div id="adminApp" class="admin hidden">
+<div class="section">
+  <h3>👥 إدارة الأعضاء</h3>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+    <input id="nu" placeholder="اسم المستخدم (مثال: Ahmed22)" style="flex:1;min-width:140px;">
+    <input id="np" type="password" placeholder="كلمة السر" style="flex:1;min-width:140px;">
+    <button id="addUserBtn" class="btn btn-primary">➕ إضافة عضو</button>
+  </div>
+  <div id="usersList" class="users-list"></div>
+  <div id="usersMsg" class="msg"></div>
+</div>
   <div class="top">
     <h2>👑 Egypt <span>Bet</span> — مركز القيادة</h2>
     <div><span id="adminEmail" style="color:#9aa8c7;font-size:11px;margin-left:8px"></span><button onclick="doSignOut()">خروج</button></div>
@@ -261,10 +279,10 @@ async function tgSend(text){
 
 /* ===== LOADERS ===== */
 async function loadAll(){
-  await Promise.all([loadCards(),loadChart(),loadLeaders(),loadGeo(),loadConfig(),loadSuggestions(),loadAlerts(),loadLog(),loadExt()]);
+  await Promise.all([loadCards(),loadChart(),loadLeaders(),loadGeo(),loadConfig(),loadSuggestions(),loadAlerts(),loadLog(),loadExt(),loadUsers()]);
 }
 async function poll(){
-  await Promise.all([loadCards(),loadSuggestions(),loadAlerts()]);
+  await Promise.all([loadCards(),loadSuggestions(),loadAlerts(),loadUsers()]);
   tgChecks();
   autoReport();
 }
@@ -526,6 +544,74 @@ async function loadExt(){
 function flash(btn){btn.textContent='✓ تم الحفظ';btn.classList.add('saved');setTimeout(()=>{btn.textContent=btn.dataset.orig||'حفظ';btn.classList.remove('saved');},1600);}
 document.querySelectorAll('.save-btn').forEach(b=>b.dataset.orig=b.textContent);
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+/* ===== إدارة الأعضاء ===== */
+var usersCache=[];
+async function hashPwd(p){
+  var enc=new TextEncoder().encode(p);
+  var buf=await crypto.subtle.digest('SHA-256',enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function loadUsers(){
+  try{
+    var snap=await db.collection('users').get();
+    usersCache=[];
+    snap.forEach(function(d){usersCache.push(Object.assign({id:d.id},d.data()));});
+    usersCache.sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0);});
+    renderUsers();
+  }catch(e){showMsg('usersMsg','فشل تحميل الأعضاء: '+e.message,'err');}
+}
+function renderUsers(){
+  var box=document.getElementById('usersList');
+  if(!usersCache.length){box.innerHTML='<div class="msg ok">مفيش أعضاء لسه — أضف أول عضو من الفورم فوق.</div>';return;}
+  var html='';
+  for(var i=0;i<usersCache.length;i++){
+    var u=usersCache[i];
+    var dt=u.createdAt?new Date(u.createdAt).toLocaleDateString('ar-EG'):'غير محدد';
+    var isSelf=(u.u==='Adminbebohamo');
+    html+='<div class="user-row">'
+      +'<div><div class="uname">'+escapeHtml(u.u||'?')+'</div><div class="udate">أُضيف: '+dt+'</div></div>'
+      +'<button class="udel" data-id="'+u.id+'" '+(isSelf?'disabled':'')+'>🗑 مسح</button>'
+      +'</div>';
+  }
+  box.innerHTML=html;
+  var btns=box.querySelectorAll('.udel');
+  for(var j=0;j<btns.length;j++){btns[j].onclick=delUser;}
+}
+async function addUser(){
+  var u=(document.getElementById('nu').value||'').trim();
+  var p=document.getElementById('np').value||'';
+  if(!u||!p){showMsg('usersMsg','اكتب الاسم والباسورد','err');return;}
+  if(u.length<3||p.length<4){showMsg('usersMsg','الاسم 3 حروف+ والباسورد 4+','err');return;}
+  var exists=usersCache.some(function(x){return x.u===u;});
+  if(exists){showMsg('usersMsg','الاسم ده موجود بالفعل','err');return;}
+  var h=await hashPwd(p);
+  try{
+    await db.collection('users').add({u:u,h:h,createdAt:Date.now()});
+    document.getElementById('nu').value='';document.getElementById('np').value='';
+    showMsg('usersMsg','✔ تم إضافة العضو: '+u,'ok');
+    log('إضافة عضو: '+u);
+    await loadUsers();
+  }catch(e){showMsg('usersMsg','فشل الإضافة: '+e.message,'err');}
+}
+async function delUser(){
+  var id=this.dataset.id;
+  var u=usersCache.find(function(x){return x.id===id;});
+  if(!u)return;
+  if(!confirm('متأكد من مسح العضو: '+u.u+' ؟'))return;
+  try{
+    await db.collection('users').doc(id).delete();
+    showMsg('usersMsg','✔ تم مسح: '+u.u,'ok');
+    log('مسح عضو: '+u.u);
+    await loadUsers();
+  }catch(e){showMsg('usersMsg','فشل المسح: '+e.message,'err');}
+}
+function showMsg(id,t,cls){
+  var el=document.getElementById(id);
+  el.textContent=t;el.className='msg '+cls;
+  setTimeout(function(){el.className='msg';},4000);
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+document.getElementById('addUserBtn').onclick=addUser;
 </script>
 </body>
 </html>
