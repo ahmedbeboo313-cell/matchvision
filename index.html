@@ -2617,6 +2617,27 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] inbox-v23b:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: كوبري رسالة الإدارة v23b ===== -->
+<!-- ===== إضافة: نبض المصادر v24 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  function cacheAge(){try{var c=JSON.parse(localStorage.getItem('eb_cache')||'null');return c&&c.ts?Date.now()-c.ts:1e12;}catch(e){return 1e12;}}
+  function badgeEl(){var els=document.querySelectorAll('span,div,button');for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').trim();if(t.indexOf('مخزن')>=0&&t.length<12)return els[i];}return null;}
+  setInterval(function(){
+    try{
+      var b=badgeEl();
+      if(!b)return;
+      if(cacheAge()<5*60*1000){b.style.display='none';}else{b.style.display='';}
+      if(!window.__egbRetrying){
+        window.__egbRetrying=true;
+        setTimeout(function(){window.__egbRetrying=false;},15000);
+        var r=document.getElementById('refreshBtn');
+        if(r)r.click();
+      }
+    }catch(e){}
+  },20000);
+}catch(e){console.warn('[EgyptBet Addon] pulse-v24:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: نبض المصادر v24 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
