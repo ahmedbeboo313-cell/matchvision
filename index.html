@@ -2575,6 +2575,47 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] bridge-v21c:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: كوبري الأعضاء v21c ===== -->
+<!-- ===== إضافة: كوبري رسالة الإدارة v23b | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  var REST='https://firestore.googleapis.com/v1/projects/egypt-bet-dab93/databases/(default)/documents/config/settings?key=AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek';
+  function scan(f,pre,out){
+    for(var k in f){
+      var v=f[k]||{};var lk=(pre+k).toLowerCase();
+      if(v.mapValue&&v.mapValue.fields){scan(v.mapValue.fields,pre+k+'.',out);continue;}
+      var isInb=lk.indexOf('inbox')>=0||lk.indexOf('broadcast')>=0;
+      if(!isInb)continue;
+      if(v.booleanValue!==undefined&&lk.indexOf('text')<0&&lk.indexOf('msg')<0){out.en=v.booleanValue?true:out.en;}
+      if(v.stringValue!==undefined){out.tx=v.stringValue||out.tx;}
+    }
+  }
+  function show(tx,en){
+    if(!en||!tx)return;
+    var m=document.getElementById('inboxModal'),t=document.getElementById('inboxText');
+    if(!m||!t)return;
+    if(!m.classList.contains('hidden'))return;
+    t.textContent=tx;
+    m.classList.remove('hidden');
+    var ok=document.getElementById('inboxOk');
+    if(ok)ok.onclick=function(){m.classList.add('hidden');};
+  }
+  function sync(){
+    try{
+      fetch(REST).then(function(r){return r.ok?r.json():null;}).then(function(j){
+        if(!j||!j.fields)return;
+        var out={en:false,tx:''};
+        scan(j.fields,'',out);
+        window.EGB_INBOX=out;
+        show(out.tx,out.en);
+      }).catch(function(){});
+    }catch(e){}
+  }
+  setTimeout(sync,3500);
+  setInterval(sync,60000);
+  setInterval(function(){try{if(window.EGB_INBOX)show(window.EGB_INBOX.tx,window.EGB_INBOX.en);}catch(e){}},60000);
+}catch(e){console.warn('[EgyptBet Addon] inbox-v23b:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: كوبري رسالة الإدارة v23b ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
