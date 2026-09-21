@@ -2531,25 +2531,48 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] dedupe-brain-v20:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منضف المخ المكرر v20 ===== -->
-<!-- ===== إضافة: كوبري الأعضاء v21 | 2026-09-22 ===== -->
+<!-- ===== إضافة: كوبري الأعضاء v21b | 2026-09-22 ===== -->
 <script>
 (function(){'use strict';try{
+  function fnv(s){var h=0x811c9dc5;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('0000000'+h.toString(16)).slice(-8);}
   function sync(){
     try{
       if(!window.firebase)return;
       var d=null;try{d=firebase.app().firestore();}catch(e){return;}
       d.collection('users').get().then(function(snap){
-        var arr=[];
-        snap.forEach(function(dc){var v=dc.data();if(v&&v.u&&v.h)arr.push({u:v.u,h:v.h});});
+        var arr=[];snap.forEach(function(dc){var v=dc.data();if(v&&v.u&&v.h)arr.push({u:v.u,h:v.h});});
+        if(!arr.length)return;
         window.EGB_USERS=arr;window.EGB_OK=true;
+        try{
+          var c=JSON.parse(localStorage.getItem('egb_gate_cfg')||'null');
+          if(!c||typeof c!=='object')c={};
+          c.users=arr;if(c.gate===undefined)c.gate=true;
+          localStorage.setItem('egb_gate_cfg',JSON.stringify(c));
+        }catch(e){}
       }).catch(function(){});
     }catch(e){}
   }
-  setTimeout(sync,3000);
-  setInterval(sync,60000);
-}catch(e){console.warn('[EgyptBet Addon] bridge-v21:',e);}})();
+  function diag(){
+    try{
+      var err=document.getElementById('egbLE');if(!err)return;
+      if((err.textContent||'').indexOf('بيانات غلط')<0){err.dataset.dbg='';return;}
+      if(err.dataset.dbg)return;
+      var u=(document.getElementById('egbLU').value||'').trim();
+      var p=(document.getElementById('egbLP').value||'');
+      var h=fnv(u+':'+p);
+      function find(L){if(!L)return null;for(var i=0;i<L.length;i++){if(L[i].u===u)return L[i];}return null;}
+      var cu=null;try{var c=JSON.parse(localStorage.getItem('egb_gate_cfg')||'null');cu=c&&c.users;}catch(e){}
+      var fu=find(window.EGB_USERS),fc=find(cu);
+      var f=function(x){return x?(x.h===h?'مطابق ✔':'موجود بس بصمته غلط ✘'):'مش موجود ✘';};
+      err.textContent='🔬 Firestore:'+f(fu)+' | الكاش:'+f(fc);
+      err.dataset.dbg='1';
+    }catch(e){}
+  }
+  setTimeout(sync,3000);setInterval(sync,60000);
+  setInterval(diag,800);
+}catch(e){console.warn('[EgyptBet Addon] bridge-v21b:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: كوبري الأعضاء v21 ===== -->
+<!-- ===== نهاية إضافة: كوبري الأعضاء v21b ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
