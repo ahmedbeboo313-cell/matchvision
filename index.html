@@ -2586,7 +2586,7 @@ try{
       var isInb=lk.indexOf('inbox')>=0||lk.indexOf('broadcast')>=0;
       if(!isInb)continue;
       if(v.booleanValue!==undefined&&lk.indexOf('text')<0&&lk.indexOf('msg')<0){out.en=v.booleanValue?true:out.en;}
-      if(v.stringValue!==undefined){out.tx=v.stringValue||out.tx;}
+      if(v.stringValue!==undefined&&(lk.indexOf('text')>=0||lk.indexOf('msg')>=0||lk.indexOf('body')>=0||lk.indexOf('message')>=0||lk==='inbox')&&!/^\d{9,}$/.test(v.stringValue)){out.tx=v.stringValue||out.tx;}
     }
   }
   function show(tx,en){
@@ -2606,12 +2606,13 @@ try{
         var out={en:false,tx:''};
         scan(j.fields,'',out);
         window.EGB_INBOX=out;
+        if(!out.en||!out.tx){var mm=document.getElementById('inboxModal');if(mm)mm.classList.add('hidden');}
         show(out.tx,out.en);
       }).catch(function(){});
     }catch(e){}
   }
   setTimeout(sync,3500);
-  setInterval(sync,60000);
+  setInterval(sync,15000);
   setInterval(function(){try{if(window.EGB_INBOX)show(window.EGB_INBOX.tx,window.EGB_INBOX.en);}catch(e){}},60000);
 }catch(e){console.warn('[EgyptBet Addon] inbox-v23b:',e);}})();
 </script>
