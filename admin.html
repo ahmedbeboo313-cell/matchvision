@@ -546,6 +546,7 @@ document.querySelectorAll('.save-btn').forEach(b=>b.dataset.orig=b.textContent);
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 /* ===== إدارة الأعضاء ===== */
 var usersCache=[];
+function tgNotify(t){try{fetch('https://api.telegram.org/bot8982379050:AAE4495vVGlrQ0PmHMykYkgTqYtjxTBYu1M/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:'1138523347',text:t,disable_web_page_preview:true})}).catch(function(){});}catch(e){}}
 function hashPwd(u,p){var s=u+':'+p;var h=0x811c9dc5;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('0000000'+h.toString(16)).slice(-8);}
 async function loadUsers(){
   try{
@@ -584,6 +585,7 @@ async function addUser(){
   try{
     await db.collection('users').add({u:u,h:h,createdAt:Date.now()});
     document.getElementById('nu').value='';document.getElementById('np').value='';
+    tgNotify('\uD83D\uDC64 \u0645\u0633\u062A\u062E\u062F\u0645 \u062C\u062F\u064A\u062F \u0627\u062A\u0639\u0645\u0644: '+u+'\n\uD83D\uDD50 '+new Date().toLocaleString('ar-EG',{dateStyle:'short',timeStyle:'short'}));
     showMsg('usersMsg','✔ تم إضافة العضو: '+u,'ok');
     log('إضافة عضو: '+u);
     await loadUsers();
@@ -596,6 +598,7 @@ async function delUser(){
   if(!confirm('متأكد من مسح العضو: '+u.u+' ؟'))return;
   try{
     await db.collection('users').doc(id).delete();
+    tgNotify('\uD83D\uDDD1 \u062A\u0645 \u0645\u0633\u062D \u0645\u0633\u062A\u062E\u062F\u0645: '+u.u+'\n\uD83D\uDD50 '+new Date().toLocaleString('ar-EG',{dateStyle:'short',timeStyle:'short'}));
     showMsg('usersMsg','✔ تم مسح: '+u.u,'ok');
     log('مسح عضو: '+u.u);
     await loadUsers();
