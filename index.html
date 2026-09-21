@@ -2763,19 +2763,19 @@ try{
 (function(){'use strict';try{
   var BOT='8982379050:AAE4495vVGlrQ0PmHMykYkgTqYtjxTBYu1M';
   var GRP='';
-  var EMO_SH=String.fromCharCode(0xD83D,0xDDE1);
+  var EMO_SH=String.fromCharCode(0xD83D,0xDCE1);
   function cards(){return [].slice.call(document.querySelectorAll('article.card'));}
   function txt(el){return el?(el.textContent||'').trim():'';}
   function info(c){
     var t=c.textContent||'';
-    var pe=c.querySelector('.prob');var pv=parseInt(pe?(pe.textContent||'').replace(/\D/g,''):'0',10)||0;if(!pv){var mm=t.match(/(\d{1,2})\s*%/);pv=mm?+mm[1]:0;}
+    var pe=c.querySelector('.prob');var pt=pe?(pe.textContent||''):t;var pm=pt.match(/(\d{1,3})\s*%/);var pv=pm?+pm[1]:0;
     var sh=pv>=85?5:(pv>=75?4:(pv>=65?3:(pv>=55?2:(pv>0?1:0))));
     var ts=[].slice.call(c.querySelectorAll('.teams strong')).map(txt).filter(Boolean);
     var home=ts[0]||'',away=ts.length>1?ts[ts.length-1]:'',tm=ts.length>2?ts[1]:'';
     return {sh:sh,home:home,away:away,tm:tm,mkt:txt(c.querySelector('.safe-head span')),val:txt(c.querySelector('.safe-val')),prob:pv?pv+'%':''};
   }
   function notStarted(c){var t=c.textContent||'';return t.indexOf('\u0627\u0646\u062A\u0647\u062A')<0&&t.indexOf('\u0645\u0628\u0627\u0634\u0631')<0&&t.indexOf('\u0644\u0627\u064A\u0641')<0;}
-  function dayLabel(){var ch=document.querySelectorAll('.chip,.date-chip,.fin-chip,[class*=chip]');for(var i=0;i<ch.length;i++){if((ch[i].className||'').indexOf('active')>=0){var s=txt(ch[i]);if(s&&s.length<20)return s;}}return '\u0627\u0644\u064A\u0648\u0645';}
+  function dayLabel(){var ch=document.querySelectorAll('.chip,.date-chip,.fin-chip,[class*=chip]');var fb='';for(var i=0;i<ch.length;i++){if((ch[i].className||'').indexOf('active')>=0){var s=txt(ch[i]);if(!s||s.length>20)continue;if(/(\u0627\u0644\u064A\u0648\u0645|\u063A\u062F\u0627\u064B|\u0628\u0639\u062F \u063A\u062F|\d{1,2}\/\d{1,2})/.test(s))return s;if(!fb)fb=s;}}return fb||'\u0627\u0644\u064A\u0648\u0645';}
   function pad(n){return (n<10?'0':'')+n;}
   var gt=document.createElement('div');gt.className='egb-gt';
   function updTicket(){
