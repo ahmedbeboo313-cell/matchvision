@@ -2752,6 +2752,71 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] trust-v26b:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: جدار الثقة v26b ===== -->
+<!-- ===== إضافة: التذكرة الذهبية والنشر v27 | 2026-09-22 ===== -->
+<style>
+.egb-gt{margin:10px 2px 2px;border-radius:14px;padding:12px;background:linear-gradient(135deg,rgba(251,191,36,.18),rgba(251,191,36,.06));border:1px solid rgba(251,191,36,.5);color:#fde68a;font-size:13px;font-weight:800;line-height:1.9;text-align:center;}
+.egb-gt b{color:#fff;}
+.egb-pub{display:inline-flex;align-items:center;gap:6px;margin-inline-start:6px;padding:4px 10px;border-radius:999px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.5);color:#93c5fd;font-size:12px;font-weight:800;cursor:pointer;}
+.egb-toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#065f46;color:#d1fae5;padding:10px 16px;border-radius:999px;font-weight:800;font-size:13px;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+</style>
+<script>
+(function(){'use strict';try{
+  var BOT='8982379050:AAE4495vVGlrQ0PmHMykYkgTqYtjxTBYu1M';
+  var SH=new RegExp('\uD83D\uDEE2','g');
+  var EMO_SH='\uD83D\uDEE2';
+  function cards(){return [].slice.call(document.querySelectorAll('article.card'));}
+  function txt(el){return el?(el.textContent||'').trim():'';}
+  function info(c){
+    var t=c.textContent||'';var sh=(t.match(SH)||[]).length;
+    var ts=[].slice.call(c.querySelectorAll('.teams strong')).map(txt).filter(Boolean);
+    return {sh:sh,teams:ts.join(' \u00D7 '),mkt:txt(c.querySelector('.safe-head span')),val:txt(c.querySelector('.safe-val')),prob:txt(c.querySelector('.prob'))};
+  }
+  function pad(n){return (n<10?'0':'')+n;}
+  var gt=document.createElement('div');gt.className='egb-gt';
+  function updTicket(){
+    try{
+      if(!gt.parentElement)return;
+      var cs=cards();if(!cs.length){gt.style.display='none';return;}
+      gt.style.display='';
+      var top=cs.map(info).sort(function(a,b){return b.sh-a.sh;})[0];
+      var now=new Date();var h21=new Date(now.getFullYear(),now.getMonth(),now.getDate(),21,0,0);
+      if(now<h21){
+        var s=Math.floor((h21-now)/1000);var hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;
+        gt.innerHTML='\uD83C\uDFAB <b>\u062A\u0630\u0643\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629 \u0627\u0644\u0630\u0647\u0628\u064A\u0629</b> \u2014 \u062A\u0641\u062A\u062D \u0628\u0639\u062F <b>'+pad(hh)+':'+pad(mm)+':'+pad(ss)+'</b><br>\u0627\u062E\u062A\u064A\u0627\u0631 \u0627\u0644\u0644\u064A\u0644\u0629 \u0634\u0627\u064A\u0644 '+top.sh+' \u062F\u0631\u0648\u0639 '+new Array(top.sh+1).join(EMO_SH)+'... \u062E\u0645\u0651\u0646 \u0623\u064A \u0645\u0628\u0627\u0631\u0627\u0629\u061F \uD83D\uDE0F';
+      }else{
+        gt.innerHTML='\uD83C\uDFAB <b>\u062A\u0630\u0643\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629 \u0627\u0644\u0630\u0647\u0628\u064A\u0629</b><br><b>'+top.teams+'</b><br>\uD83D\uDEE2 \u0627\u0644\u0623\u0636\u0645\u0646: '+top.mkt+' \u2014 '+top.val+'<br>'+new Array(top.sh+1).join(EMO_SH)+' \u062B\u0642\u0629: '+top.prob;
+      }
+    }catch(e){}
+  }
+  function mountTicket(){
+    if(gt.parentElement)return;
+    var tick=document.querySelector('.egb-tick');
+    if(tick&&tick.parentElement){tick.parentElement.insertBefore(gt,tick.nextSibling);return;}
+    var els=document.querySelectorAll('p,div,span');
+    for(var i=0;i<els.length;i++){var e=els[i];if(e.children.length===0&&(e.textContent||'').indexOf('\u0645\u0646\u062A\u0647\u064A\u0629')>=0){var card=e;for(var k=0;k<4&&card;k++){if(card.querySelector&&card.querySelector('#refreshBtn'))break;card=card.parentElement;}if(card)card.appendChild(gt);return;}}
+  }
+  var pub=document.createElement('span');pub.className='egb-pub';pub.textContent='\uD83D\uDCE2 \u0646\u0634\u0631';
+  function toast(t){var d=document.createElement('div');d.className='egb-toast';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove();},3500);}
+  function isAdmin(){try{var s=JSON.parse(localStorage.getItem('egb_session')||'null');return !!(s&&s.u==='Adminbebohamo');}catch(e){return false;}}
+  function channel(){var a=document.querySelector('a[href*="t.me/"]');if(!a)return null;var p=a.href.split('t.me/')[1]||'';p=p.split('?')[0];if(!p)return null;return p.charAt(0)==='+'?p:'@'+p;}
+  pub.onclick=function(){
+    try{
+      var list=cards().map(info).filter(function(x){return x.sh>0;}).sort(function(a,b){return b.sh-a.sh;}).slice(0,5);
+      if(!list.length){toast('\u0645\u0641\u064A\u0634 \u062A\u0648\u0642\u0639\u0627\u062A \u0628\u062F\u0631\u0648\u0639 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629');return;}
+      var msg='\uD83D\uDCE2 Egypt Bet \uD83D\uDC41 \u2014 \u0623\u0642\u0648\u0649 \u062A\u0648\u0642\u0639\u0627\u062A \u0627\u0644\u064A\u0648\u0645\n\uD83D\uDDD3 '+new Date().toLocaleDateString('ar-EG')+'\n\n';
+      for(var i=0;i<list.length;i++){var x=list[i];msg+=(i+1)+') '+x.teams+'\n   \uD83D\uDEE2 \u0627\u0644\u0623\u0636\u0645\u0646: '+x.mkt+' \u2014 '+x.val+'\n   '+new Array(x.sh+1).join(EMO_SH)+' '+x.prob+'\n\n';}
+      msg+='\u2500\u2500\u2500\u2500\u2500\u2500\n'+(txt(document.querySelector('.egb-acc'))||'')+'\n';
+      var ch=channel();if(ch)msg+='\uD83D\uDD17 \u0627\u0646\u0636\u0645: https://t.me/'+ch.replace('@','')+'\n';
+      fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ch||'1138523347',text:msg,disable_web_page_preview:true})}).then(function(r){return r.json();}).then(function(j){toast(j.ok?'\u2705 \u0627\u062A\u0646\u0634\u0631 \u0641\u064A \u0627\u0644\u0642\u0646\u0627\u0629':'\u274C \u0627\u0644\u0628\u0648\u062A \u0645\u0634 \u0623\u062F\u0645\u0646 \u0627\u0644\u0642\u0646\u0627\u0629');}).catch(function(){toast('\u274C \u0641\u0634\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644');});
+    }catch(e){toast('\u274C \u062D\u0635\u0644 \u062E\u0637\u0623');}
+  };
+  function mountPub(){if(pub.parentElement||!isAdmin())return;var rc=document.querySelector('.egb-rec-chip');if(rc&&rc.parentElement){rc.parentElement.insertBefore(pub,rc.nextSibling);}}
+  setTimeout(function(){mountTicket();updTicket();mountPub();},3000);
+  setInterval(function(){mountTicket();mountPub();},4000);
+  setInterval(updTicket,1000);
+}catch(e){console.warn('[EgyptBet Addon] gold-v27:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: التذكرة الذهبية والنشر v27 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
