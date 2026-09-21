@@ -2203,7 +2203,7 @@ try{
     var s=session();
     if(locked()){
       var ok=s&&s.exp>Date.now()&&validUser(s.u,s.h);
-      if(!ok&&s){ls(SKEY,'');}
+      if(!ok&&s&&window.EGB_OK){ls(SKEY,'');}
       if(ok||!s||window.EGB_OK){showLock(!ok);}else{setTimeout(function(){try{refresh();}catch(e){}},4000);}
     } else { showLock(false); }
   }
