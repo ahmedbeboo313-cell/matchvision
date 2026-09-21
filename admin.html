@@ -611,6 +611,36 @@ function showMsg(id,t,cls){
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 document.getElementById('addUserBtn').onclick=addUser;
+/* =====    ===== */
+async function clearChat(){
+  if(!confirm('       \n  !'))return;
+  try{
+    var deleted=0;
+    while(true){
+      var snap=await db.collection('chat_messages').limit(300).get();
+      if(snap.empty)break;
+      var batch=db.batch();
+      snap.forEach(function(d){batch.delete(d.ref);});
+      await batch.commit();
+      deleted+=snap.size;
+      if(snap.size<300)break;
+    }
+    showMsg('chatMsg','   '+deleted+' ','ok');
+    log('   ('+deleted+')');
+    tgNotify('\uD83E\uDDF9 \u062A\u0645 \u0645\u0633\u062D \u0634\u0627\u062A \u0627\u0644\u0623\u0639\u0636\u0627\u0621 \u0643\u0627\u0645\u0644\u0627\u064B ('+deleted+' \u0631\u0633\u0627\u0644\u0629)');
+  }catch(e){showMsg('chatMsg',' : '+e.message,'err');}
+}
+(function(){
+  var sec=document.createElement('div');sec.className='section';
+  sec.innerHTML='<h3>   </h3>'
+   +'<p style="color:var(--muted);font-size:12px;margin-bottom:10px;">          .</p>'
+   +'<button id="clearChatBtn" style="background:#dc2626;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;">   </button>'
+   +'<div id="chatMsg" class="msg"></div>';
+  var host=document.getElementById('addUserBtn');
+  var sect=host&&host.closest?host.closest('.section'):null;
+  if(sect&&sect.parentNode){sect.parentNode.insertBefore(sec,sect.nextSibling);}else{document.body.appendChild(sec);}
+  document.addEventListener('click',function(e){if(e.target&&e.target.id==='clearChatBtn')clearChat();});
+})();
 </script>
 <script>
 (function(){try{
