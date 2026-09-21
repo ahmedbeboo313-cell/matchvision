@@ -2193,7 +2193,7 @@ try{
   function pullCfg(){
     return fetch('./config.json?ts='+Date.now(),{cache:'no-store'})
       .then(function(r){return r.ok?r.json():null;})
-      .then(function(j){if(j&&typeof j==='object'){ls(CKEY,JSON.stringify(j));refresh();}return j;})
+      .then(function(j){if(j&&typeof j==='object'){if(window.EGB_USERS&&window.EGB_USERS.length)j.users=window.EGB_USERS;ls(CKEY,JSON.stringify(j));refresh();}return j;})
       .catch(function(){refresh();});
   }
   function session(){try{return JSON.parse(ls(SKEY)||'null');}catch(e){return null;}}
@@ -2204,7 +2204,7 @@ try{
     if(locked()){
       var ok=s&&s.exp>Date.now()&&validUser(s.u,s.h);
       if(!ok&&s){ls(SKEY,'');}
-      showLock(!ok);
+      if(ok||!s||window.EGB_OK){showLock(!ok);}else{setTimeout(function(){try{refresh();}catch(e){}},4000);}
     } else { showLock(false); }
   }
   var fails=0;
