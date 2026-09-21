@@ -2514,6 +2514,22 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] memory-v19:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: ذاكرة الفرق وفك التجميد v19 ===== -->
+<!-- ===== إضافة: منضف المخ المكرر v20 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  function fix(){
+    var els=document.querySelectorAll('span,div,p,b');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el.children.length)continue;
+      var t=el.textContent||'';
+      if(t.indexOf('🧠🧠')>=0){el.textContent=t.replace(/🧠🧠/g,'🧠');}
+    }
+  }
+  setInterval(fix,1200);setTimeout(fix,1500);
+}catch(e){console.warn('[EgyptBet Addon] dedupe-brain-v20:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: منضف المخ المكرر v20 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
