@@ -2197,7 +2197,7 @@ try{
       .catch(function(){refresh();});
   }
   function session(){try{return JSON.parse(ls(SKEY)||'null');}catch(e){return null;}}
-  function validUser(u,h){var c=cfg();if(!c||!c.users)return null;for(var i=0;i<c.users.length;i++){if(c.users[i].u===u&&c.users[i].h===h)return c.users[i];}return null;}
+  function validUser(u,h){var L=window.EGB_OK?(window.EGB_USERS||[]):((cfg()||{}).users||[]);for(var i=0;i<L.length;i++){if(L[i].u===u&&L[i].h===h)return L[i];}return null;}
   function locked(){var c=cfg();return !!(c&&c.gate);}
   function refresh(){
     var s=session();
@@ -2531,6 +2531,25 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] dedupe-brain-v20:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منضف المخ المكرر v20 ===== -->
+<!-- ===== إضافة: كوبري الأعضاء v21 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  function sync(){
+    try{
+      if(!window.firebase)return;
+      var d=null;try{d=firebase.app().firestore();}catch(e){return;}
+      d.collection('users').get().then(function(snap){
+        var arr=[];
+        snap.forEach(function(dc){var v=dc.data();if(v&&v.u&&v.h)arr.push({u:v.u,h:v.h});});
+        window.EGB_USERS=arr;window.EGB_OK=true;
+      }).catch(function(){});
+    }catch(e){}
+  }
+  setTimeout(sync,3000);
+  setInterval(sync,60000);
+}catch(e){console.warn('[EgyptBet Addon] bridge-v21:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: كوبري الأعضاء v21 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
