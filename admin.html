@@ -546,11 +546,7 @@ document.querySelectorAll('.save-btn').forEach(b=>b.dataset.orig=b.textContent);
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 /* ===== إدارة الأعضاء ===== */
 var usersCache=[];
-async function hashPwd(p){
-  var enc=new TextEncoder().encode(p);
-  var buf=await crypto.subtle.digest('SHA-256',enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+function hashPwd(u,p){var s=u+':'+p;var h=0x811c9dc5;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('0000000'+h.toString(16)).slice(-8);}
 async function loadUsers(){
   try{
     var snap=await db.collection('users').get();
@@ -584,7 +580,7 @@ async function addUser(){
   if(u.length<3||p.length<4){showMsg('usersMsg','الاسم 3 حروف+ والباسورد 4+','err');return;}
   var exists=usersCache.some(function(x){return x.u===u;});
   if(exists){showMsg('usersMsg','الاسم ده موجود بالفعل','err');return;}
-  var h=await hashPwd(p);
+  var h=hashPwd(u,p);
   try{
     await db.collection('users').add({u:u,h:h,createdAt:Date.now()});
     document.getElementById('nu').value='';document.getElementById('np').value='';
