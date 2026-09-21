@@ -2804,7 +2804,7 @@ try{
       var list=cards().map(info).filter(function(x){return x.sh>0;}).sort(function(a,b){return b.sh-a.sh;}).slice(0,5);
       if(!list.length){toast('\u0645\u0641\u064A\u0634 \u062A\u0648\u0642\u0639\u0627\u062A \u0628\u062F\u0631\u0648\u0639 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629');return;}
       var msg='\uD83D\uDCE2 Egypt Bet \uD83D\uDC41 \u2014 \u0623\u0642\u0648\u0649 \u062A\u0648\u0642\u0639\u0627\u062A \u0627\u0644\u064A\u0648\u0645\n\uD83D\uDDD3 '+new Date().toLocaleDateString('ar-EG')+'\n\n';
-      for(var i=0;i<list.length;i++){var x=list[i];msg+=(i+1)+') '+x.teams+'\n   \uD83D\uDEE2 \u0627\u0644\u0623\u0636\u0645\u0646: '+x.mkt+' \u2014 '+x.val+'\n   '+new Array(x.sh+1).join(EMO_SH)+' '+x.prob+'\n\n';}
+      for(var i=0;i<list.length;i++){var x=list[i];msg+=(i+1)+') '+x.teams+'\n   \uD83D\uDEE1 \u0627\u0644\u0623\u0636\u0645\u0646: '+x.mkt+' \u2014 '+x.val+'\n   '+new Array(x.sh+1).join(EMO_SH)+' '+x.prob+'\n\n';}
       msg+='\u2500\u2500\u2500\u2500\u2500\u2500\n'+(txt(document.querySelector('.egb-acc'))||'')+'\n';
       var ch=channel();if(ch)msg+='\uD83D\uDD17 \u0627\u0646\u0636\u0645: https://t.me/'+ch.replace('@','')+'\n';
       fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ch||'1138523347',text:msg,disable_web_page_preview:true})}).then(function(r){return r.json();}).then(function(j){toast(j.ok?'\u2705 \u0627\u062A\u0646\u0634\u0631 \u0641\u064A \u0627\u0644\u0642\u0646\u0627\u0629':'\u274C \u0627\u0644\u0628\u0648\u062A \u0645\u0634 \u0623\u062F\u0645\u0646 \u0627\u0644\u0642\u0646\u0627\u0629');}).catch(function(){toast('\u274C \u0641\u0634\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644');});
