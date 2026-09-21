@@ -2874,12 +2874,17 @@ try{
     g.fillStyle='#86efac';g.font='bold 34px sans-serif';g.fillText('\uD83C\uDFAF '+accTxt(),W/2,H-150);
     var jl=joinLink();if(jl){g.fillStyle='#93c5fd';g.font='bold 32px sans-serif';g.fillText(jl,W/2,H-95);}
     g.fillStyle='#64748b';g.font='28px sans-serif';g.fillText(new Date().toLocaleDateString('ar-EG'),W/2,H-50);
-    cv.toBlob(function(bl){
-      if(!bl)return;
-      var f=new File([bl],'egyptbet-prediction.png',{type:'image/png'});
-      if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Egypt Bet'}).catch(function(){});}
-      else{var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='egyptbet-prediction.png';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);toast('\uD83D\uDCF8 \u0627\u0644\u0635\u0648\u0631\u0629 \u0627\u062A\u062D\u0641\u0638\u062A \u0641\u064A \u0627\u0644\u062A\u0646\u0632\u064A\u0644\u0627\u062A');}
-    },'image/png');
+    showImg(cv.toDataURL('image/png'));
+  }
+  function showImg(url){
+    var m=document.createElement('div');m.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:14px;';
+    m.innerHTML='<div style="max-width:420px;width:100%;text-align:center;">'
+      +'<img src="'+url+'" style="width:100%;border-radius:14px;border:1px solid rgba(251,191,36,.5);">'
+      +'<p style="color:#fde68a;font-weight:800;font-size:13px;margin:10px 0;line-height:1.8;">\uD83D\uDC46 \u0627\u0636\u063A\u0637 \u0636\u063A\u0637\u0629 \u0637\u0648\u064A\u0644\u0629 \u0639\u0644\u0649 \u0627\u0644\u0635\u0648\u0631\u0629<br>\u0648\u0627\u062E\u062A\u0631 "\u062D\u0641\u0638 \u0627\u0644\u0635\u0648\u0631\u0629" \u0623\u0648 "\u0645\u0634\u0627\u0631\u0643\u0629 \u0627\u0644\u0635\u0648\u0631\u0629"</p>'
+      +'<button style="width:100%;border:0;border-radius:10px;padding:11px;background:#fbbf24;color:#111827;font-weight:800;font-size:14px;">\u0625\u063A\u0644\u0627\u0642</button></div>';
+    m.onclick=function(e){if(e.target===m)m.remove();};
+    m.querySelector('button').onclick=function(){m.remove();};
+    document.body.appendChild(m);
   }
   function addBtns(){
     var cs=document.querySelectorAll('article.card');
