@@ -2874,7 +2874,9 @@ try{
     g.fillStyle='#86efac';g.font='bold 34px sans-serif';g.fillText('\uD83C\uDFAF '+accTxt(),W/2,H-150);
     var jl=joinLink();if(jl){g.fillStyle='#93c5fd';g.font='bold 32px sans-serif';g.fillText(jl,W/2,H-95);}
     g.fillStyle='#64748b';g.font='28px sans-serif';g.fillText(new Date().toLocaleDateString('ar-EG'),W/2,H-50);
-    showImg(cv.toDataURL('image/png'));
+    var url=cv.toDataURL('image/png');
+    var a=document.createElement('a');a.href=url;a.download='egyptbet-'+(x.home||'match').replace(/\s+/g,'-')+'.png';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},400);
+    toast('\uD83D\uDCCE \u0627\u0644\u0635\u0648\u0631\u0629 \u0646\u0632\u0644\u062A \u0641\u064A \u0627\u0644\u062A\u0646\u0632\u064A\u0644\u0627\u062A / \u0627\u0644\u062C\u0627\u0644\u0631\u064A');
   }
   function showImg(url){
     var m=document.createElement('div');m.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:14px;';
