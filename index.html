@@ -1138,7 +1138,7 @@ function safeBlock(m,p,fin){
   var chps=others.map(function(d){var h=hOf(d);return '<span class="schip '+(fin?(h===true?'hit':(h===false?'miss':'')):'')+'">'+(fin?d[2].text+(h===true?' ✔':(h===false?' ✘':'')):d[2].text)+' <span class="sp">'+d[2].prob+'%</span></span>';}).join('');
   var ow=others.length?('<div class="safe-others-label">توقعات مضمونة إضافية:</div><div class="safe-others">'+chps+'</div>'):'';
   var learnTxt=(function(){var A=window.TEAMADJ||{},E=window.ELO||{};var nn=function(id){var a=A[id],e=E[id];return (a&&a.n)||(e&&e.n)||0;};var x=nn(m.home&&m.home.id),y=nn(m.away&&m.away.id);if(x||y)return 'مدروس من '+x+' و '+y+' مباراة';return (p.learnN)?('مدروس من '+p.learnN+' مباراة'):'تحليل أساسي';})();
-  var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+learnTxt+'</span></div>';
+  var ft='<div class="match-foot"><span>📊 تقلب: '+['منخفض','متوسط','عالي'][p.volIdx||0]+'</span><span>🧠 '+learnTxt.replace(/🧠/g,'')+'</span></div>';
   return h1SafeBox+btSafeBox+sb+ow+ft;
 }
 function matchCard(m){var p=getPrediction(m),fv=favorites.has(m.id),fin=isFinished(m)&&m.scoreHome!=null;
