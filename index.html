@@ -733,6 +733,7 @@ var nowTs=new Date(m.date).getTime();
 var restH=(tH&&tH.last)?Math.round((nowTs-tH.last)/86400000):null;
 var restA=(tA&&tA.last)?Math.round((nowTs-tA.last)/86400000):null;
 lh=lh*(1+restFactor(restH));la=la*(1+restFactor(restA));
+if(m.oddsHome>1.01&&m.oddsAway>1.01){var _ih=1/m.oddsHome,_ia=1/m.oddsAway;var _tt=_ih+_ia;var _ph=_ih/_tt;var _r=clamp(_ph/(1-_ph),0.2,5);var _c=(lh/((la)||0.001));var _f=clamp(_r/_c,0.75,1.33);lh=lh*Math.sqrt(_f);la=la/Math.sqrt(_f);}
 lh=lh*(1+streakFactor(tH?tH.streak:0));la=la*(1+streakFactor(tA?tA.streak:0));
 var cup=isCupSlug(m.leagueSlug);
 if(cup){var lm=(ld.home+ld.away)/2;lh=lh*0.92+lm*0.08;la=la*0.92+lm*0.08;}
@@ -2460,7 +2461,7 @@ try{
   function db(){try{return firebase.app().firestore();}catch(e){return null;}}
   function me(){try{var s=JSON.parse(localStorage.getItem('egb_session')||'null');return s&&s.u?s.u:'';}catch(e){return '';}}
   function isAdmin(){return me().indexOf('Admin')===0;}
-  function keys(){var out=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('mv_')===0)out.push(k);}return out;}
+  function keys(){var out=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('mv_')===0||k.indexOf('eb_')===0))out.push(k);}return out;}
   function upload(){
     if(!isAdmin())return;var d=db();if(!d)return;
     if(Date.now()-(parseInt(localStorage.getItem('egb_brain_up')||'0',10)||0)<MIN_GAP)return;
