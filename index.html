@@ -2767,7 +2767,7 @@ try{
   function cards(){return [].slice.call(document.querySelectorAll('article.card'));}
   function txt(el){return el?(el.textContent||'').trim():'';}
   function info(c){
-    var t=c.textContent||'';var sh=(t.match(SH)||[]).length;
+    var pv=parseInt((txt(c.querySelector('.prob'))||'0'),10)||0;var sh=pv>=85?5:(pv>=75?4:(pv>=65?3:(pv>=55?2:(pv>0?1:0))));
     var ts=[].slice.call(c.querySelectorAll('.teams strong')).map(txt).filter(Boolean);
     return {sh:sh,teams:ts.join(' \u00D7 '),mkt:txt(c.querySelector('.safe-head span')),val:txt(c.querySelector('.safe-val')),prob:txt(c.querySelector('.prob'))};
   }
