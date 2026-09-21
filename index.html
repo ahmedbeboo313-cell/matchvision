@@ -2762,8 +2762,8 @@ try{
 <script>
 (function(){'use strict';try{
   var BOT='8982379050:AAE4495vVGlrQ0PmHMykYkgTqYtjxTBYu1M';
-  var SH=new RegExp('\uD83D\uDEE2','g');
-  var EMO_SH='\uD83D\uDEE2';
+  var SH=new RegExp('\uD83D\uDEE1','g');
+  var EMO_SH=String.fromCharCode(0xD83D,0xDDE1);
   function cards(){return [].slice.call(document.querySelectorAll('article.card'));}
   function txt(el){return el?(el.textContent||'').trim():'';}
   function info(c){
@@ -2784,7 +2784,7 @@ try{
         var s=Math.floor((h21-now)/1000);var hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;
         gt.innerHTML='\uD83C\uDFAB <b>\u062A\u0630\u0643\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629 \u0627\u0644\u0630\u0647\u0628\u064A\u0629</b> \u2014 \u062A\u0641\u062A\u062D \u0628\u0639\u062F <b>'+pad(hh)+':'+pad(mm)+':'+pad(ss)+'</b><br>\u0627\u062E\u062A\u064A\u0627\u0631 \u0627\u0644\u0644\u064A\u0644\u0629 \u0634\u0627\u064A\u0644 '+top.sh+' \u062F\u0631\u0648\u0639 '+new Array(top.sh+1).join(EMO_SH)+'... \u062E\u0645\u0651\u0646 \u0623\u064A \u0645\u0628\u0627\u0631\u0627\u0629\u061F \uD83D\uDE0F';
       }else{
-        gt.innerHTML='\uD83C\uDFAB <b>\u062A\u0630\u0643\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629 \u0627\u0644\u0630\u0647\u0628\u064A\u0629</b><br><b>'+top.teams+'</b><br>\uD83D\uDEE2 \u0627\u0644\u0623\u0636\u0645\u0646: '+top.mkt+' \u2014 '+top.val+'<br>'+new Array(top.sh+1).join(EMO_SH)+' \u062B\u0642\u0629: '+top.prob;
+        gt.innerHTML='\uD83C\uDFAB <b>\u062A\u0630\u0643\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062F\u0629 \u0627\u0644\u0630\u0647\u0628\u064A\u0629</b><br><b>'+top.teams+'</b><br>\uD83D\uDEE1 \u0627\u0644\u0623\u0636\u0645\u0646: '+top.mkt+' \u2014 '+top.val+'<br>'+new Array(top.sh+1).join(EMO_SH)+' \u062B\u0642\u0629: '+top.prob;
       }
     }catch(e){}
   }
@@ -2807,7 +2807,13 @@ try{
       for(var i=0;i<list.length;i++){var x=list[i];msg+=(i+1)+') '+x.teams+'\n   \uD83D\uDEE1 \u0627\u0644\u0623\u0636\u0645\u0646: '+x.mkt+' \u2014 '+x.val+'\n   '+new Array(x.sh+1).join(EMO_SH)+' '+x.prob+'\n\n';}
       msg+='\u2500\u2500\u2500\u2500\u2500\u2500\n'+(txt(document.querySelector('.egb-acc'))||'')+'\n';
       var ch=channel();if(ch)msg+='\uD83D\uDD17 \u0627\u0646\u0636\u0645: https://t.me/'+ch.replace('@','')+'\n';
-      fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:ch||'1138523347',text:msg,disable_web_page_preview:true})}).then(function(r){return r.json();}).then(function(j){toast(j.ok?'\u2705 \u0627\u062A\u0646\u0634\u0631 \u0641\u064A \u0627\u0644\u0642\u0646\u0627\u0629':'\u274C \u0627\u0644\u0628\u0648\u062A \u0645\u0634 \u0623\u062F\u0645\u0646 \u0627\u0644\u0642\u0646\u0627\u0629');}).catch(function(){toast('\u274C \u0641\u0634\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644');});
+      var dests=[];if(ch)dests.push(ch);dests.push('1138523347');
+      (function trySend(i){
+        if(i>=dests.length){toast('\u274C \u0641\u0634\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u0644\u0643\u0644 \u0627\u0644\u0648\u062C\u0647\u0627\u062A');return;}
+        fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:dests[i],text:msg,disable_web_page_preview:true})}).then(function(r){return r.json();}).then(function(j){
+          if(j.ok){toast('\u2705 \u0627\u062A\u0646\u0634\u0631 \u0641\u064A: '+dests[i]);}else{trySend(i+1);}
+        }).catch(function(){trySend(i+1);});
+      })(0);
     }catch(e){toast('\u274C \u062D\u0635\u0644 \u062E\u0637\u0623');}
   };
   function mountPub(){if(pub.parentElement||!isAdmin())return;var rc=document.querySelector('.egb-rec-chip');if(rc&&rc.parentElement){rc.parentElement.insertBefore(pub,rc.nextSibling);}}
