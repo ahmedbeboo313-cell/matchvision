@@ -2829,6 +2829,21 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] gold-v27d:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التذكرة الذهبية والنشر v27d ===== -->
+<!-- ===== إضافة: فلتر الدوريات النهائي v29 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  var ALLOW=['\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0645\u0635\u0631\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0633\u0639\u0648\u062F\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0625\u0646\u062C\u0644\u064A\u0632\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0625\u0633\u0628\u0627\u0646\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0625\u064A\u0637\u0627\u0644\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0623\u0644\u0645\u0627\u0646\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0641\u0631\u0646\u0633\u064A','\u0623\u0628\u0637\u0627\u0644 \u0623\u0648\u0631\u0648\u0628\u0627','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0623\u0648\u0631\u0648\u0628\u064A','\u0643\u0623\u0633 \u0645\u0635\u0631','\u0643\u0623\u0633 \u0627\u0644\u0645\u0644\u0643','\u0623\u0628\u0637\u0627\u0644 \u0623\u0641\u0631\u064A\u0642\u064A\u0627','\u0627\u0644\u0643\u0648\u0646\u0641\u062F\u0631\u0627\u0644\u064A\u0629','\u0627\u0644\u0642\u0633\u0645 \u0627\u0644\u062B\u0627\u0646\u064A'];
+  function leagueOf(c){var e=c.querySelector('[class*=league],.lg,.league');if(e)return (e.textContent||'').trim();return c.textContent||'';}
+  function ok(c){var L=leagueOf(c);if(!L)return true;for(var i=0;i<ALLOW.length;i++){if(L.indexOf(ALLOW[i])>=0)return true;}return false;}
+  function apply(){
+    var cs=document.querySelectorAll('article.card');var hidden=0;
+    for(var i=0;i<cs.length;i++){var c=cs[i];if(!ok(c)){c.style.display='none';hidden++;}else{c.style.display='';}}
+    if(hidden>0){var els=document.querySelectorAll('span,div,p');for(var j=0;j<els.length;j++){var t=(els[j].textContent||'').trim();if(/^\d+\s*\u0645\u0628\u0627\u0631\u0627\u0629$/.test(t)&&els[j].children.length===0){els[j].textContent=(cs.length-hidden)+' \u0645\u0628\u0627\u0631\u0627\u0629';break;}}}
+  }
+  setTimeout(apply,1500);setInterval(apply,2000);
+}catch(e){console.warn('[EgyptBet Addon] leaguefilter-v29:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: فلتر الدوريات النهائي v29 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
