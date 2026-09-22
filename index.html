@@ -516,7 +516,7 @@ if(sy!=null)window.scrollTo({top:sy,behavior:'auto'});
 updateBell();updateSource();reportHealth(state.source==='live');showInbox(false);maybeBankerPush();
 if(state.matches.length===0&&Date.now()-lastEmptyRetry>20000){lastEmptyRetry=Date.now();setTimeout(function(){if(state.matches.length===0&&!isLoading&&state.mode!=='finished')loadMatches(true);},8000);}
 }
-function fetchFinishedDay(d,all){var src=all?LEAGUES:LEAGUES.filter(function(l){return CORE_SLUGS.indexOf(l.slug)>=0;});var rq=src.map(function(l){return l.apifbOnly?Promise.resolve([]):fetchESPN(l,d.replace(/-/g,''));});if(apiFbOk('fin',60))rq.push(fetchApiFb('fixtures?date='+d));rq.push(fetchTSDBDay(d));return fetchSet(rq).then(function(it){return it.filter(function(m){return m&&(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null;});});}
+function fetchFinishedDay(d,all){var src=all?LEAGUES:LEAGUES.filter(function(l){return CORE_SLUGS.indexOf(l.slug)>=0;});var rq=src.map(function(l){return l.apifbOnly?Promise.resolve([]):fetchESPN(l,d.replace(/-/g,''));});if(apiFbOk('fin:'+d,30))rq.push(fetchApiFb('fixtures?date='+d));rq.push(fetchTSDBDay(d));return fetchSet(rq).then(function(it){return it.filter(function(m){return m&&(m.statusCompleted||m.statusState==='post')&&m.scoreHome!=null&&m.scoreAway!=null;});});}
 function loadFinishedFlow(silent){
 if(finLoading)return;finLoading=true;isLoading=true;loadStartTs=Date.now();state.source='loading';state.sourcesOk=[];updateSource();
 if(!silent)showLoading();else loading.hidden=true;
@@ -552,7 +552,7 @@ function buildRequests(){var td=fmtDate(new Date()),ys=fmtDate(addDays(new Date(
 var am=state.league==='all'?AMER_SLUGS:AMER_SLUGS.filter(function(s){return s===state.league;});
 var addAm=function(){am.forEach(function(s){var l=LEAGUES.find(function(x){return x.slug===s;});if(l)rq.push(fetchESPN(l,ys.replace(/-/g,'')));});};
 if(state.mode==='live'){LIVE_SLUGS.forEach(function(sl){var l=LEAGUES.find(function(x){return x.slug===sl;});if(l)rq.push(fetchESPN(l,td.replace(/-/g,'')));});addAm();rq.push(fetchTSDBLive());rq.push(fetchTSDBDay(td));if(apiFbOk('live',5))rq.push(fetchApiFb('fixtures?live=all'));}
-else{var sel=activeLeagues();sel.forEach(function(l){if(!l.apifbOnly)rq.push(fetchESPN(l,state.date.replace(/-/g,'')));});rq.push(fetchTSDBDay(state.date));addAm();if(apiFbOk('day',60))rq.push(fetchApiFb('fixtures?date='+state.date));
+else{var sel=activeLeagues();sel.forEach(function(l){if(!l.apifbOnly)rq.push(fetchESPN(l,state.date.replace(/-/g,'')));});rq.push(fetchTSDBDay(state.date));addAm();if(apiFbOk('day:'+state.date,30))rq.push(fetchApiFb('fixtures?date='+state.date));
 if(state.date!==td){var co=state.league==='all'?LEAGUES.filter(function(l){return CORE_SLUGS.indexOf(l.slug)>=0;}):sel;co.forEach(function(l){rq.push(fetchESPN(l,td.replace(/-/g,'')));});rq.push(fetchTSDBDay(td));}}
 return rq;}
 function activeLeagues(){return state.league==='all'?LEAGUES:LEAGUES.filter(function(l){return l.slug===state.league;});}
@@ -2836,6 +2836,14 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] gold-v27d:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التذكرة الذهبية والنشر v27d ===== -->
+<!-- ===== إضافة: حارس NaN v30 | 2026-09-22 ===== -->
+<script>
+(function(){'use strict';try{
+  function fix(){var els=document.querySelectorAll('b,span,div,p,strong');for(var i=0;i<els.length;i++){var e=els[i];if(e.children.length===0){var t=(e.textContent||'').trim();if(t&&t.indexOf('NaN')>=0&&t.length<20){e.textContent='\u2014';}}}}
+  setInterval(fix,1500);setTimeout(fix,1200);
+}catch(e){}})();
+</script>
+<!-- ===== نهاية إضافة: حارس NaN v30 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
