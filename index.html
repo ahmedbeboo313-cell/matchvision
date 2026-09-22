@@ -566,9 +566,9 @@ var hl=h.linescores||[],al=a.linescores||[];var fhH=0,fhA=0,hasHalf=false;
 if(hl.length>=1&&e.status&&e.status.type&&e.status.type.completed){hasHalf=true;fhH=Number(hl[0].displayValue||hl[0].value||0)||0;fhA=Number((al[0]||{}).displayValue||(al[0]||{}).value||0)||0;}
 return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:(e.status&&e.status.type&&e.status.type.state)||'pre',statusCompleted:!!(e.status&&e.status.type&&e.status.type.completed),live:lv,minute:lv?((e.status&&e.status.type&&e.status.type.detail)||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',homeForm:String(h.form||''),awayForm:String(a.form||''),fhHome:fhH,fhAway:fhA,hasHalf:hasHalf,oddsHome:oH,oddsAway:oA,timeUnknown:false,home:{id:(h.team&&h.team.id)||'',name:(h.team&&h.team.displayName)||'فريق',abbr:(h.team&&h.team.abbreviation)||'',logo:(h.team&&h.team.logo)||'',record:getRec(h)},away:{id:(a.team&&a.team.id)||'',name:(a.team&&a.team.displayName)||'فريق',abbr:(a.team&&a.team.abbreviation)||'',logo:(a.team&&a.team.logo)||'',record:getRec(a)},venue:(c.venue&&c.venue.fullName)||''};}
 function getRec(c){var r=c.records||[];if(!r.length)return'';var t=r.find(function(x){return x.type==='total'||x.name==='overall';});return(t&&t.summary)||'';}
-function fetchTSDB(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
-function fetchTSDBDay(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
-function fetchTSDBLive(){return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,true);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDB(ds){return Promise.resolve([]);return fetchT('https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDBDay(ds){return Promise.resolve([]);return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDBLive(){return Promise.resolve([]);return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,true);}).filter(Boolean);}).catch(function(){return[];});}
 function parseTSDB(e,live){if(!e||!e.idEvent)return null;var dt=new Date();var timeUnknown=false;
 if(e.strDate){var p=new Date(e.strDate+'T'+(e.strTime||'00:00:00')+'Z');if(!isNaN(p))dt=p;else timeUnknown=true;}else{timeUnknown=true;}
 if(!e.strTime)timeUnknown=true;
@@ -2829,21 +2829,6 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] gold-v27d:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التذكرة الذهبية والنشر v27d ===== -->
-<!-- ===== إضافة: فلتر الدوريات النهائي v29b | 2026-09-22 ===== -->
-<script>
-(function(){'use strict';try{
-  var ALLOW=['\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0645\u0635\u0631\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0633\u0639\u0648\u062F\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0625\u0646\u062C\u0644\u064A\u0632\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0625\u0633\u0628\u0627\u0646\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0625\u064A\u0637\u0627\u0644\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0623\u0644\u0645\u0627\u0646\u064A','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0641\u0631\u0646\u0633\u064A','\u0623\u0628\u0637\u0627\u0644 \u0623\u0648\u0631\u0648\u0628\u0627','\u0627\u0644\u062F\u0648\u0631\u064A \u0627\u0644\u0623\u0648\u0631\u0648\u0628\u064A','\u0643\u0623\u0633 \u0645\u0635\u0631','\u0643\u0623\u0633 \u0627\u0644\u0645\u0644\u0643','\u0623\u0628\u0637\u0627\u0644 \u0623\u0641\u0631\u064A\u0642\u064A\u0627','\u0627\u0644\u0643\u0648\u0646\u0641\u062F\u0631\u0627\u0644\u064A\u0629','\u0627\u0644\u0642\u0633\u0645 \u0627\u0644\u062B\u0627\u0646\u064A'];
-  function nameOfSlug(s){var sel=document.getElementById('leagueSelect')||document.querySelector('select');if(!sel||!s)return '';var o=sel.querySelector('option[value="'+s+'"]');return o?(o.textContent||'').trim():'';}
-  function ok(c){var el=c.querySelector('[data-league]');if(!el)return true;var nm=nameOfSlug(el.getAttribute('data-league')||'');if(!nm)return true;for(var i=0;i<ALLOW.length;i++){if(nm.indexOf(ALLOW[i])>=0)return true;}return false;}
-  function apply(){
-    var cs=document.querySelectorAll('article.card');var hidden=0;
-    for(var i=0;i<cs.length;i++){var c=cs[i];if(!ok(c)){c.style.display='none';hidden++;}else{c.style.display='';}}
-    if(hidden>0){var els=document.querySelectorAll('span,div,p');for(var j=0;j<els.length;j++){var t=(els[j].textContent||'').trim();if(/^\d+\s*\u0645\u0628\u0627\u0631\u0627\u0629$/.test(t)&&els[j].children.length===0){els[j].textContent=(cs.length-hidden)+' \u0645\u0628\u0627\u0631\u0627\u0629';break;}}}
-  }
-  setTimeout(apply,1500);setInterval(apply,2000);
-}catch(e){console.warn('[EgyptBet Addon] leaguefilter-v29b:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: فلتر الدوريات النهائي v29b ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
