@@ -2844,14 +2844,15 @@ try{
 }catch(e){}})();
 </script>
 <!-- ===== نهاية إضافة: حارس NaN v30 ===== -->
-<!-- ===== إضافة: تقرير المصدر v31c | 2026-09-22 ===== -->
+<!-- ===== إضافة: تقرير المصدر v31d | 2026-09-22 ===== -->
 <script>
 (function(){'use strict';try{
   var box=document.createElement('div');box.style.cssText='display:none;position:fixed;top:8px;left:8px;right:8px;z-index:999999;background:#7f1d1d;color:#fee2e2;padding:10px;border-radius:12px;font-size:11px;line-height:1.7;max-height:60%;overflow:auto;white-space:pre-wrap;';
   document.body.appendChild(box);
+  function findLeagueSel(){var ss=document.querySelectorAll('select');for(var i=0;i<ss.length;i++){if(ss[i].querySelector('option[value="gulf.cup"]'))return ss[i];}return null;}
   setInterval(function(){
     try{
-      var sel=document.getElementById('leagueSelect')||document.querySelector('select');if(!sel)return;
+      var sel=findLeagueSel();if(!sel)return;
       var v=sel.value;if(v!=='gulf.cup'&&v!=='caf.nations'){box.style.display='none';return;}
       var cards=document.querySelectorAll('article.card');var vis=0;
       for(var i=0;i<cards.length;i++){if(cards[i].style.display!=='none')vis++;}
@@ -2863,7 +2864,7 @@ try{
   },2500);
 }catch(e){}})();
 </script>
-<!-- ===== نهاية إضافة: تقرير المصدر v31c ===== -->
+<!-- ===== نهاية إضافة: تقرير المصدر v31d ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
