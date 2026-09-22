@@ -2844,52 +2844,72 @@ try{
 }catch(e){}})();
 </script>
 <!-- ===== نهاية إضافة: حارس NaN v30 ===== -->
-<!-- ===== إضافة: بوابة الكؤوس المستقلة v32 | 2026-09-22 ===== -->
+<!-- ===== إضافة: بوابة الكؤوس v33 (طريق البحث عن المسابقة) | 2026-09-22 ===== -->
 <script>
 (function(){'use strict';try{
-  var KEY='e983a918823fdba43ac9c260543cd030';
-  var CUPS={'gulf.cup':/gulf/i,'caf.nations':/africa cup of nations|afcon|africa.*cup of nations|cup of nations.*africa/i,'uefa.nations':/nations league/i};
+  var CUPS={
+    'gulf.cup':['Arabian Gulf Cup','Gulf Cup of Nations','Gulf Cup','Arab Gulf Cup'],
+    'caf.nations':['Africa Cup of Nations Qualification','Africa Cup of Nations','African Nations Championship'],
+    'uefa.nations':['UEFA Nations League']
+  };
   function leagueSel(){var ss=document.querySelectorAll('select');for(var i=0;i<ss.length;i++){if(ss[i].querySelector('option[value="gulf.cup"]'))return ss[i];}return null;}
   function curDate(){var ss=document.querySelectorAll('select');for(var i=0;i<ss.length;i++){var v=ss[i].value||'';var m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(m)return m[3]+'-'+(m[1].length<2?'0'+m[1]:m[1])+'-'+(m[2].length<2?'0'+m[2]:m[2]);}
-    var chips=document.querySelectorAll('[class*=chip]');for(var j=0;j<chips.length;j++){var s=(chips[j].textContent||'').trim();if((chips[j].className||'').indexOf('active')>=0){var d=new Date();if(s==='\u063A\u062F\u0627\u064B')d.setDate(d.getDate()+1);else if(s==='\u0628\u0639\u062F \u063A\u062F')d.setDate(d.getDate()+2);else if(s!=='\u0627\u0644\u064A\u0648\u0645')continue;return d.toISOString().slice(0,10);}}
+    var chips=document.querySelectorAll('[class*=chip]');for(var j=0;j<chips.length;j++){if((chips[j].className||'').indexOf('active')>=0){var s=(chips[j].textContent||'').trim();var d=new Date();if(s==='\u063A\u062F\u0627\u064B')d.setDate(d.getDate()+1);else if(s==='\u0628\u0639\u062F \u063A\u062F')d.setDate(d.getDate()+2);else if(s!=='\u0627\u0644\u064A\u0648\u0645')continue;return d.toISOString().slice(0,10);}}
     return new Date().toISOString().slice(0,10);}
-  function tsdbKey(){var ss=document.querySelectorAll('script');for(var i=0;i<ss.length;i++){var m=(ss[i].textContent||'').match(/thesportsdb\.com\/api\/v1\/json\/([A-Za-z0-9]+)\//);if(m)return m[1];}return '3';}
-  function mk(e,cup,ln){var t=e.teams||{},fx=e.fixture||{},st=fx.status||{};return {cup:cup,home:(t.home&&t.home.name)||'',away:(t.away&&t.away.name)||'',time:fx.date?new Date(fx.date).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'',league:ln,status:st.short||''};}
-  function mkT(e,cup,ln){var dt=(e.strDate&&e.strTime)?new Date(e.strDate+'T'+e.strTime+'Z'):null;return {cup:cup,home:e.strHomeTeam||'',away:e.strAwayTeam||'',time:dt?dt.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}):'',league:ln,status:e.strStatus||''};}
-  function fromApiFb(date){return fetch('https://v3.football.api-sports.io/fixtures?date='+date,{headers:{'x-apisports-key':KEY}}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){var out=[];(d.response||[]).forEach(function(e){var ln=(e.league&&e.league.name)||'';for(var k in CUPS){if(CUPS[k].test(ln))out.push(mk(e,k,ln));}});return out;}).catch(function(){return null;});}
-  function fromTsdb(date){return fetch('https://www.thesportsdb.com/api/v1/json/'+tsdbKey()+'/eventsday.php?d='+date+'&s=Soccer').then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){var out=[];(d.events||[]).forEach(function(e){var ln=e.strLeague||'';for(var k in CUPS){if(CUPS[k].test(ln))out.push(mkT(e,k,ln));}});return out;}).catch(function(){return null;});}
-  function render(list){
-    var sel=leagueSel();if(!sel||!CUPS[sel.value])return;
-    list=list.filter(function(x){return x.cup===sel.value&&x.home&&x.away;});
-    var host=document.querySelector('article.card');var empty=null;
-    var els=document.querySelectorAll('div,p');for(var i=0;i<els.length;i++){if(els[i].children.length===0&&(els[i].textContent||'').indexOf('\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0628\u0627\u0631\u064A\u0627\u062A')>=0){empty=els[i];break;}}
-    var container=(host&&host.parentElement)||(empty&&empty.parentElement);if(!container)return;
-    var old=container.querySelectorAll('.egb-cup');for(var j=0;j<old.length;j++)old[j].remove();
-    if(empty)empty.style.display=list.length?'none':'';
-    if(!list.length)return;
-    var frag=document.createDocumentFragment();
-    list.forEach(function(x){var d=document.createElement('article');d.className='card egb-cup';d.style.cssText='margin:10px 0;padding:14px;border-radius:14px;background:#0f172a;border:1px solid rgba(251,191,36,.4);';
-      d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'
-        +'<b style="color:#fff;font-size:14px;flex:1;text-align:right;">'+x.home+'</b>'
-        +'<span style="color:#fbbf24;font-weight:800;font-size:13px;white-space:nowrap;">'+x.time+'</span>'
-        +'<b style="color:#fff;font-size:14px;flex:1;text-align:left;">'+x.away+'</b></div>'
-        +'<div style="margin-top:8px;text-align:center;color:#94a3b8;font-size:11px;font-weight:700;">\uD83C\uDFC6 '+x.league+' \u2022 '+(x.status||'\u0644\u0645 \u062A\u0628\u062F\u0623')+'</div>';
-      frag.appendChild(d);});
-    container.insertBefore(frag,container.firstChild);
+  function j(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json();});}
+  function findLeague(slug){
+    var c=null;try{c=JSON.parse(localStorage.getItem('egb_cup33_'+slug)||'null');}catch(e){}
+    if(c&&Date.now()-c.ts<86400000)return Promise.resolve(c);
+    var names=CUPS[slug];var i=0;
+    var step=function(){
+      if(i>=names.length){var o={ts:Date.now(),id:'',found:'\u0645\u0634 \u0645\u0648\u062C\u0648\u062F \u0641\u064A TheSportsDB'};try{localStorage.setItem('egb_cup33_'+slug,JSON.stringify(o));}catch(e){}return Promise.resolve(o);}
+      return j('https://www.thesportsdb.com/api/v1/json/3/search_leagues.php?name='+encodeURIComponent(names[i])).then(function(d){
+        var ls=d.leagues||[];
+        if(ls.length){var o={ts:Date.now(),id:ls[0].idLeague,found:ls[0].strLeague};try{localStorage.setItem('egb_cup33_'+slug,JSON.stringify(o));}catch(e){}return o;}
+        i++;return step();
+      }).catch(function(){i++;return step();});
+    };
+    return step();
   }
+  function eventsOf(id,slug,date){
+    var ck='egb_cup33ev_'+slug+'_'+date;var c=null;try{c=JSON.parse(localStorage.getItem(ck)||'null');}catch(e){}
+    if(c&&Date.now()-c.ts<600000)return Promise.resolve(c.list);
+    return j('https://www.thesportsdb.com/api/v1/json/3/lookupleague.php?id='+id).then(function(d){
+      var list=(d.events||[]).filter(function(e){return (e.strDate||'').slice(0,10)===date;}).map(function(e){return {home:e.strHomeTeam||'',away:e.strAwayTeam||'',time:(e.strTime||'').slice(0,5),status:e.strStatus||''};});
+      try{localStorage.setItem(ck,JSON.stringify({ts:Date.now(),list:list}));}catch(e){}
+      return list;
+    }).catch(function(){return [];});
+  }
+  function container(){var host=document.querySelector('article.card');if(host&&host.parentElement)return host.parentElement;
+    var els=document.querySelectorAll('div,p');for(var i=0;i<els.length;i++){if(els[i].children.length===0&&(els[i].textContent||'').indexOf('\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0628\u0627\u0631\u064A\u0627\u062A')>=0)return els[i].parentElement;}
+    return null;}
+  function clearOld(con){var old=con.querySelectorAll('.egb-cup');for(var j=0;j<old.length;j++)old[j].remove();}
+  function card(html,gold){var d=document.createElement('article');d.className='card egb-cup';d.style.cssText='margin:10px 0;padding:14px;border-radius:14px;background:#0f172a;border:1px solid '+(gold?'rgba(251,191,36,.4)':'rgba(248,113,113,.4)')+';';d.innerHTML=html;return d;}
   function run(){
     var sel=leagueSel();if(!sel||!CUPS[sel.value])return;
-    var date=curDate();var ck='egb_cups_'+date;var c=null;
-    try{c=JSON.parse(localStorage.getItem(ck)||'null');}catch(e){}
-    if(c&&Date.now()-c.ts<600000){render(c.list);return;}
-    fromApiFb(date).then(function(l){if(l&&l.length){save(l);render(l);return null;}return fromTsdb(date).then(function(l2){if(l2){save(l2);render(l2);}});});
-    function save(l){try{localStorage.setItem(ck,JSON.stringify({ts:Date.now(),list:l}));}catch(e){}}
+    var slug=sel.value;var date=curDate();var con=container();if(!con)return;
+    findLeague(slug).then(function(info){
+      if(!info.id){clearOld(con);con.insertBefore(card('<div style="color:#fca5a5;font-size:12px;font-weight:800;text-align:center;">\uD83D\uDD0D \u0627\u0644\u0645\u0633\u0627\u0628\u0642\u0629: '+info.found+'</div>',false),con.firstChild);return;}
+      eventsOf(info.id,slug,date).then(function(list){
+        clearOld(con);
+        if(!list.length){con.insertBefore(card('<div style="color:#fcd34d;font-size:12px;font-weight:8000;text-align:center;">\uD83C\uDFC6 \u0627\u0644\u0645\u0633\u0627\u0628\u0642\u0629 \u0645\u0648\u062C\u0648\u062F\u0629: <b>'+info.found+'</b><br>\u0628\u0633 \u0645\u0641\u064A\u0634 \u0645\u0628\u0627\u0631\u0627\u0629 \u064A\u0648\u0645 '+date+'</div>',true),con.firstChild);return;}
+        var frag=document.createDocumentFragment();
+        list.forEach(function(x){frag.appendChild(card('<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'
+          +'<b style="color:#fff;font-size:14px;flex:1;text-align:right;">'+x.home+'</b>'
+          +'<span style="color:#fbbf24;font-weight:800;font-size:13px;white-space:nowrap;">'+(x.time||'\u2014')+'</span>'
+          +'<b style="color:#fff;font-size:14px;flex:1;text-align:left;">'+x.away+'</b></div>'
+          +'<div style="margin-top:8px;text-align:center;color:#94a3b8;font-size:11px;font-weight:700;">\uD83C\uDFC6 '+info.found+' \u2022 '+(x.status||'\u0644\u0645 \u062A\u0628\u062F\u0623')+'</div>',true));});
+        con.insertBefore(frag,con.firstChild);
+        var empty=null;var els=con.querySelectorAll('div,p');for(var i=0;i<els.length;i++){if(els[i].children.length===0&&(els[i].textContent||'').indexOf('\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0628\u0627\u0631\u064A\u0627\u062A')>=0){empty=els[i];break;}}
+        if(empty)empty.style.display='none';
+      });
+    });
   }
-  setTimeout(run,2000);setInterval(run,8000);
+  setTimeout(run,2000);setInterval(run,10000);
   document.addEventListener('change',function(){setTimeout(run,600);});
-}catch(e){console.warn('[EgyptBet Addon] cups-v32:',e);}})();
+}catch(e){console.warn('[EgyptBet Addon] cups-v33:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: بوابة الكؤوس المستقلة v32 ===== -->
+<!-- ===== نهاية إضافة: بوابة الكؤوس v33 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
