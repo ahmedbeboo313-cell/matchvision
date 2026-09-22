@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ar"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>اختبار المصادر</title>
+<style>body{background:#0b1220;color:#e2e8f0;font-family:sans-serif;padding:14px;font-size:13px;line-height:1.8}h3{color:#fbbf24}.ok{color:#86efac}.bad{color:#fca5a5}pre{white-space:pre-wrap;background:#111c2e;padding:10px;border-radius:10px}</style></head>
+<body>
+<h3>🩻 أشعة مقطعية على المصدرين — 23 و24 سبتمبر</h3>
+<div id="d1">⏳ API-Football (23)…</div><pre id="p1"></pre>
+<div id="d2">⏳ API-Football (24)…</div><pre id="p2"></pre>
+<div id="d3">⏳ TheSportsDB (23)…</div><pre id="p3"></pre>
+<div id="d4">⏳ TheSportsDB (24)…</div><pre id="p4"></pre>
+<script>
+var KEY='e983a918823fdba43ac9c260543cd030';
+function names(list,get){var u=[];list.forEach(function(e){var n=get(e);if(u.indexOf(n)<0)u.push(n);});return u;}
+function fb(date,el,pre){fetch('https://v3.football.api-sports.io/fixtures?date='+date,{headers:{'x-apisports-key':KEY}}).then(function(r){return r.json().then(function(j){j._st=r.status;return j;});}).then(function(d){var u=names(d.response||[],function(e){return (e.league&&e.league.id)+': '+(e.league&&e.league.name);});el.className='ok';el.textContent='✅ API-Football '+date+' — حالة: '+d._st+' — عدد: '+(d.response||[]).length;pre.textContent=u.join('\n')||'(مفيش مسابقات خالص في الرد)';}).catch(function(e){el.className='bad';el.textContent='❌ API-Football '+date+' فشل: '+e;});}
+function ts(date,el,pre){fetch('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+date+'&s=Soccer').then(function(r){return r.json();}).then(function(d){var u=names(d.events||[],function(e){return e.strLeague||'?';});el.className='ok';el.textContent='✅ TheSportsDB '+date+' — عدد: '+(d.events||[]).length;pre.textContent=u.join('\n')||'(مفيش مسابقات خالص في الرد)';}).catch(function(e){el.className='bad';el.textContent='❌ TheSportsDB '+date+' فشل: '+e;});}
+fb('2026-09-23',document.getElementById('d1'),document.getElementById('p1'));
+fb('2026-09-24',document.getElementById('d2'),document.getElementById('p2'));
+ts('2026-09-23',document.getElementById('d3'),document.getElementById('p3'));
+ts('2026-09-24',document.getElementById('d4'),document.getElementById('p4'));
+</script>
+</body></html>
