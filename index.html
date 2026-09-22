@@ -2844,24 +2844,26 @@ try{
 }catch(e){}})();
 </script>
 <!-- ===== نهاية إضافة: حارس NaN v30 ===== -->
-<!-- ===== إضافة: تقرير المصدر v31b | 2026-09-22 ===== -->
+<!-- ===== إضافة: تقرير المصدر v31c | 2026-09-22 ===== -->
 <script>
 (function(){'use strict';try{
+  var box=document.createElement('div');box.style.cssText='display:none;position:fixed;top:8px;left:8px;right:8px;z-index:999999;background:#7f1d1d;color:#fee2e2;padding:10px;border-radius:12px;font-size:11px;line-height:1.7;max-height:60%;overflow:auto;white-space:pre-wrap;';
+  document.body.appendChild(box);
   setInterval(function(){
     try{
       var sel=document.getElementById('leagueSelect')||document.querySelector('select');if(!sel)return;
-      var v=sel.value;if(v!=='gulf.cup'&&v!=='caf.nations')return;
+      var v=sel.value;if(v!=='gulf.cup'&&v!=='caf.nations'){box.style.display='none';return;}
       var cards=document.querySelectorAll('article.card');var vis=0;
       for(var i=0;i<cards.length;i++){if(cards[i].style.display!=='none')vis++;}
-      if(vis>0)return;
-      if(window.__egbDbg)return;window.__egbDbg=1;
-      var o=JSON.parse(localStorage.getItem('egb_apifb_last')||'null');
-      alert('\uD83D\uDCC4 \u0622\u062E\u0631 \u0631\u062F \u0645\u0646 \u0627\u0644\u0645\u0635\u062F\u0631:\n'+(o?JSON.stringify(o):'\u0645\u0641\u064A\u0634 \u0623\u064A \u0646\u062F\u0627\u0621 \u0628\u0639\u062F'));
+      if(vis>0){box.style.display='none';return;}
+      var o=localStorage.getItem('egb_apifb_last');
+      box.textContent='\uD83D\uDCC4 \u062A\u0642\u0631\u064A\u0631 \u0627\u0644\u0645\u0635\u062F\u0631 (\u0635\u0648\u0631\u0646\u064A \u064A\u0627 \u0635\u0627\u062D\u0628\u064A):\n'+(o||'\u0645\u0641\u064A\u0634 \u0623\u064A \u0646\u062F\u0627\u0621 \u0644\u0645\u0633 \u0627\u0644\u0645\u0635\u062F\u0631 \u062E\u0627\u0644\u0635');
+      box.style.display='block';
     }catch(e){}
-  },3000);
+  },2500);
 }catch(e){}})();
 </script>
-<!-- ===== نهاية إضافة: تقرير المصدر v31b ===== -->
+<!-- ===== نهاية إضافة: تقرير المصدر v31c ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
