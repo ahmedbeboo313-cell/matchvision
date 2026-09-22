@@ -583,7 +583,7 @@ var APIFB_KEY='e983a918823fdba43ac9c260543cd030';
 var APIFB_MAP={233:'eg.1',307:'sa.1'};
 var APIFB_LAST={};
 function apiFbOk(tag,mins){try{var d=new Date().toISOString().slice(0,10);var o=JSON.parse(localStorage.getItem('egb_apifb')||'null');if(!o||o.d!==d)o={d:d,n:0};if(o.n>=90)return false;var now=Date.now();if(APIFB_LAST[tag]&&now-APIFB_LAST[tag]<mins*60000)return false;APIFB_LAST[tag]=now;o.n++;localStorage.setItem('egb_apifb',JSON.stringify(o));return true;}catch(e){return false;}}
-function fetchApiFb(q){return fetch('https://v3.football.api-sports.io/'+q,{headers:{'x-apisports-key':APIFB_KEY}}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){return (d.response||[]).map(parseApiFb).filter(Boolean);}).catch(function(){return [];});}
+function fetchApiFb(q){return fetch('https://v3.football.api-sports.io/'+q,{headers:{'x-apisports-key':APIFB_KEY}}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){try{var un=[];(d.response||[]).forEach(function(x){var nm=((x.league&&x.league.id)||'?')+':'+((x.league&&x.league.name)||'?');if(un.indexOf(nm)<0)un.push(nm);});localStorage.setItem('egb_apifb_last',JSON.stringify({q:q,n:(d.response||[]).length,lig:un.slice(0,25)}));}catch(e4){}return (d.response||[]).map(parseApiFb).filter(Boolean);}).catch(function(){try{localStorage.setItem('egb_apifb_last',JSON.stringify({q:q,n:-1}));}catch(e5){}return [];});}
 function apiFbSlugByName(n){n=(n||'').toLowerCase();if(n.indexOf('gulf')>=0)return 'gulf.cup';if(n.indexOf('africa cup')>=0||n.indexOf('afcon')>=0||(n.indexOf('cup of nations')>=0&&n.indexOf('africa')>=0))return 'caf.nations';if(n.indexOf('nations league')>=0)return 'uefa.nations';return '';}
 function parseApiFb(e){try{var lg=e.league||{},t=e.teams||{},g=e.goals||{},fx=e.fixture||{},st=fx.status||{};var slug=APIFB_MAP[lg.id]||apiFbSlugByName(lg.name);if(!slug){try{var sn=JSON.parse(localStorage.getItem('egb_apifb_seen')||'[]');var nm=(lg.id||'?')+': '+(lg.name||'?');if(sn.indexOf(nm)<0){sn.push(nm);if(sn.length>60)sn=sn.slice(-60);localStorage.setItem('egb_apifb_seen',JSON.stringify(sn));}}catch(e3){}return null;}var l=null;for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug===slug){l=LEAGUES[i];break;}}if(!l)return null;var live=['1H','2H','HT','ET','BT','LIVE','INT'].indexOf(st.short)>=0;var fin=['FT','AET','PEN'].indexOf(st.short)>=0;return {id:'apifb-'+fx.id,date:fx.date,leagueName:l.name,leagueSlug:slug,statusState:fin?'post':(live?'in':'pre'),statusCompleted:fin,live:live,minute:live?String(st.elapsed||''):'',scoreHome:g.home,scoreAway:g.away,sourceName:'API-Football',homeForm:'',awayForm:'',fhHome:null,fhAway:null,hasHalf:false,oddsHome:null,oddsAway:null,timeUnknown:false,home:{id:String((t.home&&t.home.id)||''),name:(t.home&&t.home.name)||'',abbr:'',logo:(t.home&&t.home.logo)||''},away:{id:String((t.away&&t.away.id)||''),name:(t.away&&t.away.name)||'',abbr:'',logo:(t.away&&t.away.logo)||''},record:'',venue:(fx.venue&&fx.venue.name)||''};}catch(e2){return null;}}
 function demoMatches(){var fx=[['الهلال','4-2-0','النصر','3-2-1','20:00','ksa.1'],['مانشستر سيتي','4-1-1','ليفربول','4-2-0','19:00','eng.1'],['ريال مدريد','5-0-1','برشلونة','4-1-1','21:00','esp.1']];
@@ -2844,7 +2844,7 @@ try{
 }catch(e){}})();
 </script>
 <!-- ===== نهاية إضافة: حارس NaN v30 ===== -->
-<!-- ===== إضافة: تشخيص الأسماء v31 | 2026-09-22 ===== -->
+<!-- ===== إضافة: تقرير المصدر v31b | 2026-09-22 ===== -->
 <script>
 (function(){'use strict';try{
   setInterval(function(){
@@ -2854,13 +2854,14 @@ try{
       var cards=document.querySelectorAll('article.card');var vis=0;
       for(var i=0;i<cards.length;i++){if(cards[i].style.display!=='none')vis++;}
       if(vis>0)return;
-      var seen=JSON.parse(localStorage.getItem('egb_apifb_seen')||'[]');
-      if(seen.length&&!window.__egbDbg){window.__egbDbg=1;alert('\uD83D\uDD0D \u0623\u0633\u0645\u0627\u0621 \u0634\u0641\u0646\u0627\u0647\u0627 \u0645\u0646 \u0627\u0644\u0645\u0635\u062F\u0631:\n'+seen.slice(0,15).join('\n'));}
+      if(window.__egbDbg)return;window.__egbDbg=1;
+      var o=JSON.parse(localStorage.getItem('egb_apifb_last')||'null');
+      alert('\uD83D\uDCC4 \u0622\u062E\u0631 \u0631\u062F \u0645\u0646 \u0627\u0644\u0645\u0635\u062F\u0631:\n'+(o?JSON.stringify(o):'\u0645\u0641\u064A\u0634 \u0623\u064A \u0646\u062F\u0627\u0621 \u0628\u0639\u062F'));
     }catch(e){}
   },3000);
 }catch(e){}})();
 </script>
-<!-- ===== نهاية إضافة: تشخيص الأسماء v31 ===== -->
+<!-- ===== نهاية إضافة: تقرير المصدر v31b ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
