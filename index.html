@@ -3138,6 +3138,26 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] guard-v41:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: درع الحماية v41 ===== -->
+<!-- ===== إضافة: اللايف لحد النهاية v44 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  var _il=window.isLive, _if=window.isFinished;
+  window.isLive=function(m){
+    try{
+      if(_if&&_if(m))return false;
+      if(_il&&_il(m))return true;
+      var t=+(m.ts||m.kickoff||m.start||0);
+      if(!t&&m.date)t=+new Date(m.date);
+      if(!t&&m.time)t=+new Date(m.time);
+      if(!t)return false;
+      var el=Date.now()-t;
+      return el>60000&&el<135*60000;
+    }catch(e){return _il?_il(m):false;}
+  };
+  console.info('[EgyptBet Addon] live-v44: اللايف هيفضل لايف لحد صافرة النهاية');
+}catch(e){console.warn('[EgyptBet Addon] live-v44:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: اللايف لحد النهاية v44 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
