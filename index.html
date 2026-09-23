@@ -3118,25 +3118,32 @@ try{
     var s=((t.name||'')+' '+(t.slug||'')+' '+(c.slug||'')+' '+(c.name||'')).toLowerCase();
     return /esoccer|e-soccer|fc 2|5x5|4x4|3x3|rush|battle|electronic|cyber|gtd|dlf|adrenaline|virtual fifa/.test(s);
   }
-  var WORKER=''; // ← لو عملت المرحلة 2، حط لينك الـ Worker هنا
+  var WORKER='';
+  var LASTERR='';
+  function withTimeout(p,ms){return new Promise(function(res,rej){var t=setTimeout(function(){rej(new Error('timeout'));},ms);p.then(function(v){clearTimeout(t);res(v);},function(e){clearTimeout(t);rej(e);});});}
   function fetchDay(){
     var d=new Date(); var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     var direct='https://api.sofascore.com/api/v1/sport/football/schedule/'+ds;
     var routes=[];
-    if(WORKER)routes.push(WORKER.replace(/\/$/,'')+'/schedule/'+ds);
-    routes.push(direct);
-    routes.push('https://api.allorigins.win/raw?url='+encodeURIComponent(direct));
-    routes.push('https://corsproxy.io/?url='+encodeURIComponent(direct));
+    if(WORKER)routes.push({u:WORKER.replace(/\/$/,'')+'/schedule/'+ds,n:'worker'});
+    routes.push({u:direct,n:'direct'});
+    routes.push({u:'https://api.allorigins.win/raw?url='+encodeURIComponent(direct),n:'allorigins'});
+    routes.push({u:'https://corsproxy.io/?url='+encodeURIComponent(direct),n:'corsproxy'});
     function tryRoute(i){
-      if(i>=routes.length)return Promise.reject(new Error('all-routes-failed'));
-      return fetch(routes[i],{cache:'no-store'}).then(function(r){
-        if(!r.ok)throw new Error('HTTP '+r.status);
-        return r.json();
+      if(i>=routes.length)return Promise.reject(new Error(LASTERR||'all-failed'));
+      var r=routes[i];
+      return withTimeout(fetch(r.u,{cache:'no-store'}),9000).then(function(resp){
+        if(!resp.ok)throw new Error(r.n+':HTTP '+resp.status);
+        return resp.json();
       }).then(function(j){
         var evs=(j&&j.events)||[]; var out=[];
         for(var k=0;k<evs.length;k++){ if(isEsoccer(evs[k])) out.push(evs[k]); }
+        LASTERR='';
         return out;
-      }).catch(function(){return tryRoute(i+1);});
+      }).catch(function(e){
+        LASTERR=String((e&&e.message)||e);
+        return tryRoute(i+1);
+      });
     }
     return tryRoute(0);
   }
@@ -3231,13 +3238,14 @@ try{
   }
   function tick(force){
     if(!active&&!force)return;
+    var b0=document.getElementById('fifaList'); if(b0&&!loaded)b0.innerHTML='<div class="empty">⏳ جاري الاتصال بمصدر FIFA...</div>';
     fetchDay().then(function(evs){
       pool=evs;
       for(var i=0;i<evs.length;i++){ if(evs[i].status&&evs[i].status.type==='finished'&&!evs[i].__learned){evs[i].__learned=1;learn(evs[i]);} }
       loaded=true; render();
     }).catch(function(){
       var box=document.getElementById('fifaList');
-      if(box&&!loaded)box.innerHTML='<div class="empty">⚠️ مش قادر أوصل لمصدر FIFA دلوقتي — جرّب تحديث بعد شوية.</div>';
+      if(box&&!loaded)box.innerHTML='<div class="empty">⚠️ مش قادر أوصل لمصدر FIFA.<br><small style="color:#94a3b8">آخر خطأ: '+LASTERR+'</small></div>';
     });
   }
 
