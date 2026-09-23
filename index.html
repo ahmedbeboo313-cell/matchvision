@@ -3098,6 +3098,167 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] decal-v39:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: المعايرة العميقة v39 ===== -->
+<!-- ===== إضافة: قسم FIFA/eSoccer v40 | 2026-09-23 ===== -->
+<style>
+#view-fifa .fifa-warn{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.4);color:#c4b5fd;border-radius:16px;padding:10px 12px;font-size:11.5px;font-weight:800;line-height:1.8;margin-bottom:12px;text-align:center}
+#view-fifa .fifa-live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite;margin-left:4px}
+</style>
+<script>
+(function(){'use strict';try{
+  var LS_TRACK='eb_fifa_track', LS_PICK='eb_fifa_picks', LS_TEAM='eb_fifa_team', LS_ELO='eb_fifa_elo';
+  var POLL=60000, BASE_H=3.7, BASE_A=3.4, MAXG=20;
+  function ls(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d;}catch(e){return d;}}
+  function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+  var track=ls(LS_TRACK,{ev:0,w:0}), teams=ls(LS_TEAM,{}), elo=ls(LS_ELO,{}), picks=ls(LS_PICK,{});
+  var pool=[], active=false, loaded=false;
+
+  /* ===== جلب من Sofascore (esoccer فقط) ===== */
+  function isEsoccer(ev){
+    var t=(ev&&ev.tournament)||{}; var c=(t.category)||{};
+    var s=((t.name||'')+' '+(t.slug||'')+' '+(c.slug||'')+' '+(c.name||'')).toLowerCase();
+    return /esoccer|e-soccer|fc 2|5x5|4x4|3x3|rush|battle|electronic|cyber|gtd|dlf|adrenaline|virtual fifa/.test(s);
+  }
+  function fetchDay(){
+    var d=new Date(); var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    return fetch('https://api.sofascore.com/api/v1/sport/football/schedule/'+ds,{cache:'no-store'})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .then(function(j){
+        var evs=(j&&j.events)||[]; var out=[];
+        for(var i=0;i<evs.length;i++){ if(isEsoccer(evs[i])) out.push(evs[i]); }
+        return out;
+      });
+  }
+
+  /* ===== محرك توقعات المحاكاة ===== */
+  function pmf(l,k){var p=Math.exp(-l),f=1;for(var i=1;i<=k;i++){f*=i;p+=0;}var v=Math.exp(-l),acc=1,res=[1];for(var kk=1;kk<=MAXG;kk++){acc*=l/kk;res[kk]=acc;}var s=Math.exp(-l);return res.map(function(x){return x*s;});}
+  function strength(id,isHome){
+    var t=teams[id]; var base=isHome?BASE_H:BASE_A;
+    if(!t||!t.n)return base;
+    var shr=t.n+5;
+    var att=(t.gf+base*5)/shr;
+    return Math.max(1.2,Math.min(6.5,att));
+  }
+  function predict(ev){
+    var idH=ev.homeTeam.id, idA=ev.awayTeam.id;
+    var lh=strength(idH,true), la=strength(idA,false);
+    var eH=elo[idH]||1500, eA=elo[idA]||1500;
+    var adj=Math.max(-0.35,Math.min(0.35,(eH-eA)/1500*0.35));
+    lh=Math.max(1.3,Math.min(6.8,lh*(1+adj))); la=Math.max(1.2,Math.min(6.8,la*(1-adj)));
+    var PH=pmf(lh), PA=pmf(la);
+    var ph=0,pd=0,pa=0,p75=0,btts=0,hc=0,ac=0;
+    for(var i=0;i<=MAXG;i++)for(var k=0;k<=MAXG;k++){
+      var q=PH[i]*PA[k];
+      if(i>k)ph+=q; else if(i===k)pd+=q; else pa+=q;
+      if(i+k>7)p75+=q;
+      if(i>0&&k>0)btts+=q;
+      if(i-k>=2)hc+=q;
+      if(k-i>=2)ac+=q;
+    }
+    var cands=[
+      {k:'o75',txt:'أوفر 7.5 أهداف',p:p75},
+      {k:'u75',txt:'أندر 7.5 أهداف',p:1-p75},
+      {k:'bttsY',txt:'الفريقان يسجلان: نعم',p:btts},
+      {k:'bttsN',txt:'الفريقان يسجلان: لا',p:1-btts},
+      {k:'h',txt:'فوز '+ev.homeTeam.name,p:ph},
+      {k:'a',txt:'فوز '+ev.awayTeam.name,p:pa}
+    ];
+    if(hc>=0.55)cands.push({k:'hc',txt:'هانديكاب -1.5: '+ev.homeTeam.name,p:hc});
+    if(ac>=0.55)cands.push({k:'ac',txt:'هانديكاب -1.5: '+ev.awayTeam.name,p:ac});
+    var best=cands[0]; for(var c=1;c<cands.length;c++)if(cands[c].p>best.p)best=cands[c];
+    return {ph:ph,pd:pd,pa:pa,p75:p75,btts:btts,hc:hc,ac:ac,best:best,lh:lh,la:la};
+  }
+  function hit(k,hs,as){
+    if(k==='o75')return hs+as>7; if(k==='u75')return hs+as<=7;
+    if(k==='bttsY')return hs>0&&as>0; if(k==='bttsN')return !(hs>0&&as>0);
+    if(k==='h')return hs>as; if(k==='a')return hs<as; if(k==='d')return hs===as;
+    if(k==='hc')return hs-as>=2; if(k==='ac')return as-hs>=2;
+    return false;
+  }
+  function learn(ev){
+    var hs=+ev.homeScore.current, as=+ev.awayScore.current;
+    if(!isFinite(hs)||!isFinite(as))return;
+    var idH=ev.homeTeam.id, idA=ev.awayTeam.id;
+    var tH=teams[idH]||(teams[idH]={n:0,gf:0}); var tA=teams[idA]||(teams[idA]={n:0,gf:0});
+    tH.n++;tH.gf+=hs; tA.n++;tA.gf+=as;
+    var rH=elo[idH]||1500, rA=elo[idA]||1500;
+    var S=hs>as?1:(hs===as?0.5:0); var E=1/(1+Math.pow(10,(rA-rH)/400));
+    elo[idH]=Math.max(900,Math.min(2100,rH+20*(S-E))); elo[idA]=Math.max(900,Math.min(2100,rA+20*(E>1?1-E:-(S-E))-(20*(S-E))*0)); 
+    elo[idA]=Math.max(900,Math.min(2100,(elo[idA]||1500)-20*(S-E)));
+    var pk=picks[ev.id];
+    if(pk){ if(hit(pk.k,hs,as)){track.w++;} track.ev++; delete picks[ev.id]; sv(LS_PICK,picks); sv(LS_TRACK,track); }
+    sv(LS_TEAM,teams); sv(LS_ELO,elo);
+  }
+
+  /* ===== الواجهة ===== */
+  function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function card(ev){
+    var st=(ev.status&&ev.status.type)||'notstarted';
+    var live=st==='inprogress', done=st==='finished';
+    var p=predict(ev);
+    if(!done&&!picks[ev.id]&&!live){picks[ev.id]={k:p.best.k,p:Math.round(p.best.p*100)};sv(LS_PICK,picks);}
+    var pk=picks[ev.id];
+    var time=live?'<span class="fifa-live-dot"></span> مباشر':(done?'انتهت':new Date(ev.startTimestamp*1000).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}));
+    var score=(live||done)?('<strong class="'+(done?'scoreDone':'score')+'">'+(ev.homeScore.current||0)+' - '+(ev.awayScore.current||0)+'</strong>'):('<span>'+time+'</span>');
+    var hitBadge='';
+    if(done&&pk){hitBadge='<span class="schip '+(hit(pk.k,+ev.homeScore.current,+ev.awayScore.current)?'hit':'miss')+'">'+(hit(pk.k,+ev.homeScore.current,+ev.awayScore.current)?'✅':'❌')+' '+esc(pk.k)+' '+pk.p+'%</span>';}
+    return '<div class="card" style="cursor:default">'
+      +'<div style="display:flex;justify-content:space-between;gap:6px;margin-bottom:8px;flex-wrap:wrap"><span class="league-pill">🎮 '+esc(ev.tournament.name)+'</span><span class="date-text">'+time+'</span></div>'
+      +'<div class="teams"><div class="team"><strong>'+esc(ev.homeTeam.name)+'</strong></div><div class="vs">'+score+'</div><div class="team"><strong>'+esc(ev.awayTeam.name)+'</strong></div></div>'
+      +(done?hitBadge:'<div class="safe-box"><div class="safe-head"><span>الأضمن 🛡️ (محاكاة)</span><span class="safe-badge">'+Math.round(p.best.p*100)+'%</span></div><div class="safe-val">'+esc(p.best.txt)+'</div><div class="meter big"><span style="width:'+Math.round(p.best.p*100)+'%"></span></div></div>'
+      +'<div class="safe-others"><span class="schip">1: '+Math.round(p.ph*100)+'%</span><span class="schip">X: '+Math.round(p.pd*100)+'%</span><span class="schip">2: '+Math.round(p.pa*100)+'%</span><span class="schip">أوفر7.5: '+Math.round(p.p75*100)+'%</span><span class="schip">BTTS: '+Math.round(p.btts*100)+'%</span></div>')
+      +'</div>';
+  }
+  function render(){
+    var box=document.getElementById('fifaList'); if(!box)return;
+    if(!pool.length){box.innerHTML='<div class="empty">🎮 مفيش مباريات محاكاة FIFA دلوقتي — بتبدأ كل كام دقايق، حدّث بعد شوية.</div>';return;}
+    var live=pool.filter(function(e){return e.status&&e.status.type==='inprogress';});
+    var next=pool.filter(function(e){return !e.status||e.status.type==='notstarted';}).sort(function(a,b){return a.startTimestamp-b.startTimestamp;});
+    var done=pool.filter(function(e){return e.status&&e.status.type==='finished';}).slice(0,8);
+    var acc=track.ev?Math.round(track.w/track.ev*100):0;
+    box.innerHTML='<div class="statsbar" style="padding-bottom:8px"><div>🔴 لايف: '+live.length+'</div><div>🎯 دقة القسم: '+acc+'% ('+track.w+'/'+track.ev+')</div></div>'
+      +live.concat(next,done).slice(0,30).map(card).join('');
+  }
+  function tick(force){
+    if(!active&&!force)return;
+    fetchDay().then(function(evs){
+      pool=evs;
+      for(var i=0;i<evs.length;i++){ if(evs[i].status&&evs[i].status.type==='finished'&&!evs[i].__learned){evs[i].__learned=1;learn(evs[i]);} }
+      loaded=true; render();
+    }).catch(function(){
+      var box=document.getElementById('fifaList');
+      if(box&&!loaded)box.innerHTML='<div class="empty">⚠️ مش قادر أوصل لمصدر FIFA دلوقتي — جرّب تحديث بعد شوية.</div>';
+    });
+  }
+
+  /* ===== التاب + القسم ===== */
+  function build(){
+    if(document.getElementById('view-fifa'))return;
+    var main=document.querySelector('main'); if(!main)return;
+    var sec=document.createElement('section'); sec.id='view-fifa'; sec.className='view hidden';
+    sec.innerHTML='<div class="fifa-warn">🎮 قسم مباريات محاكاة FIFA (eSoccer)<br>دي مش كرة قدم حقيقية — نتائج محاكاة إلكترونية. توقعات ترفيهية عالية المخاطرة، بتتعلم ذاتياً من نتائجها.</div><div id="fifaList"></div>';
+    main.appendChild(sec);
+    var nav=document.querySelector('.bottom-nav'); if(!nav)return;
+    var btn=document.createElement('button'); btn.className='nav-item'; btn.id='fifaNav';
+    btn.innerHTML='<span class="nic">🎮</span><small>FIFA</small>';
+    nav.insertBefore(btn,nav.lastElementChild);
+    btn.onclick=function(){
+      document.querySelectorAll('.view').forEach(function(v){v.classList.add('hidden');});
+      sec.classList.remove('hidden');
+      document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+      btn.classList.add('active');
+      active=true; tick(true);
+    };
+    nav.addEventListener('click',function(e){
+      if(e.target&&e.target.closest&&e.target.closest('#fifaNav'))return;
+      active=false; sec.classList.add('hidden');
+    },true);
+    setInterval(function(){tick(false);},POLL);
+  }
+  build(); setInterval(build,3000);
+  console.info('[EgyptBet Addon] fifa-v40: قسم FIFA/eSoccer جاهز');
+}catch(e){console.warn('[EgyptBet Addon] fifa-v40:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: قسم FIFA/eSoccer v40 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
