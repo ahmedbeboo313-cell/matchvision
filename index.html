@@ -3158,6 +3158,44 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] live-v44:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف لحد النهاية v44 ===== -->
+<!-- ===== إضافة: إصلاح المنتخبات v45 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  try{localStorage.removeItem('eb_decal');}catch(e){}
+  function pmfs(l){var a=[Math.exp(-l)];for(var i=1;i<=12;i++)a[i]=a[i-1]*l/i;return a;}
+  function neutral(){
+    var H=pmfs(1.5),A=pmfs(1.2),o=0,b=0,h1=0;
+    for(var i=0;i<=12;i++)for(var j=0;j<=12;j++){var q=H[i]*A[j];if(i+j>2)o+=q;if(i>0&&j>0)b+=q;if(i+j>=1)h1+=q;}
+    return {o25:Math.round(o*100),btts:Math.round(b*100),h1:Math.round(h1*100)};
+  }
+  var N=neutral();
+  var gp=window.getPrediction;
+  window.getPrediction=function(m){
+    var p=gp(m);
+    try{
+      if(!p)return p;
+      var rec=((m.home&&m.home.record)||'')+'|'+((m.away&&m.away.record)||'');
+      if(p.hasData===false&&rec==='0-0-0|0-0-0'){
+        if(p.o25)p.o25.prob=N.o25;
+        if(p.u25)p.u25.prob=100-N.o25;
+        if(p.goals){p.goals.prob=(N.o25>=50)?N.o25:100-N.o25;p.goals.text=(N.o25>=50)?'أكثر من 2.5':'أقل من 2.5';}
+        if(p.btts)p.btts.prob=N.btts;
+        if(p.h1Goal)p.h1Goal.prob=N.h1;
+      }
+      if(p.attHp==null)p.attHp='—';
+      if(p.attAp==null)p.attAp='—';
+      ['btts','o25','u25','h1Goal','goals','win','dc1','dc2'].forEach(function(k){
+        var o=p[k];
+        if(o&&o.prob!=null){if(!isFinite(o.prob))o.prob=50;else o.prob=Math.max(3,Math.min(97,o.prob));}
+      });
+      if(p.o25&&p.u25&&p.o25.prob!=null)p.u25.prob=100-p.o25.prob;
+    }catch(e){}
+    return p;
+  };
+  console.info('[EgyptBet Addon] fix-v45: إصلاح المنتخبات + تنظيف null شغال');
+}catch(e){console.warn('[EgyptBet Addon] fix-v45:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: إصلاح المنتخبات v45 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
