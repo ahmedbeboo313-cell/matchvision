@@ -2984,10 +2984,11 @@ try{
   // 1) حقن الدوريات الناقصة في قوائم الجلب أثناء التشغيل (بدون تعديل الملف)
   function inject(){
     try{
-      var add=['ned.cup','eng.w.league_cup','nor.nm_cupen','uefa.wchampions'];
+      var add=['ned.cup','eng.w.league_cup','nor.nm_cupen','uefa.wchampions','concacaf.nations.league'];
       if(window.CORE_SLUGS)add.forEach(function(s){if(CORE_SLUGS.indexOf(s)<0)CORE_SLUGS.push(s);});
       if(window.LIVE_SLUGS)add.forEach(function(s){if(LIVE_SLUGS.indexOf(s)<0)LIVE_SLUGS.push(s);});
       if(window.KNOWN)add.forEach(function(s){KNOWN[s]=1;});
+      if(window.LEAGUES&&!LEAGUES.some(function(l){return l.slug==='concacaf.nations.league';}))LEAGUES.push({slug:'concacaf.nations.league',name:'كونكاكاف دوري الأمم',em:'🌎',home:1.45,away:1.20});
     }catch(e){}
   }
   inject();setInterval(inject,30000);
