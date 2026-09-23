@@ -3029,6 +3029,75 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] pool-v38:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: حارس الأحواض الدائم v38 ===== -->
+<!-- ===== إضافة: المعايرة العميقة v39 | 2026-09-23 ===== -->
+<script>
+(function(){'use strict';try{
+  var KEY='eb_decal', IDKEY='eb_decal_ids';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||{};}catch(e){return {};}}
+  var S=load();
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+  function mkt(k){if(!S[k])S[k]={b:0,s:1,n:0,bins:[]};var m=S[k];while(m.bins.length<10)m.bins.push({w:0,t:0});return m;}
+  function clamp01(x){return x<0.01?0.01:(x>0.99?0.99:x);}
+  function sig(z){return 1/(1+Math.exp(-z));}
+  function logit(p){p=clamp01(p);return Math.log(p/(1-p));}
+  function apply(k,raw){
+    var m=mkt(k);if(m.n<12)return raw;
+    var bin=Math.min(9,Math.max(0,Math.floor(raw*10)));
+    var b=m.bins[bin];
+    var emp=(b.w+1)/(b.t+2);
+    var w=b.t/(b.t+15);
+    var cal=raw*(1-w)+emp*w;
+    return clamp01(sig(logit(cal)*m.s+m.b));
+  }
+  function learn(k,raw,y){
+    var m=mkt(k);
+    var bin=Math.min(9,Math.max(0,Math.floor(raw*10)));
+    m.bins[bin].t++;if(y)m.bins[bin].w++;
+    var p=apply(k,raw);
+    var err=y-p;
+    m.b=Math.min(1.5,Math.max(-1.5,m.b+0.05*err));
+    m.s=Math.min(2.5,Math.max(0.5,m.s+0.05*err*logit(p)));
+    m.n++;
+  }
+  var gp=window.getPrediction;
+  window.getPrediction=function(m){
+    var p=gp(m);
+    try{
+      if(p&&p.btts&&p.btts.prob!=null)p.btts.prob=Math.round(apply('btts',p.btts.prob/100)*100);
+      if(p&&p.o25&&p.o25.prob!=null)p.o25.prob=Math.round(apply('o25',p.o25.prob/100)*100);
+      if(p&&p.h1Goal&&p.h1Goal.prob!=null)p.h1Goal.prob=Math.round(apply('h1',p.h1Goal.prob/100)*100);
+      if(p&&p.u25&&p.o25)p.u25.prob=100-p.o25.prob;
+    }catch(e){}
+    return p;
+  };
+  var tf=window.trackFinished;
+  window.trackFinished=function(m){
+    try{
+      var done=(window.isFinished&&window.isFinished(m))||(m&&m.status==='finished');
+      if(m&&done&&m.home&&m.away){
+        var hs=+m.home.score,as=+m.away.score;
+        if(isFinite(hs)&&isFinite(as)){
+          var ids=JSON.parse(localStorage.getItem(IDKEY)||'{}');
+          if(Object.keys(ids).length>2000)ids={};
+          if(!ids[m.id]){
+            ids[m.id]=1;localStorage.setItem(IDKEY,JSON.stringify(ids));
+            var p=gp(m);
+            if(p){
+              if(p.btts&&p.btts.prob!=null)learn('btts',p.btts.prob/100,(hs>0&&as>0)?1:0);
+              if(p.o25&&p.o25.prob!=null)learn('o25',p.o25.prob/100,(hs+as>2.5)?1:0);
+              if(p.h1Goal&&p.h1Goal.prob!=null)learn('h1',p.h1Goal.prob/100,(hs+as>=1)?1:0);
+              save();
+            }
+          }
+        }
+      }
+    }catch(e){}
+    return tf.apply(this,arguments);
+  };
+  console.info('[EgyptBet Addon] decal-v39: المعايرة العميقة شغالة');
+}catch(e){console.warn('[EgyptBet Addon] decal-v39:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: المعايرة العميقة v39 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
