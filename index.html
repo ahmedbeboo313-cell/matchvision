@@ -3118,17 +3118,28 @@ try{
     var s=((t.name||'')+' '+(t.slug||'')+' '+(c.slug||'')+' '+(c.name||'')).toLowerCase();
     return /esoccer|e-soccer|fc 2|5x5|4x4|3x3|rush|battle|electronic|cyber|gtd|dlf|adrenaline|virtual fifa/.test(s);
   }
+  var WORKER=''; // ← لو عملت المرحلة 2، حط لينك الـ Worker هنا
   function fetchDay(){
     var d=new Date(); var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    return fetch('https://api.sofascore.com/api/v1/sport/football/schedule/'+ds,{cache:'no-store'})
-      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-      .then(function(j){
+    var direct='https://api.sofascore.com/api/v1/sport/football/schedule/'+ds;
+    var routes=[];
+    if(WORKER)routes.push(WORKER.replace(/\/$/,'')+'/schedule/'+ds);
+    routes.push(direct);
+    routes.push('https://api.allorigins.win/raw?url='+encodeURIComponent(direct));
+    routes.push('https://corsproxy.io/?url='+encodeURIComponent(direct));
+    function tryRoute(i){
+      if(i>=routes.length)return Promise.reject(new Error('all-routes-failed'));
+      return fetch(routes[i],{cache:'no-store'}).then(function(r){
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        return r.json();
+      }).then(function(j){
         var evs=(j&&j.events)||[]; var out=[];
-        for(var i=0;i<evs.length;i++){ if(isEsoccer(evs[i])) out.push(evs[i]); }
+        for(var k=0;k<evs.length;k++){ if(isEsoccer(evs[k])) out.push(evs[k]); }
         return out;
-      });
+      }).catch(function(){return tryRoute(i+1);});
+    }
+    return tryRoute(0);
   }
-
   /* ===== محرك توقعات المحاكاة ===== */
   function pmf(l,k){var p=Math.exp(-l),f=1;for(var i=1;i<=k;i++){f*=i;p+=0;}var v=Math.exp(-l),acc=1,res=[1];for(var kk=1;kk<=MAXG;kk++){acc*=l/kk;res[kk]=acc;}var s=Math.exp(-l);return res.map(function(x){return x*s;});}
   function strength(id,isHome){
