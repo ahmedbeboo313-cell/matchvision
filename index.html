@@ -3098,6 +3098,45 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] decal-v39:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: المعايرة العميقة v39 ===== -->
+<!-- ===== إضافة: درع الحماية v41 | 2026-09-23 ===== -->
+<script>
+(function(){'use strict';try{
+  /* 1) قفل النطاق: التطبيق يشتغل بس على لينكاتك الرسمية */
+  var ALLOW=['ahmedbeboo313-cell.github.io','egyptbet.pages.dev','localhost','127.0.0.1'];
+  var h=location.hostname;
+  var okHost=false;
+  for(var i=0;i<ALLOW.length;i++){if(h===ALLOW[i]||h.indexOf('.'+ALLOW[i])===h.length-ALLOW[i].length-1){okHost=true;break;}}
+  if(!okHost){
+    document.open();
+    document.write('<div style="font-family:sans-serif;text-align:center;padding:60px 20px;background:#050810;color:#edf2ff;min-height:100vh"><h1 style="color:#fbbf24">⛔ نسخة مسروقة</h1><p>التطبيق ده ملكية Egypt Bet — النسخة دي مش رسمية وممكن تكون ملغومة.</p><p>النسخة الأصلية الوحيدة:<br><b dir="ltr">https://ahmedbeboo313-cell.github.io/matchvision/</b></p></div>');
+    document.close();
+    return;
+  }
+  /* 2) منع دمج التطبيق جوه مواقع تانية (iframe) */
+  if(window.top!==window.self){try{window.top.location=location.href;}catch(e){}}
+  /* 3) منع كليك يمين + سحب + نسخ — مع استثناء حقول الكتابة عشان اللصق يفضل شغال فيها */
+  function isField(t){return t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);}
+  document.addEventListener('contextmenu',function(e){if(!isField(e.target))e.preventDefault();});
+  document.addEventListener('selectstart',function(e){if(!isField(e.target))e.preventDefault();});
+  document.addEventListener('dragstart',function(e){e.preventDefault();});
+  document.addEventListener('copy',function(e){if(!isField(e.target))e.preventDefault();});
+  /* 4) صدّ أدوات الفحص: اختصارات + تحذير ملكية في الكونسول */
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(k==='i'||k==='j'||k==='c'))||(e.ctrlKey&&(k==='s'||k==='u'||k==='p'))){e.preventDefault();}
+  });
+  console.log('%c⛔ قف!','font-size:38px;color:#ef4444;font-weight:900');
+  console.log('%cالكود والتصميم ومحرك التعلم ملكية فكرية لـ Egypt Bet (Ahmed Bebo) — النسخ أو إعادة النشر يعرّضك للمسائلة القانونية.','font-size:14px;color:#fbbf24');
+  /* 5) كشف تقريبي لأدوات المطورين المفتوحة */
+  setInterval(function(){
+    if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){document.title='⛔ Egypt Bet — الفحص ممنوع';}
+  },3000);
+  /* 6) ختم ملكية مخفي في أول الصفحة */
+  document.documentElement.insertBefore(document.createComment(' © 2026 Egypt Bet — Ahmed Bebo | كل الحقوق محفوظة: التصميم والكود ومحرك التعلم الذاتي. النسخ غير المصرح به ممنوع. '),document.documentElement.firstChild);
+  console.info('[EgyptBet Addon] guard-v41: درع الحماية شغال');
+}catch(e){console.warn('[EgyptBet Addon] guard-v41:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: درع الحماية v41 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
