@@ -3127,6 +3127,7 @@ try{
     var routes=[];
     if(WORKER)routes.push({u:WORKER.replace(/\/$/,'')+'/schedule/'+ds,n:'worker'});
     routes.push({u:direct,n:'direct'});
+    routes.push({u:'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(direct),n:'codetabs'});
     routes.push({u:'https://api.allorigins.win/raw?url='+encodeURIComponent(direct),n:'allorigins'});
     routes.push({u:'https://corsproxy.io/?url='+encodeURIComponent(direct),n:'corsproxy'});
     function tryRoute(i){
