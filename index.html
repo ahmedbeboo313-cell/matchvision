@@ -2907,6 +2907,77 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] cups-v34:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: بوابة الكؤوس v34 ===== -->
+<!-- ===== إضافة: الدرع السحابي ESPN v37 (ثبات لكل المستخدمين) | 2026-09-23 ===== -->
+<script>
+(function(){'use strict';try{
+  var TTL=45000, COOLDOWN=120000, WGAP=600000, WCHANCE=0.12, MAXAGE=1800000;
+  var mem={},last={},inflight={},failAll=0,downUntil=0,cloudHit=0;
+  var of=window.fetch;
+  function isE(u){return u.indexOf('espn.com/apis/')>=0;}
+  function res(t){return new Response(t,{status:200,headers:{'Content-Type':'application/json'}});}
+  function fdb(){try{return firebase.app().firestore();}catch(e){try{firebase.initializeApp(window.FIREBASE_CONFIG||{apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEW-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2"});return firebase.app().firestore();}catch(x){return null;}}}
+  function docId(url){var m=url.match(/sports\/([^?]+)/);var k=(m?m[1]:url).replace(/[\/.?#]/g,'_');return k.slice(0,120);}
+  function who(){try{var s=JSON.parse(localStorage.getItem('egb_session')||'null');return (s&&s.u)||'زائر';}catch(e){return 'زائر';}}
+  function cloudGet(url){var d=fdb();if(!d)return Promise.reject(new Error('no-db'));
+    return d.collection('egb_shield').doc(docId(url)).get().then(function(s){
+      if(!s.exists)return Promise.reject(new Error('miss'));
+      var v=s.data();if(!v||!v.text)return Promise.reject(new Error('empty'));
+      if(Date.now()-(v.t||0)>MAXAGE)return Promise.reject(new Error('old'));
+      cloudHit=Date.now();
+      return v.text;
+    });
+  }
+  function cloudPut(url,text){
+    if(!text||text.length>900000)return;
+    if(Math.random()>WCHANCE)return;
+    var d=fdb();if(!d)return;
+    var id=docId(url);
+    var g=mem['__w'+id];if(g&&(Date.now()-g)<WGAP)return;mem['__w'+id]=Date.now();
+    try{d.collection('egb_shield').doc(id).set({t:Date.now(),text:text,by:who()},{merge:true}).catch(function(){});}catch(e){}
+  }
+  window.fetch=function(u,o){
+    var url=(typeof u==='string')?u:((u&&u.url)||'');
+    if(!isE(url))return of.apply(this,arguments);
+    var now=Date.now();
+    if(inflight[url])return inflight[url];
+    if(mem[url]&&(now-mem[url].t)<TTL)return Promise.resolve(res(mem[url].text));
+    if(now<downUntil&&last[url])return Promise.resolve(res(last[url].text));
+    var p=of(url,o).then(function(r){
+      delete inflight[url];
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return r.text().then(function(txt){
+        mem[url]={t:Date.now(),text:txt};last[url]={t:Date.now(),text:txt};
+        failAll=0;downUntil=0;
+        cloudPut(url,txt);
+        return res(txt);
+      });
+    }).catch(function(e){
+      delete inflight[url];
+      failAll++;if(failAll>=3){downUntil=Date.now()+COOLDOWN;failAll=0;}
+      if(last[url])return res(last[url].text);
+      return cloudGet(url).then(function(txt){
+        mem[url]={t:Date.now(),text:txt};last[url]={t:Date.now(),text:txt};
+        return res(txt);
+      });
+    });
+    inflight[url]=p;
+    return p;
+  };
+  setInterval(function(){
+    if(Date.now()<downUntil){var ks=Object.keys(last);if(ks.length){of(ks[0]).then(function(r){if(r.ok){downUntil=0;failAll=0;}}).catch(function(){});}}
+  },60000);
+  setInterval(function(){
+    try{
+      var b=document.getElementById('sourceBadge');if(!b)return;
+      if((b.textContent||'').indexOf('مخزن')<0)return;
+      var age=1e12;try{var c=JSON.parse(localStorage.getItem('eb_cache')||'null');if(c&&c.ts)age=Date.now()-c.ts;}catch(e){}
+      if((Date.now()-cloudHit<300000)||age<600000){b.textContent='ESPN ☁️';}
+    }catch(e){}
+  },4000);
+  console.info('[EgyptBet Addon] shield-v37: الدرع السحابي شغال لكل المستخدمين');
+}catch(e){console.warn('[EgyptBet Addon] shield-v37:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: الدرع السحابي ESPN v37 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
