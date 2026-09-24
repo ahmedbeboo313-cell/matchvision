@@ -3563,6 +3563,31 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] hush-v59:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: كتم رسالة TheSportsDB النهائي v59 ===== -->
+<!-- ===== إضافة: قطع TheSportsDB نهائياً v60 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  var EMPTY='{"events":null,"event":null,"teams":null,"players":null,"leagues":null,"results":null}';
+  var of=window.fetch;
+  window.fetch=function(u,o){
+    var url=(typeof u==='string')?u:((u&&u.url)||'');
+    if(/thesportsdb\.com/i.test(url)){
+      return Promise.resolve(new Response(EMPTY,{status:200,headers:{'Content-Type':'application/json'}}));
+    }
+    return of.apply(this,arguments);
+  };
+  var ox=XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open=function(mth,url){
+    try{
+      if(/thesportsdb\.com/i.test(url+'')){
+        arguments[1]='data:application/json,'+EMPTY;
+      }
+    }catch(e){}
+    return ox.apply(this,arguments);
+  };
+  console.info('[EgyptBet Addon] cut-v60: TheSportsDB مقطوعة — المصادر: ESPN + API فقط');
+}catch(e){console.warn('[EgyptBet Addon] cut-v60:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: قطع TheSportsDB نهائياً v60 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
