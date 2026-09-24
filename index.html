@@ -3397,6 +3397,61 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
+<!-- ===== إضافة: قناة اللايف اللحظية v52 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+  function tickLive(){
+    try{
+      if(document.hidden)return;
+      var ms=(window.state&&state.matches)||[];
+      var bySlug={},ids={};
+      ms.forEach(function(m){ids[m.id]=m;if(m.live&&m.leagueSlug)(bySlug[m.leagueSlug]=bySlug[m.leagueSlug]||[]).push(m);});
+      var slugs=Object.keys(bySlug);
+      if(!slugs.length)return;
+      var ds=dstr(new Date());
+      slugs.forEach(function(slug){
+        fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,{cache:'no-store'})
+        .then(function(r){return r.ok?r.json():null;})
+        .then(function(j){
+          if(!j||!j.events)return;
+          var ch=false;
+          j.events.forEach(function(ev){
+            var m=ids[ev.id];if(!m)return;
+            var c=ev.competitions&&ev.competitions[0];if(!c)return;
+            var st=c.status&&c.status.type;
+            var hs=null,as=null;
+            (c.competitors||[]).forEach(function(cp){
+              if(cp.homeAway==='home')hs=+cp.score;
+              else if(cp.homeAway==='away')as=+cp.score;
+            });
+            if(hs!=null&&isFinite(hs)&&hs!==+(m.scoreHome||0)){m.scoreHome=hs;ch=true;}
+            if(as!=null&&isFinite(as)&&as!==+(m.scoreAway||0)){m.scoreAway=as;ch=true;}
+            if(st&&st.state==='in'){
+              var min=(c.status&&c.status.clock)?Math.max(1,Math.round(c.status.clock/60)):(parseInt(c.status.displayClock)||m.minute);
+              if(min&&min!==m.minute){m.minute=min;ch=true;}
+            }
+            if(st&&st.state==='post'&&m.live){m.live=false;m.status='finished';ch=true;}
+          });
+          if(ch){
+            if(typeof window.renderCurrent==='function')renderCurrent();
+            try{
+              if(state.detailsId&&typeof window.renderDetails==='function'){
+                var d=ms.find(function(x){return x.id===state.detailsId;});
+                if(d&&d.live)renderDetails();
+              }
+            }catch(e){}
+          }
+        }).catch(function(){});
+      });
+    }catch(e){}
+  }
+  setInterval(tickLive,20000);
+  setTimeout(tickLive,4000);
+  console.info('[EgyptBet Addon] live-v52: قناة اللايف اللحظية شغالة (كل 20 ثانية)');
+}catch(e){console.warn('[EgyptBet Addon] live-v52:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: قناة اللايف اللحظية v52 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
