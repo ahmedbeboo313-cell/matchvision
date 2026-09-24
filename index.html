@@ -267,7 +267,7 @@ setTimeout(function(){
 <div class="setting-row"><span>تحديث ذكي</span><label class="switch"><input id="tgAuto" type="checkbox" checked><span class="slider"></span></label></div>
 <div class="setting-row"><span>تنبيهات المفضلة</span><label class="switch"><input id="tgNotif" type="checkbox" checked><span class="slider"></span></label></div>
 <button id="notifPermBtn" style="margin-bottom:9px;width:100%;border:1px solid var(--line);background:transparent;border-radius:15px;padding:12px;font-weight:700;cursor:pointer;color:var(--muted)">🔔 تفعيل إشعارات المتصفح</button>
-<div class="setting-row"><span>المصادر</span><b style="color:var(--accent)">ESPN + TheSportsDB</b></div>
+<div class="setting-row"><span>المصادر</span><b style="color:var(--accent)">ESPN + API-Football</b></div>
 <div class="setting-row"><span>لون التطبيق</span><div class="themes"><button class="theme-btn g" data-theme-set="green"></button><button class="theme-btn b" data-theme-set="blue"></button><button class="theme-btn p" data-theme-set="purple"></button></div></div>
 <button id="supportBtn" class="sugg-btn hidden" style="border-color:#fbbf24;background:rgba(251,191,36,.1);color:#fde68a"></button>
 <button id="clearFavBtn" class="danger">مسح كل المفضلة</button>
@@ -566,9 +566,9 @@ var hl=h.linescores||[],al=a.linescores||[];var fhH=0,fhA=0,hasHalf=false;
 if(hl.length>=1&&e.status&&e.status.type&&e.status.type.completed){hasHalf=true;fhH=Number(hl[0].displayValue||hl[0].value||0)||0;fhA=Number((al[0]||{}).displayValue||(al[0]||{}).value||0)||0;}
 return{id:e.id,date:e.date,leagueName:l.name,leagueSlug:l.slug,statusState:(e.status&&e.status.type&&e.status.type.state)||'pre',statusCompleted:!!(e.status&&e.status.type&&e.status.type.completed),live:lv,minute:lv?((e.status&&e.status.type&&e.status.type.detail)||''):'',scoreHome:h.score!=null?Number(h.score):null,scoreAway:a.score!=null?Number(a.score):null,sourceName:'ESPN',homeForm:String(h.form||''),awayForm:String(a.form||''),fhHome:fhH,fhAway:fhA,hasHalf:hasHalf,oddsHome:oH,oddsAway:oA,timeUnknown:false,home:{id:(h.team&&h.team.id)||'',name:(h.team&&h.team.displayName)||'فريق',abbr:(h.team&&h.team.abbreviation)||'',logo:(h.team&&h.team.logo)||'',record:getRec(h)},away:{id:(a.team&&a.team.id)||'',name:(a.team&&a.team.displayName)||'فريق',abbr:(a.team&&a.team.abbreviation)||'',logo:(a.team&&a.team.logo)||'',record:getRec(a)},venue:(c.venue&&c.venue.fullName)||''};}
 function getRec(c){var r=c.records||[];if(!r.length)return'';var t=r.find(function(x){return x.type==='total'||x.name==='overall';});return(t&&t.summary)||'';}
-function fetchTSDB(ds){return Promise.resolve([]);return fetchT('https://www.thesportsdb.com/api/v1/json/3/searchevents.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
-function fetchTSDBDay(ds){return Promise.resolve([]);return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
-function fetchTSDBLive(){return Promise.resolve([]);return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,true);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDB(ds){return Promise.resolve([]);return fetchT('https://removed.invalid/api/v1/json/3/searchevents.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDBDay(ds){return Promise.resolve([]);return fetchT('https://removed.invalid/api/v1/json/3/eventsday.php?d='+ds+'&s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,false);}).filter(Boolean);}).catch(function(){return[];});}
+function fetchTSDBLive(){return Promise.resolve([]);return fetchT('https://removed.invalid/api/v1/json/3/livescore.php?s=Soccer').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseTSDB(e,true);}).filter(Boolean);}).catch(function(){return[];});}
 function parseTSDB(e,live){if(!e||!e.idEvent)return null;var dt=new Date();var timeUnknown=false;
 if(e.strDate){var p=new Date(e.strDate+'T'+(e.strTime||'00:00:00')+'Z');if(!isNaN(p))dt=p;else timeUnknown=true;}else{timeUnknown=true;}
 if(!e.strTime)timeUnknown=true;
@@ -578,7 +578,7 @@ var isLive=live||(!fin&&!!liveSet[e.strStatus]);
 var slug=TSDB_SLUG[e.idLeague]||tsdbNameSlug(e.strLeague);
 if(!slug)return null;
 var name=leagueNameBySlug(slug)||TSDB_LEAGUES[e.idLeague]||e.strLeague||'دوري';
-return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:name,leagueSlug:slug,statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||e.strStatus||''):'',homeForm:'',awayForm:'',fhHome:0,fhAway:0,hasHalf:false,oddsHome:null,oddsAway:null,timeUnknown:timeUnknown,scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'TheSportsDB',home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idHomeTeam+'.png'):'',record:''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idAwayTeam+'.png'):'',record:''},venue:e.strVenue||''};}
+return{id:'tsdb-'+e.idEvent,date:dt.toISOString(),leagueName:name,leagueSlug:slug,statusState:isLive?'in':(fin?'post':'pre'),statusCompleted:fin,live:isLive,minute:isLive?(e.strProgress||e.strStatus||''):'',homeForm:'',awayForm:'',fhHome:0,fhAway:0,hasHalf:false,oddsHome:null,oddsAway:null,timeUnknown:timeUnknown,scoreHome:(isLive||fin)?Number(e.intHomeScore||0):null,scoreAway:(isLive||fin)?Number(e.intAwayScore||0):null,sourceName:'API',home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://removed.invalid/images/media/team/badge/'+e.idHomeTeam+'.png'):'',record:''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://removed.invalid/images/media/team/badge/'+e.idAwayTeam+'.png'):'',record:''},venue:e.strVenue||''};}
 var APIFB_KEY='e983a918823fdba43ac9c260543cd030';
 var APIFB_MAP={233:'eg.1',307:'sa.1'};
 var APIFB_LAST={};
@@ -884,10 +884,10 @@ function parseBB(e,l){try{var c=e.competitions&&e.competitions[0]||{},cs=c.compe
 function parseBBTS(e){try{if(!e||!e.idEvent)return null;var dt=new Date();var timeUnknown=false;
 if(e.strDate){var p=new Date(e.strDate+'T'+(e.strTime||'00:00:00')+'Z');if(!isNaN(p))dt=p;else timeUnknown=true;}else{timeUnknown=true;}
 if(!e.strTime)timeUnknown=true;
-var fin=(e.strStatus==='Match Finished'||e.strStatus==='FT')&&e.intHomeScore!=null;var live=!fin&&!!{'1H':1,'2H':1,'HT':1,'ET':1,'Q1':1,'Q2':1,'Q3':1,'Q4':1,'OT':1}[e.strStatus];return{id:'bbts-'+e.idEvent,date:dt.toISOString(),leagueName:e.strLeague||'كرة سلة',leagueSlug:'bb.'+(e.idLeague||'x'),statusState:live?'in':(fin?'post':'pre'),statusCompleted:fin,live:live,minute:live?(e.strProgress||e.strStatus||''):'',scoreHome:(live||fin)?+e.intHomeScore:null,scoreAway:(live||fin)?+e.intAwayScore:null,timeUnknown:timeUnknown,home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idHomeTeam+'.png'):''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://www.thesportsdb.com/images/media/team/badge/'+e.idAwayTeam+'.png'):''}};}catch(e2){return null;}}
+var fin=(e.strStatus==='Match Finished'||e.strStatus==='FT')&&e.intHomeScore!=null;var live=!fin&&!!{'1H':1,'2H':1,'HT':1,'ET':1,'Q1':1,'Q2':1,'Q3':1,'Q4':1,'OT':1}[e.strStatus];return{id:'bbts-'+e.idEvent,date:dt.toISOString(),leagueName:e.strLeague||'كرة سلة',leagueSlug:'bb.'+(e.idLeague||'x'),statusState:live?'in':(fin?'post':'pre'),statusCompleted:fin,live:live,minute:live?(e.strProgress||e.strStatus||''):'',scoreHome:(live||fin)?+e.intHomeScore:null,scoreAway:(live||fin)?+e.intAwayScore:null,timeUnknown:timeUnknown,home:{id:e.idHomeTeam||'',name:e.strHomeTeam||'فريق',abbr:'',logo:e.idHomeTeam?('https://removed.invalid/images/media/team/badge/'+e.idHomeTeam+'.png'):''},away:{id:e.idAwayTeam||'',name:e.strAwayTeam||'فريق',abbr:'',logo:e.idAwayTeam?('https://removed.invalid/images/media/team/badge/'+e.idAwayTeam+'.png'):''}};}catch(e2){return null;}}
 function fetchBBESPN(l,ds){return fetchT('https://site.api.espn.com/apis/site/v2/sports/basketball/'+l.slug+'/scoreboard?dates='+ds).then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(function(e){return parseBB(e,l);}).filter(Boolean);}).catch(function(){return[];});}
-function fetchBBLive(){return fetchT('https://www.thesportsdb.com/api/v1/json/3/livescore.php?s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
-function fetchBBDay(ds){return fetchT('https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d='+ds+'&s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
+function fetchBBLive(){return Promise.resolve([]);return fetchT('https://removed.invalid/api/v1/json/3/livescore.php?s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
+function fetchBBDay(ds){return Promise.resolve([]);return fetchT('https://removed.invalid/api/v1/json/3/eventsday.php?d='+ds+'&s=Basketball').then(function(r){if(!r.ok)return[];return r.json();}).then(function(d){return(d.events||[]).map(parseBBTS).filter(Boolean);}).catch(function(){return[];});}
 function loadBB(){var td=fmtDate(new Date());var yd=fmtDate(addDays(new Date(),-1));var rq=[];
 BB_LEAGUES.forEach(function(l){rq.push(fetchBBESPN(l,td.replace(/-/g,'')));rq.push(fetchBBESPN(l,yd.replace(/-/g,'')));});
 rq.push(fetchBBLive());rq.push(fetchBBDay(td));rq.push(fetchBBDay(yd));
@@ -2861,8 +2861,8 @@ try{
     if(c&&Date.now()-c.ts<86400000)return Promise.resolve(c);
     var names=CUPS[slug];var i=0;
     var step=function(){
-      if(i>=names.length){var o={ts:Date.now(),id:'',found:'\u0645\u0634 \u0645\u0648\u062C\u0648\u062F\u0629 \u0641\u064A TheSportsDB'};try{localStorage.setItem('egb_cup34_'+slug,JSON.stringify(o));}catch(e){}return Promise.resolve(o);}
-      return j('https://www.thesportsdb.com/api/v1/json/3/search_leagues.php?name='+encodeURIComponent(names[i])).then(function(d){
+      if(i>=names.length){var o={ts:Date.now(),id:'',found:'\u0645\u0634 \u0645\u0648\u062C\u0648\u062F\u0629 \u0641\u064A API'};try{localStorage.setItem('egb_cup34_'+slug,JSON.stringify(o));}catch(e){}return Promise.resolve(o);}
+      return j('https://removed.invalid/api/v1/json/3/search_leagues.php?name='+encodeURIComponent(names[i])).then(function(d){
         var ls=d.leagues||[];
         if(ls.length){var o={ts:Date.now(),id:ls[0].idLeague,found:ls[0].strLeague};try{localStorage.setItem('egb_cup34_'+slug,JSON.stringify(o));}catch(e){}return o;}
         i++;return step();
@@ -2873,7 +2873,7 @@ try{
   function eventsOf(id,slug,date){
     var ck='egb_cup34ev_'+slug+'_'+date;var c=null;try{c=JSON.parse(localStorage.getItem(ck)||'null');}catch(e){}
     if(c&&Date.now()-c.ts<600000)return Promise.resolve(c.list);
-    return j('https://www.thesportsdb.com/api/v1/json/3/lookupleague.php?id='+id).then(function(d){
+    return j('https://removed.invalid/api/v1/json/3/lookupleague.php?id='+id).then(function(d){
       var list=(d.events||[]).filter(function(e){return (e.strDate||'').slice(0,10)===date;}).map(function(e){return {home:e.strHomeTeam||'',away:e.strAwayTeam||'',time:(e.strTime||'').slice(0,5),status:e.strStatus||''};});
       try{localStorage.setItem(ck,JSON.stringify({ts:Date.now(),list:list}));}catch(e){}
       return list;
@@ -2888,7 +2888,7 @@ try{
     var date=curDate();var con=container();if(!con)return;
     var old=con.querySelectorAll('.egb-cup');for(var q=0;q<old.length;q++)old[q].remove();
     findLeague(slug).then(function(info){
-      if(!info.id){con.insertBefore(card('<div style="color:#fca5a5;font-size:12px;font-weight:800;text-align:center;">\uD83D\uDD0D '+info.found+'</div>',false),con.firstChild);return;}
+      if(!info.id){return;con.insertBefore(card('<div style="color:#fca5a5;font-size:12px;font-weight:800;text-align:center;">\uD83D\uDD0D '+info.found+'</div>',false),con.firstChild);return;}
       eventsOf(info.id,slug,date).then(function(list){
         if(!list.length){con.insertBefore(card('<div style="color:#fcd34d;font-size:12px;font-weight:800;text-align:center;">\uD83C\uDFC6 \u0627\u0644\u0645\u0633\u0627\u0628\u0642\u0629 \u0645\u0648\u062C\u0648\u062F\u0629: <b>'+info.found+'</b><br>\u0628\u0633 \u0645\u0641\u064A\u0634 \u0645\u0628\u0627\u0631\u0627\u0629 \u064A\u0648\u0645 '+date+'</div>',true),con.firstChild);return;}
         var frag=document.createDocumentFragment();
@@ -3521,10 +3521,10 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] auto-v57:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التحديث الذاتي الشامل v57 ===== -->
-<!-- ===== إضافة: كتم رسالة TheSportsDB النهائي v59 | 2026-09-24 ===== -->
+<!-- ===== إضافة: كتم رسالة API النهائي v59 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
-  var PH='مش موجودة في TheSportsDB';
+  var PH='مش موجودة في API';
   var cssDone={};
   function hideEl(el){
     el.style.display='none';el.__hid=1;
@@ -3562,15 +3562,15 @@ try{
   console.info('[EgyptBet Addon] hush-v59: الكتم النهائي شغال');
 }catch(e){console.warn('[EgyptBet Addon] hush-v59:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: كتم رسالة TheSportsDB النهائي v59 ===== -->
-<!-- ===== إضافة: قطع TheSportsDB نهائياً v60 | 2026-09-24 ===== -->
+<!-- ===== نهاية إضافة: كتم رسالة API النهائي v59 ===== -->
+<!-- ===== إضافة: قطع API نهائياً v60 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
   var EMPTY='{"events":null,"event":null,"teams":null,"players":null,"leagues":null,"results":null}';
   var of=window.fetch;
   window.fetch=function(u,o){
     var url=(typeof u==='string')?u:((u&&u.url)||'');
-    if(/thesportsdb\.com/i.test(url)){
+    if(/API\.com/i.test(url)){
       return Promise.resolve(new Response(EMPTY,{status:200,headers:{'Content-Type':'application/json'}}));
     }
     return of.apply(this,arguments);
@@ -3578,16 +3578,16 @@ try{
   var ox=XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open=function(mth,url){
     try{
-      if(/thesportsdb\.com/i.test(url+'')){
+      if(/API\.com/i.test(url+'')){
         arguments[1]='data:application/json,'+EMPTY;
       }
     }catch(e){}
     return ox.apply(this,arguments);
   };
-  console.info('[EgyptBet Addon] cut-v60: TheSportsDB مقطوعة — المصادر: ESPN + API فقط');
+  console.info('[EgyptBet Addon] cut-v60: API مقطوعة — المصادر: ESPN + API فقط');
 }catch(e){console.warn('[EgyptBet Addon] cut-v60:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: قطع TheSportsDB نهائياً v60 ===== -->
+<!-- ===== نهاية إضافة: قطع API نهائياً v60 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
