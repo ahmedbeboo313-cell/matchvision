@@ -3468,6 +3468,32 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] pulse-v61:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: محرك النبض اللحظي v61 ===== -->
+<!-- ===== إضافة: التأمين الشامل v62 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  var EMPTY='{"events":null,"event":null,"teams":null,"players":null,"leagues":null,"results":null}';
+  var of=window.fetch;
+  window.fetch=function(u,o){var url=(typeof u==='string')?u:((u&&u.url)||'');
+    if(/thesportsdb\.com/i.test(url))return Promise.resolve(new Response(EMPTY,{status:200,headers:{'Content-Type':'application/json'}}));
+    return of.apply(this,arguments);};
+  var ox=XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open=function(m,url){try{if(/thesportsdb\.com/i.test(url+''))arguments[1]='data:application/json,'+EMPTY;}catch(e){}return ox.apply(this,arguments);};
+  ['fetchTSDB','fetchTSDBDay','fetchTSDBLive','fetchBBLive','fetchBBDay'].forEach(function(fn){
+    try{if(typeof window[fn]==='function')window[fn]=function(){return Promise.resolve([]);};}catch(e){}
+  });
+  var PH=['مش موجودة في TheSportsDB','مش موجودة في API'];
+  var last=0;
+  function sweep(){var n=Date.now();if(n-last<800)return;last=n;
+    try{var all=document.querySelectorAll('div,section,p,span,b,strong');
+      for(var i=0;i<all.length;i++){var el=all[i];if(el.__hid)continue;var t=(el.textContent||'').trim();
+        if(t.length<80&&PH.some(function(p){return t.indexOf(p)>=0;})){el.style.display='none';el.__hid=1;
+          var pa=el.parentElement;if(pa&&(pa.textContent||'').trim().length<80){pa.style.display='none';pa.__hid=1;}}}}catch(e){}}
+  setInterval(sweep,1500);
+  try{new MutationObserver(function(){sweep();}).observe(document.body,{childList:true,subtree:true});}catch(e){}
+  console.info('[EgyptBet Addon] audit-v62: التأمين الشامل شغال');
+}catch(e){console.warn('[EgyptBet Addon] audit-v62:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: التأمين الشامل v62 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
