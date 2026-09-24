@@ -3397,13 +3397,41 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
-<!-- ===== إضافة: القناة اللحظية المستقلة v55 | 2026-09-24 ===== -->
+<!-- ===== إضافة: نبض الدقيقة المحلي v56 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  function tickMin(){
+    try{
+      if(document.hidden)return;
+      var ms=(window.state&&state.matches)||[];var now=Date.now();var ch=false;
+      ms.forEach(function(m){
+        if(!m.live||m.minute==null)return;
+        var src=m.minute;
+        if(m.__b==null||m.__b!==src){m.__b=src;m.__bt=now;return;}
+        if(src===45||src>=90)return;
+        var add=Math.floor((now-m.__bt)/60000);
+        if(add<1)return;
+        var nm=src+Math.min(add,2);
+        if(nm>m.minute){m.minute=nm;ch=true;}
+      });
+      if(ch){
+        try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
+        try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
+      }
+    }catch(e){}
+  }
+  setInterval(tickMin,10000);
+  console.info('[EgyptBet Addon] tick-v56: نبض الدقيقة شغال');
+}catch(e){console.warn('[EgyptBet Addon] tick-v56:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: نبض الدقيقة المحلي v56 ===== -->
+<!-- ===== إضافة: التحديث الذاتي الشامل v57 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
   function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
   var chip=document.createElement('div');
   chip.id='liveChip';
-  chip.style.cssText='position:fixed;bottom:86px;left:8px;z-index:9999;background:#052e16;border:1px solid #22c55e;color:#86efac;font-size:10px;padding:3px 8px;border-radius:12px;opacity:.85;direction:ltr';
+  chip.style.cssText='position:fixed;bottom:86px;left:8px;z-index:9999;background:#052e16;border:1px solid #22c55e;color:#86efac;font-size:10px;padding:3px 8px;border-radius:12px;opacity:.85;direction:ltr;display:none';
   if(document.body)document.body.appendChild(chip);
   function stamp(t){try{chip.textContent='⚡ '+t;}catch(e){}}
   function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
@@ -3432,6 +3460,11 @@ try{
         minute:(st.clock?Math.max(1,Math.round(st.clock/60)):(parseInt(st.displayClock)||1)),
         scoreHome:h.score,scoreAway:a.score};
     }catch(e){return null;}
+  }
+  function forceRender(){
+    try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
+    try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
+    try{if(typeof window.updateBell==='function')updateBell();}catch(e){}
   }
   function tickLive(){
     try{
@@ -3476,48 +3509,18 @@ try{
           });
           var t=new Date();
           stamp(String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0'));
-          if(ch){
-            try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
-            try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
-          }
+          if(ch)forceRender();
         });
       });
     }catch(e){}
   }
-  setInterval(tickLive,15000);
-  setTimeout(tickLive,3000);
-  console.info('[EgyptBet Addon] live-v55: القناة المستقلة شغالة (XHR كل 15 ثانية)');
-}catch(e){console.warn('[EgyptBet Addon] live-v55:',e);}})();
+  setInterval(tickLive,10000);
+  setTimeout(tickLive,2500);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(tickLive,800);});
+  console.info('[EgyptBet Addon] auto-v57: التحديث الذاتي الشامل شغال (10 ثواني)');
+}catch(e){console.warn('[EgyptBet Addon] auto-v57:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: القناة اللحظية المستقلة v55 ===== -->
-<!-- ===== إضافة: نبض الدقيقة المحلي v56 | 2026-09-24 ===== -->
-<script>
-(function(){'use strict';try{
-  function tickMin(){
-    try{
-      if(document.hidden)return;
-      var ms=(window.state&&state.matches)||[];var now=Date.now();var ch=false;
-      ms.forEach(function(m){
-        if(!m.live||m.minute==null)return;
-        var src=m.minute;
-        if(m.__b==null||m.__b!==src){m.__b=src;m.__bt=now;return;}
-        if(src===45||src>=90)return;
-        var add=Math.floor((now-m.__bt)/60000);
-        if(add<1)return;
-        var nm=src+Math.min(add,2);
-        if(nm>m.minute){m.minute=nm;ch=true;}
-      });
-      if(ch){
-        try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
-        try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
-      }
-    }catch(e){}
-  }
-  setInterval(tickMin,10000);
-  console.info('[EgyptBet Addon] tick-v56: نبض الدقيقة شغال');
-}catch(e){console.warn('[EgyptBet Addon] tick-v56:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: نبض الدقيقة المحلي v56 ===== -->
+<!-- ===== نهاية إضافة: التحديث الذاتي الشامل v57 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
