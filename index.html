@@ -3521,6 +3521,36 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] auto-v57:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التحديث الذاتي الشامل v57 ===== -->
+<!-- ===== إضافة: كتم رسالة TheSportsDB v58 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  var PH='مش موجودة في TheSportsDB';
+  var last=0;
+  function sweep(){
+    var n=Date.now();if(n-last<800)return;last=n;
+    try{
+      var all=document.querySelectorAll('div,section,p,span,b,strong');
+      for(var i=0;i<all.length;i++){
+        var el=all[i];
+        if(el.__hid)continue;
+        var t=(el.textContent||'').trim();
+        if(t.indexOf(PH)>=0&&t.length<80){
+          el.style.display='none';el.__hid=1;
+          var pa=el.parentElement;
+          if(pa&&(pa.textContent||'').trim().length<80){pa.style.display='none';pa.__hid=1;}
+        }
+      }
+    }catch(e){}
+  }
+  setInterval(sweep,1200);
+  try{
+    var mo=new MutationObserver(function(){sweep();});
+    mo.observe(document.body,{childList:true,subtree:true});
+  }catch(e){}
+  console.info('[EgyptBet Addon] hush-v58: رسالة TheSportsDB مكتومة');
+}catch(e){console.warn('[EgyptBet Addon] hush-v58:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: كتم رسالة TheSportsDB v58 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
