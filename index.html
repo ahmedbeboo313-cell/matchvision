@@ -3268,6 +3268,25 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] policy-v47:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: سياسة الأسواق الآمنة v47 ===== -->
+<!-- ===== إضافة: بذرة قوة المنتخبات v48 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  try{['eb_pred_frozen','eb_preds','eb_pred_cache'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+  var SEED={'Portugal':'8-1-1','Spain':'8-1-1','France':'8-1-1','England':'7-2-1','Germany':'8-1-1','Netherlands':'7-2-1','Belgium':'7-1-2','Croatia':'7-1-2','Italy':'7-2-1','Argentina':'8-1-1','Brazil':'7-2-1','Norway':'7-1-2','Denmark':'7-2-1','Austria':'7-1-2','Switzerland':'7-2-1','Ukraine':'6-2-2','Poland':'6-2-2','Serbia':'6-2-2','Greece':'6-2-2','Turkey':'6-2-2','Scotland':'6-2-2','Wales':'5-2-3','Republic of Ireland':'5-2-3','Ireland':'5-2-3','Hungary':'6-2-2','Czechia':'6-2-2','Romania':'6-2-2','Sweden':'6-2-2','Slovenia':'5-2-3','Slovakia':'5-2-3','Iceland':'5-2-3','Albania':'5-2-3','Montenegro':'5-2-3','Bosnia and Herzegovina':'5-2-3','Northern Ireland':'4-2-4','Finland':'4-2-4','Bulgaria':'4-2-4','Israel':'5-2-3','Kosovo':'4-2-4','Georgia':'5-2-3','Armenia':'4-2-4','Belarus':'4-2-4','Kazakhstan':'4-2-4','Azerbaijan':'3-2-5','Moldova':'3-2-5','Lithuania':'3-2-5','Latvia':'3-2-5','Estonia':'3-2-5','Cyprus':'3-2-5','Luxembourg':'4-2-4','Malta':'2-2-6','Andorra':'1-2-7','San Marino':'0-1-9','Liechtenstein':'1-1-8','Gibraltar':'1-1-8','Faroe Islands':'2-2-6','North Macedonia':'5-2-3','Saudi Arabia':'5-2-3','Japan':'8-1-1','South Korea':'7-2-1','Australia':'6-2-2','United States':'6-2-2','USA':'6-2-2','Mexico':'6-2-2','Canada':'6-2-2','Egypt':'6-2-2','Morocco':'7-2-1','Algeria':'7-1-2','Tunisia':'6-2-2','Senegal':'7-2-1','Ghana':'5-2-3','Nigeria':'6-2-2','Cameroon':'6-2-2','Ivory Coast':'6-2-2','South Africa':'5-2-3','Qatar':'5-2-3','Iraq':'5-2-3','Jordan':'5-2-3','United Arab Emirates':'5-2-3','Oman':'4-2-4','Bahrain':'4-2-4','Kuwait':'4-2-4','Lebanon':'4-2-4','Syria':'4-2-4','Palestine':'4-2-4','India':'4-2-4','China':'4-2-4','Iran':'7-2-1','Uzbekistan':'6-2-2','New Zealand':'4-2-4','Jamaica':'4-2-4','Panama':'4-2-4','Costa Rica':'5-2-3','Honduras':'4-2-4','Guatemala':'4-2-4','Curaçao':'4-2-4','Haiti':'4-2-4','Trinidad and Tobago':'4-2-4','Venezuela':'5-2-3','Colombia':'7-2-1','Uruguay':'7-2-1','Ecuador':'6-2-2','Paraguay':'5-2-3','Peru':'5-2-3','Chile':'5-2-3','Bolivia':'3-2-5','Suriname':'4-2-4','Guyana':'3-2-5','Bahamas':'2-2-6','Barbados':'3-2-5','Bermuda':'3-2-5','Antigua and Barbuda':'2-2-6','Aruba':'2-2-6','St. Martin':'1-2-7','Saint Martin':'1-2-7','Turks and Caicos Islands':'1-2-7','British Virgin Islands':'1-2-7','US Virgin Islands':'1-2-7','U.S. Virgin Islands':'1-2-7','Anguilla':'1-2-7','Montserrat':'2-2-6','Dominica':'2-2-6','Grenada':'2-2-6','St. Lucia':'2-2-6','Saint Lucia':'2-2-6','St. Vincent and the Grenadines':'2-2-6','Saint Vincent and the Grenadines':'2-2-6','Puerto Rico':'3-2-5','Dominican Republic':'3-2-5','Cuba':'3-2-5','Nicaragua':'3-2-5','Belize':'2-2-6','El Salvador':'4-2-4','Martinique':'3-2-5','Guadeloupe':'3-2-5','French Guiana':'2-2-6','Bonaire':'1-2-7','Sint Maarten':'1-2-7','Cayman Islands':'1-2-7'};
+  var gp=window.getPrediction;
+  window.getPrediction=function(m){
+    try{
+      if(m&&m.home&&m.away){
+        if((!m.home.record||m.home.record==='0-0-0')&&SEED[m.home.name])m.home.record=SEED[m.home.name];
+        if((!m.away.record||m.away.record==='0-0-0')&&SEED[m.away.name])m.away.record=SEED[m.away.name];
+      }
+    }catch(e){}
+    return gp(m);
+  };
+  console.info('[EgyptBet Addon] seed-v48: بذرة قوة المنتخبات شغالة');
+}catch(e){console.warn('[EgyptBet Addon] seed-v48:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: بذرة قوة المنتخبات v48 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
