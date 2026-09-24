@@ -3397,18 +3397,31 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
-<!-- ===== إضافة: قناة اللايف اللحظية v52 | 2026-09-24 ===== -->
+<!-- ===== إضافة: قناة اللايف اللحظية v53 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
   function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+  var chip=document.createElement('div');
+  chip.id='liveChip';
+  chip.style.cssText='position:fixed;bottom:86px;left:8px;z-index:9999;background:#052e16;border:1px solid #22c55e;color:#86efac;font-size:10px;padding:3px 8px;border-radius:12px;opacity:.85;direction:ltr';
+  if(document.body)document.body.appendChild(chip);
+  function stamp(t){try{chip.textContent='⚡ '+t;}catch(e){}}
+  function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
   function tickLive(){
     try{
       if(document.hidden)return;
       var ms=(window.state&&state.matches)||[];
-      var bySlug={},ids={};
-      ms.forEach(function(m){ids[m.id]=m;if(m.live&&m.leagueSlug)(bySlug[m.leagueSlug]=bySlug[m.leagueSlug]||[]).push(m);});
+      var now=Date.now(),bySlug={},ids={};
+      ms.forEach(function(m){
+        ids[m.id]=m;
+        var slug=m.leagueSlug||m.slug||m.league;
+        if(!slug)return;
+        var t=kick(m),el=t?now-t:0;
+        var liveish=m.live===true||((window.isFinished&&isFinished(m))===false&&el>45000&&el<200*60000);
+        if(liveish)(bySlug[slug]=bySlug[slug]||[]).push(m);
+      });
       var slugs=Object.keys(bySlug);
-      if(!slugs.length)return;
+      if(!slugs.length){stamp('لايف: 0');return;}
       var ds=dstr(new Date());
       slugs.forEach(function(slug){
         fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,{cache:'no-store'})
@@ -3421,10 +3434,7 @@ try{
             var c=ev.competitions&&ev.competitions[0];if(!c)return;
             var st=c.status&&c.status.type;
             var hs=null,as=null;
-            (c.competitors||[]).forEach(function(cp){
-              if(cp.homeAway==='home')hs=+cp.score;
-              else if(cp.homeAway==='away')as=+cp.score;
-            });
+            (c.competitors||[]).forEach(function(cp){if(cp.homeAway==='home')hs=+cp.score;else if(cp.homeAway==='away')as=+cp.score;});
             if(hs!=null&&isFinite(hs)&&hs!==+(m.scoreHome||0)){m.scoreHome=hs;ch=true;}
             if(as!=null&&isFinite(as)&&as!==+(m.scoreAway||0)){m.scoreAway=as;ch=true;}
             if(st&&st.state==='in'){
@@ -3433,25 +3443,22 @@ try{
             }
             if(st&&st.state==='post'&&m.live){m.live=false;m.status='finished';ch=true;}
           });
+          var t=new Date();
+          stamp(String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0'));
           if(ch){
-            if(typeof window.renderCurrent==='function')renderCurrent();
-            try{
-              if(state.detailsId&&typeof window.renderDetails==='function'){
-                var d=ms.find(function(x){return x.id===state.detailsId;});
-                if(d&&d.live)renderDetails();
-              }
-            }catch(e){}
+            try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
+            try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
           }
         }).catch(function(){});
       });
     }catch(e){}
   }
-  setInterval(tickLive,20000);
-  setTimeout(tickLive,4000);
-  console.info('[EgyptBet Addon] live-v52: قناة اللايف اللحظية شغالة (كل 20 ثانية)');
-}catch(e){console.warn('[EgyptBet Addon] live-v52:',e);}})();
+  setInterval(tickLive,15000);
+  setTimeout(tickLive,3000);
+  console.info('[EgyptBet Addon] live-v53: القناة اللحظية شغالة (15 ثانية)');
+}catch(e){console.warn('[EgyptBet Addon] live-v53:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: قناة اللايف اللحظية v52 ===== -->
+<!-- ===== نهاية إضافة: قناة اللايف اللحظية v53 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
