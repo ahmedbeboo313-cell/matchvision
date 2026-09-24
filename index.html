@@ -3521,13 +3521,27 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] auto-v57:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التحديث الذاتي الشامل v57 ===== -->
-<!-- ===== إضافة: كتم رسالة TheSportsDB v58 | 2026-09-24 ===== -->
+<!-- ===== إضافة: كتم رسالة TheSportsDB النهائي v59 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
   var PH='مش موجودة في TheSportsDB';
-  var last=0;
+  var cssDone={};
+  function hideEl(el){
+    el.style.display='none';el.__hid=1;
+    var pa=el.parentElement;
+    if(pa&&(pa.textContent||'').trim().length<80){pa.style.display='none';pa.__hid=1;}
+  }
+  function tryCss(el){
+    var cn=(el.className||'')+'';
+    var m=cn.match(/[a-z0-9_-]*(tsdb|sportsdb|missing|notfound|nofound)[a-z0-9_-]*/i);
+    if(m&&!cssDone[m[0]]){
+      cssDone[m[0]]=1;
+      var st=document.createElement('style');
+      st.textContent='.'+m[0]+'{display:none!important}';
+      document.head.appendChild(st);
+    }
+  }
   function sweep(){
-    var n=Date.now();if(n-last<800)return;last=n;
     try{
       var all=document.querySelectorAll('div,section,p,span,b,strong');
       for(var i=0;i<all.length;i++){
@@ -3535,22 +3549,20 @@ try{
         if(el.__hid)continue;
         var t=(el.textContent||'').trim();
         if(t.indexOf(PH)>=0&&t.length<80){
-          el.style.display='none';el.__hid=1;
-          var pa=el.parentElement;
-          if(pa&&(pa.textContent||'').trim().length<80){pa.style.display='none';pa.__hid=1;}
+          tryCss(el);
+          hideEl(el);
         }
       }
     }catch(e){}
   }
-  setInterval(sweep,1200);
-  try{
-    var mo=new MutationObserver(function(){sweep();});
-    mo.observe(document.body,{childList:true,subtree:true});
-  }catch(e){}
-  console.info('[EgyptBet Addon] hush-v58: رسالة TheSportsDB مكتومة');
-}catch(e){console.warn('[EgyptBet Addon] hush-v58:',e);}})();
+  var last=0;
+  function fast(){var n=Date.now();if(n-last<50)return;last=n;sweep();}
+  setInterval(sweep,1000);
+  try{new MutationObserver(fast).observe(document.body,{childList:true,subtree:true,characterData:true});}catch(e){}
+  console.info('[EgyptBet Addon] hush-v59: الكتم النهائي شغال');
+}catch(e){console.warn('[EgyptBet Addon] hush-v59:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: كتم رسالة TheSportsDB v58 ===== -->
+<!-- ===== نهاية إضافة: كتم رسالة TheSportsDB النهائي v59 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
