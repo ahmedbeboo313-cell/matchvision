@@ -3593,7 +3593,7 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] whistle-v64:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: لحظة الصافرة v64 ===== -->
-<!-- ===== إضافة: أرشيف المنتهيات v66 | 2026-09-25 ===== -->
+<!-- ===== إضافة: أرشيف المنتهيات ثلاثي الأيام v67 | 2026-09-25 ===== -->
 <script>
 (function(){'use strict';try{
   var KEY='eb_fin_archive';
@@ -3630,27 +3630,37 @@ try{
   }
   function backfill(){
     try{
-      var day=new Date().toDateString();
-      if(localStorage.getItem('eb_arch_bf')===day)return;
-      localStorage.setItem('eb_arch_bf',day);
-      var slugs=(window.LIVE_SLUGS||[]).slice(0,20);
-      var ds=dstr(new Date());
-      slugs.forEach(function(slug){
-        getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,function(j){
-          if(!j||!j.events)return;
-          j.events.forEach(function(ev){
-            var c=ev.competitions&&ev.competitions[0];if(!c)return;
-            var st=c.status&&c.status.type;
-            if(!st||st.state!=='post')return;
-            var h=null,a2=null;
-            (c.competitors||[]).forEach(function(cp){
-              var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};
-              if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a2=o;
+      var last=+localStorage.getItem('eb_arch_bf3')||0;
+      if(Date.now()-last<6*3600000)return;
+      localStorage.setItem('eb_arch_bf3',String(Date.now()));
+      var slugs=((window.LIVE_SLUGS||[]).concat(window.CORE_SLUGS||[])).slice(0,24);
+      var seen={};var uniq=[];
+      slugs.forEach(function(s){if(s&&!seen[s]){seen[s]=1;uniq.push(s);}});
+      var q=[];
+      [0,1,2].forEach(function(d){
+        var ds=dstr(new Date(Date.now()-d*86400000));
+        uniq.forEach(function(slug){q.push([slug,ds]);});
+      });
+      q.forEach(function(pair,i){
+        setTimeout(function(){
+          getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+pair[0]+'/scoreboard?dates='+pair[1],function(j){
+            if(!j||!j.events)return;
+            var lname=(j.leagues&&j.leagues[0]&&j.leagues[0].name)||'';
+            j.events.forEach(function(ev){
+              var c=ev.competitions&&ev.competitions[0];if(!c)return;
+              var st=c.status&&c.status.type;
+              if(!st||st.state!=='post')return;
+              var h=null,a2=null;
+              (c.competitors||[]).forEach(function(cp){
+                var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};
+                if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a2=o;
+              });
+              if(!h||!a2)return;
+              pushArch({id:ev.id,home:h,away:a2,leagueSlug:pair[0],leagueName:lname,date:ev.date||new Date().toISOString(),live:false,status:'finished',scoreHome:h.score,scoreAway:a2.score,minute:''});
             });
-            if(!h||!a2)return;
-            pushArch({id:ev.id,home:h,away:a2,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:false,status:'finished',scoreHome:h.score,scoreAway:a2.score,minute:''});
+            try{if(mode()==='finished')inject();}catch(e){}
           });
-        });
+        },i*250);
       });
     }catch(e){}
   }
@@ -3681,10 +3691,10 @@ try{
   setTimeout(function(){archive();backfill();},6000);
   var rc=window.renderCurrent;
   window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(inject,80);return r;};
-  console.info('[EgyptBet Addon] arch-v66: أرشيف المنتهيات شغال');
-}catch(e){console.warn('[EgyptBet Addon] arch-v66:',e);}})();
+  console.info('[EgyptBet Addon] arch-v67: الأرشيف ثلاثي الأيام شغال');
+}catch(e){console.warn('[EgyptBet Addon] arch-v67:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: أرشيف المنتهيات v66 ===== -->
+<!-- ===== نهاية إضافة: أرشيف المنتهيات ثلاثي الأيام v67 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
