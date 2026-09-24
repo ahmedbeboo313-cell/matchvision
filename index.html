@@ -3203,7 +3203,7 @@ try{
   function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
   window.fetch=function(u,o){
     var url=(typeof u==='string')?u:((u&&u.url)||'');
-    var m=url.match(/scoreboard\?dates=(\d{8})/)||url.match(/scoreboard\/(\d{8})/);
+    var m=url.match(/[?&]dates=(\d{8})/)||url.match(/scoreboard\/(\d{8})/);
     var p=of.apply(this,arguments);
     if(!m)return p;
     var today=dstr(new Date());
@@ -3344,6 +3344,59 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] nat-v50:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التحليل الشامل للمنتخبات v50 ===== -->
+<!-- ===== إضافة: اللايف اللاصق لحد الصافرة v51 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  var KEY='eb_live_sticky';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return {};}}
+  var sticky=load();
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(sticky));}catch(e){}}
+  function kick(m){
+    var t=+(m.ts||m.kickoff||m.start||0);
+    if(!t&&m.date)t=+new Date(m.date);
+    if(!t&&m.time)t=+new Date(m.time);
+    return t||0;
+  }
+  function scan(){
+    try{
+      var pools=[],now=Date.now(),changed=false;
+      if(window.state&&state.matches)pools.push(state.matches);
+      if(window.state&&state.livePool)pools.push(state.livePool);
+      if(window.state&&state.livePoolMap){for(var k in state.livePoolMap){if(state.livePoolMap[k]&&state.livePoolMap[k].forEach)pools.push(state.livePoolMap[k]);}}
+      for(var id in sticky){if(now-sticky[id]>12*3600000)delete sticky[id];}
+      pools.forEach(function(arr){
+        arr.forEach(function(m){
+          if(!m||!m.id)return;
+          var fin=(window.isFinished&&window.isFinished(m))||m.status==='finished';
+          if(fin){if(sticky[m.id]){delete sticky[m.id];save();}if(m.live){m.live=false;changed=true;}return;}
+          var t=kick(m),el=t?now-t:0;
+          if(m.live===true&&!sticky[m.id]){sticky[m.id]=now;save();}
+          var promote=false;
+          if(sticky[m.id]&&t&&el<200*60000)promote=true;
+          else if(t&&el>60000&&el<200*60000)promote=true;
+          if(promote&&m.live!==true){m.live=true;if(m.status==='upcoming'||m.status==='scheduled'||!m.status)m.status='live';changed=true;}
+          if(promote&&m.live&&m.minute==null&&el<125*60000)m.minute=Math.max(1,Math.round(el/60000));
+        });
+      });
+      if(changed&&typeof window.renderCurrent==='function')window.renderCurrent();
+    }catch(e){}
+  }
+  setInterval(scan,20000);setTimeout(scan,5000);
+  var il=window.isLive;
+  window.isLive=function(m){
+    try{
+      if(m&&m.id&&sticky[m.id]){
+        var fin=(window.isFinished&&window.isFinished(m))||m.status==='finished';
+        var t=kick(m),el=t?Date.now()-t:0;
+        if(!fin&&el<200*60000)return true;
+      }
+    }catch(e){}
+    return il?il(m):false;
+  };
+  console.info('[EgyptBet Addon] stick-v51: اللايف اللاصق شغال');
+}catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
