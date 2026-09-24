@@ -3546,6 +3546,85 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] flip-v63:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: درع تقلب النتيجة v63 ===== -->
+<!-- ===== إضافة: لحظة الصافرة v64 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  var seen={};
+  var lastFlow=0,lastSweep=0;
+  function mode(){
+    try{var a=document.querySelector('.mode-chip.active');return a&&a.dataset?a.dataset.mode:'all';}catch(e){return 'all';}
+  }
+  function sweep(){
+    var n=Date.now();if(n-lastSweep<300)return;lastSweep=n;
+    try{
+      var md=mode();
+      if(md==='finished')return;
+      var cards=document.querySelectorAll('article.card');
+      for(var i=0;i<cards.length;i++){
+        var c=cards[i];
+        if(c.querySelector&&c.querySelector('.done-pill')&&!c.__finHid){c.style.display='none';c.__finHid=1;}
+      }
+    }catch(e){}
+  }
+  function detect(){
+    try{
+      var ms=(window.state&&state.matches)||[];
+      var newFin=false;
+      ms.forEach(function(m){
+        if(!m||!m.id)return;
+        var fin=false;
+        try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
+        if(fin&&m.scoreHome!=null&&!seen[m.id]){seen[m.id]=1;newFin=true;}
+      });
+      if(newFin){
+        var n=Date.now();
+        if(n-lastFlow>5000){lastFlow=n;
+          try{if(typeof window.loadFinishedFlow==='function')window.loadFinishedFlow(true);}catch(e){}
+        }
+      }
+      sweep();
+    }catch(e){}
+  }
+  setInterval(detect,5000);setTimeout(detect,2500);
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(sweep,60);return r;};
+  try{new MutationObserver(function(){setTimeout(sweep,80);}).observe(document.body,{childList:true,subtree:true});}catch(e){}
+  console.info('[EgyptBet Addon] whistle-v64: لحظة الصافرة شغالة');
+}catch(e){console.warn('[EgyptBet Addon] whistle-v64:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: لحظة الصافرة v64 ===== -->
+<!-- ===== إضافة: أرشفة الصافرة v65 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  function mode(){try{var a=document.querySelector('.mode-chip.active');return a&&a.dataset?a.dataset.mode:'all';}catch(e){return 'all';}}
+  function inject(){
+    try{
+      if(mode()!=='finished')return;
+      var box=document.getElementById('homeContent');if(!box)return;
+      var ms=(window.state&&state.matches)||[];
+      ms.forEach(function(m){
+        if(!m||!m.id)return;
+        var fin=false;
+        try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
+        if(!fin||m.scoreHome==null)return;
+        if(document.querySelector('[data-match="'+m.id+'"]'))return;
+        if(typeof window.matchCard!=='function')return;
+        var html=window.matchCard(m);
+        if(!html)return;
+        var w=document.createElement('div');
+        w.innerHTML=html;
+        var el=w.firstChild;
+        if(el)box.appendChild(el);
+      });
+    }catch(e){}
+  }
+  setInterval(inject,4000);
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(inject,80);return r;};
+  console.info('[EgyptBet Addon] arch-v65: أرشفة الصافرة شغالة');
+}catch(e){console.warn('[EgyptBet Addon] arch-v65:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: أرشفة الصافرة v65 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
