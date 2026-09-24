@@ -3593,38 +3593,98 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] whistle-v64:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: لحظة الصافرة v64 ===== -->
-<!-- ===== إضافة: أرشفة الصافرة v65 | 2026-09-25 ===== -->
+<!-- ===== إضافة: أرشيف المنتهيات v66 | 2026-09-25 ===== -->
 <script>
 (function(){'use strict';try{
+  var KEY='eb_fin_archive';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}}
+  function save(a){try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
   function mode(){try{var a=document.querySelector('.mode-chip.active');return a&&a.dataset?a.dataset.mode:'all';}catch(e){return 'all';}}
-  function inject(){
+  function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+  function getX(url,cb){try{var x=new XMLHttpRequest();x.open('GET',url,true);x.timeout=12000;
+    x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
+    x.onerror=function(){cb(null);};x.ontimeout=function(){cb(null);};x.send();}catch(e){cb(null);}}
+  function pushArch(c){
+    var a=load();var ex=false;
+    for(var i=0;i<a.length;i++){if(a[i].id===c.id){ex=true;break;}}
+    if(ex)return;
+    a.push(c);
+    var cut=Date.now()-3*86400000;
+    a=a.filter(function(x){var t=+new Date(x.date||0);return !t||t>cut;});
+    if(a.length>300)a=a.slice(a.length-300);
+    save(a);
+  }
+  function archive(){
     try{
-      if(mode()!=='finished')return;
-      var box=document.getElementById('homeContent');if(!box)return;
       var ms=(window.state&&state.matches)||[];
       ms.forEach(function(m){
         if(!m||!m.id)return;
         var fin=false;
         try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
         if(!fin||m.scoreHome==null)return;
+        var c;try{c=JSON.parse(JSON.stringify(m));}catch(e){return;}
+        c.live=false;c.status='finished';
+        pushArch(c);
+      });
+    }catch(e){}
+  }
+  function backfill(){
+    try{
+      var day=new Date().toDateString();
+      if(localStorage.getItem('eb_arch_bf')===day)return;
+      localStorage.setItem('eb_arch_bf',day);
+      var slugs=(window.LIVE_SLUGS||[]).slice(0,20);
+      var ds=dstr(new Date());
+      slugs.forEach(function(slug){
+        getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,function(j){
+          if(!j||!j.events)return;
+          j.events.forEach(function(ev){
+            var c=ev.competitions&&ev.competitions[0];if(!c)return;
+            var st=c.status&&c.status.type;
+            if(!st||st.state!=='post')return;
+            var h=null,a2=null;
+            (c.competitors||[]).forEach(function(cp){
+              var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};
+              if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a2=o;
+            });
+            if(!h||!a2)return;
+            pushArch({id:ev.id,home:h,away:a2,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:false,status:'finished',scoreHome:h.score,scoreAway:a2.score,minute:''});
+          });
+        });
+      });
+    }catch(e){}
+  }
+  function inject(){
+    try{
+      if(mode()!=='finished')return;
+      var box=document.getElementById('homeContent');if(!box)return;
+      var anchor=box.querySelector('.day-head');
+      var src=[];
+      var ms=(window.state&&state.matches)||[];
+      ms.forEach(function(m){var fin=false;try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}if(fin&&m.scoreHome!=null)src.push(m);});
+      load().forEach(function(x){src.push(x);});
+      src.forEach(function(m){
+        if(!m||!m.id)return;
         if(document.querySelector('[data-match="'+m.id+'"]'))return;
         if(typeof window.matchCard!=='function')return;
         var html=window.matchCard(m);
         if(!html)return;
-        var w=document.createElement('div');
-        w.innerHTML=html;
+        var w=document.createElement('div');w.innerHTML=html;
         var el=w.firstChild;
-        if(el)box.appendChild(el);
+        if(!el)return;
+        if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(el,anchor.nextSibling);
+        else box.insertBefore(el,box.firstChild);
       });
     }catch(e){}
   }
-  setInterval(inject,4000);
+  setInterval(function(){archive();inject();},5000);
+  setTimeout(function(){archive();backfill();},6000);
   var rc=window.renderCurrent;
   window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(inject,80);return r;};
-  console.info('[EgyptBet Addon] arch-v65: أرشفة الصافرة شغالة');
-}catch(e){console.warn('[EgyptBet Addon] arch-v65:',e);}})();
+  console.info('[EgyptBet Addon] arch-v66: أرشيف المنتهيات شغال');
+}catch(e){console.warn('[EgyptBet Addon] arch-v66:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: أرشفة الصافرة v65 ===== -->
+<!-- ===== نهاية إضافة: أرشيف المنتهيات v66 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
