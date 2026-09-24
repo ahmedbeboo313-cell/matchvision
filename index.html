@@ -3397,7 +3397,7 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
-<!-- ===== إضافة: قناة اللايف اللحظية v53 | 2026-09-24 ===== -->
+<!-- ===== إضافة: القناة اللحظية + البعث v54 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
   function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
@@ -3407,6 +3407,21 @@ try{
   if(document.body)document.body.appendChild(chip);
   function stamp(t){try{chip.textContent='⚡ '+t;}catch(e){}}
   function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
+  function mkMatch(ev,slug){
+    try{
+      var c=ev.competitions&&ev.competitions[0];if(!c)return null;
+      var h=null,a=null;
+      (c.competitors||[]).forEach(function(cp){
+        var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};
+        if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a=o;
+      });
+      if(!h||!a)return null;
+      var st=c.status||{};
+      return {id:ev.id,home:h,away:a,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:true,status:'in',
+        minute:(st.clock?Math.max(1,Math.round(st.clock/60)):(parseInt(st.displayClock)||1)),
+        scoreHome:h.score,scoreAway:a.score};
+    }catch(e){return null;}
+  }
   function tickLive(){
     try{
       if(document.hidden)return;
@@ -3430,9 +3445,16 @@ try{
           if(!j||!j.events)return;
           var ch=false;
           j.events.forEach(function(ev){
-            var m=ids[ev.id];if(!m)return;
             var c=ev.competitions&&ev.competitions[0];if(!c)return;
             var st=c.status&&c.status.type;
+            var m=ids[ev.id];
+            if(!m){
+              if(st&&st.state==='in'){
+                var mm=mkMatch(ev,slug);
+                if(mm){state.matches.push(mm);ids[mm.id]=mm;ch=true;}
+              }
+              return;
+            }
             var hs=null,as=null;
             (c.competitors||[]).forEach(function(cp){if(cp.homeAway==='home')hs=+cp.score;else if(cp.homeAway==='away')as=+cp.score;});
             if(hs!=null&&isFinite(hs)&&hs!==+(m.scoreHome||0)){m.scoreHome=hs;ch=true;}
@@ -3455,10 +3477,10 @@ try{
   }
   setInterval(tickLive,15000);
   setTimeout(tickLive,3000);
-  console.info('[EgyptBet Addon] live-v53: القناة اللحظية شغالة (15 ثانية)');
-}catch(e){console.warn('[EgyptBet Addon] live-v53:',e);}})();
+  console.info('[EgyptBet Addon] live-v54: القناة اللحظية + البعث شغالين');
+}catch(e){console.warn('[EgyptBet Addon] live-v54:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: قناة اللايف اللحظية v53 ===== -->
+<!-- ===== نهاية إضافة: القناة اللحظية + البعث v54 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
