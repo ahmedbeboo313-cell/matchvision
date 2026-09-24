@@ -3397,7 +3397,7 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
-<!-- ===== إضافة: القناة اللحظية + البعث v54 | 2026-09-24 ===== -->
+<!-- ===== إضافة: القناة اللحظية المستقلة v55 | 2026-09-24 ===== -->
 <script>
 (function(){'use strict';try{
   function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
@@ -3407,6 +3407,17 @@ try{
   if(document.body)document.body.appendChild(chip);
   function stamp(t){try{chip.textContent='⚡ '+t;}catch(e){}}
   function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
+  function getX(url,cb){
+    try{
+      var x=new XMLHttpRequest();
+      x.open('GET',url,true);
+      x.timeout=12000;
+      x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
+      x.onerror=function(){cb(null);};
+      x.ontimeout=function(){cb(null);};
+      x.send();
+    }catch(e){cb(null);}
+  }
   function mkMatch(ev,slug){
     try{
       var c=ev.competitions&&ev.competitions[0];if(!c)return null;
@@ -3439,9 +3450,7 @@ try{
       if(!slugs.length){stamp('لايف: 0');return;}
       var ds=dstr(new Date());
       slugs.forEach(function(slug){
-        fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,{cache:'no-store'})
-        .then(function(r){return r.ok?r.json():null;})
-        .then(function(j){
+        getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,function(j){
           if(!j||!j.events)return;
           var ch=false;
           j.events.forEach(function(ev){
@@ -3471,16 +3480,16 @@ try{
             try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
             try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
           }
-        }).catch(function(){});
+        });
       });
     }catch(e){}
   }
   setInterval(tickLive,15000);
   setTimeout(tickLive,3000);
-  console.info('[EgyptBet Addon] live-v54: القناة اللحظية + البعث شغالين');
-}catch(e){console.warn('[EgyptBet Addon] live-v54:',e);}})();
+  console.info('[EgyptBet Addon] live-v55: القناة المستقلة شغالة (XHR كل 15 ثانية)');
+}catch(e){console.warn('[EgyptBet Addon] live-v55:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: القناة اللحظية + البعث v54 ===== -->
+<!-- ===== نهاية إضافة: القناة اللحظية المستقلة v55 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
