@@ -3494,6 +3494,58 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] audit-v62:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التأمين الشامل v62 ===== -->
+<!-- ===== إضافة: درع تقلب النتيجة v63 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  var KEY='eb_score_max';
+  var maxMap={};
+  try{maxMap=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(maxMap));}catch(e){}}
+  function rec(id){
+    var r=maxMap[id];
+    if(!r||Date.now()-r.t>12*3600000){r={h:0,a:0,lh:0,la:0,t:Date.now()};maxMap[id]=r;}
+    return r;
+  }
+  function guard(m){
+    if(!m||!m.id||m.__smax)return;
+    var r=rec(m.id);
+    var ch=+m.scoreHome||0,ca=+m.scoreAway||0;
+    if(ch>r.h)r.h=ch;
+    if(ca>r.a)r.a=ca;
+    r.lh=ch;r.la=ca;
+    try{
+      Object.defineProperty(m,'scoreHome',{configurable:true,
+        get:function(){return r.h;},
+        set:function(v){v=+v||0;r.lh=v;if(v>r.h){r.h=v;save();}}});
+      Object.defineProperty(m,'scoreAway',{configurable:true,
+        get:function(){return r.a;},
+        set:function(v){v=+v||0;r.la=v;if(v>r.a){r.a=v;save();}}});
+      m.__smax=1;
+    }catch(e){}
+  }
+  function scan(){
+    try{
+      var ms=(window.state&&state.matches)||[];
+      ms.forEach(function(m){
+        if(!m||!m.id)return;
+        var fin=false;
+        try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
+        if(fin){
+          var r=maxMap[m.id];
+          if(r&&(r.lh!==r.h||r.la!==r.a)){r.h=r.lh;r.a=r.la;save();}
+          return;
+        }
+        if(m.live)guard(m);
+      });
+    }catch(e){}
+  }
+  setInterval(scan,4000);setTimeout(scan,2000);
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){scan();return rc?rc.apply(this,arguments):undefined;};
+  console.info('[EgyptBet Addon] flip-v63: درع تقلب النتيجة شغال');
+}catch(e){console.warn('[EgyptBet Addon] flip-v63:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: درع تقلب النتيجة v63 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
