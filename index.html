@@ -3397,197 +3397,77 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
-<!-- ===== إضافة: نبض الدقيقة المحلي v56 | 2026-09-24 ===== -->
-<script>
-(function(){'use strict';try{
-  function tickMin(){
-    try{
-      if(document.hidden)return;
-      var ms=(window.state&&state.matches)||[];var now=Date.now();var ch=false;
-      ms.forEach(function(m){
-        if(!m.live||m.minute==null)return;
-        var src=m.minute;
-        if(m.__b==null||m.__b!==src){m.__b=src;m.__bt=now;return;}
-        if(src===45||src>=90)return;
-        var add=Math.floor((now-m.__bt)/60000);
-        if(add<1)return;
-        var nm=src+Math.min(add,2);
-        if(nm>m.minute){m.minute=nm;ch=true;}
-      });
-      if(ch){
-        try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
-        try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
-      }
-    }catch(e){}
-  }
-  setInterval(tickMin,10000);
-  console.info('[EgyptBet Addon] tick-v56: نبض الدقيقة شغال');
-}catch(e){console.warn('[EgyptBet Addon] tick-v56:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: نبض الدقيقة المحلي v56 ===== -->
-<!-- ===== إضافة: التحديث الذاتي الشامل v57 | 2026-09-24 ===== -->
+<!-- ===== إضافة: محرك النبض اللحظي v61 | 2026-09-25 ===== -->
 <script>
 (function(){'use strict';try{
   function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
-  var chip=document.createElement('div');
-  chip.id='liveChip';
-  chip.style.cssText='position:fixed;bottom:86px;left:8px;z-index:9999;background:#052e16;border:1px solid #22c55e;color:#86efac;font-size:10px;padding:3px 8px;border-radius:12px;opacity:.85;direction:ltr;display:none';
-  if(document.body)document.body.appendChild(chip);
-  function stamp(t){try{chip.textContent='⚡ '+t;}catch(e){}}
   function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
-  function getX(url,cb){
-    try{
-      var x=new XMLHttpRequest();
-      x.open('GET',url,true);
-      x.timeout=12000;
-      x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
-      x.onerror=function(){cb(null);};
-      x.ontimeout=function(){cb(null);};
-      x.send();
-    }catch(e){cb(null);}
-  }
-  function mkMatch(ev,slug){
-    try{
-      var c=ev.competitions&&ev.competitions[0];if(!c)return null;
-      var h=null,a=null;
-      (c.competitors||[]).forEach(function(cp){
-        var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};
-        if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a=o;
-      });
-      if(!h||!a)return null;
-      var st=c.status||{};
-      return {id:ev.id,home:h,away:a,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:true,status:'in',
-        minute:(st.clock?Math.max(1,Math.round(st.clock/60)):(parseInt(st.displayClock)||1)),
-        scoreHome:h.score,scoreAway:a.score};
-    }catch(e){return null;}
-  }
-  function forceRender(){
-    try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
+  function getX(url,cb){try{var x=new XMLHttpRequest();x.open('GET',url,true);x.timeout=12000;
+    x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
+    x.onerror=function(){cb(null);};x.ontimeout=function(){cb(null);};x.send();}catch(e){cb(null);}}
+  function mkMatch(ev,slug){try{var c=ev.competitions&&ev.competitions[0];if(!c)return null;var h=null,a=null;
+    (c.competitors||[]).forEach(function(cp){var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a=o;});
+    if(!h||!a)return null;var st=c.status||{};
+    return {id:ev.id,home:h,away:a,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:true,status:'in',minute:(st.clock?Math.max(1,Math.round(st.clock/60)):(parseInt(st.displayClock)||1)),scoreHome:h.score,scoreAway:a.score};}catch(e){return null;}}
+  function forceRender(){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
     try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
-    try{if(typeof window.updateBell==='function')updateBell();}catch(e){}
-  }
-  function tickLive(){
+    try{if(typeof window.updateBell==='function')updateBell();}catch(e){}}
+  function fetchLive(){
     try{
       if(document.hidden)return;
-      var ms=(window.state&&state.matches)||[];
-      var now=Date.now(),bySlug={},ids={};
-      ms.forEach(function(m){
-        ids[m.id]=m;
-        var slug=m.leagueSlug||m.slug||m.league;
-        if(!slug)return;
+      var ms=(window.state&&state.matches)||[];var now=Date.now(),bySlug={},ids={};
+      ms.forEach(function(m){ids[m.id]=m;var slug=m.leagueSlug||m.slug||m.league;if(!slug)return;
         var t=kick(m),el=t?now-t:0;
         var liveish=m.live===true||((window.isFinished&&isFinished(m))===false&&el>45000&&el<200*60000);
-        if(liveish)(bySlug[slug]=bySlug[slug]||[]).push(m);
-      });
-      var slugs=Object.keys(bySlug);
-      if(!slugs.length){stamp('لايف: 0');return;}
+        if(liveish)(bySlug[slug]=bySlug[slug]||[]).push(m);});
+      var slugs=Object.keys(bySlug);if(!slugs.length)return;
       var ds=dstr(new Date());
       slugs.forEach(function(slug){
         getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,function(j){
-          if(!j||!j.events)return;
-          var ch=false;
+          if(!j||!j.events)return;var ch=false;
           j.events.forEach(function(ev){
-            var c=ev.competitions&&ev.competitions[0];if(!c)return;
-            var st=c.status&&c.status.type;
+            var c=ev.competitions&&ev.competitions[0];if(!c)return;var st=c.status&&c.status.type;
             var m=ids[ev.id];
-            if(!m){
-              if(st&&st.state==='in'){
-                var mm=mkMatch(ev,slug);
-                if(mm){state.matches.push(mm);ids[mm.id]=mm;ch=true;}
-              }
-              return;
-            }
+            if(!m){if(st&&st.state==='in'){var mm=mkMatch(ev,slug);if(mm){state.matches.push(mm);ids[mm.id]=mm;ch=true;}}return;}
             var hs=null,as=null;
             (c.competitors||[]).forEach(function(cp){if(cp.homeAway==='home')hs=+cp.score;else if(cp.homeAway==='away')as=+cp.score;});
             if(hs!=null&&isFinite(hs)&&hs!==+(m.scoreHome||0)){m.scoreHome=hs;ch=true;}
             if(as!=null&&isFinite(as)&&as!==+(m.scoreAway||0)){m.scoreAway=as;ch=true;}
             if(st&&st.state==='in'){
               var min=(c.status&&c.status.clock)?Math.max(1,Math.round(c.status.clock/60)):(parseInt(c.status.displayClock)||m.minute);
-              if(min&&(min>(m.minute||0)||(m.minute||0)-min>=5)){m.minute=min;ch=true;}
+              if(min&&(min>(m.minute||0)||(m.minute||0)-min>=6)){m.minute=min;m.__b=min;m.__bt=Date.now();ch=true;}
             }
             if(st&&st.state==='post'&&m.live){m.live=false;m.status='finished';ch=true;}
           });
-          var t=new Date();
-          stamp(String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0'));
           if(ch)forceRender();
         });
       });
     }catch(e){}
   }
-  setInterval(tickLive,10000);
-  setTimeout(tickLive,2500);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(tickLive,800);});
-  console.info('[EgyptBet Addon] auto-v57: التحديث الذاتي الشامل شغال (10 ثواني)');
-}catch(e){console.warn('[EgyptBet Addon] auto-v57:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: التحديث الذاتي الشامل v57 ===== -->
-<!-- ===== إضافة: كتم رسالة API النهائي v59 | 2026-09-24 ===== -->
-<script>
-(function(){'use strict';try{
-  var PH='مش موجودة في API';
-  var cssDone={};
-  function hideEl(el){
-    el.style.display='none';el.__hid=1;
-    var pa=el.parentElement;
-    if(pa&&(pa.textContent||'').trim().length<80){pa.style.display='none';pa.__hid=1;}
-  }
-  function tryCss(el){
-    var cn=(el.className||'')+'';
-    var m=cn.match(/[a-z0-9_-]*(tsdb|sportsdb|missing|notfound|nofound)[a-z0-9_-]*/i);
-    if(m&&!cssDone[m[0]]){
-      cssDone[m[0]]=1;
-      var st=document.createElement('style');
-      st.textContent='.'+m[0]+'{display:none!important}';
-      document.head.appendChild(st);
-    }
-  }
-  function sweep(){
+  function tickMinute(){
     try{
-      var all=document.querySelectorAll('div,section,p,span,b,strong');
-      for(var i=0;i<all.length;i++){
-        var el=all[i];
-        if(el.__hid)continue;
-        var t=(el.textContent||'').trim();
-        if(t.indexOf(PH)>=0&&t.length<80){
-          tryCss(el);
-          hideEl(el);
-        }
-      }
+      if(document.hidden)return;
+      var ms=(window.state&&state.matches)||[];var now=Date.now();var ch=false;
+      ms.forEach(function(m){
+        if(!m.live||m.minute==null)return;
+        if(m.minute===45||m.minute>=90)return;
+        if(m.__b==null){m.__b=m.minute;m.__bt=now;return;}
+        var add=Math.floor((now-m.__bt)/60000);
+        if(add<1)return;
+        var nm=m.__b+Math.min(add,3);
+        if(nm>m.minute){m.minute=nm;ch=true;}
+      });
+      if(ch)forceRender();
     }catch(e){}
   }
-  var last=0;
-  function fast(){var n=Date.now();if(n-last<50)return;last=n;sweep();}
-  setInterval(sweep,1000);
-  try{new MutationObserver(fast).observe(document.body,{childList:true,subtree:true,characterData:true});}catch(e){}
-  console.info('[EgyptBet Addon] hush-v59: الكتم النهائي شغال');
-}catch(e){console.warn('[EgyptBet Addon] hush-v59:',e);}})();
+  setInterval(fetchLive,10000);
+  setInterval(tickMinute,10000);
+  setTimeout(fetchLive,2500);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){setTimeout(fetchLive,600);setTimeout(tickMinute,900);}});
+  console.info('[EgyptBet Addon] pulse-v61: محرك النبض اللحظي شغال');
+}catch(e){console.warn('[EgyptBet Addon] pulse-v61:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: كتم رسالة API النهائي v59 ===== -->
-<!-- ===== إضافة: قطع API نهائياً v60 | 2026-09-24 ===== -->
-<script>
-(function(){'use strict';try{
-  var EMPTY='{"events":null,"event":null,"teams":null,"players":null,"leagues":null,"results":null}';
-  var of=window.fetch;
-  window.fetch=function(u,o){
-    var url=(typeof u==='string')?u:((u&&u.url)||'');
-    if(/API\.com/i.test(url)){
-      return Promise.resolve(new Response(EMPTY,{status:200,headers:{'Content-Type':'application/json'}}));
-    }
-    return of.apply(this,arguments);
-  };
-  var ox=XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open=function(mth,url){
-    try{
-      if(/API\.com/i.test(url+'')){
-        arguments[1]='data:application/json,'+EMPTY;
-      }
-    }catch(e){}
-    return ox.apply(this,arguments);
-  };
-  console.info('[EgyptBet Addon] cut-v60: API مقطوعة — المصادر: ESPN + API فقط');
-}catch(e){console.warn('[EgyptBet Addon] cut-v60:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: قطع API نهائياً v60 ===== -->
+<!-- ===== نهاية إضافة: محرك النبض اللحظي v61 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
