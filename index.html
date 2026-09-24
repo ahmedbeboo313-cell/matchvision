@@ -3234,6 +3234,40 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] bridge-v46:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: كوبري اللايف v46 ===== -->
+<!-- ===== إضافة: سياسة الأسواق الآمنة v47 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  function pmfs(l){var a=[Math.exp(-l)];for(var i=1;i<=12;i++)a[i]=a[i-1]*l/i;return a;}
+  function neutral(){
+    var LH=1.40,LA=1.10,H=pmfs(LH),A=pmfs(LA);
+    var o=0,b=0;
+    for(var i=0;i<=12;i++)for(var j=0;j<=12;j++){var q=H[i]*A[j];if(i+j>2)o+=q;if(i>0&&j>0)b+=q;}
+    var h1=1-Math.exp(-(LH+LA)*0.44);
+    return {o25:Math.round(o*100),btts:Math.round(b*100),h1:Math.round(h1*100)};
+  }
+  var N=neutral();
+  var gp=window.getPrediction;
+  window.getPrediction=function(m){
+    var p=gp(m);
+    try{
+      if(!p)return p;
+      var rec=((m.home&&m.home.record)||'')+'|'+((m.away&&m.away.record)||'');
+      if(p.hasData===false&&rec==='0-0-0|0-0-0'){
+        if(p.h1Goal)p.h1Goal.prob=N.h1;
+        if(p.o25)p.o25.prob=N.o25;
+        if(p.u25)p.u25.prob=100-N.o25;
+        if(p.btts)p.btts.prob=N.btts;
+        if(p.goals){p.goals.prob=Math.max(N.o25,100-N.o25);p.goals.text=(N.o25>=50)?'أكثر من 2.5':'أقل من 2.5';}
+        var whole=Math.max(p.o25?p.o25.prob:0,p.u25?p.u25.prob:0);
+        if(p.h1Goal&&p.h1Goal.prob>whole-2)p.h1Goal.prob=Math.max(40,whole-2);
+      }
+    }catch(e){}
+    return p;
+  };
+  console.info('[EgyptBet Addon] policy-v47: سياسة الأسواق الآمنة شغالة');
+}catch(e){console.warn('[EgyptBet Addon] policy-v47:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: سياسة الأسواق الآمنة v47 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
