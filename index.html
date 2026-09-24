@@ -3287,6 +3287,50 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] seed-v48:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: بذرة قوة المنتخبات v48 ===== -->
+<!-- ===== إضافة: التحليل الشامل للمنتخبات v49 | 2026-09-24 ===== -->
+<script>
+(function(){'use strict';try{
+  var T={'S':[2.0,0.8],'A':[1.7,0.9],'B':[1.4,1.1],'C':[1.1,1.3],'D':[0.8,1.5],'E':[0.5,1.8]};
+  var R={'Portugal':'S','Spain':'S','France':'S','England':'S','Germany':'S','Netherlands':'A','Belgium':'A','Croatia':'A','Italy':'A','Argentina':'S','Brazil':'A','Norway':'A','Denmark':'A','Austria':'A','Switzerland':'A','Ukraine':'B','Poland':'B','Serbia':'B','Greece':'B','Turkey':'B','Scotland':'B','Wales':'C','Republic of Ireland':'C','Ireland':'C','Hungary':'B','Czechia':'B','Romania':'B','Sweden':'B','Slovenia':'C','Slovakia':'C','Iceland':'C','Albania':'C','Montenegro':'C','Bosnia and Herzegovina':'C','Northern Ireland':'D','Finland':'C','Bulgaria':'D','Israel':'C','Kosovo':'D','Georgia':'C','Armenia':'D','Belarus':'D','Kazakhstan':'D','Azerbaijan':'E','Moldova':'E','Lithuania':'D','Latvia':'D','Estonia':'D','Cyprus':'D','Luxembourg':'D','Malta':'E','Andorra':'E','San Marino':'E','Liechtenstein':'E','Gibraltar':'E','Faroe Islands':'E','North Macedonia':'C','Saudi Arabia':'C','Japan':'S','South Korea':'A','Australia':'B','United States':'B','USA':'B','Mexico':'B','Canada':'B','Egypt':'B','Morocco':'A','Algeria':'A','Tunisia':'B','Senegal':'A','Ghana':'C','Nigeria':'B','Cameroon':'B','Ivory Coast':'B','South Africa':'C','Qatar':'C','Iraq':'C','Jordan':'C','United Arab Emirates':'C','Oman':'D','Bahrain':'D','Kuwait':'D','Lebanon':'D','Syria':'D','Palestine':'D','India':'D','China':'D','Iran':'A','Uzbekistan':'B','New Zealand':'D','Jamaica':'D','Panama':'D','Costa Rica':'C','Honduras':'D','Guatemala':'D','Curaçao':'D','Haiti':'D','Trinidad and Tobago':'D','Venezuela':'C','Colombia':'A','Uruguay':'A','Ecuador':'B','Paraguay':'C','Peru':'C','Chile':'C','Bolivia':'D','Suriname':'D','Guyana':'E','Bahamas':'E','Barbados':'E','Bermuda':'E','Antigua and Barbuda':'E','Aruba':'E','St. Martin':'E','Saint Martin':'E','Turks and Caicos Islands':'E','British Virgin Islands':'E','US Virgin Islands':'E','U.S. Virgin Islands':'E','Anguilla':'E','Montserrat':'E','Dominica':'E','Grenada':'E','St. Lucia':'E','Saint Lucia':'E','St. Vincent and the Grenadines':'E','Saint Vincent and the Grenadines':'E','Puerto Rico':'D','Dominican Republic':'D','Cuba':'D','Nicaragua':'D','Belize':'E','El Salvador':'D','Martinique':'D','Guadeloupe':'D','French Guiana':'E','Bonaire':'E','Sint Maarten':'E','Cayman Islands':'E'};
+  function pmfs(l){var a=[Math.exp(-l)];for(var i=1;i<=14;i++)a[i]=a[i-1]*l/i;return a;}
+  function probs(lh,la){
+    var H=pmfs(lh),A=pmfs(la),o=0,b=0,hw=0,dr=0,aw=0;
+    for(var i=0;i<=14;i++)for(var j=0;j<=14;j++){
+      var q=H[i]*A[j];
+      if(i+j>2)o+=q;
+      if(i>0&&j>0)b+=q;
+      if(i>j)hw+=q;else if(i===j)dr+=q;else aw+=q;
+    }
+    return {o25:o,btts:b,hw:hw,dr:dr,aw:aw,h1:1-Math.exp(-(lh+la)*0.44)};
+  }
+  var gp=window.getPrediction;
+  window.getPrediction=function(m){
+    var p=gp(m);
+    try{
+      if(!p||!m||!m.home||!m.away)return p;
+      var th=R[m.home.name],ta=R[m.away.name];
+      if(!th||!ta||p.hasData!==false)return p;
+      var H=T[th],A2=T[ta];
+      var lh=Math.min(4.2,Math.max(0.25,H[0]*A2[1]*1.10));
+      var la=Math.min(3.8,Math.max(0.20,A2[0]*H[1]*0.95));
+      var q=probs(lh,la);
+      if(p.o25)p.o25.prob=Math.round(q.o25*100);
+      if(p.u25)p.u25.prob=Math.round((1-q.o25)*100);
+      if(p.goals){p.goals.prob=Math.round(Math.max(q.o25,1-q.o25)*100);p.goals.text=(q.o25>=0.5)?'أكثر من 2.5':'أقل من 2.5';}
+      if(p.btts){p.btts.prob=Math.round(q.btts*100);p.btts.text=(q.btts>=0.5)?'نعم':'لا';}
+      if(p.h1Goal)p.h1Goal.prob=Math.round(q.h1*100);
+      if(p.win)p.win.prob=Math.round(q.hw*100);
+      if(p.dc1)p.dc1.prob=Math.round(q.hw*100);
+      if(p.dc2)p.dc2.prob=Math.round(q.aw*100);
+      p.attHp=Math.round(lh/(lh+la)*100);
+      p.attAp=100-p.attHp;
+    }catch(e){}
+    return p;
+  };
+  console.info('[EgyptBet Addon] nat-v49: التحليل الشامل للمنتخبات شغال');
+}catch(e){console.warn('[EgyptBet Addon] nat-v49:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: التحليل الشامل للمنتخبات v49 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
