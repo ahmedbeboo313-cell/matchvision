@@ -3759,5 +3759,25 @@ show();
   console.info('[EgyptBet Addon] disc-v78: انضباط اليوم نشط');
 }catch(e){console.warn('[EgyptBet Addon] disc-v78:',e);}})();
 </script>
+<script>
+/* ===== v79 إخفاء الشريطين | 2026-09-25 ===== */
+(function(){'use strict';try{
+  function hide(){
+    try{
+      var els=document.querySelectorAll('div');
+      for(var i=0;i<els.length;i++){
+        var t=(els[i].textContent||'').trim();
+        if(els[i].style.position==='fixed'&&(t.indexOf('v75 ')===0||t.indexOf('v77 ')===0)){
+          els[i].style.display='none';
+        }
+      }
+    }catch(e){}
+  }
+  setTimeout(hide,800);
+  setTimeout(hide,2500);
+  setInterval(hide,10000);
+  console.info('[EgyptBet Addon] hidebars-v79: الشريطين مخفيين عن المستخدمين');
+}catch(e){console.warn('[EgyptBet Addon] hidebars-v79:',e);}})();
+</script>
 </body>
 </html>
