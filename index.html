@@ -3828,6 +3828,49 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] indep-v70:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: محرك الاستقلال التام v70 ===== -->
+<!-- ===== إضافة: صحة المنتهية v71 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  var KEY='eb_fin_archive';
+  function purge(){
+    try{
+      var a=JSON.parse(localStorage.getItem(KEY)||'[]');
+      var now=Date.now();
+      var b=a.filter(function(x){
+        if(x.scoreHome==null||x.scoreAway==null)return false;
+        var t=+new Date(x.date||0);
+        if(t&&t>now)return false;
+        return true;
+      });
+      if(b.length!==a.length)localStorage.setItem(KEY,JSON.stringify(b));
+    }catch(e){}
+  }
+  function hideWrong(){
+    try{
+      var md='all';try{var c=document.querySelector('.mode-chip.active');md=c&&c.dataset?c.dataset.mode:'all';}catch(e){}
+      if(md!=='finished')return;
+      var ms=(window.state&&state.matches)||[];
+      var byId={};ms.forEach(function(m){byId[m.id]=m;});
+      var cards=document.querySelectorAll('[data-match]');
+      var now=Date.now();
+      for(var i=0;i<cards.length;i++){
+        var id=cards[i].getAttribute('data-match');
+        var m=byId[id];
+        if(!m)continue;
+        var t=+new Date(m.date||0);
+        var fin=false;try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
+        if(!fin||(t&&t>now)){cards[i].style.display='none';}
+      }
+    }catch(e){}
+  }
+  setInterval(function(){purge();hideWrong();},5000);
+  setTimeout(purge,2500);
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(hideWrong,90);return r;};
+  console.info('[EgyptBet Addon] sane-v71: صحة المنتهية شغالة');
+}catch(e){console.warn('[EgyptBet Addon] sane-v71:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: صحة المنتهية v71 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
