@@ -3873,15 +3873,15 @@ try{
 <!-- ===== نهاية إضافة: صحة المنتهية v71 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 <script>
-/* ===== v72 الصندوق الأسود | 2026-09-25 ===== */
+/* ===== v73 الحقن المرئي | 2026-09-25 ===== */
 (function(){'use strict';
 var SLUG='concacaf.nations.league',KEY='eb_fin_archive';
 var B=document.createElement('div');
 B.style.cssText='position:fixed;bottom:70px;right:6px;z-index:99999;background:#111827;color:#7dd3fc;font:10px monospace;padding:4px 7px;border-radius:10px;border:1px solid #334155;direction:ltr';
-B.textContent='v72 ...';
+B.textContent='v73 ...';
 document.documentElement.appendChild(B);
-var S={a:0,s:0,f:'-',i:0,box:0};
-function show(){B.textContent='v72 A:'+S.a+' S:'+S.s+' F:'+S.f+' I:'+S.i+' B:'+S.box;}
+var S={a:0,s:0,f:'-',i:0,b:'-'};
+function show(){B.textContent='v73 A:'+S.a+' S:'+S.s+' F:'+S.f+' I:'+S.i+' B:'+S.b;}
 function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
 function getX(u,cb){try{var x=new XMLHttpRequest();x.open('GET',u,true);x.timeout=12000;
 x.onload=function(){S.f=x.status;try{cb(x.status>=200&&x.status<300?JSON.parse(x.responseText):null);}catch(e){cb(null);}show();};
@@ -3901,6 +3901,14 @@ function arch(m){try{var a=JSON.parse(localStorage.getItem(KEY)||'[]');var ex=fa
 for(var i=0;i<a.length;i++)if(a[i].id===m.id){ex=true;break;}
 if(!ex){a.push({id:m.id,date:m.date,leagueSlug:SLUG,leagueName:'كونكاكاف دوري الأمم',status:'finished',statusState:'post',live:false,minute:'',scoreHome:m.sH,scoreAway:m.sA,home:{id:m.h.id,name:m.h.name,record:''},away:{id:m.a.id,name:m.a.name,record:''}});
 localStorage.setItem(KEY,JSON.stringify(a));}}catch(e){}}
+function visBox(){
+  var cands=[document.getElementById('homeContent'),document.getElementById('finContent'),document.getElementById('finishedContent')];
+  var secs=document.querySelectorAll('section.view,div.view,section,main');
+  for(var i=0;i<secs.length;i++){if(secs[i].offsetParent&&!secs[i].classList.contains('hidden'))cands.push(secs[i]);}
+  for(var j=0;j<cands.length;j++){var c=cands[j];if(c&&c.offsetParent&&c.querySelector('.day-head,.card'))return c;}
+  for(var k=0;k<cands.length;k++){if(cands[k]&&cands[k].offsetParent)return cands[k];}
+  return document.getElementById('homeContent');
+}
 function card(m,fin){var d=new Date(m.date||Date.now());var tm=d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
 var mid=fin?(m.sH+' - '+m.sA):(m.live?('مباشر '+m.min+"'"):tm);
 return '<article class="card" data-match="'+m.id+'" style="padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(255,255,255,.05)">'
@@ -3910,7 +3918,7 @@ return '<article class="card" data-match="'+m.id+'" style="padding:14px;margin-b
 function work(){
  try{
   var md='all';try{var c=document.querySelector('.mode-chip.active');md=c&&c.dataset?c.dataset.mode:'all';}catch(e){}
-  var box=document.getElementById('homeContent');S.box=box?1:0;
+  var box=visBox();S.b=box?(box.id||'sec'):'none';
   var A=[];try{A=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
   S.a=A.length;S.s=Object.keys(STORE).length;
   if(!box){show();return;}
@@ -3925,7 +3933,7 @@ function work(){
   var now=Date.now();
   src.forEach(function(m){try{
     if(!m||!m.id)return;
-    if(document.querySelector('[data-match="'+m.id+'"]'))return;
+    if(box.querySelector('[data-match="'+m.id+'"]'))return;
     var t=+new Date(m.date||0);
     if(md==='finished'&&t>now)return;
     if(md!=='finished'&&m.fin)return;
