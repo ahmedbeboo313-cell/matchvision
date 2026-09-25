@@ -3673,5 +3673,63 @@ show();
   console.info('[EgyptBet Addon] stable-v76: ثبات البناء نشط');
 }catch(e){console.warn('[EgyptBet Addon] stable-v76:',e);}})();
 </script>
+<script>
+/* ===== v77 القائمة الحديدية | 2026-09-25 ===== */
+(function(){'use strict';try{
+  var UKEY='eb_pool_union';
+  var UNION={};
+  try{UNION=JSON.parse(sessionStorage.getItem(UKEY)||'{}')||{};}catch(e){UNION={};}
+  var CACHE={},HITS=0,REAL='-';
+  var of=window.fetch;
+  window.fetch=function(u,o){
+    var url=(typeof u==='string')?u:((u&&u.url)||'');
+    if(url.indexOf('site.api.espn.com')>=0&&url.indexOf('scoreboard')>=0){
+      var c=CACHE[url];
+      if(c&&Date.now()-c.t<90000){HITS++;return Promise.resolve(new Response(JSON.stringify(c.j),{status:200,headers:{'Content-Type':'application/json'}}));}
+      return of.apply(this,arguments).then(function(r){
+        if(r&&r.ok){var r2=r.clone();r2.json().then(function(j){CACHE[url]={t:Date.now(),j:j};}).catch(function(){});REAL=r.status;}
+        else REAL=r?r.status:'x';
+        return r;
+      });
+    }
+    return of.apply(this,arguments);
+  };
+  function clone(m){try{return JSON.parse(JSON.stringify(m));}catch(e){return null;}}
+  function scan(){
+    try{
+      var ms=(window.state&&state.matches)||[];var ch=false;var now=Date.now();
+      ms.forEach(function(m){
+        if(!m||!m.id)return;
+        var t=+new Date(m.date||0);
+        if(t&&(now-t>36*3600000||t-now>48*3600000))return;
+        var v=(m.scoreHome||0)+'-'+(m.scoreAway||0)+'-'+(m.minute||0)+'-'+(m.live?1:0);
+        if(!UNION[m.id]||UNION[m.id].__v!==v){
+          var c=clone(m);if(c){c.__v=v;UNION[m.id]=c;ch=true;}
+        }
+      });
+      if(ch){try{sessionStorage.setItem(UKEY,JSON.stringify(UNION));}catch(e){}}
+    }catch(e){}
+  }
+  var br=window.buildRequests;
+  window.buildRequests=function(){
+    try{window.__xdatesDone=0;}catch(e){}
+    var rq=br.apply(this,arguments);
+    try{
+      var ids={};var ms=(window.state&&state.matches)||[];
+      ms.forEach(function(m){ids[m.id]=1;});
+      var extra=[];
+      Object.keys(UNION).forEach(function(k){if(!ids[k])extra.push(UNION[k]);});
+      if(extra.length)rq.push(Promise.resolve(extra.map(function(m){var c=clone(m);if(c){delete c.__v;}return c;}).filter(Boolean)));
+    }catch(e){}
+    return rq;
+  }
+  setInterval(scan,5000);setTimeout(scan,2000);
+  var B=document.createElement('div');
+  B.style.cssText='position:fixed;bottom:92px;right:6px;z-index:99999;background:#111827;color:#86efac;font:10px monospace;padding:4px 7px;border-radius:10px;border:1px solid #334155;direction:ltr';
+  document.documentElement.appendChild(B);
+  setInterval(function(){B.textContent='v77 U:'+Object.keys(UNION).length+' H:'+HITS+' R:'+REAL;},3000);
+  console.info('[EgyptBet Addon] iron-v77: القائمة الحديدية نشطة');
+}catch(e){console.warn('[EgyptBet Addon] iron-v77:',e);}})();
+</script>
 </body>
 </html>
