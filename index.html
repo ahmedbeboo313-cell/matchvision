@@ -3496,6 +3496,32 @@ console.info('[EgyptBet Addon] finished-archive-v26: ON');
 }catch(e){console.warn('[EgyptBet Addon] finarc-v26:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: أرشيف المنتهية الشامل v26 ===== -->
+<!-- ===== إضافة: تصفيات كأس الأمم الأفريقية v27 | 2026-09-26 ===== -->
+<script>
+(function(){'use strict';try{
+var NAME='تصفيات كأس الأمم الأفريقية',EM='🌍',HOME=1.45,AWAY=1.05;
+var BASE=['caf.nations.qualifying','caf.nations.qualifiers','caf.afcon.qualifying'];
+var CANDS=(function(){try{var s=localStorage.getItem('egb_afconq_slug');if(s)return [s].concat(BASE.filter(function(x){return x!==s;}));}catch(e){}return BASE.slice();})();
+function ok(slug){return fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard',{cache:'no-store'}).then(function(r){return r&&r.ok?slug:null;}).catch(function(){return null;});}
+function pushLists(slug){try{if(window.CORE_SLUGS&&CORE_SLUGS.indexOf(slug)<0)CORE_SLUGS.push(slug);}catch(e){}try{if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(slug)<0)LIVE_SLUGS.push(slug);}catch(e){}}
+function rmLists(slug){try{var a=CORE_SLUGS.indexOf(slug);if(a>=0)CORE_SLUGS.splice(a,1);}catch(e){}try{var b=LIVE_SLUGS.indexOf(slug);if(b>=0)LIVE_SLUGS.splice(b,1);}catch(e){}}
+function refreshUI(){try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}}
+var reg=null;
+if(window.LEAGUES&&!LEAGUES.some(function(l){return l.name===NAME;})){reg={slug:CANDS[0],name:NAME,em:EM,home:HOME,away:AWAY};LEAGUES.push(reg);pushLists(reg.slug);}
+function verify(i){
+if(i>=CANDS.length){console.warn('[EgyptBet Addon] afconq-v27: no valid slug found');return;}
+ok(CANDS[i]).then(function(s){
+if(s&&reg){
+try{localStorage.setItem('egb_afconq_slug',s);}catch(e){}
+if(reg.slug!==s){var old=reg.slug;reg.slug=s;rmLists(old);pushLists(s);refreshUI();var r=document.getElementById('refreshBtn');if(r)r.click();console.info('[EgyptBet Addon] afconq-v27: slug corrected to '+s);}
+console.info('[EgyptBet Addon] afconq-v27: ON ('+s+')');
+}else{verify(i+1);}
+}).catch(function(){verify(i+1);});
+}
+if(reg)setTimeout(function(){verify(0);},1500);
+}catch(e){console.warn('[EgyptBet Addon] afconq-v27:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: تصفيات كأس الأمم الأفريقية v27 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
