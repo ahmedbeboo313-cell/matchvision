@@ -3825,5 +3825,56 @@ show();
   console.info('[EgyptBet Addon] live-v83: ثبات اللايف وصدق العداد نشط');
 }catch(e){console.warn('[EgyptBet Addon] live-v83:',e);}})();
 </script>
+<script>
+/* ===== v84 الدرع الأمامي | 2026-09-25 ===== */
+(function(){'use strict';try{
+  var KEY='eb_score_max84';
+  var M={};
+  try{M=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(M));}catch(e){}}
+  function rec(id){var r=M[id];if(!r||Date.now()-r.t>12*3600000){r={h:0,a:0,lh:0,la:0,t:Date.now()};M[id]=r;}return r;}
+  function guard(m){
+    if(!m||!m.id||m.__s84)return;
+    var r=rec(m.id);
+    var ch=+m.scoreHome||0,ca=+m.scoreAway||0;
+    if(ch>r.h)r.h=ch;
+    if(ca>r.a)r.a=ca;
+    r.lh=ch;r.la=ca;
+    var mn=m.minute;
+    try{
+      Object.defineProperty(m,'scoreHome',{configurable:true,
+        get:function(){return r.h;},
+        set:function(v){v=+v||0;r.lh=v;if(!m.live||v>r.h){r.h=v;save();}}});
+      Object.defineProperty(m,'scoreAway',{configurable:true,
+        get:function(){return r.a;},
+        set:function(v){v=+v||0;r.la=v;if(!m.live||v>r.a){r.a=v;save();}}});
+      Object.defineProperty(m,'minute',{configurable:true,
+        get:function(){return mn;},
+        set:function(v){if(m.live){if(v>mn)mn=v;}else{mn=v;}}});
+      m.__s84=1;
+    }catch(e){}
+  }
+  function scan(){
+    try{
+      var ms=(window.state&&state.matches)||[];
+      ms.forEach(function(m){
+        if(!m||!m.id)return;
+        var fin=false;
+        try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post'||!m.live;}catch(e){fin=!m.live;}
+        if(fin){
+          var r=M[m.id];
+          if(r&&(r.lh!==r.h||r.la!==r.a)){r.h=r.lh;r.a=r.la;save();}
+          return;
+        }
+        guard(m);
+      });
+    }catch(e){}
+  }
+  setInterval(scan,2000);setTimeout(scan,1500);
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;scan();return r;};
+  console.info('[EgyptBet Addon] shield-v84: الدرع الأمامي نشط');
+}catch(e){console.warn('[EgyptBet Addon] shield-v84:',e);}})();
+</script>
 </body>
 </html>
