@@ -3695,6 +3695,36 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] arch-v67:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: أرشيف المنتهيات ثلاثي الأيام v67 ===== -->
+<!-- ===== إضافة: حد اليوم الشامل v68 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+  var br=window.buildRequests;
+  if(typeof br==='function'){
+    window.buildRequests=function(){
+      var rq=br.apply(this,arguments);
+      try{
+        if(!window.__xdatesDone){
+          window.__xdatesDone=1;
+          var seen={};var uniq=[];
+          (window.CORE_SLUGS||[]).concat(window.LIVE_SLUGS||[]).forEach(function(s){if(s&&!seen[s]){seen[s]=1;uniq.push(s);}});
+          uniq=uniq.slice(0,24);
+          var ys=dstr(new Date(Date.now()-86400000)),ts=dstr(new Date(Date.now()+86400000));
+          uniq.forEach(function(slug){
+            if(typeof window.fetchESPN==='function'){
+              rq.push(window.fetchESPN({slug:slug},ys));
+              rq.push(window.fetchESPN({slug:slug},ts));
+            }
+          });
+        }
+      }catch(e){}
+      return rq;
+    };
+  }
+  console.info('[EgyptBet Addon] bound-v68: حد اليوم الشامل نشط');
+}catch(e){console.warn('[EgyptBet Addon] bound-v68:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: حد اليوم الشامل v68 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
