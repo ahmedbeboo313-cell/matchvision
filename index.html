@@ -3731,5 +3731,33 @@ show();
   console.info('[EgyptBet Addon] iron-v77: القائمة الحديدية نشطة');
 }catch(e){console.warn('[EgyptBet Addon] iron-v77:',e);}})();
 </script>
+<script>
+/* ===== v78 انضباط اليوم | 2026-09-25 ===== */
+(function(){'use strict';try{
+  function dayKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function clean(){
+    try{
+      var md='all';try{var c=document.querySelector('.mode-chip.active');md=c&&c.dataset?c.dataset.mode:'all';}catch(e){}
+      if(md==='finished')return;
+      var picker=document.getElementById('datePicker');
+      var off=0;var dc=document.querySelector('.date-chip.active');
+      if(dc&&dc.dataset&&dc.dataset.offset)off=parseInt(dc.dataset.offset)||0;
+      var target=(picker&&picker.value)?picker.value:dayKey(new Date(Date.now()+off*86400000));
+      var ms=(window.state&&state.matches)||[];var byId={};
+      ms.forEach(function(m){byId[m.id]=m;});
+      var cards=document.querySelectorAll('article.card[data-match]');
+      for(var i=0;i<cards.length;i++){
+        var m=byId[cards[i].getAttribute('data-match')];if(!m||!m.date)continue;
+        if(dayKey(new Date(m.date))!==target){cards[i].style.display='none';}
+      }
+    }catch(e){}
+  }
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;clean();return r;};
+  setInterval(clean,4000);
+  document.addEventListener('click',function(){setTimeout(clean,80);},true);
+  console.info('[EgyptBet Addon] disc-v78: انضباط اليوم نشط');
+}catch(e){console.warn('[EgyptBet Addon] disc-v78:',e);}})();
+</script>
 </body>
 </html>
