@@ -3397,77 +3397,6 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] stick-v51:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: اللايف اللاصق لحد الصافرة v51 ===== -->
-<!-- ===== إضافة: محرك النبض اللحظي v61 | 2026-09-25 ===== -->
-<script>
-(function(){'use strict';try{
-  function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
-  function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
-  function getX(url,cb){try{var x=new XMLHttpRequest();x.open('GET',url,true);x.timeout=12000;
-    x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
-    x.onerror=function(){cb(null);};x.ontimeout=function(){cb(null);};x.send();}catch(e){cb(null);}}
-  function mkMatch(ev,slug){try{var c=ev.competitions&&ev.competitions[0];if(!c)return null;var h=null,a=null;
-    (c.competitors||[]).forEach(function(cp){var o={id:(cp.team&&cp.team.id)||cp.id,name:(cp.team&&(cp.team.displayName||cp.team.shortDisplayName||cp.team.name))||'?',score:(+cp.score||0),record:''};if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a=o;});
-    if(!h||!a)return null;var st=c.status||{};
-    return {id:ev.id,home:h,away:a,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:true,status:'in',minute:(st.clock?Math.max(1,Math.round(st.clock/60)):(parseInt(st.displayClock)||1)),scoreHome:h.score,scoreAway:a.score};}catch(e){return null;}}
-  function forceRender(){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
-    try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
-    try{if(typeof window.updateBell==='function')updateBell();}catch(e){}}
-  function fetchLive(){
-    try{
-      if(document.hidden)return;
-      var ms=(window.state&&state.matches)||[];var now=Date.now(),bySlug={},ids={};
-      ms.forEach(function(m){ids[m.id]=m;var slug=m.leagueSlug||m.slug||m.league;if(!slug)return;
-        var t=kick(m),el=t?now-t:0;
-        var liveish=m.live===true||((window.isFinished&&isFinished(m))===false&&el>45000&&el<200*60000);
-        if(liveish)(bySlug[slug]=bySlug[slug]||[]).push(m);});
-      var slugs=Object.keys(bySlug);if(!slugs.length)return;
-      var ds=dstr(new Date());
-      slugs.forEach(function(slug){
-        getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,function(j){
-          if(!j||!j.events)return;var ch=false;
-          j.events.forEach(function(ev){
-            var c=ev.competitions&&ev.competitions[0];if(!c)return;var st=c.status&&c.status.type;
-            var m=ids[ev.id];
-            if(!m){if(st&&st.state==='in'){var mm=mkMatch(ev,slug);if(mm){state.matches.push(mm);ids[mm.id]=mm;ch=true;}}return;}
-            var hs=null,as=null;
-            (c.competitors||[]).forEach(function(cp){if(cp.homeAway==='home')hs=+cp.score;else if(cp.homeAway==='away')as=+cp.score;});
-            if(hs!=null&&isFinite(hs)&&hs!==+(m.scoreHome||0)){m.scoreHome=hs;ch=true;}
-            if(as!=null&&isFinite(as)&&as!==+(m.scoreAway||0)){m.scoreAway=as;ch=true;}
-            if(st&&st.state==='in'){
-              var min=(c.status&&c.status.clock)?Math.max(1,Math.round(c.status.clock/60)):(parseInt(c.status.displayClock)||m.minute);
-              if(min&&(min>(m.minute||0)||(m.minute||0)-min>=6)){m.minute=min;m.__b=min;m.__bt=Date.now();ch=true;}
-            }
-            if(st&&st.state==='post'&&m.live){m.live=false;m.status='finished';ch=true;}
-          });
-          if(ch)forceRender();
-        });
-      });
-    }catch(e){}
-  }
-  function tickMinute(){
-    try{
-      if(document.hidden)return;
-      var ms=(window.state&&state.matches)||[];var now=Date.now();var ch=false;
-      ms.forEach(function(m){
-        if(!m.live||m.minute==null)return;
-        if(m.minute===45||m.minute>=90)return;
-        if(m.__b==null){m.__b=m.minute;m.__bt=now;return;}
-        var add=Math.floor((now-m.__bt)/60000);
-        if(add<1)return;
-        var nm=m.__b+Math.min(add,3);
-        if(nm>m.minute){m.minute=nm;ch=true;}
-      });
-      if(ch)forceRender();
-    }catch(e){}
-  }
-  setInterval(fetchLive,10000);
-  setInterval(tickMinute,10000);
-  setTimeout(fetchLive,2500);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden){setTimeout(fetchLive,600);setTimeout(tickMinute,900);}});
-  console.info('[EgyptBet Addon] pulse-v61: محرك النبض اللحظي شغال');
-}catch(e){console.warn('[EgyptBet Addon] pulse-v61:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: محرك النبض اللحظي v61 ===== -->
 <!-- ===== إضافة: التأمين الشامل v62 | 2026-09-25 ===== -->
 <script>
 (function(){'use strict';try{
@@ -3494,58 +3423,6 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] audit-v62:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: التأمين الشامل v62 ===== -->
-<!-- ===== إضافة: درع تقلب النتيجة v63 | 2026-09-25 ===== -->
-<script>
-(function(){'use strict';try{
-  var KEY='eb_score_max';
-  var maxMap={};
-  try{maxMap=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(maxMap));}catch(e){}}
-  function rec(id){
-    var r=maxMap[id];
-    if(!r||Date.now()-r.t>12*3600000){r={h:0,a:0,lh:0,la:0,t:Date.now()};maxMap[id]=r;}
-    return r;
-  }
-  function guard(m){
-    if(!m||!m.id||m.__smax)return;
-    var r=rec(m.id);
-    var ch=+m.scoreHome||0,ca=+m.scoreAway||0;
-    if(ch>r.h)r.h=ch;
-    if(ca>r.a)r.a=ca;
-    r.lh=ch;r.la=ca;
-    try{
-      Object.defineProperty(m,'scoreHome',{configurable:true,
-        get:function(){return r.h;},
-        set:function(v){v=+v||0;r.lh=v;if(v>r.h){r.h=v;save();}}});
-      Object.defineProperty(m,'scoreAway',{configurable:true,
-        get:function(){return r.a;},
-        set:function(v){v=+v||0;r.la=v;if(v>r.a){r.a=v;save();}}});
-      m.__smax=1;
-    }catch(e){}
-  }
-  function scan(){
-    try{
-      var ms=(window.state&&state.matches)||[];
-      ms.forEach(function(m){
-        if(!m||!m.id)return;
-        var fin=false;
-        try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
-        if(fin){
-          var r=maxMap[m.id];
-          if(r&&(r.lh!==r.h||r.la!==r.a)){r.h=r.lh;r.a=r.la;save();}
-          return;
-        }
-        if(m.live)guard(m);
-      });
-    }catch(e){}
-  }
-  setInterval(scan,4000);setTimeout(scan,2000);
-  var rc=window.renderCurrent;
-  window.renderCurrent=function(){scan();return rc?rc.apply(this,arguments):undefined;};
-  console.info('[EgyptBet Addon] flip-v63: درع تقلب النتيجة شغال');
-}catch(e){console.warn('[EgyptBet Addon] flip-v63:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: درع تقلب النتيجة v63 ===== -->
 <!-- ===== إضافة: حد اليوم الشامل v68 | 2026-09-25 ===== -->
 <script>
 (function(){'use strict';try{
@@ -3778,6 +3655,72 @@ show();
   setInterval(hide,10000);
   console.info('[EgyptBet Addon] hidebars-v79: الشريطين مخفيين عن المستخدمين');
 }catch(e){console.warn('[EgyptBet Addon] hidebars-v79:',e);}})();
+</script>
+<script>
+/* ===== v80 تزامن ESPN الكامل | 2026-09-25 ===== */
+(function(){'use strict';try{
+  function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+  function kick(m){var t=+(m.ts||m.kickoff||m.start||0);if(!t&&m.date)t=+new Date(m.date);if(!t&&m.time)t=+new Date(m.time);return t||0;}
+  function getX(u,cb){try{var x=new XMLHttpRequest();x.open('GET',u,true);x.timeout=9000;
+    x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
+    x.onerror=function(){cb(null);};x.ontimeout=function(){cb(null);};x.send();}catch(e){cb(null);}}
+  function mkMatch(ev,slug){try{var c=ev.competitions&&ev.competitions[0];if(!c)return null;var h=null,a=null;
+    (c.competitors||[]).forEach(function(cp){var t=cp.team||{};var o={id:t.id||cp.id||'',name:t.displayName||t.shortDisplayName||t.name||'?',score:(+cp.score||0),record:''};
+      if(cp.homeAway==='home')h=o;else if(cp.homeAway==='away')a=o;});
+    if(!h||!a)return null;var st=c.status||{};
+    return{id:ev.id,home:h,away:a,leagueSlug:slug,date:ev.date||new Date().toISOString(),live:true,status:'in',
+      minute:(st.displayClock?parseInt(st.displayClock):(st.clock?Math.floor(st.clock/60):1)),scoreHome:h.score,scoreAway:a.score};}catch(e){return null;}}
+  function forceRender(){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
+    try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
+    try{if(typeof window.updateBell==='function')updateBell();}catch(e){}}
+  function sync(){
+    try{
+      if(document.hidden)return;
+      var ms=(window.state&&state.matches)||[];var now=Date.now(),bySlug={},ids={};
+      ms.forEach(function(m){ids[m.id]=m;var slug=m.leagueSlug||m.slug||m.league;if(!slug)return;
+        var t=kick(m),el=t?now-t:0;
+        var liveish=m.live===true||((window.isFinished&&isFinished(m))===false&&el>45000&&el<200*60000);
+        if(liveish)(bySlug[slug]=bySlug[slug]||[]).push(m);});
+      var slugs=Object.keys(bySlug).slice(0,10);
+      if(!slugs.length)return;
+      var ds=dstr(new Date());
+      slugs.forEach(function(slug){
+        getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+ds,function(j){
+          if(!j||!j.events)return;var ch=false;
+          j.events.forEach(function(ev){
+            var c=ev.competitions&&ev.competitions[0];if(!c)return;
+            var st=c.status&&c.status.type;var m=ids[ev.id];
+            if(!m){if(st&&st.state==='in'){var mm=mkMatch(ev,slug);if(mm){state.matches.push(mm);ids[mm.id]=mm;ch=true;}}return;}
+            var hs=null,as=null;
+            (c.competitors||[]).forEach(function(cp){if(cp.homeAway==='home')hs=+cp.score;else if(cp.homeAway==='away')as=+cp.score;});
+            if(hs!=null&&isFinite(hs)&&hs!==+(m.scoreHome||0)){m.scoreHome=hs;ch=true;}
+            if(as!=null&&isFinite(as)&&as!==+(m.scoreAway||0)){m.scoreAway=as;ch=true;}
+            if(st&&st.state==='in'){
+              var min=(st.displayClock&&parseInt(st.displayClock))||((c.status&&c.status.clock!=null)?Math.floor(c.status.clock/60):null);
+              if(min!=null&&min!==m.minute){m.minute=min;ch=true;}
+              if(!m.live){m.live=true;ch=true;}
+              if(m.status!=='in'){m.status='in';ch=true;}
+            }
+            if(st&&st.state==='post'){
+              if(m.live){m.live=false;ch=true;}
+              if(m.status!=='finished'){m.status='finished';ch=true;}
+            }
+            if(st&&st.state==='pre'){
+              if(m.live){m.live=false;ch=true;}
+            }
+            m.period=(c.status&&c.status.period)||m.period;
+            m.statusDetail=(st&&(st.detail||st.shortDetail))||m.statusDetail;
+          });
+          if(ch)forceRender();
+        });
+      });
+    }catch(e){}
+  }
+  setInterval(sync,5000);
+  setTimeout(sync,2000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,500);});
+  console.info('[EgyptBet Addon] sync-v80: تزامن ESPN الكامل كل 5 ثواني');
+}catch(e){console.warn('[EgyptBet Addon] sync-v80:',e);}})();
 </script>
 </body>
 </html>
