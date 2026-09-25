@@ -3876,5 +3876,40 @@ show();
   console.info('[EgyptBet Addon] shield-v84: الدرع الأمامي نشط');
 }catch(e){console.warn('[EgyptBet Addon] shield-v84:',e);}})();
 </script>
+<script>
+/* ===== v85 دقة الأرقام | 2026-09-25 ===== */
+(function(){'use strict';try{
+  function visCards(){var a=document.querySelectorAll('article.card');var out=[];for(var i=0;i<a.length;i++){if(a[i].style.display!=='none'&&a[i].offsetParent)out.push(a[i]);}return out;}
+  function ar(n){try{return n.toLocaleString('ar-EG');}catch(e){return String(n);}}
+  function fix(){
+    try{
+      var vis=visCards();
+      var mc=document.getElementById('matchCount');
+      if(mc)mc.textContent=String(vis.length);
+      var heads=document.querySelectorAll('.day-head');
+      for(var h=0;h<heads.length;h++){
+        var hd=heads[h];
+        if(!hd.offsetParent)continue;
+        var n=0;var el=hd.nextElementSibling;
+        while(el&&!el.classList.contains('day-head')){
+          if(el.tagName==='ARTICLE'&&el.classList.contains('card')){if(el.style.display!=='none')n++;}
+          else if(el.querySelectorAll){var inner=el.querySelectorAll('article.card');for(var q=0;q<inner.length;q++){if(inner[q].style.display!=='none')n++;}}
+          el=el.nextElementSibling;
+        }
+        var t=hd.textContent||'';
+        var nt=t.replace(/\([^)]*\)/g,'('+ar(n)+')');
+        if(nt!==t)hd.textContent=nt;
+        if(n===0&&hd.style.display!=='none')hd.style.display='none';
+        else if(n>0&&hd.style.display==='none')hd.style.display='';
+      }
+    }catch(e){}
+  }
+  setInterval(fix,3000);
+  var rc=window.renderCurrent;
+  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;fix();return r;};
+  document.addEventListener('click',function(){setTimeout(fix,80);},true);
+  console.info('[EgyptBet Addon] count-v85: دقة الأرقام نشطة');
+}catch(e){console.warn('[EgyptBet Addon] count-v85:',e);}})();
+</script>
 </body>
 </html>
