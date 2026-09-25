@@ -3725,6 +3725,96 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] bound-v68:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: حد اليوم الشامل v68 ===== -->
+<!-- ===== إضافة: جسر الكونكاكاف المستقل v69 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+  var INTL=['concacaf.nations.league'];
+  var LNAME='كونكاكاف دوري الأمم';
+  function reg(){
+    try{
+      INTL.forEach(function(slug){
+        if(window.LEAGUES&&!LEAGUES.some(function(l){return l.slug===slug;}))LEAGUES.push({slug:slug,name:LNAME,em:'🌎',home:1.45,away:1.15});
+        if(window.CORE_SLUGS&&CORE_SLUGS.indexOf(slug)<0)CORE_SLUGS.push(slug);
+        if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(slug)<0)LIVE_SLUGS.push(slug);
+      });
+    }catch(e){}
+  }
+  reg();setInterval(reg,30000);
+  function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+  function getX(url,cb){try{var x=new XMLHttpRequest();x.open('GET',url,true);x.timeout=12000;
+    x.onload=function(){if(x.status>=200&&x.status<300){try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}}else cb(null);};
+    x.onerror=function(){cb(null);};x.ontimeout=function(){cb(null);};x.send();}catch(e){cb(null);}}
+  function parseEv(ev,slug){
+    try{
+      var c=ev.competitions&&ev.competitions[0];if(!c)return null;
+      var st=(c.status&&c.status.type)||{};
+      var h=null,a=null,hs=null,as=null;
+      (c.competitors||[]).forEach(function(cp){
+        var t=cp.team||{};
+        var rec=(cp.records&&cp.records[0]&&cp.records[0].summary)||'';
+        var o={id:t.id||cp.id||'',name:t.displayName||t.shortDisplayName||t.name||'?',record:rec,logo:t.logo||''};
+        if(cp.homeAway==='home'){h=o;hs=cp.score!=null?+cp.score:null;}
+        if(cp.homeAway==='away'){a=o;as=cp.score!=null?+cp.score:null;}
+      });
+      if(!h||!a)return null;
+      var state=st.state||'pre';
+      var live=state==='in';
+      var fin=state==='post'||st.completed===true;
+      var min=live?((c.status&&c.status.clock)?Math.max(1,Math.round(c.status.clock/60)):(parseInt(c.status.displayClock)||1)):'';
+      return {id:ev.id,date:ev.date||new Date().toISOString(),leagueSlug:slug,leagueName:LNAME,
+        statusState:fin?'post':(live?'in':'pre'),status:fin?'finished':(live?'in':'pre'),
+        live:live,minute:min,scoreHome:(fin||live)?hs:null,scoreAway:(fin||live)?as:null,
+        home:h,away:a,oddsHome:null,oddsAway:null,homeForm:'',awayForm:'',hasHalf:false,fhHome:null,fhAway:null,timeUnknown:false};
+    }catch(e){return null;}
+  }
+  function arch(m){
+    try{
+      var KEY='eb_fin_archive';
+      var a=JSON.parse(localStorage.getItem(KEY)||'[]');
+      for(var i=0;i<a.length;i++)if(a[i].id===m.id)return;
+      a.push(m);
+      if(a.length>300)a=a.slice(a.length-300);
+      localStorage.setItem(KEY,JSON.stringify(a));
+    }catch(e){}
+  }
+  function merge(m){
+    var ms=(window.state&&state.matches)||[];
+    for(var i=0;i<ms.length;i++){
+      if(ms[i].id===m.id){
+        var t=ms[i];
+        if(m.scoreHome!=null)t.scoreHome=m.scoreHome;
+        if(m.scoreAway!=null)t.scoreAway=m.scoreAway;
+        if(m.minute)t.minute=m.minute;
+        t.live=m.live;t.status=m.status;t.statusState=m.statusState;
+        return t;
+      }
+    }
+    ms.push(m);return m;
+  }
+  function run(){
+    try{
+      if(document.hidden)return;
+      var ds=[dstr(new Date(Date.now()-86400000)),dstr(new Date()),dstr(new Date(Date.now()+86400000))];
+      INTL.forEach(function(slug){
+        ds.forEach(function(d){
+          getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard?dates='+d,function(j){
+            if(!j||!j.events)return;var ch=false;
+            j.events.forEach(function(ev){
+              var m=parseEv(ev,slug);if(!m)return;
+              merge(m);ch=true;
+              if(m.statusState==='post'&&m.scoreHome!=null)arch(m);
+            });
+            if(ch){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}}
+          });
+        });
+      });
+    }catch(e){}
+  }
+  setInterval(run,60000);setTimeout(run,4000);
+  console.info('[EgyptBet Addon] intl-v69: جسر الكونكاكاف المستقل نشط');
+}catch(e){console.warn('[EgyptBet Addon] intl-v69:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: جسر الكونكاكاف المستقل v69 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
