@@ -3546,53 +3546,6 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] flip-v63:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: درع تقلب النتيجة v63 ===== -->
-<!-- ===== إضافة: لحظة الصافرة v64 | 2026-09-25 ===== -->
-<script>
-(function(){'use strict';try{
-  var seen={};
-  var lastFlow=0,lastSweep=0;
-  function mode(){
-    try{var a=document.querySelector('.mode-chip.active');return a&&a.dataset?a.dataset.mode:'all';}catch(e){return 'all';}
-  }
-  function sweep(){
-    var n=Date.now();if(n-lastSweep<300)return;lastSweep=n;
-    try{
-      var md=mode();
-      if(md==='finished')return;
-      var cards=document.querySelectorAll('article.card');
-      for(var i=0;i<cards.length;i++){
-        var c=cards[i];
-        if(c.querySelector&&c.querySelector('.done-pill')&&!c.__finHid){c.style.display='none';c.__finHid=1;}
-      }
-    }catch(e){}
-  }
-  function detect(){
-    try{
-      var ms=(window.state&&state.matches)||[];
-      var newFin=false;
-      ms.forEach(function(m){
-        if(!m||!m.id)return;
-        var fin=false;
-        try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
-        if(fin&&m.scoreHome!=null&&!seen[m.id]){seen[m.id]=1;newFin=true;}
-      });
-      if(newFin){
-        var n=Date.now();
-        if(n-lastFlow>5000){lastFlow=n;
-          try{if(typeof window.loadFinishedFlow==='function')window.loadFinishedFlow(true);}catch(e){}
-        }
-      }
-      sweep();
-    }catch(e){}
-  }
-  setInterval(detect,5000);setTimeout(detect,2500);
-  var rc=window.renderCurrent;
-  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(sweep,60);return r;};
-  try{new MutationObserver(function(){setTimeout(sweep,80);}).observe(document.body,{childList:true,subtree:true});}catch(e){}
-  console.info('[EgyptBet Addon] whistle-v64: لحظة الصافرة شغالة');
-}catch(e){console.warn('[EgyptBet Addon] whistle-v64:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: لحظة الصافرة v64 ===== -->
 <!-- ===== إضافة: حد اليوم الشامل v68 | 2026-09-25 ===== -->
 <script>
 (function(){'use strict';try{
@@ -3623,59 +3576,16 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] bound-v68:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: حد اليوم الشامل v68 ===== -->
-<!-- ===== إضافة: صحة المنتهية v71 | 2026-09-25 ===== -->
-<script>
-(function(){'use strict';try{
-  var KEY='eb_fin_archive';
-  function purge(){
-    try{
-      var a=JSON.parse(localStorage.getItem(KEY)||'[]');
-      var now=Date.now();
-      var b=a.filter(function(x){
-        if(x.scoreHome==null||x.scoreAway==null)return false;
-        var t=+new Date(x.date||0);
-        if(t&&t>now)return false;
-        return true;
-      });
-      if(b.length!==a.length)localStorage.setItem(KEY,JSON.stringify(b));
-    }catch(e){}
-  }
-  function hideWrong(){
-    try{
-      var md='all';try{var c=document.querySelector('.mode-chip.active');md=c&&c.dataset?c.dataset.mode:'all';}catch(e){}
-      if(md!=='finished')return;
-      var ms=(window.state&&state.matches)||[];
-      var byId={};ms.forEach(function(m){byId[m.id]=m;});
-      var cards=document.querySelectorAll('[data-match]');
-      var now=Date.now();
-      for(var i=0;i<cards.length;i++){
-        var id=cards[i].getAttribute('data-match');
-        var m=byId[id];
-        if(!m)continue;
-        var t=+new Date(m.date||0);
-        var fin=false;try{fin=(window.isFinished&&isFinished(m))||m.status==='finished'||m.status==='post';}catch(e){}
-        if(!fin||(t&&t>now)){cards[i].style.display='none';}
-      }
-    }catch(e){}
-  }
-  setInterval(function(){purge();hideWrong();},5000);
-  setTimeout(purge,2500);
-  var rc=window.renderCurrent;
-  window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;setTimeout(hideWrong,90);return r;};
-  console.info('[EgyptBet Addon] sane-v71: صحة المنتهية شغالة');
-}catch(e){console.warn('[EgyptBet Addon] sane-v71:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: صحة المنتهية v71 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 <script>
-/* ===== v74 المحرك الأوحد | 2026-09-25 ===== */
+/* ===== v75 هندسة اللا حرب | 2026-09-25 ===== */
 (function(){'use strict';
 var SLUG='concacaf.nations.league',LNAME='كونكاكاف دوري الأمم',KEY='eb_fin_archive';
 var B=document.createElement('div');
 B.style.cssText='position:fixed;bottom:70px;right:6px;z-index:99999;background:#111827;color:#7dd3fc;font:10px monospace;padding:4px 7px;border-radius:10px;border:1px solid #334155;direction:ltr';
 document.documentElement.appendChild(B);
-var S={a:0,s:0,f:'-',i:0,b:'-'};
-function show(){B.textContent='v74 A:'+S.a+' S:'+S.s+' F:'+S.f+' I:'+S.i+' B:'+S.b;}
+var S={a:0,p:0,f:'-',c:0};
+function show(){B.textContent='v75 A:'+S.a+' P:'+S.p+' F:'+S.f+' C:'+S.c;}
 function dstr(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
 function getX(u,cb){try{var x=new XMLHttpRequest();x.open('GET',u,true);x.timeout=12000;
 x.onload=function(){S.f=x.status;try{cb(x.status>=200&&x.status<300?JSON.parse(x.responseText):null);}catch(e){cb(null);}show();};
@@ -3688,6 +3598,11 @@ function reg(){try{
 }catch(e){}}
 reg();setInterval(reg,30000);
 var STORE={};
+function seed(){try{
+  var a=JSON.parse(localStorage.getItem(KEY)||'[]');S.a=a.length;
+  a.forEach(function(x){if(x&&x.id&&!STORE[x.id])STORE[x.id]=x;});
+}catch(e){}}
+seed();
 function parseEv(ev){try{var c=ev.competitions&&ev.competitions[0];if(!c)return null;var st=(c.status&&c.status.type)||{};
 var h=null,a=null,hs=null,as=null;
 (c.competitors||[]).forEach(function(cp){var t=cp.team||{};var rec=(cp.records&&cp.records[0]&&cp.records[0].summary)||'';
@@ -3699,82 +3614,49 @@ return{id:ev.id,date:ev.date||new Date().toISOString(),leagueSlug:SLUG,leagueNam
 statusState:fin?'post':(live?'in':'pre'),status:fin?'finished':(live?'in':'pre'),live:live,
 minute:live?((c.status&&c.status.clock)?Math.max(1,Math.round(c.status.clock/60)):(parseInt(c.status.displayClock)||1)):'',
 scoreHome:(fin||live)?hs:null,scoreAway:(fin||live)?as:null,home:h,away:a,oddsHome:null,oddsAway:null,
-homeForm:'',awayForm:'',hasHalf:false,fhHome:null,fhAway:null,timeUnknown:false,fin:fin,sH:hs,sA:as};}catch(e){return null;}}
+homeForm:'',awayForm:'',hasHalf:false,fhHome:null,fhAway:null,timeUnknown:false};}catch(e){return null;}}
 function arch(m){try{var a=JSON.parse(localStorage.getItem(KEY)||'[]');var ex=false;
 for(var i=0;i<a.length;i++)if(a[i].id===m.id){ex=true;break;}
-if(!ex){a.push({id:m.id,date:m.date,leagueSlug:m.leagueSlug||SLUG,leagueName:m.leagueName||LNAME,status:'finished',statusState:'post',live:false,minute:'',scoreHome:(m.sH!=null?m.sH:m.scoreHome),scoreAway:(m.sA!=null?m.sA:m.scoreAway),home:{id:m.home.id,name:m.home.name,record:m.home.record||''},away:{id:m.away.id,name:m.away.name,record:m.away.record||''}});
-if(a.length>300)a=a.slice(a.length-300);localStorage.setItem(KEY,JSON.stringify(a));}}catch(e){}}
+if(!ex){a.push(m);if(a.length>300)a=a.slice(a.length-300);localStorage.setItem(KEY,JSON.stringify(a));S.a=a.length;}}catch(e){}}
 function merge(m){try{STORE[m.id]=m;
 var ms=(window.state&&state.matches)||[];
 for(var i=0;i<ms.length;i++){if(ms[i].id===m.id){var t=ms[i];
 if(m.scoreHome!=null)t.scoreHome=m.scoreHome;if(m.scoreAway!=null)t.scoreAway=m.scoreAway;
 if(m.minute)t.minute=m.minute;t.live=m.live;t.status=m.status;t.statusState=m.statusState;return;}}
 ms.push(m);}catch(e){}}
-function backfill(){try{
-var last=+localStorage.getItem('eb_bf74')||0;
-if(Date.now()-last<6*3600000)return;
-localStorage.setItem('eb_bf74',String(Date.now()));
-var seen={};var uniq=[];
-(window.CORE_SLUGS||[]).concat(window.LIVE_SLUGS||[]).forEach(function(s){if(s&&!seen[s]){seen[s]=1;uniq.push(s);}});
-uniq=uniq.slice(0,24);var q=[];
-[0,1,2].forEach(function(d){var ds=dstr(new Date(Date.now()-d*86400000));uniq.forEach(function(s){q.push([s,ds]);});});
-q.forEach(function(p,i){setTimeout(function(){getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+p[0]+'/scoreboard?dates='+p[1],function(j){
-if(!j||!j.events)return;
-j.events.forEach(function(ev){var m=parseEv(ev);if(!m||!m.fin||m.sH==null)return;arch(m);});});},i*200);});
-}catch(e){}}
+var br=window.buildRequests;
+if(typeof br==='function'){
+window.buildRequests=function(){var rq=br.apply(this,arguments);
+ try{var ids={};var ms=(window.state&&state.matches)||[];
+  ms.forEach(function(m){ids[m.id]=1;});
+  var extra=[];Object.keys(STORE).forEach(function(k){if(!ids[k])extra.push(STORE[k]);});
+  S.p=extra.length;
+  if(extra.length)rq.push(Promise.resolve(extra.map(function(m){try{return JSON.parse(JSON.stringify(m));}catch(e){return null;}}).filter(Boolean)));
+ }catch(e){}
+ return rq;};}
 function mode(){try{var c=document.querySelector('.mode-chip.active');return c&&c.dataset?c.dataset.mode:'all';}catch(e){return 'all';}}
-function visBox(){
-var cands=[document.getElementById('homeContent'),document.getElementById('finContent'),document.getElementById('finishedContent')];
-var secs=document.querySelectorAll('section.view,div.view,section,main');
-for(var i=0;i<secs.length;i++){if(secs[i].offsetParent&&!secs[i].classList.contains('hidden'))cands.push(secs[i]);}
-for(var j=0;j<cands.length;j++){var c=cands[j];if(c&&c.offsetParent&&c.querySelector('.day-head,.card'))return c;}
-for(var k=0;k<cands.length;k++){if(cands[k]&&cands[k].offsetParent)return cands[k];}
-return document.getElementById('homeContent');}
-function card(m){var fin=m.fin||m.statusState==='post';
-var d=new Date(m.date||Date.now());var tm=d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
-var mid=fin?((m.sH!=null?m.sH:m.scoreHome)+' - '+(m.sA!=null?m.sA:m.scoreAway)):(m.live?('مباشر '+m.minute+"'"):tm);
-var hn=(m.home&&m.home.name)||m.h&&m.h.name||'?';var an=(m.away&&m.away.name)||m.a&&m.a.name||'?';
-return '<article class="card" data-match="'+m.id+'" style="padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(255,255,255,.05)">'
-+'<div style="display:flex;gap:8px;justify-content:space-between;font-size:11px;opacity:.8"><span>'+(m.leagueName||LNAME)+'</span><span>انتهت</span></div>'
-+'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;direction:rtl">'
-+'<b style="font-size:13px">'+hn+'</b><b style="font-size:15px;color:#fca5a5">'+mid+'</b><b style="font-size:13px">'+an+'</b></div></article>';}
-function injectFin(){
-try{
-if(mode()!=='finished'){S.i=0;show();return;}
-var box=visBox();S.b=box?(box.id||'sec'):'none';
-var A=[];try{A=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
-S.a=A.length;S.s=Object.keys(STORE).length;
-if(!box){show();return;}
-var src=[],ids={};
-A.forEach(function(x){src.push(x);ids[x.id]=1;});
-Object.keys(STORE).forEach(function(k){var m=STORE[k];if(m.fin&&!ids[k])src.push(m);});
-var anchor=box.querySelector('.day-head');S.i=0;var now=Date.now();
-src.forEach(function(m){try{
-if(!m||!m.id)return;
-if(box.querySelector('[data-match="'+m.id+'"]'))return;
-var t=+new Date(m.date||0);
-if(t>now)return;
-var w=document.createElement('div');w.innerHTML=card(m);
-var el=w.firstChild;if(!el)return;
-if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(el,anchor.nextSibling);else box.appendChild(el);
-S.i++;
-}catch(e){}});
-show();
-}catch(e){show();}}
-function run(){try{
-if(document.hidden)return;
-var ds=[dstr(new Date(Date.now()-86400000)),dstr(new Date()),dstr(new Date(Date.now()+86400000))];
-ds.forEach(function(d){getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+SLUG+'/scoreboard?dates='+d,function(j){
-if(!j||!j.events)return;var ch=false;
-j.events.forEach(function(ev){var m=parseEv(ev);if(!m)return;merge(m);ch=true;if(m.fin&&m.sH!=null)arch(m);});
-if(ch){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}}
-});});
+function clean(){try{
+ if(mode()==='finished'){S.c=0;return;}
+ var cards=document.querySelectorAll('article.card');var n=0;
+ for(var i=0;i<cards.length;i++){var c=cards[i];
+  if(c.querySelector&&c.querySelector('.done-pill')&&c.style.display!=='none'){c.style.display='none';n++;}}
+ S.c=n;show();
 }catch(e){}}
-setInterval(function(){run();injectFin();},20000);
-setTimeout(function(){run();backfill();},3000);
 var rc=window.renderCurrent;
-window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;injectFin();return r;};
-document.addEventListener('click',function(){setTimeout(injectFin,60);},true);
+window.renderCurrent=function(){var r=rc?rc.apply(this,arguments):undefined;clean();return r;};
+var lastCl=0;
+try{new MutationObserver(function(){var n=Date.now();if(n-lastCl<60)return;lastCl=n;clean();}).observe(document.body,{childList:true,subtree:true});}catch(e){}
+function run(){try{
+ if(document.hidden)return;
+ var ds=[dstr(new Date(Date.now()-86400000)),dstr(new Date()),dstr(new Date(Date.now()+86400000))];
+ ds.forEach(function(d){getX('https://site.api.espn.com/apis/site/v2/sports/soccer/'+SLUG+'/scoreboard?dates='+d,function(j){
+  if(!j||!j.events)return;var ch=false;
+  j.events.forEach(function(ev){var m=parseEv(ev);if(!m)return;merge(m);ch=true;
+   if(m.statusState==='post'&&m.scoreHome!=null){arch(m);STORE[m.id]=m;}});
+  if(ch){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}}
+ });});
+}catch(e){}}
+setInterval(run,30000);setTimeout(run,3000);
 show();
 })();
 </script>
