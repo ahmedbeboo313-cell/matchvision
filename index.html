@@ -3752,5 +3752,21 @@ show();
   console.info('[EgyptBet Addon] tick-v81: نبض موقع ESPN نشط');
 }catch(e){console.warn('[EgyptBet Addon] tick-v81:',e);}})();
 </script>
+<script>
+/* ===== v82 تنضيف شارة المصادر | 2026-09-25 ===== */
+(function(){'use strict';try{
+  function fix(){
+    try{
+      var b=document.getElementById('sourceBadge');if(!b)return;
+      var t=(b.textContent||'').trim();
+      var n=t.replace(/\+\s*$/,'').replace(/\s{2,}/g,' ').trim();
+      if(n!==t)b.textContent=n;
+    }catch(e){}
+  }
+  setInterval(fix,2000);
+  setTimeout(fix,1500);
+  console.info('[EgyptBet Addon] badge-v82: شارة المصادر نضيفة');
+}catch(e){console.warn('[EgyptBet Addon] badge-v82:',e);}})();
+</script>
 </body>
 </html>
