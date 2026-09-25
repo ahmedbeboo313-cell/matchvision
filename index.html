@@ -3722,5 +3722,35 @@ show();
   console.info('[EgyptBet Addon] sync-v80: تزامن ESPN الكامل كل 5 ثواني');
 }catch(e){console.warn('[EgyptBet Addon] sync-v80:',e);}})();
 </script>
+<script>
+/* ===== v81 نبض موقع ESPN | 2026-09-25 ===== */
+(function(){'use strict';try{
+  function tick(){
+    try{
+      if(document.hidden)return;
+      var ms=(window.state&&state.matches)||[];var now=Date.now();var ch=false;
+      ms.forEach(function(m){
+        if(!m.live||m.minute==null)return;
+        if(m.minute===45||m.minute>=90)return;
+        if(m.__b==null){m.__b=m.minute;m.__t=now;m.__set=m.minute;return;}
+        if(m.minute!==m.__set){
+          m.__b=m.minute;m.__t=now;m.__set=m.minute;return;
+        }
+        var add=Math.floor((now-m.__t)/60000);
+        if(add<1)return;
+        var nm=m.__b+add;
+        if(nm>90)nm=90;
+        if(nm>m.minute){m.minute=nm;m.__set=nm;ch=true;}
+      });
+      if(ch){
+        try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}
+        try{if(typeof window.renderDetails==='function')renderDetails();}catch(e){}
+      }
+    }catch(e){}
+  }
+  setInterval(tick,10000);
+  console.info('[EgyptBet Addon] tick-v81: نبض موقع ESPN نشط');
+}catch(e){console.warn('[EgyptBet Addon] tick-v81:',e);}})();
+</script>
 </body>
 </html>
