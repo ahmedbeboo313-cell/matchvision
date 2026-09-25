@@ -3453,6 +3453,49 @@ try{
 }catch(e){console.warn('[EgyptBet Addon] bound-v68:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: حد اليوم الشامل v68 ===== -->
+<!-- ===== إضافة: أرشيف المنتهية الشامل v26 | 2026-09-25 ===== -->
+<script>
+(function(){'use strict';try{
+function setSpan(){try{if(window.state&&(!state.finSpan||state.finSpan<7))state.finSpan=7;}catch(e){}}
+setSpan();setInterval(setSpan,10000);
+function liveish(m){var s=((m&&m.statusState)||'')+'';s=s.toLowerCase();return s==='in'||s==='live'||s==='1h'||s==='2h'||s==='ht'||s==='et'||s==='halftime'||s==='inprogress'||s==='progress'||s==='pre'||s==='scheduled'||s==='delayed'||s==='postponed'||s==='cancelled';}
+function isFin(m){
+if(!m||m.scoreHome==null||m.scoreAway==null)return false;
+var dt=new Date(m.date);if(isNaN(dt.getTime())||dt.getTime()>Date.now())return false;
+if(m.statusCompleted)return true;
+var s=((m.statusState)||'')+'';s=s.toLowerCase();
+if(s==='post'||s==='finished'||s==='ft'||s==='aet'||s==='pen'||s==='fulltime'||s==='afterpenalties')return true;
+if(liveish(m))return false;
+return (Date.now()-dt.getTime())>3*3600*1000;
+}
+function norm(m){if(!m.statusCompleted)m.statusCompleted=true;if(!m.statusState)m.statusState='post';return m;}
+if(typeof window.fetchESPN==='function'&&typeof window.fetchSet==='function'&&typeof window.fetchTSDBDay==='function'&&window.LEAGUES&&window.CORE_SLUGS){
+window.fetchFinishedDay=function(d,all){
+var diff=0;try{diff=Math.round((new Date(fmtDate(new Date()))-new Date(d))/86400000);}catch(e){}
+var src=(all||diff<=1)?LEAGUES:LEAGUES.filter(function(l){return CORE_SLUGS.indexOf(l.slug)>=0;});
+var rq=src.map(function(l){return l.apifbOnly?Promise.resolve([]):fetchESPN(l,String(d).replace(/-/g,''));});
+try{if(typeof apiFbOk==='function'&&apiFbOk('fin:'+d,30)&&typeof fetchApiFb==='function')rq.push(fetchApiFb('fixtures?date='+d));}catch(e){}
+try{rq.push(fetchTSDBDay(d));}catch(e){}
+return fetchSet(rq).then(function(it){var out=[];(it||[]).forEach(function(m){if(isFin(m))out.push(norm(m));});return out;});
+};
+}
+if(typeof window.finDayKey==='function'&&typeof window.slimMatch==='function'){
+var K=function(d){try{return finDayKey(d)+'-v26';}catch(e){return 'egb-fin-'+d+'-v26';}};
+window.readDayCache=function(d,all){
+try{var c=JSON.parse(localStorage.getItem(K(d))||'null');if(!c||!c.list||!c.list.length)return null;
+var age=Date.now()-c.ts;var diff=Math.round((new Date(fmtDate(new Date()))-new Date(d))/86400000);
+var maxAge=(diff<=0)?(60*1000):((diff<=3)?(30*60*1000):(10*86400000));
+if(age<maxAge)return c.list;}catch(e){}
+return null;};
+window.writeDayCache=function(d,l){try{localStorage.setItem(K(d),JSON.stringify({ts:Date.now(),list:(l||[]).slice(0,250).map(slimMatch)}));}catch(e){}};
+}
+if(typeof window.finDays==='function'&&typeof window.addDays==='function'&&typeof window.fmtDate==='function'){
+window.finDays=function(){var n=7;try{if(window.state&&state.finSpan>7)n=state.finSpan;}catch(e){}var o=[];for(var i=0;i<n;i++){o.push(fmtDate(addDays(new Date(),-i)));}return o;};
+}
+console.info('[EgyptBet Addon] finished-archive-v26: ON');
+}catch(e){console.warn('[EgyptBet Addon] finarc-v26:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: أرشيف المنتهية الشامل v26 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
