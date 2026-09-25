@@ -3660,5 +3660,18 @@ setInterval(run,30000);setTimeout(run,3000);
 show();
 })();
 </script>
+<script>
+/* ===== v76 ثبات البناء | 2026-09-25 ===== */
+(function(){'use strict';try{
+  var br=window.buildRequests;
+  if(typeof br==='function'){
+    window.buildRequests=function(){
+      try{window.__xdatesDone=0;}catch(e){}
+      return br.apply(this,arguments);
+    };
+  }
+  console.info('[EgyptBet Addon] stable-v76: ثبات البناء نشط');
+}catch(e){console.warn('[EgyptBet Addon] stable-v76:',e);}})();
+</script>
 </body>
 </html>
