@@ -3496,32 +3496,6 @@ console.info('[EgyptBet Addon] finished-archive-v26: ON');
 }catch(e){console.warn('[EgyptBet Addon] finarc-v26:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: أرشيف المنتهية الشامل v26 ===== -->
-<!-- ===== إضافة: تصفيات كأس الأمم الأفريقية v27 | 2026-09-26 ===== -->
-<script>
-(function(){'use strict';try{
-var NAME='تصفيات كأس الأمم الأفريقية',EM='🌍',HOME=1.45,AWAY=1.05;
-var BASE=['caf.nations.qualifying','caf.nations.qualifiers','caf.afcon.qualifying'];
-var CANDS=(function(){try{var s=localStorage.getItem('egb_afconq_slug');if(s)return [s].concat(BASE.filter(function(x){return x!==s;}));}catch(e){}return BASE.slice();})();
-function ok(slug){return fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+slug+'/scoreboard',{cache:'no-store'}).then(function(r){return r&&r.ok?slug:null;}).catch(function(){return null;});}
-function pushLists(slug){try{if(window.CORE_SLUGS&&CORE_SLUGS.indexOf(slug)<0)CORE_SLUGS.push(slug);}catch(e){}try{if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(slug)<0)LIVE_SLUGS.push(slug);}catch(e){}}
-function rmLists(slug){try{var a=CORE_SLUGS.indexOf(slug);if(a>=0)CORE_SLUGS.splice(a,1);}catch(e){}try{var b=LIVE_SLUGS.indexOf(slug);if(b>=0)LIVE_SLUGS.splice(b,1);}catch(e){}}
-function refreshUI(){try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}}
-var reg=null;
-if(window.LEAGUES&&!LEAGUES.some(function(l){return l.name===NAME;})){reg={slug:CANDS[0],name:NAME,em:EM,home:HOME,away:AWAY};LEAGUES.push(reg);pushLists(reg.slug);}
-function verify(i){
-if(i>=CANDS.length){console.warn('[EgyptBet Addon] afconq-v27: no valid slug found');return;}
-ok(CANDS[i]).then(function(s){
-if(s&&reg){
-try{localStorage.setItem('egb_afconq_slug',s);}catch(e){}
-if(reg.slug!==s){var old=reg.slug;reg.slug=s;rmLists(old);pushLists(s);refreshUI();var r=document.getElementById('refreshBtn');if(r)r.click();console.info('[EgyptBet Addon] afconq-v27: slug corrected to '+s);}
-console.info('[EgyptBet Addon] afconq-v27: ON ('+s+')');
-}else{verify(i+1);}
-}).catch(function(){verify(i+1);});
-}
-if(reg)setTimeout(function(){verify(0);},1500);
-}catch(e){console.warn('[EgyptBet Addon] afconq-v27:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: تصفيات كأس الأمم الأفريقية v27 ===== -->
 <!-- ===== إضافة: الحارس الدائم للمباريات v28 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
@@ -3574,6 +3548,50 @@ console.info('[EgyptBet Addon] guard28: ON (persistent upcoming+live)');
 }catch(e){console.warn('[EgyptBet Addon] guard28:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الحارس الدائم للمباريات v28 ===== -->
+<!-- ===== إضافة: تصفيات كأس الأمم الأفريقية v29 | 2026-09-26 ===== -->
+<script>
+(function(){'use strict';try{
+var NAME='تصفيات كأس الأمم الأفريقية',EM='🌍',HOME=1.45,AWAY=1.05,SKEY='egb_afconq_slug2';
+var CANDS=['caf.nations.qualifying','caf.nations','caf.afcon.qualifying','caf.nations.qualifiers'];
+var BASE='https://site.api.espn.com/apis/site/v2/sports/soccer/';
+function probe(slug){return fetch(BASE+slug+'/scoreboard',{cache:'no-store'}).then(function(r){if(!r||!r.ok)return null;return r.json().then(function(d){return (d&&d.leagues&&d.leagues.length)?slug:null;}).catch(function(){return null;});}).catch(function(){return null;});}
+function registryPick(d){
+var lists=[];if(d&&d.leagues)lists.push(d.leagues);
+if(d&&d.sports)for(var i=0;i<d.sports.length;i++){if(d.sports[i]&&d.sports[i].leagues)lists.push(d.sports[i].leagues);}
+var all=[];lists.forEach(function(L){(L||[]).forEach(function(x){all.push(x);});});
+function nz(x){return ((x&&x.name||'')+' '+(x&&x.shortName||'')+' '+(x&&x.abbreviation||'')+' '+(x&&x.id||'')).toLowerCase();}
+var q1=null,q2=null,q3=null;
+for(var j=0;j<all.length;j++){var s=nz(all[j]);
+if(!q1&&s.indexOf('africa')>=0&&s.indexOf('qualif')>=0)q1=all[j];
+if(!q2&&s.indexOf('africa cup of nations')>=0)q2=all[j];
+if(!q3&&s.indexOf('caf.nations')>=0)q3=all[j];}
+var p=q1||q2||q3;return p?(p.id||null):null;
+}
+function discover(){return fetch(BASE.replace('/soccer/','/soccer/')+'leagues',{cache:'no-store'}).then(function(r){if(!r||!r.ok)return null;return r.json();}).then(registryPick).catch(function(){return null;});}
+function pushLists(slug){try{if(window.CORE_SLUGS&&CORE_SLUGS.indexOf(slug)<0)CORE_SLUGS.push(slug);}catch(e){}try{if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(slug)<0)LIVE_SLUGS.push(slug);}catch(e){}}
+function rmLists(slug){try{var a=CORE_SLUGS.indexOf(slug);if(a>=0)CORE_SLUGS.splice(a,1);}catch(e){}try{var b=LIVE_SLUGS.indexOf(slug);if(b>=0)LIVE_SLUGS.splice(b,1);}catch(e){}}
+function refreshUI(){try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}}
+function clickRefresh(){try{var r=document.getElementById('refreshBtn');if(r)r.click();}catch(e){}}
+var reg=null;
+if(window.LEAGUES){
+for(var q=0;q<LEAGUES.length;q++){if(LEAGUES[q].name===NAME||CANDS.indexOf(LEAGUES[q].slug)>=0){reg=LEAGUES[q];break;}}
+if(!reg){reg={slug:CANDS[0],name:NAME,em:EM,home:HOME,away:AWAY};LEAGUES.push(reg);}
+pushLists(reg.slug);
+}
+function setSlug(s,why){if(!s||!reg)return;var old=reg.slug;if(old!==s){rmLists(old);}reg.slug=s;pushLists(s);try{localStorage.setItem(SKEY,s);}catch(e){}refreshUI();clickRefresh();console.info('[EgyptBet Addon] afconq-v29: slug='+s+' via '+why);}
+function chain(i){
+if(i>=CANDS.length){discover().then(function(s){if(s)setSlug(s,'registry');else console.warn('[EgyptBet Addon] afconq-v29: discovery failed');});return;}
+probe(CANDS[i]).then(function(s){if(s)setSlug(s,'probe');else chain(i+1);});
+}
+setTimeout(function(){
+var saved=null;try{saved=localStorage.getItem(SKEY);}catch(e){}
+if(saved&&reg){reg.slug=saved;pushLists(saved);probe(saved).then(function(s){if(s){console.info('[EgyptBet Addon] afconq-v29: saved slug ok ('+saved+')');}else{rmLists(saved);chain(0);}});}
+else{chain(0);}
+},1200);
+console.info('[EgyptBet Addon] afconq-v29: loaded');
+}catch(e){console.warn('[EgyptBet Addon] afconq-v29:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: تصفيات كأس الأمم الأفريقية v29 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
