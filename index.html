@@ -3656,10 +3656,11 @@ console.info('[EgyptBet Addon] live-inspector-v36: ON');
 }catch(e){console.warn('[EgyptBet Addon] live-inspector-v36:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: مفتش اللايف الراكد v36 ===== -->
-<!-- ===== إضافة: ساعة المعايرة المطابقة v42 | 2026-09-26 ===== -->
+<!-- ===== إضافة: المالك الوحيد للساعة v43 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock42: missing');return;}
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock43: missing');return;}
+window.__EGB_CLOCK='v43';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;var ADD=2;
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
 function sfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length<40&&MIN_RE.test(v))out.push(k);}return out;}
@@ -3697,7 +3698,7 @@ setInterval(function(){
 if(document.hidden||!window.state||!state.matches)return;
 var ch=false;for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(!isLive(m)||!m.__p)continue;try{if(paint(m))ch=true;}catch(e){}}
 if(ch)renderKeep();
-},15000);
+},10000);
 var busy=false;
 function sync(){
 if(busy||document.hidden||!window.state||!state.matches)return;
@@ -3721,17 +3722,17 @@ try{if(typeof f[kk]==='string'&&MIN_RE.test(f[kk]))return;m[kk]=f[kk];}catch(e){
 var pf=sfields(f),p=null;if(pf.length)p=pmin(f[pf[0]]);
 if(p){m.__p=p;if(paint(m))changed=true;}
 });
-var t=new Date();chip('v42 '+(live[0].__p?comb(live[0].__p,ADD):'-')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));
+var t=new Date();chip('v43 '+(live[0].__p?comb(live[0].__p,ADD):'-')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));
 fin();
 }).catch(function(){fin();});
 });
 }
 setInterval(sync,30000);setTimeout(sync,6000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,1500);});
-console.info('[EgyptBet Addon] clock42: ON (calibrated +2)');
-}catch(e){console.warn('[EgyptBet Addon] clock42:',e);}})();
+console.info('[EgyptBet Addon] clock43: SOLE CLOCK OWNER');
+}catch(e){console.warn('[EgyptBet Addon] clock43:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: ساعة المعايرة المطابقة v42 ===== -->
+<!-- ===== نهاية إضافة: المالك الوحيد للساعة v43 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
