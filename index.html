@@ -3847,6 +3847,24 @@ console.info('[EgyptBet Addon] gulf-honest-v57: ON (ESPN only, no fake data)');
 }catch(e){console.warn('[EgyptBet Addon] v57:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الخليج الصادق v57 ===== -->
+<!-- ===== إضافة: حاجب أدوات التشخيص v58 | 2026-09-27 ===== -->
+<script>
+(function(){'use strict';try{
+var ids=['egbMc','egbDiag','egbDiag34','egbDiag35','egbDiag49','egbDiag54','egbDiag56'];
+var css=ids.map(function(i){return '#'+i;}).join(',')+'{display:none!important;visibility:hidden!important;opacity:0!important;}';
+var st=document.createElement('style');st.textContent=css;
+(document.head||document.documentElement).appendChild(st);
+function kill(){for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el&&el.parentNode)el.parentNode.removeChild(el);}}
+kill();
+setInterval(kill,3000);
+try{
+var mo=new MutationObserver(function(){kill();});
+mo.observe(document.body||document.documentElement,{childList:true,subtree:true});
+}catch(e){}
+console.info('[EgyptBet Addon] diag-hider-v58: ON');
+}catch(e){}})();
+</script>
+<!-- ===== نهاية إضافة: حاجب أدوات التشخيص v58 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
