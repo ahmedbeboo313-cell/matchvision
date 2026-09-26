@@ -3618,6 +3618,44 @@ console.info('[EgyptBet Addon] leagues-engine-v33: ready ('+NEW_LEAGUES.length+'
 }catch(e){console.warn('[EgyptBet Addon] leagues-engine-v33:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: محرك الدوريات الشامل v33 ===== -->
+<!-- ===== إضافة: مفتش اللايف الراكد v36 | 2026-09-26 ===== -->
+<script>
+(function(){'use strict';try{
+var KEY='egb_persist_v28';
+function store(){try{var j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&j.up&&j.lv)return j;}catch(e){}return null;}
+function save(S){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+var busy=false;
+function tick(){
+if(busy)return;var S=store();if(!S)return;
+var now=Date.now();var susp={};
+for(var k in S.lv){var e=S.lv[k];var t=0;try{t=new Date(e.m.date).getTime();}catch(err){}
+if(!t||now-t<100*60*1000)continue;
+var lg=e.m.leagueSlug;if(!lg)continue;
+if(!susp[lg])susp[lg]=[];susp[lg].push(k);}
+var lgs=Object.keys(susp).slice(0,3);
+if(!lgs.length)return;
+busy=true;var done=0,changed=false;
+function fin(){done++;if(done>=lgs.length){busy=false;if(changed){save(S);try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}}}}
+lgs.forEach(function(lg){
+var L=null;try{for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug===lg)L=LEAGUES[i];}}catch(e){}
+var dstr='';try{dstr=fmtDate(new Date(S.lv[susp[lg][0]].m.date));}catch(e){dstr=fmtDate(new Date());}
+if(!L){fin();return;}
+fetchESPN(L,dstr.replace(/-/g,'')).then(function(list){
+var byKey={};(list||[]).forEach(function(m){try{byKey[matchKey(m)]=m;}catch(e){}});
+susp[lg].forEach(function(k){
+var f=byKey[k];if(!f)return;
+if(f.statusCompleted||f.statusState==='post'){delete S.lv[k];changed=true;}
+else{S.lv[k].m=f;S.lv[k].ts=now;changed=true;}
+});
+fin();
+}).catch(function(){fin();});
+});
+}
+setTimeout(tick,8000);setInterval(tick,90000);
+console.info('[EgyptBet Addon] live-inspector-v36: ON');
+}catch(e){console.warn('[EgyptBet Addon] live-inspector-v36:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: مفتش اللايف الراكد v36 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
