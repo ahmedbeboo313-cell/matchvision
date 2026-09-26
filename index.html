@@ -3656,21 +3656,11 @@ console.info('[EgyptBet Addon] live-inspector-v36: ON');
 }catch(e){console.warn('[EgyptBet Addon] live-inspector-v36:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: مفتش اللايف الراكد v36 ===== -->
-<!-- ===== إضافة: محرك الدقائق الحية v39 النهائي | 2026-09-26 ===== -->
+<!-- ===== إضافة: محرك الساعة الحقيقية v40 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.fetchESPN!=='function'||typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] minutecore-v39: missing');return;}
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock40: missing');return;}
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
-function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
-function sfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length<40&&MIN_RE.test(v))out.push(k);}return out;}
-function nfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='number'&&/clock|minute/i.test(k)&&v>=0&&v<=129)out.push(k);}return out;}
-function anchor(m){
-var f=sfields(m),n=nfields(m);var p=null;
-if(f.length)p=pmin(m[f[0]]);
-if(!p&&n.length)p={main:Math.floor(m[n[0]]),plus:0};
-if(!p)return;
-m.__m0=p;m.__t0=Date.now();m.__flds=f;m.__nflds=n;
-}
 function isLive(m){
 if(!m||m.statusCompleted||m.statusState==='post')return false;
 if(m.live)return true;
@@ -3678,30 +3668,40 @@ var s=((m.statusState||'')+'').toLowerCase();
 if(s==='pre'||s==='scheduled'||s==='delayed'||s==='postponed')return false;
 if(s==='in'||s==='live'||s==='1h'||s==='2h'||s==='ht'||s==='et'||s==='halftime'||s==='inprogress'||s==='progress')return true;
 var t=0;try{t=new Date(m.date).getTime();}catch(e){}
-if(!t)return false;
-var el=Date.now()-t;
-return el>0&&el<5*3600*1000&&m.scoreHome!=null;
+if(!t)return false;var el=Date.now()-t;return el>0&&el<5*3600*1000&&m.scoreHome!=null;
 }
-function tickMatch(m){
-if(!isLive(m))return false;
-if(!m.__m0){anchor(m);return false;}
-var add=Math.floor((Date.now()-m.__t0)/60000);if(add<1)return false;
-var main=m.__m0.main,plus=m.__m0.plus;
-if(plus>0){plus=plus+add;if(plus>15)plus=15;}
-else{var nm=main+add;
-if(m.__m0.main<=45&&nm>45){plus=Math.min(add-(45-main),12);if(plus<1)plus=1;main=45;}
-else if(m.__m0.main>45&&m.__m0.main<=90&&nm>90){plus=Math.min(add-(90-main),12);if(plus<1)plus=1;main=90;}
-else if(nm>120){main=120;}
-else{main=nm;}}
+function isHT(m){var s=((m.statusState||'')+'').toLowerCase();return s==='ht'||s==='halftime';}
+function disp(m){
+var t=0;try{t=new Date(m.date).getTime();}catch(e){return null;}
+var el=Math.floor((Date.now()-t)/60000);
+if(el<0)return null;
+if(isHT(m))return 'استراحة';
+if(el<45)return (el+1)+"'";
+if(el<60)return '45+'+Math.min(el-44,15)+"'";
+var c=el-14;
+if(c<=90)return c+"'";
+return '90+'+Math.min(c-90,15)+"'";
+}
+function apply(m){
+var d=disp(m);if(!d)return false;
 var changed=false;
-if(m.__flds)for(var i=0;i<m.__flds.length;i++){var k=m.__flds[i];var v=m[k];if(typeof v!=='string')continue;
-var nv=v.replace(MIN_RE,function(){return plus>0?(main+'+'+plus+"'"):(main+"'");});
-if(nv!==v){m[k]=nv;changed=true;}}
-if(m.__nflds)for(var j=0;j<m.__nflds.length;j++){m[m.__nflds[j]]=main;changed=true;}
+for(var k in m){
+if(k.indexOf('__')===0)continue;
+var v=m[k];if(typeof v!=='string'||v.length>40)continue;
+if(MIN_RE.test(v)){
+var nv=(d==='استراحة')?'استراحة':v.replace(MIN_RE,d);
+if(nv!==v){m[k]=nv;changed=true;}
+}else if(d==='استراحة'&&/مباشر|لايف/.test(v)&&v.length<20){m[k]='استراحة';changed=true;}
+}
 return changed;
 }
-function chip(txt){var el=document.getElementById('egbMc');if(!el){el=document.createElement('div');el.id='egbMc';el.style.cssText='position:fixed;top:6px;left:8px;z-index:99998;background:rgba(0,0,0,.55);color:#86efac;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;direction:ltr';el.onclick=function(){el.style.display='none';};document.body.appendChild(el);}el.textContent=txt;}
 function renderKeep(){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}
+function chip(t){var el=document.getElementById('egbMc');if(!el){el=document.createElement('div');el.id='egbMc';el.style.cssText='position:fixed;top:6px;left:8px;z-index:99998;background:rgba(0,0,0,.55);color:#86efac;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;direction:ltr';el.onclick=function(){el.style.display='none';};document.body.appendChild(el);}el.textContent=t;}
+setInterval(function(){
+if(document.hidden||!window.state||!state.matches)return;
+var ch=false;for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(!isLive(m))continue;try{if(apply(m))ch=true;}catch(e){}}
+if(ch)renderKeep();
+},5000);
 var busy=false;
 function sync(){
 if(busy||document.hidden||!window.state||!state.matches)return;
@@ -3717,27 +3717,19 @@ if(!L){fin();return;}
 var ds='';try{ds=fmtDate(new Date(byLg[lg][0].date)).replace(/-/g,'');}catch(e){ds=fmtDate(new Date()).replace(/-/g,'');}
 fetchESPN(L,ds).then(function(fr){
 var bk={};(fr||[]).forEach(function(f){try{bk[matchKey(f)]=f;}catch(e){}});
-byLg[lg].forEach(function(m){
-var f=null;try{f=bk[matchKey(m)];}catch(e){}if(!f)return;
-Object.keys(f).forEach(function(kk){try{m[kk]=f[kk];}catch(e){}});
-anchor(m);changed=true;
-});
-var t=new Date();chip('v39 sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));
+byLg[lg].forEach(function(m){var f=null;try{f=bk[matchKey(m)];}catch(e){}if(!f)return;
+Object.keys(f).forEach(function(kk){try{m[kk]=f[kk];}catch(e){}});changed=true;});
+var t=new Date();chip('v40 '+(disp(live[0])||'-')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));
 fin();
 }).catch(function(){fin();});
 });
 }
-setInterval(function(){
-if(document.hidden||!window.state||!state.matches)return;
-var ch=false;for(var i=0;i<state.matches.length;i++){try{if(tickMatch(state.matches[i]))ch=true;}catch(e){}}
-if(ch)renderKeep();
-},5000);
 setInterval(sync,30000);setTimeout(sync,6000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,1500);});
-console.info('[EgyptBet Addon] minutecore-v39: ON');
-}catch(e){console.warn('[EgyptBet Addon] minutecore-v39:',e);}})();
+console.info('[EgyptBet Addon] clock40: ON');
+}catch(e){console.warn('[EgyptBet Addon] clock40:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: محرك الدقائق الحية v39 النهائي ===== -->
+<!-- ===== نهاية إضافة: محرك الساعة الحقيقية v40 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
