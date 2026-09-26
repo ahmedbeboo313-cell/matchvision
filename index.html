@@ -3789,37 +3789,72 @@ console.info('[EgyptBet Addon] clock47: monotonic single-writer ON');
 }catch(e){console.warn('[EgyptBet Addon] clock47:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الساعة الموحدة بالقفل التصاعدي v47 ===== -->
-<!-- ===== إضافة: لفّة parseESPN لكأس الخليج v53 | 2026-09-27 ===== -->
+<!-- ===== إضافة: جسر البيانات الحقيقية للخليج v54 | 2026-09-27 ===== -->
 <script>
 (function(){'use strict';try{
-var SLUGS=['global.gulf_cup'];
-if(typeof window.parseESPN!=='function'){console.warn('[EgyptBet Addon] parseESPN-wrap-v53: missing');return;}
+var SLUG='global.gulf_cup';
+var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
+function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
+if(typeof window.apiFbSlugByName==='function'){
+var origN=window.apiFbSlugByName;
+window.apiFbSlugByName=function(n){
+var r=null;try{r=origN.apply(this,arguments);}catch(e){}
+var s=(n||'').toLowerCase();
+if(s.indexOf('gulf')>=0)r=SLUG;
+return r;
+};
+}
+if(typeof window.dedupe==='function'){
+var origD=window.dedupe;
+window.dedupe=function(a){
+var s=(a||[]).slice().sort(function(x,y){return (x&&x.sourceName==='API-Football'?0:1)-(y&&y.sourceName==='API-Football'?0:1);});
+return origD(s);
+};
+}
+if(typeof window.parseESPN==='function'){
 var origP=window.parseESPN;
 window.parseESPN=function(e,l){
 var m=null;try{m=origP.apply(this,arguments);}catch(err){m=null;}
 if(!m)return m;
 try{
-if(l&&SLUGS.indexOf(l.slug)>=0&&!m.statusCompleted&&m.statusState==='pre'){
+if(l&&l.slug===SLUG&&!m.statusCompleted&&m.statusState==='pre'){
 var t=new Date(m.date).getTime();
-if(!isNaN(t)){
-var el=Math.floor((Date.now()-t)/60000);
-if(el>=0&&el<=240){
-m.live=true;m.statusState='in';
-var mm;
-if(el<45)mm=(el+1)+"'";
-else if(el<60)mm='45+'+Math.min(el-44,15)+"'";
-else{var c=el-14;mm=(c<=90)?(c+"'"):('90+'+Math.min(c-90,15)+"'");}
-m.minute=mm;
-}
+if(!isNaN(t)){var el=Date.now()-t;
+if(el>=0&&el<=240*60*1000){m.live=true;m.statusState='in';m.minute='';}
 }
 }
 }catch(err){}
 return m;
 };
-console.info('[EgyptBet Addon] parseESPN-wrap-v53: ON for '+SLUGS.join(','));
-}catch(e){console.warn('[EgyptBet Addon] v53:',e);}})();
+}
+function banner(t){var el=document.getElementById('egbDiag54');if(!el){el=document.createElement('div');el.id='egbDiag54';el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#0e7490;color:#fff;font-size:12px;font-weight:800;padding:7px;text-align:center';el.onclick=function(){el.remove();};document.body.appendChild(el);}el.textContent=t;}
+function pull(){
+if(typeof window.fetchApiFb!=='function'||!window.state||!state.matches)return;
+fetchApiFb('fixtures?live=all').then(function(list){
+var g=(list||[]).filter(function(m){return m&&m.leagueSlug===SLUG;});
+if(!sessionStorage.getItem('egb54b')){sessionStorage.setItem('egb54b','1');
+banner(g.length?('GULF APIFB: n='+g.length+' score='+(g[0].scoreHome!=null?g[0].scoreHome+'-'+g[0].scoreAway:'?')+' min='+(g[0].minute||'-')):'GULF APIFB: n=0');}
+g.forEach(function(f){
+var k=null;try{k=matchKey(f);}catch(e){return;}
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];var mk=null;try{mk=matchKey(m);}catch(e){continue;}
+if(mk===k){
+if(f.scoreHome!=null)m.scoreHome=f.scoreHome;
+if(f.scoreAway!=null)m.scoreAway=f.scoreAway;
+if(f.minute){m.minute=f.minute;var p=pmin(f.minute);if(p){m.__p=p;m.__add=0;}}
+if(f.statusState==='post'||f.statusCompleted){m.statusCompleted=true;m.statusState='post';m.live=false;}
+else{m.live=true;m.statusState='in';}
+break;
+}}
+});
+try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}
+}).catch(function(){});
+}
+setTimeout(pull,10000);
+setInterval(pull,25*60*1000);
+console.info('[EgyptBet Addon] gulf-bridge-v54: ON');
+}catch(e){console.warn('[EgyptBet Addon] v54:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: لفّة parseESPN لكأس الخليج v53 ===== -->
+<!-- ===== نهاية إضافة: جسر البيانات الحقيقية للخليج v54 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
