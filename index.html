@@ -3789,6 +3789,21 @@ console.info('[EgyptBet Addon] clock47: monotonic single-writer ON');
 }catch(e){console.warn('[EgyptBet Addon] clock47:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الساعة الموحدة بالقفل التصاعدي v47 ===== -->
+<!-- ===== إضافة: ضمان تسجيل كأس الخليج v48 | 2026-09-27 ===== -->
+<script>
+(function(){'use strict';try{
+var SLUG='global.gulf_cup';
+if(!window.LEAGUES||!window.CORE_SLUGS){console.warn('[EgyptBet Addon] gulf48: core missing');return;}
+var ex=null;
+for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug===SLUG){ex=LEAGUES[i];break;}}
+if(!ex){ex={slug:SLUG,name:'كأس الخليج',em:'🏆',home:1.45,away:1.10};LEAGUES.push(ex);}
+if(CORE_SLUGS.indexOf(SLUG)<0)CORE_SLUGS.push(SLUG);
+if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(SLUG)<0)LIVE_SLUGS.push(SLUG);
+try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}
+console.info('[EgyptBet Addon] gulf-ensure-v48: registered');
+}catch(e){console.warn('[EgyptBet Addon] gulf48:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: ضمان تسجيل كأس الخليج v48 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
