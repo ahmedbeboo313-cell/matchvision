@@ -3522,6 +3522,58 @@ if(reg)setTimeout(function(){verify(0);},1500);
 }catch(e){console.warn('[EgyptBet Addon] afconq-v27:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: تصفيات كأس الأمم الأفريقية v27 ===== -->
+<!-- ===== إضافة: الحارس الدائم للمباريات v28 | 2026-09-26 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.matchKey!=='function'||typeof window.fmtDate!=='function'){console.warn('[EgyptBet Addon] guard28: core missing, skipped');return;}
+var KEY='egb_persist_v28',H5=5*3600*1000;
+function load(){try{var j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&j.up&&j.lv)return j;}catch(e){}return{up:{},lv:{}};}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function ko(m){try{return new Date(m.date).getTime();}catch(e){return NaN;}}
+function clone(m){try{return JSON.parse(JSON.stringify(m));}catch(e){return m;}}
+function byDate(a,b){return new Date(a.date)-new Date(b.date);}
+function cap(){var ks=[],k;for(k in S.up)ks.push(['up',k,S.up[k].ts]);for(k in S.lv)ks.push(['lv',k,S.lv[k].ts]);if(ks.length<=300)return;ks.sort(function(a,b){return a[2]-b[2];});for(var i=0;i<ks.length-300;i++){if(ks[i][0]==='up')delete S.up[ks[i][1]];else delete S.lv[ks[i][1]];}}
+function sweep(){var now=Date.now(),k;for(k in S.up){var t=ko(S.up[k].m);if(isNaN(t)||now>t+H5)delete S.up[k];}for(k in S.lv){var t2=ko(S.lv[k].m);if(isNaN(t2)||now>t2+H5)delete S.lv[k];}cap();}
+function hidden(m){try{var hm=(window.remoteCfg&&remoteCfg.hiddenMatches)||[],hl=(window.remoteCfg&&remoteCfg.hiddenLeagues)||[];if(hm.indexOf(matchKey(m))>=0)return true;if(hl.indexOf(m.leagueSlug)>=0)return true;}catch(e){}return false;}
+function leagueOk(m){try{return !window.state||!state.league||state.league==='all'||m.leagueSlug===state.league;}catch(e){return true;}}
+function sameDay(m,dsel){try{return fmtDate(new Date(m.date))===dsel;}catch(e){return false;}}
+function snapshot(){
+if(!window.state)return;var list=state.matches||[],now=Date.now();
+for(var i=0;i<list.length;i++){var m=list[i];if(!m)continue;var k;try{k=matchKey(m);}catch(e){continue;}if(!k)continue;
+if(m.statusCompleted||m.statusState==='post'){delete S.up[k];delete S.lv[k];continue;}
+var t=ko(m);if(isNaN(t))continue;
+if(m.live||t<=now){S.lv[k]={m:clone(m),ts:now};delete S.up[k];}
+else{S.up[k]={m:clone(m),ts:now};}}
+sweep();save();
+}
+function merge(){
+if(!window.state)return;if(state.mode==='finished')return;
+var list=state.matches||[],have={},now=Date.now(),add=[],k;
+for(var i=0;i<list.length;i++){try{have[matchKey(list[i])]=1;}catch(e){}}
+if(state.mode==='live'){
+for(k in S.lv){var e=S.lv[k];if(!have[k]&&leagueOk(e.m)&&!hidden(e.m))add.push(e.m);}
+for(k in S.up){var u=S.up[k];var t=ko(u.m);if(!have[k]&&!isNaN(t)&&t<=now&&now-t<=H5&&leagueOk(u.m)&&!hidden(u.m)){var c=clone(u.m);c.live=true;add.push(c);}}
+add.sort(byDate);state.matches=list.concat(add);
+}else{
+var dsel=state.date;
+for(k in S.up){var e2=S.up[k];if(!have[k]&&sameDay(e2.m,dsel)&&leagueOk(e2.m)&&!hidden(e2.m))add.push(e2.m);}
+for(k in S.lv){var e3=S.lv[k];if(!have[k]&&sameDay(e3.m,dsel)&&leagueOk(e3.m)&&!hidden(e3.m))add.push(e3.m);}
+add.sort(byDate);state.matches=list.concat(add);
+}
+}
+if(typeof window.renderCurrent==='function'){
+var orig=window.renderCurrent;
+window.renderCurrent=function(){
+try{merge();}catch(e){}
+var r;try{r=orig.apply(this,arguments);}finally{try{snapshot();}catch(e){}}
+return r;};
+setInterval(function(){try{sweep();save();}catch(e){}},300000);
+console.info('[EgyptBet Addon] guard28: ON (persistent upcoming+live)');
+}else{console.warn('[EgyptBet Addon] guard28: renderCurrent missing, skipped');}
+}catch(e){console.warn('[EgyptBet Addon] guard28:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: الحارس الدائم للمباريات v28 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
