@@ -3656,11 +3656,11 @@ console.info('[EgyptBet Addon] live-inspector-v36: ON');
 }catch(e){console.warn('[EgyptBet Addon] live-inspector-v36:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: مفتش اللايف الراكد v36 ===== -->
-<!-- ===== إضافة: ساعة المصدر بالعدّاد المطابق v41 | 2026-09-26 ===== -->
+<!-- ===== إضافة: ساعة المعايرة المطابقة v42 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock41: missing');return;}
-var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock42: missing');return;}
+var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;var ADD=2;
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
 function sfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length<40&&MIN_RE.test(v))out.push(k);}return out;}
 function isLive(m){
@@ -3673,40 +3673,31 @@ var t=0;try{t=new Date(m.date).getTime();}catch(e){}
 if(!t)return false;var el=Date.now()-t;return el>0&&el<5*3600*1000&&m.scoreHome!=null;
 }
 function isHT(m){var s=((m.statusState||'')+'').toLowerCase();return s==='ht'||s==='halftime';}
-function anchor(m){
-var f=sfields(m);if(!f.length)return;
-var p=pmin(m[f[0]]);if(!p)return;
-var key=p.main+'+'+p.plus;
-if(m.__lk!==key){m.__lk=key;m.__seen=Date.now();}
-m.__p=p;m.__flds=f;
+function comb(p,add){
+var main=p.main,plus=p.plus;
+if(plus>0)return main+'+'+Math.min(plus+add,15)+"'";
+var n=main+add;
+if(main<=45&&n>45)return '45+'+(n-45)+"'";
+if(main>45&&main<=90&&n>90)return '90+'+(n-90)+"'";
+if(n>120)return "120'";
+return n+"'";
 }
-function tick(m){
-if(!isLive(m))return false;
-if(isHT(m)){var ch0=false;for(var q=0;q<(m.__flds||[]).length;q++){var kk=m.__flds[q];if(typeof m[kk]==='string'&&m[kk]!=='استراحة'){m[kk]='استراحة';ch0=true;}}return ch0;}
-if(!m.__p||!m.__flds){anchor(m);return false;}
-var add=Math.min(Math.floor((Date.now()-m.__seen)/60000),2);
-if(add<1)return false;
-var main=m.__p.main,plus=m.__p.plus;
-if(plus>0){plus=plus+add;if(plus>15)plus=15;}
-else{var nm=main+add;
-if(m.__p.main<=45&&nm>45){plus=Math.min(add-(45-main),12);if(plus<1)plus=1;main=45;}
-else if(m.__p.main>45&&m.__p.main<=90&&nm>90){plus=Math.min(add-(90-main),12);if(plus<1)plus=1;main=90;}
-else if(nm>120){main=120;}
-else{main=nm;}}
-var changed=false;
-for(var i=0;i<m.__flds.length;i++){var k=m.__flds[i];var v=m[k];if(typeof v!=='string')continue;
-var nv=v.replace(MIN_RE,function(){return plus>0?(main+'+'+plus+"'"):(main+"'");});
-if(nv!==v){m[k]=nv;changed=true;}}
-return changed;
+function paint(m){
+if(!m.__p)return false;
+var d=isHT(m)?'استراحة':comb(m.__p,ADD);
+var f=sfields(m),ch=false;
+for(var i=0;i<f.length;i++){var v=m[f[i]];if(typeof v!=='string')continue;
+var nv=(d==='استراحة')?'استراحة':v.replace(MIN_RE,d);
+if(nv!==v){m[f[i]]=nv;ch=true;}}
+return ch;
 }
-function disp(m){if(!m||!m.__p)return '-';var add=Math.min(Math.floor((Date.now()-(m.__seen||Date.now()))/60000),2);var mn=m.__p.main,pl=m.__p.plus;if(pl>0)return mn+'+'+Math.min(pl+add,15)+"'";var n=mn+add;if(mn<=45&&n>45)return '45+'+(n-45)+"'";if(mn>45&&mn<=90&&n>90)return '90+'+(n-90)+"'";return n+"'";}
 function renderKeep(){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}
 function chip(t){var el=document.getElementById('egbMc');if(!el){el=document.createElement('div');el.id='egbMc';el.style.cssText='position:fixed;top:6px;left:8px;z-index:99998;background:rgba(0,0,0,.55);color:#86efac;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;direction:ltr';el.onclick=function(){el.style.display='none';};document.body.appendChild(el);}el.textContent=t;}
 setInterval(function(){
 if(document.hidden||!window.state||!state.matches)return;
-var ch=false;for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(!isLive(m))continue;try{if(tick(m))ch=true;}catch(e){}}
+var ch=false;for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(!isLive(m)||!m.__p)continue;try{if(paint(m))ch=true;}catch(e){}}
 if(ch)renderKeep();
-},5000);
+},15000);
 var busy=false;
 function sync(){
 if(busy||document.hidden||!window.state||!state.matches)return;
@@ -3722,20 +3713,25 @@ if(!L){fin();return;}
 var ds='';try{ds=fmtDate(new Date(byLg[lg][0].date)).replace(/-/g,'');}catch(e){ds=fmtDate(new Date()).replace(/-/g,'');}
 fetchESPN(L,ds).then(function(fr){
 var bk={};(fr||[]).forEach(function(f){try{bk[matchKey(f)]=f;}catch(e){}});
-byLg[lg].forEach(function(m){var f=null;try{f=bk[matchKey(m)];}catch(e){}if(!f)return;
-Object.keys(f).forEach(function(kk){try{m[kk]=f[kk];}catch(e){}});
-anchor(m);changed=true;});
-var t=new Date();chip('v41 '+(disp(live[0])||'-')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));
+byLg[lg].forEach(function(m){
+var f=null;try{f=bk[matchKey(m)];}catch(e){}if(!f)return;
+Object.keys(f).forEach(function(kk){
+try{if(typeof f[kk]==='string'&&MIN_RE.test(f[kk]))return;m[kk]=f[kk];}catch(e){}
+});
+var pf=sfields(f),p=null;if(pf.length)p=pmin(f[pf[0]]);
+if(p){m.__p=p;if(paint(m))changed=true;}
+});
+var t=new Date();chip('v42 '+(live[0].__p?comb(live[0].__p,ADD):'-')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));
 fin();
 }).catch(function(){fin();});
 });
 }
 setInterval(sync,30000);setTimeout(sync,6000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,1500);});
-console.info('[EgyptBet Addon] clock41: ON');
-}catch(e){console.warn('[EgyptBet Addon] clock41:',e);}})();
+console.info('[EgyptBet Addon] clock42: ON (calibrated +2)');
+}catch(e){console.warn('[EgyptBet Addon] clock42:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: ساعة المصدر بالعدّاد المطابق v41 ===== -->
+<!-- ===== نهاية إضافة: ساعة المعايرة المطابقة v42 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
