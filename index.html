@@ -3656,6 +3656,41 @@ console.info('[EgyptBet Addon] live-inspector-v36: ON');
 }catch(e){console.warn('[EgyptBet Addon] live-inspector-v36:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: مفتش اللايف الراكد v36 ===== -->
+<!-- ===== إضافة: مزامنة اللايف الحية مع المصدر v37 | 2026-09-26 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.fetchESPN!=='function'||typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] livesync-v37: core missing');return;}
+var busy=false;
+function sync(){
+if(busy||document.hidden||!window.state||!state.matches||!state.matches.length)return;
+var live=[];for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(m&&m.live&&!m.statusCompleted&&m.statusState!=='post')live.push(m);}
+if(!live.length)return;
+var byLg={};live.forEach(function(m){var lg=m.leagueSlug||'';if(!lg)return;if(!byLg[lg])byLg[lg]=[];byLg[lg].push(m);});
+var lgs=Object.keys(byLg).slice(0,6);
+if(!lgs.length)return;
+busy=true;var done=0,changed=false;
+function fin(){done++;if(done>=lgs.length){busy=false;if(changed){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}}}
+lgs.forEach(function(lg){
+var L=null;try{for(var j=0;j<LEAGUES.length;j++){if(LEAGUES[j].slug===lg)L=LEAGUES[j];}}catch(e){}
+if(!L){fin();return;}
+var dstr='';try{dstr=fmtDate(new Date(byLg[lg][0].date));}catch(e){dstr=fmtDate(new Date());}
+fetchESPN(L,dstr.replace(/-/g,'')).then(function(fresh){
+var byKey={};(fresh||[]).forEach(function(f){try{byKey[matchKey(f)]=f;}catch(e){}});
+byLg[lg].forEach(function(m){
+var f=null;try{f=byKey[matchKey(m)];}catch(e){}
+if(!f)return;
+Object.keys(f).forEach(function(kk){try{m[kk]=f[kk];}catch(e){}});
+changed=true;
+});
+fin();
+}).catch(function(){fin();});
+});
+}
+setInterval(sync,30000);setTimeout(sync,10000);
+console.info('[EgyptBet Addon] livesync-v37: ON (30s sync)');
+}catch(e){console.warn('[EgyptBet Addon] livesync-v37:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: مزامنة اللايف الحية مع المصدر v37 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
