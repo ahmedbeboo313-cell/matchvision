@@ -3594,6 +3594,30 @@ console.info('[EgyptBet Addon] known-v32: isKnown patched');
 }catch(e){console.warn('[EgyptBet Addon] known-v32:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: بوابة المعرفة لدوريات الإضافات v32 ===== -->
+<!-- ===== إضافة: محرك الدوريات الشامل v33 | 2026-09-26 ===== -->
+<script>
+(function(){'use strict';try{
+/* ✍️ لإضافة دوري جديد: ضيف سطر واحد جوه القائمة دي وارفع الملف — خلاص كده */
+var NEW_LEAGUES=[
+/* مثال: {slug:'eng.fa_cup',name:'كأس الاتحاد الإنجليزي',em:'🏆',home:1.50,away:1.20}, */
+/* core:0 = ميظهرش في النطاق التلقائي للمنتهية | live:0 = ميتابعش في وضع اللايف */
+{slug:'global.gulf_cup',name:'كأس الخليج',em:'🏆',home:1.45,away:1.10},
+];
+if(!window.LEAGUES||!window.CORE_SLUGS){console.warn('[EgyptBet Addon] leagues-engine-v33: core missing');return;}
+function addOne(cfg){
+if(!cfg||!cfg.slug||!cfg.name)return;
+var reg=null;
+for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug===cfg.slug||LEAGUES[i].name===cfg.name){reg=LEAGUES[i];break;}}
+if(!reg){reg={slug:cfg.slug,name:cfg.name,em:cfg.em||'🏆',home:cfg.home||1.50,away:cfg.away||1.15};if(cfg.apifbOnly)reg.apifbOnly=1;LEAGUES.push(reg);}
+if(cfg.core!==0&&CORE_SLUGS.indexOf(cfg.slug)<0)CORE_SLUGS.push(cfg.slug);
+if(cfg.live!==0&&window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(cfg.slug)<0)LIVE_SLUGS.push(cfg.slug);
+}
+NEW_LEAGUES.forEach(addOne);
+try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}
+console.info('[EgyptBet Addon] leagues-engine-v33: ready ('+NEW_LEAGUES.length+' configured)');
+}catch(e){console.warn('[EgyptBet Addon] leagues-engine-v33:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: محرك الدوريات الشامل v33 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
