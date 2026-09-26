@@ -3548,50 +3548,35 @@ console.info('[EgyptBet Addon] guard28: ON (persistent upcoming+live)');
 }catch(e){console.warn('[EgyptBet Addon] guard28:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الحارس الدائم للمباريات v28 ===== -->
-<!-- ===== إضافة: تصفيات كأس الأمم الأفريقية v29 | 2026-09-26 ===== -->
+<!-- ===== إضافة: تثبيت slug تصفيات أمم أفريقيا v30 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
-var NAME='تصفيات كأس الأمم الأفريقية',EM='🌍',HOME=1.45,AWAY=1.05,SKEY='egb_afconq_slug2';
-var CANDS=['caf.nations.qualifying','caf.nations','caf.afcon.qualifying','caf.nations.qualifiers'];
-var BASE='https://site.api.espn.com/apis/site/v2/sports/soccer/';
-function probe(slug){return fetch(BASE+slug+'/scoreboard',{cache:'no-store'}).then(function(r){if(!r||!r.ok)return null;return r.json().then(function(d){return (d&&d.leagues&&d.leagues.length)?slug:null;}).catch(function(){return null;});}).catch(function(){return null;});}
-function registryPick(d){
-var lists=[];if(d&&d.leagues)lists.push(d.leagues);
-if(d&&d.sports)for(var i=0;i<d.sports.length;i++){if(d.sports[i]&&d.sports[i].leagues)lists.push(d.sports[i].leagues);}
-var all=[];lists.forEach(function(L){(L||[]).forEach(function(x){all.push(x);});});
-function nz(x){return ((x&&x.name||'')+' '+(x&&x.shortName||'')+' '+(x&&x.abbreviation||'')+' '+(x&&x.id||'')).toLowerCase();}
-var q1=null,q2=null,q3=null;
-for(var j=0;j<all.length;j++){var s=nz(all[j]);
-if(!q1&&s.indexOf('africa')>=0&&s.indexOf('qualif')>=0)q1=all[j];
-if(!q2&&s.indexOf('africa cup of nations')>=0)q2=all[j];
-if(!q3&&s.indexOf('caf.nations')>=0)q3=all[j];}
-var p=q1||q2||q3;return p?(p.id||null):null;
-}
-function discover(){return fetch(BASE.replace('/soccer/','/soccer/')+'leagues',{cache:'no-store'}).then(function(r){if(!r||!r.ok)return null;return r.json();}).then(registryPick).catch(function(){return null;});}
-function pushLists(slug){try{if(window.CORE_SLUGS&&CORE_SLUGS.indexOf(slug)<0)CORE_SLUGS.push(slug);}catch(e){}try{if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(slug)<0)LIVE_SLUGS.push(slug);}catch(e){}}
-function rmLists(slug){try{var a=CORE_SLUGS.indexOf(slug);if(a>=0)CORE_SLUGS.splice(a,1);}catch(e){}try{var b=LIVE_SLUGS.indexOf(slug);if(b>=0)LIVE_SLUGS.splice(b,1);}catch(e){}}
-function refreshUI(){try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}}
-function clickRefresh(){try{var r=document.getElementById('refreshBtn');if(r)r.click();}catch(e){}}
+var SLUG='caf.nations_qual',NAME='تصفيات كأس الأمم الأفريقية',EM='🌍',HOME=1.45,AWAY=1.05;
+var OLD=['caf.nations.qualifying','caf.nations','caf.afcon.qualifying','caf.nations.qualifiers'];
+try{localStorage.removeItem('egb_afconq_slug');localStorage.removeItem('egb_afconq_slug2');}catch(e){}
+if(!window.LEAGUES||!window.CORE_SLUGS){console.warn('[EgyptBet Addon] afconq-v30: core missing');return;}
 var reg=null;
-if(window.LEAGUES){
-for(var q=0;q<LEAGUES.length;q++){if(LEAGUES[q].name===NAME||CANDS.indexOf(LEAGUES[q].slug)>=0){reg=LEAGUES[q];break;}}
-if(!reg){reg={slug:CANDS[0],name:NAME,em:EM,home:HOME,away:AWAY};LEAGUES.push(reg);}
-pushLists(reg.slug);
+for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].name===NAME||OLD.indexOf(LEAGUES[i].slug)>=0||LEAGUES[i].slug===SLUG){reg=LEAGUES[i];break;}}
+if(!reg){reg={slug:SLUG,name:NAME,em:EM,home:HOME,away:AWAY};LEAGUES.push(reg);}
+function fix(silent){
+var changed=false;
+if(reg.slug!==SLUG){reg.slug=SLUG;changed=true;}
+OLD.forEach(function(s){var a=CORE_SLUGS.indexOf(s);if(a>=0)CORE_SLUGS.splice(a,1);var b=LIVE_SLUGS.indexOf(s);if(b>=0)LIVE_SLUGS.splice(b,1);});
+if(CORE_SLUGS.indexOf(SLUG)<0){CORE_SLUGS.push(SLUG);changed=true;}
+if(window.LIVE_SLUGS&&LIVE_SLUGS.indexOf(SLUG)<0){LIVE_SLUGS.push(SLUG);changed=true;}
+if(changed&&!silent){
+try{if(typeof populateLeagueSelect==='function')populateLeagueSelect();}catch(e){}
+try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}
+try{var r=document.getElementById('refreshBtn');if(r)r.click();}catch(e){}
 }
-function setSlug(s,why){if(!s||!reg)return;var old=reg.slug;if(old!==s){rmLists(old);}reg.slug=s;pushLists(s);try{localStorage.setItem(SKEY,s);}catch(e){}refreshUI();clickRefresh();console.info('[EgyptBet Addon] afconq-v29: slug='+s+' via '+why);}
-function chain(i){
-if(i>=CANDS.length){discover().then(function(s){if(s)setSlug(s,'registry');else console.warn('[EgyptBet Addon] afconq-v29: discovery failed');});return;}
-probe(CANDS[i]).then(function(s){if(s)setSlug(s,'probe');else chain(i+1);});
+return changed;
 }
-setTimeout(function(){
-var saved=null;try{saved=localStorage.getItem(SKEY);}catch(e){}
-if(saved&&reg){reg.slug=saved;pushLists(saved);probe(saved).then(function(s){if(s){console.info('[EgyptBet Addon] afconq-v29: saved slug ok ('+saved+')');}else{rmLists(saved);chain(0);}});}
-else{chain(0);}
-},1200);
-console.info('[EgyptBet Addon] afconq-v29: loaded');
-}catch(e){console.warn('[EgyptBet Addon] afconq-v29:',e);}})();
+fix(false);
+setInterval(function(){try{if(reg.slug!==SLUG){try{localStorage.removeItem('egb_afconq_slug2');}catch(e){}fix(false);}}catch(e){}},15000);
+console.info('[EgyptBet Addon] afconq-v30: slug locked = '+SLUG);
+}catch(e){console.warn('[EgyptBet Addon] afconq-v30:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: تصفيات كأس الأمم الأفريقية v29 ===== -->
+<!-- ===== نهاية إضافة: تثبيت slug تصفيات أمم أفريقيا v30 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
