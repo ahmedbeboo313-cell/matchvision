@@ -3789,7 +3789,7 @@ console.info('[EgyptBet Addon] clock47: monotonic single-writer ON');
 }catch(e){console.warn('[EgyptBet Addon] clock47:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الساعة الموحدة بالقفل التصاعدي v47 ===== -->
-<!-- ===== إضافة: حاقن لايف كأس الخليج v50 | 2026-09-27 ===== -->
+<!-- ===== إضافة: حاقن لايف الخليج بنافذة الوقت v51 | 2026-09-27 ===== -->
 <script>
 (function(){'use strict';try{
 var SLUG='global.gulf_cup';
@@ -3797,33 +3797,38 @@ function renderKeep(){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{w
 function gulfSync(){
 if(document.hidden||!window.state||!window.LEAGUES)return;
 var L=null;try{for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug===SLUG)L=LEAGUES[i];}}catch(e){}
-if(!L||typeof fetchESPN!=='function')return;
+if(!L||typeof fetchESPN!=='function'||typeof fmtDate!=='function')return;
 var d='';try{d=fmtDate(new Date()).replace(/-/g,'');}catch(e){return;}
 fetchESPN(L,d).then(function(list){
-var touched=false;
+var now=Date.now(),touched=false;
 (list||[]).forEach(function(f){
+if(!f)return;
+if(f.statusCompleted||f.statusState==='post')return;
+var t=0;try{t=new Date(f.date).getTime();}catch(e){return;}
+var el=now-t;
 var st=((f.statusState||'')+'').toLowerCase();
-var liveNow=(st==='in'||st==='1h'||st==='2h'||st==='et'||st==='ht'||st==='halftime'||st==='progress'||st==='inprogress'||f.live===true);
-if(!liveNow)return;
-f.live=true;if(!f.statusState)f.statusState='in';
+var liveByStatus=(st==='in'||st==='1h'||st==='2h'||st==='et'||st==='ht'||st==='halftime'||st==='progress'||st==='inprogress'||st==='live'||f.live===true);
+var liveByTime=(el>=0&&el<=125*60*1000);
+if(!liveByStatus&&!liveByTime)return;
+f.live=true;f.statusState='in';
 touched=true;
 if(state.matches){
 var k=null;try{k=matchKey(f);}catch(e){return;}
 var found=null;
 for(var j=0;j<state.matches.length;j++){try{if(matchKey(state.matches[j])===k){found=state.matches[j];break;}}catch(e){}}
-if(found){found.live=true;found.statusState=f.statusState;}
+if(found){found.live=true;found.statusState='in';}
 else if(state.mode==='live'){state.matches.push(f);}
 }
 });
 if(touched&&state.mode==='live')renderKeep();
 }).catch(function(){});
 }
-setTimeout(gulfSync,5000);
+setTimeout(gulfSync,4000);
 setInterval(gulfSync,30000);
-console.info('[EgyptBet Addon] gulf-live-injector-v50: ON');
-}catch(e){console.warn('[EgyptBet Addon] gulf50:',e);}})();
+console.info('[EgyptBet Addon] gulf-timewindow-v51: ON');
+}catch(e){console.warn('[EgyptBet Addon] gulf51:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: حاقن لايف كأس الخليج v50 ===== -->
+<!-- ===== نهاية إضافة: حاقن لايف الخليج بنافذة الوقت v51 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
