@@ -3789,7 +3789,7 @@ console.info('[EgyptBet Addon] clock47: monotonic single-writer ON');
 }catch(e){console.warn('[EgyptBet Addon] clock47:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الساعة الموحدة بالقفل التصاعدي v47 ===== -->
-<!-- ===== إضافة: مسبار وملخص الخليج الحي من ESPN v56 | 2026-09-27 ===== -->
+<!-- ===== إضافة: الخليج الصادق v57 | 2026-09-27 ===== -->
 <script>
 (function(){'use strict';try{
 var SLUG='global.gulf_cup';
@@ -3804,34 +3804,17 @@ try{
 if(l&&l.slug===SLUG&&!m.statusCompleted&&m.statusState==='pre'){
 var t=new Date(m.date).getTime();
 if(!isNaN(t)){var el=Date.now()-t;
-if(el>=0&&el<=240*60*1000){m.live=true;m.statusState='in';m.minute='';}
+if(el>=0&&el<=240*60*1000){
+m.live=true;m.statusState='in';m.minute='';
+m.scoreHome=null;m.scoreAway=null;
+}
 }
 }
 }catch(err){}
 return m;
 };
 }
-function banner(t){var el=document.getElementById('egbDiag56');if(!el){el=document.createElement('div');el.id='egbDiag56';el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#0e7490;color:#fff;font-size:12px;font-weight:800;padding:7px;text-align:center';el.onclick=function(){el.remove();};document.body.appendChild(el);}el.textContent=t;}
-function applySumm(m,d,first){
-if(!d||!d.header)return false;
-var h=d.header,st=h.status||{},ty=st.type||{};
-var comp=(h.competitions&&h.competitions[0])||{};var cs=comp.competitors||[];
-var hs=null,as=null;
-cs.forEach(function(c){var sc=c.score!=null?Number(c.score):null;
-if(c.homeAway==='home')hs=sc;else if(c.homeAway==='away')as=sc;});
-if(first){banner('SUMM: state='+((ty.state)||'?')+' clock='+(st.displayClock||'-')+' score='+(hs==null?'?':hs)+'-'+(as==null?'?':as));}
-var changed=false;
-if(ty.completed){m.statusCompleted=true;m.statusState='post';m.live=false;m.minute='';changed=true;}
-else{
-if(hs!=null&&hs!==m.scoreHome){m.scoreHome=hs;changed=true;}
-if(as!=null&&as!==m.scoreAway){m.scoreAway=as;changed=true;}
-if(ty.state==='in'){m.live=true;m.statusState='in';
-var dc=st.displayClock||'';
-if(dc&&MIN_RE.test(dc)&&dc!==m.minute){m.minute=dc;var p=pmin(dc);if(p){m.__p=p;m.__add=0;}changed=true;}}
-}
-return changed;
-}
-function pull(first){
+function pull(){
 if(document.hidden||!window.state||!state.matches)return;
 var live=[];for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(m&&m.leagueSlug===SLUG&&m.live&&!m.statusCompleted)live.push(m);}
 if(!live.length)return;
@@ -3840,16 +3823,30 @@ function fin(){done++;if(done>=live.length&&changed){var sy=window.scrollY;try{r
 live.forEach(function(m){
 fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+SLUG+'/summary?event='+encodeURIComponent(m.id),{cache:'no-store'})
 .then(function(r){return r.ok?r.json():null;})
-.then(function(d){var c=applySumm(m,d,first);if(c)changed=true;fin();})
-.catch(function(){fin();});
+.then(function(d){
+if(!d||!d.header){fin();return;}
+var h=d.header,st=h.status||{},ty=st.type||{};
+var comp=(h.competitions&&h.competitions[0])||{};var cs=comp.competitors||[];
+var hs=null,as=null;
+cs.forEach(function(c){var sc=c.score!=null?Number(c.score):null;
+if(c.homeAway==='home')hs=sc;else if(c.homeAway==='away')as=sc;});
+if(ty.completed){m.statusCompleted=true;m.statusState='post';m.live=false;changed=true;}
+else{
+if(hs!=null){m.scoreHome=hs;changed=true;}
+if(as!=null){m.scoreAway=as;changed=true;}
+if(ty.state==='in'){var dc=st.displayClock||'';
+if(dc&&MIN_RE.test(dc)){m.minute=dc;var p=pmin(dc);if(p){m.__p=p;m.__add=0;}changed=true;}}
+}
+fin();
+}).catch(function(){fin();});
 });
 }
-setTimeout(function(){pull(true);},8000);
-setInterval(function(){pull(false);},60000);
-console.info('[EgyptBet Addon] gulf-summary-v56: ON (ESPN only)');
-}catch(e){console.warn('[EgyptBet Addon] v56:',e);}})();
+setTimeout(pull,8000);
+setInterval(pull,60000);
+console.info('[EgyptBet Addon] gulf-honest-v57: ON (ESPN only, no fake data)');
+}catch(e){console.warn('[EgyptBet Addon] v57:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: مسبار وملخص الخليج الحي من ESPN v56 ===== -->
+<!-- ===== نهاية إضافة: الخليج الصادق v57 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
