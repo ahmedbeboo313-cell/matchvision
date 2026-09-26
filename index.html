@@ -3656,11 +3656,11 @@ console.info('[EgyptBet Addon] live-inspector-v36: ON');
 }catch(e){console.warn('[EgyptBet Addon] live-inspector-v36:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: مفتش اللايف الراكد v36 ===== -->
-<!-- ===== إضافة: الساعة الحقيقية مزدوجة المصدر v46 | 2026-09-26 ===== -->
+<!-- ===== إضافة: الساعة الموحدة بالقفل التصاعدي v47 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock46: missing');return;}
-window.__EGB_CLOCK='v46';
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'||typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] clock47: missing');return;}
+window.__EGB_CLOCK='v47';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
 function sfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length<40&&MIN_RE.test(v))out.push(k);}return out;}
@@ -3675,23 +3675,32 @@ var t=0;try{t=new Date(m.date).getTime();}catch(e){}
 if(!t)return false;var el=Date.now()-t;return el>0&&el<5*3600*1000&&m.scoreHome!=null;
 }
 function isHT(m){var s=((m.statusState||'')+'').toLowerCase();return s==='ht'||s==='halftime';}
-function comb(p,add){
-var main=p.main,plus=p.plus;
-if(plus>0)return main+'+'+Math.min(plus+add,15)+"'";
-var n=main+add;
-if(main<=45&&n>45)return '45+'+(n-45)+"'";
-if(main>45&&main<=90&&n>90)return '90+'+(n-90)+"'";
-if(n>120)return "120'";
-return n+"'";
+function target(m){
+var b=m.__p,add=(m.__add===0)?0:1,t;
+if(b.plus>0){t={main:b.main,plus:Math.min(b.plus+add,15)};}
+else{var n=b.main+add;
+if(b.main<=45&&n>45)t={main:45,plus:n-45};
+else if(b.main>45&&b.main<=90&&n>90)t={main:90,plus:n-90};
+else if(n>120)t={main:120,plus:0};
+else t={main:n,plus:0};}
+var cur=t.main*100+t.plus;
+if(m.__ht){m.__max=0;}
+m.__ht=isHT(m);
+if(!m.__max||cur>=m.__max){m.__max=cur;}
+else{var mm=m.__max;t={main:Math.floor(mm/100),plus:mm%100};}
+return t;
 }
-function renderKeep(){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}
+function str(t){return t.plus>0?(t.main+'+'+t.plus+"'"):(t.main+"'");}
 function paint(m){
 if(!m.__p)return false;
-var d=isHT(m)?'استراحة':comb(m.__p,m.__add||0);
-var f=sfields(m),ch=false;
+var t=target(m),d=isHT(m)?'استراحة':str(t),ch=false;
+var f=sfields(m);
 for(var i=0;i<f.length;i++){var v=m[f[i]];if(typeof v!=='string')continue;
 var nv=(d==='استراحة')?'استراحة':v.replace(MIN_RE,d);
 if(nv!==v){m[f[i]]=nv;ch=true;}}
+for(var k in m){if(k.indexOf('__')===0)continue;var val=m[k];
+if(typeof val==='number'&&(/clock|minute/i.test(k)||val===m.__p.main)&&!/score|goal|win|prob|conf/i.test(k)){
+if(m[k]!==t.main){m[k]=t.main;ch=true;}}}
 return ch;
 }
 function fixDeep(el,d,depth){
@@ -3709,7 +3718,7 @@ if(!live.length)return;
 var cards=document.querySelectorAll('.card');var ch=false;
 for(var i2=0;i2<live.length;i2++){
 var m=live[i2],nm=tnames(m);if(nm.length<2)continue;
-var d=isHT(m)?'استراحة':comb(m.__p,m.__add||0);
+var d=isHT(m)?'استراحة':str(target(m));
 for(var c=0;c<cards.length;c++){
 var ct=cards[c].textContent||'';
 if(ct.indexOf(nm[0])>=0&&ct.indexOf(nm[1])>=0&&MIN_RE.test(ct)){if(fixDeep(cards[c],d,0))ch=true;break;}
@@ -3731,6 +3740,7 @@ if(document.hidden||!window.state||!state.matches)return;
 var ch=false;for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(!isLive(m)||!m.__p)continue;try{if(paint(m))ch=true;}catch(e){}}
 if(ch)renderKeep();
 },10000);
+function renderKeep(){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}
 var busy=false;
 function sync(){
 if(busy||document.hidden||!window.state||!state.matches)return;
@@ -3743,12 +3753,11 @@ function afterFb(){
 live.forEach(function(m){
 var f2=null;try{f2=fb[matchKey(m)];}catch(e){}
 if(f2){var pf2=sfields(f2),p2=null;if(pf2.length)p2=pmin(f2[pf2[0]]);
-if(p2){m.__p=p2;m.__add=0;if(paint(m))changed=true;return;}}
-if(m.__p&&m.__add!==0){m.__add=0;}
+if(p2){m.__p=p2;m.__add=0;if(paint(m))changed=true;}}
 });
 }
 function fin(){done++;if(done>=lgs.length+1){busy=false;if(changed)renderKeep();
-var t=new Date();chip('v46 '+(live[0]&&live[0].__p?comb(live[0].__p,live[0].__add||0):'-')+(live[0]&&live[0].__add===0?'A':'E')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));}}
+var t=new Date();chip('v47 '+(live[0]&&live[0].__p?str(target(live[0])):'-')+' sync '+t.getHours()+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2));}}
 lgs.forEach(function(lg){
 var L=null;try{for(var j=0;j<LEAGUES.length;j++){if(LEAGUES[j].slug===lg)L=LEAGUES[j];}}catch(e){}
 if(!L){fin();return;}
@@ -3766,7 +3775,7 @@ if(p){m.__p=p;if(m.__add===undefined)m.__add=1;if(paint(m))changed=true;}
 fin();
 }).catch(function(){fin();});
 });
-if(typeof window.fetchApiFb==='function'&&typeof window.apiFbOk==='function'&&apiFbOk('v46live',8)){
+if(typeof window.fetchApiFb==='function'&&typeof window.apiFbOk==='function'&&apiFbOk('v47live',6)){
 fetchApiFb('fixtures?live=all').then(function(list){
 (list||[]).forEach(function(f){try{fb[matchKey(f)]=f;}catch(e){}});
 afterFb();fin();
@@ -3776,10 +3785,10 @@ afterFb();fin();
 setInterval(sync,30000);setTimeout(sync,6000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,1500);});
 function chip(t){var el=document.getElementById('egbMc');if(!el){el=document.createElement('div');el.id='egbMc';el.style.cssText='position:fixed;top:6px;left:8px;z-index:99998;background:rgba(0,0,0,.55);color:#86efac;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;direction:ltr';el.onclick=function(){el.style.display='none';};document.body.appendChild(el);}el.textContent=t;}
-console.info('[EgyptBet Addon] clock46: dual-source ON');
-}catch(e){console.warn('[EgyptBet Addon] clock46:',e);}})();
+console.info('[EgyptBet Addon] clock47: monotonic single-writer ON');
+}catch(e){console.warn('[EgyptBet Addon] clock47:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: الساعة الحقيقية مزدوجة المصدر v46 ===== -->
+<!-- ===== نهاية إضافة: الساعة الموحدة بالقفل التصاعدي v47 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
