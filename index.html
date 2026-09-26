@@ -3789,28 +3789,12 @@ console.info('[EgyptBet Addon] clock47: monotonic single-writer ON');
 }catch(e){console.warn('[EgyptBet Addon] clock47:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الساعة الموحدة بالقفل التصاعدي v47 ===== -->
-<!-- ===== إضافة: جسر البيانات الحقيقية للخليج v54 | 2026-09-27 ===== -->
+<!-- ===== إضافة: مسبار وملخص الخليج الحي من ESPN v56 | 2026-09-27 ===== -->
 <script>
 (function(){'use strict';try{
 var SLUG='global.gulf_cup';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
-if(typeof window.apiFbSlugByName==='function'){
-var origN=window.apiFbSlugByName;
-window.apiFbSlugByName=function(n){
-var r=null;try{r=origN.apply(this,arguments);}catch(e){}
-var s=(n||'').toLowerCase();
-if(s.indexOf('gulf')>=0)r=SLUG;
-return r;
-};
-}
-if(typeof window.dedupe==='function'){
-var origD=window.dedupe;
-window.dedupe=function(a){
-var s=(a||[]).slice().sort(function(x,y){return (x&&x.sourceName==='API-Football'?0:1)-(y&&y.sourceName==='API-Football'?0:1);});
-return origD(s);
-};
-}
 if(typeof window.parseESPN==='function'){
 var origP=window.parseESPN;
 window.parseESPN=function(e,l){
@@ -3827,34 +3811,45 @@ if(el>=0&&el<=240*60*1000){m.live=true;m.statusState='in';m.minute='';}
 return m;
 };
 }
-function banner(t){var el=document.getElementById('egbDiag54');if(!el){el=document.createElement('div');el.id='egbDiag54';el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#0e7490;color:#fff;font-size:12px;font-weight:800;padding:7px;text-align:center';el.onclick=function(){el.remove();};document.body.appendChild(el);}el.textContent=t;}
-function pull(){
-if(typeof window.fetchApiFb!=='function'||!window.state||!state.matches)return;
-fetchApiFb('fixtures?live=all').then(function(list){
-var g=(list||[]).filter(function(m){return m&&m.leagueSlug===SLUG;});
-if(!sessionStorage.getItem('egb54b')){sessionStorage.setItem('egb54b','1');
-banner(g.length?('GULF APIFB: n='+g.length+' score='+(g[0].scoreHome!=null?g[0].scoreHome+'-'+g[0].scoreAway:'?')+' min='+(g[0].minute||'-')):'GULF APIFB: n=0');}
-g.forEach(function(f){
-var k=null;try{k=matchKey(f);}catch(e){return;}
-for(var i=0;i<state.matches.length;i++){var m=state.matches[i];var mk=null;try{mk=matchKey(m);}catch(e){continue;}
-if(mk===k){
-if(f.scoreHome!=null)m.scoreHome=f.scoreHome;
-if(f.scoreAway!=null)m.scoreAway=f.scoreAway;
-if(f.minute){m.minute=f.minute;var p=pmin(f.minute);if(p){m.__p=p;m.__add=0;}}
-if(f.statusState==='post'||f.statusCompleted){m.statusCompleted=true;m.statusState='post';m.live=false;}
-else{m.live=true;m.statusState='in';}
-break;
-}}
-});
-try{if(typeof renderCurrent==='function')renderCurrent();}catch(e){}
-}).catch(function(){});
+function banner(t){var el=document.getElementById('egbDiag56');if(!el){el=document.createElement('div');el.id='egbDiag56';el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#0e7490;color:#fff;font-size:12px;font-weight:800;padding:7px;text-align:center';el.onclick=function(){el.remove();};document.body.appendChild(el);}el.textContent=t;}
+function applySumm(m,d,first){
+if(!d||!d.header)return false;
+var h=d.header,st=h.status||{},ty=st.type||{};
+var comp=(h.competitions&&h.competitions[0])||{};var cs=comp.competitors||[];
+var hs=null,as=null;
+cs.forEach(function(c){var sc=c.score!=null?Number(c.score):null;
+if(c.homeAway==='home')hs=sc;else if(c.homeAway==='away')as=sc;});
+if(first){banner('SUMM: state='+((ty.state)||'?')+' clock='+(st.displayClock||'-')+' score='+(hs==null?'?':hs)+'-'+(as==null?'?':as));}
+var changed=false;
+if(ty.completed){m.statusCompleted=true;m.statusState='post';m.live=false;m.minute='';changed=true;}
+else{
+if(hs!=null&&hs!==m.scoreHome){m.scoreHome=hs;changed=true;}
+if(as!=null&&as!==m.scoreAway){m.scoreAway=as;changed=true;}
+if(ty.state==='in'){m.live=true;m.statusState='in';
+var dc=st.displayClock||'';
+if(dc&&MIN_RE.test(dc)&&dc!==m.minute){m.minute=dc;var p=pmin(dc);if(p){m.__p=p;m.__add=0;}changed=true;}}
 }
-setTimeout(pull,10000);
-setInterval(pull,25*60*1000);
-console.info('[EgyptBet Addon] gulf-bridge-v54: ON');
-}catch(e){console.warn('[EgyptBet Addon] v54:',e);}})();
+return changed;
+}
+function pull(first){
+if(document.hidden||!window.state||!state.matches)return;
+var live=[];for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(m&&m.leagueSlug===SLUG&&m.live&&!m.statusCompleted)live.push(m);}
+if(!live.length)return;
+var done=0,changed=false;
+function fin(){done++;if(done>=live.length&&changed){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}}
+live.forEach(function(m){
+fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+SLUG+'/summary?event='+encodeURIComponent(m.id),{cache:'no-store'})
+.then(function(r){return r.ok?r.json():null;})
+.then(function(d){var c=applySumm(m,d,first);if(c)changed=true;fin();})
+.catch(function(){fin();});
+});
+}
+setTimeout(function(){pull(true);},8000);
+setInterval(function(){pull(false);},60000);
+console.info('[EgyptBet Addon] gulf-summary-v56: ON (ESPN only)');
+}catch(e){console.warn('[EgyptBet Addon] v56:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: جسر البيانات الحقيقية للخليج v54 ===== -->
+<!-- ===== نهاية إضافة: مسبار وملخص الخليج الحي من ESPN v56 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
