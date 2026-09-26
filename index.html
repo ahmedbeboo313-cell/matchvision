@@ -3577,29 +3577,23 @@ console.info('[EgyptBet Addon] afconq-v30: slug locked = '+SLUG);
 }catch(e){console.warn('[EgyptBet Addon] afconq-v30:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: تثبيت slug تصفيات أمم أفريقيا v30 ===== -->
-<!-- ===== إضافة: مسبار تشخيص التصفيات v31d | 2026-09-26 ===== -->
+<!-- ===== إضافة: بوابة المعرفة لدوريات الإضافات v32 | 2026-09-26 ===== -->
 <script>
 (function(){'use strict';try{
-function banner(t){var el=document.getElementById('egbDiag');if(!el){el=document.createElement('div');el.id='egbDiag';el.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#7c3aed;color:#fff;font-size:12px;font-weight:800;padding:7px;text-align:center';document.body.appendChild(el);}el.textContent=t;}
-setTimeout(function(){
+if(typeof window.isKnown!=='function'){console.warn('[EgyptBet Addon] known-v32: isKnown missing');return;}
+var orig=window.isKnown;
+window.isKnown=function(m){
 try{
-var l=null;for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug==='caf.nations_qual')l=LEAGUES[i];}
-if(!l){banner('DIAG: league NOT registered');return;}
-var d=fmtDate(new Date()).replace(/-/g,'');
-fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/caf.nations_qual/scoreboard?dates='+d,{cache:'no-store'})
-.then(function(r){return r.ok?r.json():null;})
-.then(function(raw){
-var ev=(raw&&raw.events)?raw.events:[];
-var parsed=0,known=0;
-ev.forEach(function(e){var m=null;try{m=parseESPN(e,l);}catch(err){m=null;}
-if(m){parsed++;var ok=true;try{if(typeof isKnown==='function')ok=isKnown(m);}catch(err){ok=true;}if(ok)known++;}});
-banner('DIAG fetch='+ev.length+' parse='+parsed+' known='+known);
-}).catch(function(e){banner('DIAG fetch-error: '+e.message);});
-}catch(e){banner('DIAG error: '+e.message);}
-},3000);
-}catch(e){}})();
+if(m&&m.leagueSlug&&window.LEAGUES){
+for(var i=0;i<LEAGUES.length;i++){if(LEAGUES[i].slug===m.leagueSlug)return true;}
+}
+}catch(e){}
+return orig.apply(this,arguments);
+};
+console.info('[EgyptBet Addon] known-v32: isKnown patched');
+}catch(e){console.warn('[EgyptBet Addon] known-v32:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: مسبار تشخيص التصفيات v31d ===== -->
+<!-- ===== نهاية إضافة: بوابة المعرفة لدوريات الإضافات v32 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
