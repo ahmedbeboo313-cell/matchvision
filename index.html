@@ -4156,6 +4156,53 @@ box-shadow:0 0 18px rgba(212,175,55,.35), inset 0 0 12px rgba(212,175,55,.18) !i
 }
 </style>
 <!-- ===== نهاية إضافة: الختم الصافي v77.1 ===== -->
+<!-- ===== إضافة: مكتبة دراسة المنتخبات v79 | 2026-10-01 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.fetchESPN!=='function'){console.warn('[EgyptBet Addon] nt-study-v79: missing fetchESPN');return;}
+var KEY='egb_nt_backfill_v79';
+var STEP=7, DAYS=400, DELAY=3500;
+function prog(){try{return JSON.parse(localStorage.getItem(KEY)||'{"done":[]}')||{done:[]};}catch(e){return {done:[]};}}
+function save(p){try{localStorage.setItem(KEY,JSON.stringify(p));}catch(e){}}
+function localDS(dt){var y=dt.getFullYear();var m=('0'+(dt.getMonth()+1)).slice(-2);var d=('0'+dt.getDate()).slice(-2);return ''+y+m+d;}
+function natLeagues(){
+var out=[];try{
+for(var i=0;i<LEAGUES.length;i++){var L=LEAGUES[i];var s=(L.slug||'')+' '+(L.name||'');
+if(/nations|afcon|euro|wcq|copa|gulf|concacaf|amom|أمم|تصفيات|خليج|كونكاكاف/i.test(s))out.push(L);}
+}catch(e){}
+return out;
+}
+var queue=[];
+function buildQueue(){
+var p=prog();var Ls=natLeagues();queue=[];
+var now=new Date();
+for(var li=0;li<Ls.length;li++){
+for(var d=STEP;d<=DAYS;d+=STEP){
+var dt=new Date(now.getTime()-d*86400000);
+var ds=localDS(dt);
+var id=Ls[li].slug+'|'+ds;
+if(p.done.indexOf(id)>=0)continue;
+queue.push({L:Ls[li],ds:ds,id:id});
+}}
+}
+buildQueue();
+var busy=false;
+function step(){
+if(busy||document.hidden||!queue.length)return;
+busy=true;
+var item=queue.shift();
+fetchESPN(item.L,item.ds).then(function(){
+var p=prog();p.done.push(item.id);
+if(p.done.length>5000)p.done=p.done.slice(-5000);
+save(p);busy=false;
+}).catch(function(){busy=false;});
+}
+setInterval(step,DELAY);
+setTimeout(step,8000);
+console.info('[EgyptBet Addon] nt-study-v79: ON queue='+queue.length);
+}catch(e){console.warn('[EgyptBet Addon] v79:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: مكتبة دراسة المنتخبات v79 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
