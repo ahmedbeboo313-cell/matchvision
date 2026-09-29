@@ -4191,7 +4191,7 @@ fetchT('https://site.api.espn.com/apis/site/v2/sports/soccer/'+encodeURIComponen
 .then(function(d){
 if(!d||!d.header){fin();return;}
 var h=d.header,st=h.status||{},ty=st.type||{};
-m.__detail=(ty.detail||st.detail||''')+'';
+m.__detail=String(ty.detail||st.detail||'');
 var comp=(h.competitions&&h.competitions[0])||{};var cs=comp.competitors||[];
 var hs=null,as=null;
 cs.forEach(function(c){var sc=c.score!=null?Number(c.score):null;if(c.homeAway==='home')hs=sc;else if(c.homeAway==='away')as=sc;});
