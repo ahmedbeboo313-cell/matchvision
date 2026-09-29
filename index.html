@@ -3899,19 +3899,30 @@ console.info('[EgyptBet Addon] instant-v70: ON (final)');
 }catch(e){console.warn('[EgyptBet Addon] v70:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: المزامنة الفورية النهائية v70 ===== -->
-<!-- ===== إضافة: الطابع المصري الفرعوني v71.2 (سريع) | 2026-09-30 ===== -->
+<!-- ===== إضافة: الطابع الفرعوني بالعلامة المائية الملكية v71.3 | 2026-09-30 ===== -->
 <style id="egb-pharaoh-v71">
 html{background:#080604;scroll-behavior:auto;}
 body{
 background-color:#0a0805;
 background-image:
-url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='620' height='430' viewBox='0 0 620 430'><g fill='none' stroke='%23d4af37' stroke-opacity='0.055' stroke-width='2'><path d='M60 330 L165 165 L270 330 Z'/><path d='M225 330 L335 145 L445 330 Z'/><path d='M405 330 L487 205 L569 330 Z'/><path d='M290 92 q42 -28 84 0 q-42 26 -84 0'/><circle cx='332' cy='92' r='11'/><path d='M332 103 v24'/><path d='M348 105 q12 20 -6 29'/><path d='M316 105 l-9 22'/><circle cx='82' cy='78' r='13'/><path d='M82 91 v42 M63 104 h38'/><circle cx='545' cy='80' r='13'/><path d='M545 93 v42 M526 106 h38'/></g></svg>"),
-radial-gradient(1100px 520px at 50% -12%, rgba(212,175,55,.10), transparent 70%),
+url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='450' viewBox='0 0 640 450'><g fill='none' stroke='%23d4af37' stroke-opacity='0.10' stroke-width='2'><path d='M55 330 L165 160 L275 330 Z'/><path d='M165 160 L205 330'/><path d='M225 330 L338 140 L451 330 Z'/><path d='M338 140 L382 330'/><path d='M410 330 L492 202 L574 330 Z'/><path d='M20 344 q80 -18 160 0 t160 0 t160 0 t160 0'/><circle cx='338' cy='84' r='24'/><path d='M338 48 v-14 M338 120 v14 M302 84 h-14 M374 84 h14 M312 58 l-10 -10 M364 58 l10 -10 M312 110 l-10 10 M364 110 l10 10'/><path d='M296 92 q42 -28 84 0 q-42 26 -84 0'/><circle cx='338' cy='92' r='10'/><path d='M338 102 v22 M354 104 q12 20 -6 28 M322 104 l-9 21'/><circle cx='80' cy='76' r='12'/><path d='M80 88 v40 M62 100 h36'/><circle cx='560' cy='76' r='12'/><path d='M560 88 v40 M542 100 h36'/></g><text x='320' y='418' font-family='Georgia,serif' font-size='30' letter-spacing='10' fill='%23d4af37' fill-opacity='0.09' text-anchor='middle'>EGYPT BET</text></svg>"),
+radial-gradient(1100px 520px at 50% -12%, rgba(212,175,55,.12), transparent 70%),
 linear-gradient(180deg,#0e0a06 0%,#0a0805 45%,#070503 100%);
-background-size:620px auto,auto,auto;
+background-size:640px auto,auto,auto;
 background-repeat:repeat,no-repeat,no-repeat;
 color:#f3e9d2;
 -webkit-overflow-scrolling:touch;
+}
+/* ===== الختم الملكي الثابت فوق كل شيء ===== */
+body::after{
+content:'';
+position:fixed;inset:0;
+pointer-events:none;
+z-index:9990;
+background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900' viewBox='0 0 900 900'><g fill='none' stroke='%23d4af37' stroke-opacity='0.10' stroke-width='3'><circle cx='450' cy='450' r='430'/><circle cx='450' cy='450' r='398' stroke-dasharray='5 12' stroke-width='2'/><path d='M170 610 L330 330 L490 610 Z'/><path d='M330 330 L378 610'/><path d='M300 610 L460 300 L620 610 Z'/><path d='M460 300 L512 610'/><path d='M520 610 L630 420 L740 610 Z'/><path d='M120 628 q165 -22 330 0 t330 0'/><circle cx='450' cy='215' r='52'/><path d='M450 140 v-26 M450 290 v26 M375 215 h-26 M525 215 h26 M398 163 l-18 -18 M502 163 l18 -18 M398 267 l-18 18 M502 267 l18 18'/><path d='M370 700 q80 -50 160 0 q-80 46 -160 0'/><circle cx='450' cy='700' r='19'/><path d='M450 719 v40 M480 723 q22 36 -10 52 M420 723 l-16 38'/><circle cx='120' cy='450' r='22'/><path d='M120 472 v70 M88 494 h64'/><circle cx='780' cy='450' r='22'/><path d='M780 472 v70 M748 494 h64'/></g><text x='450' y='810' font-family='Georgia,serif' font-size='62' font-weight='bold' letter-spacing='16' fill='%23d4af37' fill-opacity='0.12' text-anchor='middle'>EGYPT BET</text></svg>");
+background-repeat:no-repeat;
+background-position:center;
+background-size:min(82vw,560px) auto;
 }
 ::selection{background:#d4af37;color:#1a1408;}
 body::-webkit-scrollbar{width:5px;}
@@ -3955,7 +3966,7 @@ box-shadow:0 0 16px rgba(212,175,55,.22), inset 0 1px 0 rgba(212,175,55,.25) !im
 h1,h2,h3,b{color:#f5e9c8;}
 input,select,textarea{background:#14100a !important;border-color:rgba(212,175,55,.25) !important;color:#f3e9d2 !important;}
 </style>
-<!-- ===== نهاية إضافة: الطابع المصري الفرعوني v71.2 ===== -->
+<!-- ===== نهاية إضافة: الطابع الفرعوني بالعلامة المائية الملكية v71.3 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
