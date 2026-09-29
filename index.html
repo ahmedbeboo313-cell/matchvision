@@ -4011,17 +4011,19 @@ console.info('[EgyptBet Addon] nt-study-v79: ON queue='+queue.length);
 }catch(e){console.warn('[EgyptBet Addon] v79:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: مكتبة دراسة المنتخبات v79 ===== -->
-<!-- ===== إضافة: عقد المصدر بالسقف الفيزيائي v80 | 2026-10-01 ===== -->
+<!-- ===== إضافة: حارس الاستحالة والاندماج المحافظ v81 | 2026-10-01 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] physical-v80: missing');return;}
-window.__EGB_CLOCK='v80';
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] impossible-v81: missing');return;}
+window.__EGB_CLOCK='v81';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
 var DONE={},LIVEI={};
 try{DONE=JSON.parse(localStorage.getItem('egb_done_v75')||'{}')||{};}catch(e){DONE={};}
-var doneDirty=false;
+var BROKEN={};try{BROKEN=JSON.parse(localStorage.getItem('egb_clockBroken')||'{}')||{};}catch(e){BROKEN={};}
+var doneDirty=false,brokenDirty=false;
 function saveDone(){if(!doneDirty)return;doneDirty=false;try{localStorage.setItem('egb_done_v75',JSON.stringify(DONE));}catch(e){}}
-setInterval(saveDone,5000);
+function saveBroken(){if(!brokenDirty)return;brokenDirty=false;try{localStorage.setItem('egb_clockBroken',JSON.stringify(BROKEN));}catch(e){}}
+setInterval(function(){saveDone();saveBroken();},5000);
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
 function sfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length<40&&MIN_RE.test(v))out.push(k);}return out;}
 function tnames(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length>=3&&v.length<=30&&!MIN_RE.test(v)&&!/مباشر|استراحة|الأضمن|موثوق/.test(v))out.push(v);}return out.slice(0,2);}
@@ -4039,6 +4041,25 @@ else if(el<135){main=el-14;}
 else{main=120;plus=0;}
 return main*100+plus;
 }
+function periodOf(m){
+var d=(m.__detail||'').toLowerCase();
+if(/half\s*time|halftime|استراحة/.test(d))return 1.5;
+if(/2nd|second|الثاني/.test(d))return 2;
+if(/1st|first|الأول/.test(d))return 1;
+return 0;
+}
+function sbCur(m){
+if(!m.__sbP)return null;
+var add=Math.min(Math.floor((Date.now()-(m.__sbTs||Date.now()))/60000),2);
+var p=m.__sbP,main=p.main,plus=p.plus;
+if(plus>0){plus=Math.min(plus+add,15);}
+else{var n=main+add;
+if(main<=45&&n>45){main=45;plus=n-45;}
+else if(main>45&&main<=90&&n>90){main=90;plus=n-90;}
+else if(n>120){main=120;plus=0;}
+else{main=n;plus=0;}}
+return main*100+plus;
+}
 function target(m){
 if(!m.__sumP)return null;
 var add=Math.min(Math.floor((Date.now()-(m.__sumTs||Date.now()))/60000),4);
@@ -4050,11 +4071,14 @@ else if(main>45&&main<=90&&n>90){main=90;plus=n-90;}
 else if(n>120){main=120;plus=0;}
 else{main=n;plus=0;}}
 var cur=main*100+plus;
+var per=periodOf(m);
+if(per===1&&cur>4503){cur=4503;
+if(m.leagueSlug&&!BROKEN[m.leagueSlug]){BROKEN[m.leagueSlug]=Date.now();brokenDirty=true;}}
+if(per===2&&cur>9015){cur=9015;}
 var cap=capNow(m);
-if(cap!=null){
-if(m.__max>cap)m.__max=cap;
-if(cur>cap)cur=cap;
-}
+if(cap!=null&&cur>cap)cur=cap;
+if(BROKEN[m.leagueSlug]){var sb=sbCur(m);if(sb!=null&&sb<cur)cur=sb;}
+if(m.__max>cur&&BROKEN[m.leagueSlug])m.__max=cur;
 if(!m.__max||cur>=m.__max){m.__max=cur;}else{cur=m.__max;}
 main=Math.floor(cur/100);plus=cur%100;
 return {main:main,plus:plus};
@@ -4113,6 +4137,8 @@ window.fetchESPN=function(l,ds){
 return origF.apply(this,arguments).then(function(list){
 try{
 (list||[]).forEach(function(m){
+var f0=sfields(m);var sbp=f0.length?pmin(m[f0[0]]):null;
+if(sbp&&!m.statusCompleted){m.__sbP=sbp;m.__sbTs=Date.now();}
 var k=null;try{k=matchKey(m);}catch(e){return;}
 var dn=DONE[k];
 if(dn){
@@ -4165,6 +4191,7 @@ fetchT('https://site.api.espn.com/apis/site/v2/sports/soccer/'+encodeURIComponen
 .then(function(d){
 if(!d||!d.header){fin();return;}
 var h=d.header,st=h.status||{},ty=st.type||{};
+m.__detail=(ty.detail||st.detail||''')+'';
 var comp=(h.competitions&&h.competitions[0])||{};var cs=comp.competitors||[];
 var hs=null,as=null;
 cs.forEach(function(c){var sc=c.score!=null?Number(c.score):null;if(c.homeAway==='home')hs=sc;else if(c.homeAway==='away')as=sc;});
@@ -4219,10 +4246,10 @@ if(ch)renderKeep();
 },10000);
 setInterval(function(){var cut=Date.now()-6*3600*1000;for(var k in DONE){if(DONE[k].ts<cut)delete DONE[k];}doneDirty=true;saveDone();},300000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,2000);});
-console.info('[EgyptBet Addon] physical-v80: ON (clock can never exceed real time)');
-}catch(e){console.warn('[EgyptBet Addon] v80:',e);}})();
+console.info('[EgyptBet Addon] impossible-v81: ON');
+}catch(e){console.warn('[EgyptBet Addon] v81:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: عقد المصدر بالسقف الفيزيائي v80 ===== -->
+<!-- ===== نهاية إضافة: حارس الاستحالة والاندماج المحافظ v81 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
