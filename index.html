@@ -4065,6 +4065,85 @@ console.info('[EgyptBet Addon] cache-floor-v76: ON');
 }catch(e){console.warn('[EgyptBet Addon] v76:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: أرضية الكاش للمنتهية v76 ===== -->
+<!-- ===== إضافة: المعبد الحي v77 | 2026-10-01 ===== -->
+<style id="egb-living-temple">
+/* ===== أعمدة المعبد: الشريط السفلي ===== */
+.bottom-nav .nav-item{position:relative;padding-top:12px;transition:transform .25s;}
+.bottom-nav .nav-item::before{content:'';position:absolute;top:5px;left:24%;right:24%;height:3px;border-radius:99px;
+background:linear-gradient(90deg,transparent,rgba(212,175,55,.45),transparent);}
+.bottom-nav .nav-item::after{content:'';position:absolute;bottom:0;left:26%;right:26%;height:12px;border-radius:99px;
+background:radial-gradient(60% 100% at 50% 100%,rgba(212,175,55,.6),rgba(212,175,55,.12) 60%,transparent 80%);
+opacity:0;transition:opacity .35s;}
+.bottom-nav .nav-item.active::after,.bottom-nav .nav-item.on::after,.bottom-nav .nav-item[aria-current=page]::after{opacity:1;}
+.bottom-nav .nav-item.active,.bottom-nav .nav-item.on,.bottom-nav .nav-item[aria-current=page]{transform:translateY(-3px);}
+.bottom-nav .nav-item.active .nic,.bottom-nav .nav-item.on .nic{text-shadow:0 0 10px rgba(212,175,55,.7);}
+/* ===== النبض الملكي في الهيدر ===== */
+#egbRoyalPulse{position:absolute;top:12px;left:12px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none;}
+#egbRoyalPulse .rp-clock{width:56px;height:56px;border-radius:50%;
+border:2px solid rgba(212,175,55,.6);
+background:radial-gradient(circle at 35% 30%,#241a0c,#120d07);
+display:flex;align-items:center;justify-content:center;
+font-weight:900;font-size:13px;color:#f0d488;letter-spacing:.5px;
+box-shadow:0 0 14px rgba(212,175,55,.28), inset 0 0 10px rgba(212,175,55,.14);}
+#egbRoyalPulse .rp-live{font-size:10px;font-weight:800;color:#fecaca;
+background:rgba(127,29,29,.35);border:1px solid rgba(239,68,68,.5);
+border-radius:99px;padding:2px 9px;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+#egbRoyalPulse .rp-live .dot{width:6px;height:6px;border-radius:50%;background:#ef4444;animation:rpPulse 1.2s infinite;}
+#egbRoyalPulse .rp-live.idle{color:#d8c690;background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.3);}
+#egbRoyalPulse .rp-live.idle .dot{background:#d4af37;animation:none;}
+#egbRoyalPulse .rp-last{font-size:9px;color:#9c8a5e;max-width:118px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@keyframes rpPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+</style>
+<script>
+(function(){'use strict';try{
+function mount(){
+var h=document.querySelector('header');if(!h)return;
+var w=document.getElementById('egbRoyalPulse');
+if(!w){
+w=document.createElement('div');w.id='egbRoyalPulse';
+w.innerHTML='<div class="rp-clock"><span id="rpTime">--:--</span></div><div class="rp-live idle" id="rpLive"><span class="dot"></span><span id="rpLiveTxt">بانتظار الصافرة</span></div><div class="rp-last" id="rpLast"></div>';
+h.appendChild(w);
+}
+update();
+}
+function isLive(m){
+if(!m||m.statusCompleted||m.statusState==='post')return false;
+if(m.live)return true;
+var s=((m.statusState||'')+'').toLowerCase();
+return s==='in'||s==='1h'||s==='2h'||s==='ht'||s==='et'||s==='halftime'||s==='inprogress'||s==='progress';
+}
+function update(){
+try{
+var t=document.getElementById('rpTime');
+if(t)t.textContent=new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+var lv=document.getElementById('rpLive'),lt=document.getElementById('rpLiveTxt'),ls=document.getElementById('rpLast');
+var n=0,top=null;
+if(window.state&&state.matches){
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
+if(isLive(m)){n++;if(!top&&(m.minute||m.__sumP))top=m;}}
+}
+if(lv&&lt){
+if(n>0){lv.classList.remove('idle');
+var mn='';if(top){mn=top.minute||'';if(!mn&&top.__sumP)mn=top.__sumP.main+(top.__sumP.plus?'+'+top.__sumP.plus:'')+"'";}
+lt.textContent='لايف الآن '+n+(mn?' • '+mn:'');
+}else{lv.classList.add('idle');lt.textContent='بانتظار الصافرة';}
+}
+if(ls&&window.state&&state.matches){
+var f=null;
+for(var j=0;j<state.matches.length;j++){var mm=state.matches[j];
+if(mm&&(mm.statusCompleted||mm.statusState==='post')&&mm.scoreHome!=null){f=mm;break;}}
+ls.textContent=f?('انتهت: '+(f.home&&f.home.name?f.home.name.split(' ')[0]:'')+' '+f.scoreHome+'-'+f.scoreAway):'';
+}
+}catch(e){}
+}
+mount();
+setInterval(mount,3000);
+setInterval(update,15000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)update();});
+console.info('[EgyptBet Addon] living-temple-v77: ON');
+}catch(e){}})();
+</script>
+<!-- ===== نهاية إضافة: المعبد الحي v77 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
