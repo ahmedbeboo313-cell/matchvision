@@ -3729,11 +3729,11 @@ console.info('[EgyptBet Addon] sugg-bridge-v66: ON (order-based + event-flag)');
 }catch(e){console.warn('[EgyptBet Addon] v66:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: جسر الاقتراحات بالترتيب الثابت v66 ===== -->
-<!-- ===== إضافة: المزامنة الفورية الشاملة v68 | 2026-09-30 ===== -->
+<!-- ===== إضافة: المزامنة الفورية المحصنة v69 | 2026-09-30 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] instant-v68: missing');return;}
-window.__EGB_CLOCK='v68';
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] instant-v69: missing');return;}
+window.__EGB_CLOCK='v69';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
 var DONE={},LIVEI={};
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
@@ -3772,6 +3772,12 @@ for(var k in m){if(k.indexOf('__')===0)continue;var val=m[k];
 if(typeof val==='number'&&/clock|minute/i.test(k)&&!/score|goal|win|prob|conf/i.test(k)){if(m[k]!==t.main){m[k]=t.main;ch=true;}}}
 return ch;
 }
+function markFT(m){
+m.statusCompleted=true;m.statusState='post';m.live=false;
+var k=null;try{k=matchKey(m);}catch(e){}
+if(k)DONE[k]={hs:m.scoreHome,as:m.scoreAway,ts:Date.now()};
+setTimeout(function(){try{var rb=document.getElementById('refreshBtn');if(rb)rb.click();}catch(e){}},600);
+}
 function fixDeep(el,d,depth){var ch=false;if(depth>6)return ch;
 for(var i=0;i<el.childNodes.length;i++){var n=el.childNodes[i];
 if(n.nodeType===3){if(MIN_RE.test(n.nodeValue)){var nv=n.nodeValue.replace(MIN_RE,d);if(nv!==n.nodeValue){n.nodeValue=nv;ch=true;}}}
@@ -3790,6 +3796,12 @@ if(ct.indexOf(nm[0])>=0&&ct.indexOf(nm[1])>=0&&MIN_RE.test(ct)){fixDeep(cards[c]
 }
 }
 function renderKeep(){var sy=window.scrollY;try{renderCurrent();}catch(e){}try{window.scrollTo({top:sy,behavior:'auto'});}catch(e){}}
+function fetchT(url,ms){
+return new Promise(function(res){
+var to=setTimeout(function(){res(null);},ms);
+fetch(url,{cache:'no-store'}).then(function(r){clearTimeout(to);return r.ok?r.json():null;}).then(function(j){res(j);}).catch(function(){clearTimeout(to);res(null);});
+});
+}
 if(typeof window.fetchESPN==='function'){
 var origF=window.fetchESPN;
 window.fetchESPN=function(l,ds){
@@ -3815,9 +3827,10 @@ return list;
 });
 };
 }
-var busy=false;
+var busy=false,busySince=0;
 function sync(){
-if(busy||document.hidden||!window.state||!state.matches)return;
+if(document.hidden||!window.state||!state.matches)return;
+if(busy){if(Date.now()-busySince<60000)return;busy=false;}
 var now=Date.now();var cand=[];
 for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
 if(!m||m.statusCompleted||m.statusState==='post')continue;
@@ -3825,11 +3838,10 @@ var t0=0;try{t0=new Date(m.date).getTime();}catch(e){continue;}
 var el=now-t0;if(el< -5*60*1000||el>150*60*1000)continue;
 cand.push(m);}
 cand=cand.slice(0,8);if(!cand.length)return;
-busy=true;var done=0,changed=false;
+busy=true;busySince=now;var done=0,changed=false;
 function fin(){done++;if(done>=cand.length){busy=false;if(changed)renderKeep();}}
 cand.forEach(function(m){
-fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/'+encodeURIComponent(m.leagueSlug||'')+'/summary?event='+encodeURIComponent(m.id),{cache:'no-store'})
-.then(function(r){return r.ok?r.json():null;})
+fetchT('https://site.api.espn.com/apis/site/v2/sports/soccer/'+encodeURIComponent(m.leagueSlug||'')+'/summary?event='+encodeURIComponent(m.id),12000)
 .then(function(d){
 if(!d||!d.header){fin();return;}
 var h=d.header,st=h.status||{},ty=st.type||{};
@@ -3842,11 +3854,12 @@ m.statusCompleted=true;m.statusState='post';m.live=false;
 if(hs!=null)m.scoreHome=hs;if(as!=null)m.scoreAway=as;
 if(k){DONE[k]={hs:hs,as:as,ts:Date.now()};delete LIVEI[k];}
 changed=true;
+setTimeout(function(){try{var rb=document.getElementById('refreshBtn');if(rb)rb.click();}catch(e){}},600);
 }else{
 if(hs!=null&&hs!==m.scoreHome){m.scoreHome=hs;changed=true;}
 if(as!=null&&as!==m.scoreAway){m.scoreAway=as;changed=true;}
 var p=pmin(st.displayClock||'');
-if(p){m.__sumP=p;m.__sumTs=Date.now();m.live=true;m.statusState='in';
+if(p){m.__sumP=p;m.__sumTs=Date.now();m.__lastUpd=Date.now();m.live=true;m.statusState='in';
 if(k)LIVEI[k]={p:p,ts:Date.now()};
 if(paint(m))changed=true;}
 }
@@ -3857,16 +3870,23 @@ fin();
 setInterval(sync,45000);setTimeout(sync,6000);
 setInterval(function(){
 if(document.hidden||!window.state||!state.matches)return;
-var ch=false;for(var i=0;i<state.matches.length;i++){var m=state.matches[i];if(!m||m.statusCompleted||!m.__sumP)continue;try{if(paint(m))ch=true;}catch(e){}}
+var ch=false,ft=false;var now=Date.now();
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
+if(!m||m.statusCompleted)continue;
+if(m.__sumP){
+try{if(paint(m))ch=true;}catch(e){}
+if((m.__sumP.main>=90||m.__sumP.plus>0)&&m.__lastUpd&&(now-m.__lastUpd)>240000){markFT(m);ft=true;ch=true;}
+}
+}
 fixDOM();
 if(ch)renderKeep();
 },10000);
 setInterval(function(){var cut=Date.now()-6*3600*1000;for(var k in DONE){if(DONE[k].ts<cut)delete DONE[k];}},300000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,2000);});
-console.info('[EgyptBet Addon] instant-v68: ON (instant live+finished)');
-}catch(e){console.warn('[EgyptBet Addon] v68:',e);}})();
+console.info('[EgyptBet Addon] instant-v69: ON (hardened)');
+}catch(e){console.warn('[EgyptBet Addon] v69:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: المزامنة الفورية الشاملة v68 ===== -->
+<!-- ===== نهاية إضافة: المزامنة الفورية المحصنة v69 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
