@@ -4036,6 +4036,35 @@ console.info('[EgyptBet Addon] single-source-v75: ON (persistent floor)');
 }catch(e){console.warn('[EgyptBet Addon] v75:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: عقد المصدر الواحد بالذاكرة الدائمة v75 ===== -->
+<!-- ===== إضافة: أرضية الكاش للمنتهية v76 | 2026-10-01 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.readDayCache!=='function'||typeof window.matchKey!=='function'){console.warn('[EgyptBet Addon] cache-floor-v76: missing');return;}
+function floors(){try{return JSON.parse(localStorage.getItem('egb_done_v75')||'{}')||{};}catch(e){return {};}}
+var origR=window.readDayCache;
+window.readDayCache=function(d,all){
+var r=null;try{r=origR.apply(this,arguments);}catch(e){return r;}
+try{
+var list=null;
+if(r&&Object.prototype.toString.call(r.list)==='[object Array]')list=r.list;
+else if(Object.prototype.toString.call(r)==='[object Array]')list=r;
+if(list&&list.length){
+var DN=floors();
+for(var i=0;i<list.length;i++){var m=list[i];if(!m)continue;
+var k=null;try{k=matchKey(m);}catch(e){continue;}
+var dn=DN[k];if(!dn)continue;
+m.statusCompleted=true;m.statusState='post';m.live=false;
+m.scoreHome=Math.max(m.scoreHome!=null?m.scoreHome:0,dn.hs||0);
+m.scoreAway=Math.max(m.scoreAway!=null?m.scoreAway:0,dn.as||0);
+}
+}
+}catch(e){}
+return r;
+};
+console.info('[EgyptBet Addon] cache-floor-v76: ON');
+}catch(e){console.warn('[EgyptBet Addon] v76:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: أرضية الكاش للمنتهية v76 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
