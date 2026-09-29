@@ -3796,6 +3796,63 @@ console.info('[EgyptBet Addon] diag-hider-v58: ON');
 }catch(e){}})();
 </script>
 <!-- ===== نهاية إضافة: حاجب أدوات التشخيص v58 ===== -->
+<!-- ===== إضافة: كوبري الاقتراحات المباشر v60 | 2026-09-30 ===== -->
+<script>
+(function(){'use strict';try{
+var CFG={apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEw-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2"};
+function ensureSdk(cb){
+try{if(window.firebase&&firebase.apps&&firebase.apps.length&&firebase.firestore){cb(firebase.firestore());return;}}catch(e){}
+try{if(window.firebase&&firebase.firestore){cb(firebase.firestore());return;}}catch(e){}
+var a=document.createElement('script');a.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+a.onload=function(){var b=document.createElement('script');b.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js';
+b.onload=function(){try{if(!firebase.apps.length)firebase.initializeApp(CFG);cb(firebase.firestore());}catch(e){cb(null);}};
+b.onerror=function(){cb(null);};document.head.appendChild(b);};
+a.onerror=function(){cb(null);};document.head.appendChild(a);
+}
+function push(o){ensureSdk(function(d){if(!d)return;try{o.via='v60';d.collection('suggestions').add(o).catch(function(){});}catch(e){}});}
+function toast(t){var el=document.createElement('div');el.textContent=t;el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:99999;background:#16a34a;color:#fff;font-weight:800;padding:10px 22px;border-radius:99px;font-size:13px';document.body.appendChild(el);setTimeout(function(){el.remove();},2500);}
+function visibleInputs(){
+var out=[];var els=document.querySelectorAll('textarea,input[type=text]');
+for(var i=0;i<els.length;i++){var el=els[i];if(el.type==='search')continue;var r=el.getBoundingClientRect();if(r.width>40&&r.height>10&&(el.value||'').trim())out.push(el);}
+return out;
+}
+function stars(){
+var n=0;try{n=document.querySelectorAll('[class*=star][class*=active],[class*=star][class*=on],[class*=star].sel,[data-star].on').length;}catch(e){}
+return n||5;
+}
+document.addEventListener('click',function(e){
+var t=e.target&&e.target.closest?e.target.closest('button'):null;if(!t)return;
+var txt=(t.textContent||''),id=(t.id||'')+'';
+if(!(/(ابعت|ابعث|أرسل|ارسل|إرسال|ارسال|send|submit)/i.test(txt)||/sugg|feedback/i.test(id)&&/send|submit|save|add/i.test(id)))return;
+if(/openSugg|suggHero/i.test(id))return;
+var ins=visibleInputs();if(!ins.length)return;
+var msg=ins[ins.length-1].value.trim();if(!msg)return;
+var nameEl=null;try{var all=document.querySelectorAll('input[type=text]');for(var i=0;i<all.length;i++){var ph=(all[i].placeholder||'');if(/اسم|name/i.test(ph)){nameEl=all[i];break;}}}catch(e){}
+var name=(nameEl&&nameEl.value.trim())||'مجهول';
+e.stopImmediatePropagation();e.preventDefault();
+push({name:name,stars:stars(),txt:msg,text:msg,msg:msg,ts:Date.now(),date:Date.now()});
+try{ins[ins.length-1].value='';if(nameEl)nameEl.value='';}catch(e){}
+toast('وصلنا صوتك ✅ شكراً يا باشا');
+},true);
+var seen={};
+setInterval(function(){
+try{
+for(var i=0;i<localStorage.length;i++){
+var k=localStorage.key(i);if(!/sugg|feedback|aqtirah/i.test(k))continue;
+var v=null;try{v=JSON.parse(localStorage.getItem(k));}catch(e){continue;}
+if(Object.prototype.toString.call(v)==='[object Array]'){
+var n=v.length;var prev=seen[k]||0;
+if(n>prev){for(var j=prev;j<n;j++){var it=v[j];if(!it)continue;var s=(typeof it==='string')?it:(it.txt||it.text||it.msg||'');if(!s)continue;
+push({name:(it.name||'مجهول'),stars:(it.stars||it.rating||5),txt:s,text:s,msg:s,ts:(it.ts||Date.now()),date:(it.ts||Date.now()),via:'v60-local'});}
+seen[k]=n;}
+}else{seen[k]=seen[k]||0;}
+}
+}catch(e){}
+},5000);
+console.info('[EgyptBet Addon] sugg-bridge-v60: ON');
+}catch(e){console.warn('[EgyptBet Addon] v60:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: كوبري الاقتراحات المباشر v60 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
