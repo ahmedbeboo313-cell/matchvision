@@ -3796,12 +3796,12 @@ console.info('[EgyptBet Addon] diag-hider-v58: ON');
 }catch(e){}})();
 </script>
 <!-- ===== نهاية إضافة: حاجب أدوات التشخيص v58 ===== -->
-<!-- ===== إضافة: كوبري الاقتراحات الشامل v62 | 2026-09-30 ===== -->
+<!-- ===== إضافة: كوبري الاقتراحات الكامل المواصفات v63 | 2026-09-30 ===== -->
 <script>
 (function(){'use strict';try{
 var CFG={apiKey:"AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEw-u9TN-ek",authDomain:"egypt-bet-dab93.firebaseapp.com",projectId:"egypt-bet-dab93",storageBucket:"egypt-bet-dab93.firebasestorage.app",messagingSenderId:"851474057927",appId:"1:851474057927:web:8ab164b85be6ab30854ce2"};
-var COLS=['suggestions','feedback','sugg','reviews'];
-function toast(t){var el=document.createElement('div');el.textContent=t;el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:99999;background:#0f172a;color:#fff;font-weight:800;padding:10px 22px;border-radius:99px;font-size:13px;border:1px solid #334155';document.body.appendChild(el);setTimeout(function(){el.remove();},3500);}
+var COLS=['suggestions','feedback','sugg','reviews','suggs','userFeedback'];
+function toast(t){var el=document.createElement('div');el.textContent=t;el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:99999;background:#0f172a;color:#fff;font-weight:800;padding:10px 22px;border-radius:99px;font-size:13px;border:1px solid #334155';document.body.appendChild(el);setTimeout(function(){el.remove();},3000);}
 function lastErr(s){try{localStorage.setItem('egb_sugg_last',s+' @'+new Date().toLocaleTimeString());}catch(e){}}
 var DB=null,SDKTRIED=false;
 function ensureSdk(cb){
@@ -3810,19 +3810,19 @@ try{if(window.firebase&&firebase.apps&&firebase.apps.length){DB=firebase.firesto
 if(SDKTRIED){cb(null);return;}SDKTRIED=true;
 var a=document.createElement('script');a.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
 a.onload=function(){var b=document.createElement('script');b.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js';
-b.onload=function(){try{if(!firebase.apps.length)firebase.initializeApp(CFG);DB=firebase.firestore();cb(DB);}catch(e){lastErr('init:'+e.message);cb(null);}};
+b.onload=function(){try{if(!firebase.apps.length)firebase.initializeApp(CFG);DB=firebase.firestore();cb(DB);}catch(e){cb(null);}};
 b.onerror=function(){cb(null);};document.head.appendChild(b);};
 a.onerror=function(){cb(null);};document.head.appendChild(a);
 }
 function restWrite(col,o){
-var fields={};for(var k in o){var v=o[k];fields[k]=(typeof v==='number')?{integerValue:Math.round(v)}:{stringValue:String(v)};}
+var fields={};for(var k in o){var v=o[k];fields[k]=(typeof v==='number')?{integerValue:Math.round(v)}:(typeof v==='boolean')?{booleanValue:v}:{stringValue:String(v)};}
 return fetch('https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents/'+col+'?key='+CFG.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:fields})}).then(function(r){if(!r.ok)throw new Error('rest'+r.status);return true;});
 }
 function push(o){
 ensureSdk(function(d){
 COLS.forEach(function(col){
-if(d){d.collection(col).add(o).then(function(){toast('✅ وصل: '+col);lastErr('ok:'+col);}).catch(function(e){lastErr(col+':'+(e.code||e.message));restWrite(col,o).catch(function(){});});}
-else{restWrite(col,o).then(function(){toast('✅ وصل: '+col);lastErr('ok-rest:'+col);}).catch(function(e){lastErr(col+'-rest:'+e.message);});}
+if(d){d.collection(col).add(o).then(function(){toast('✅ '+col);lastErr('ok:'+col);}).catch(function(e){restWrite(col,o).catch(function(){});});}
+else{restWrite(col,o).then(function(){toast('✅ '+col);lastErr('ok-rest:'+col);}).catch(function(e){lastErr(col+':'+e.message);});}
 });
 });
 }
@@ -3845,13 +3845,14 @@ if(!inp||!isSend)return;
 var msg=inp.value.trim();if(!msg)return;
 e.stopImmediatePropagation();e.preventDefault();
 var nameEl=null;try{var all=document.querySelectorAll('input[type=text]');for(var i=0;i<all.length;i++){if(/اسم|name/i.test(all[i].placeholder||'')){nameEl=all[i];break;}}}catch(err){}
-push({name:(nameEl&&nameEl.value.trim())||'مجهول',stars:stars(),txt:msg,text:msg,msg:msg,ts:Date.now(),date:Date.now()});
+var now=Date.now();
+push({name:(nameEl&&nameEl.value.trim())||'مجهول',stars:stars(),txt:msg,text:msg,msg:msg,message:msg,ts:now,date:now,createdAt:now,seen:false,read:false,del:false,deleted:false,hidden:false,status:'new',via:'v63'});
 try{inp.value='';if(nameEl)nameEl.value='';}catch(err){}
 },true);
-console.info('[EgyptBet Addon] sugg-bridge-v62: ON (multi-col)');
-}catch(e){console.warn('[EgyptBet Addon] v62:',e);}})();
+console.info('[EgyptBet Addon] sugg-bridge-v63: ON');
+}catch(e){console.warn('[EgyptBet Addon] v63:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: كوبري الاقتراحات الشامل v62 ===== -->
+<!-- ===== نهاية إضافة: كوبري الاقتراحات الكامل المواصفات v63 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
