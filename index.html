@@ -4006,6 +4006,31 @@ console.info('[EgyptBet Addon] single-source-v73: ON (floor-lock)');
 }catch(e){console.warn('[EgyptBet Addon] v73:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: عقد المصدر الواحد بالأرضية المتحركة v73 ===== -->
+<!-- ===== إضافة: حارس الهيدر v74 | 2026-10-01 ===== -->
+<script>
+(function(){'use strict';try{
+function fix(){
+var h=document.querySelector('header');if(!h)return;
+var cs=null;try{cs=getComputedStyle(h);}catch(e){return;}
+var bad=(cs.opacity==='0')||(cs.visibility==='hidden')||(cs.display==='none')||(h.offsetHeight<12)||h.classList.contains('hidden')||h.classList.contains('hide')||h.classList.contains('collapsed');
+if(!bad)return;
+h.classList.remove('hidden','hide','collapsed','header-hidden','is-hidden');
+h.style.opacity='1';h.style.visibility='visible';h.style.display='';h.style.transform='none';h.style.height='';h.style.minHeight='';
+var kids=h.children;
+for(var i=0;i<kids.length;i++){var k=kids[i];var kc=null;try{kc=getComputedStyle(k);}catch(e){continue;}
+if(kc.opacity==='0'||kc.visibility==='hidden'||kc.display==='none'){k.style.opacity='1';k.style.visibility='visible';k.style.display='';}}
+}
+fix();
+setInterval(fix,1200);
+var st=null;
+window.addEventListener('scroll',function(){
+if(window.scrollY<60){if(st)return;st=setTimeout(function(){st=0;fix();},120);}
+},{passive:true});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(fix,300);});
+console.info('[EgyptBet Addon] header-guard-v74: ON');
+}catch(e){}})();
+</script>
+<!-- ===== نهاية إضافة: حارس الهيدر v74 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
