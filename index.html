@@ -3819,11 +3819,11 @@ border:1px solid #e6c76a !important;
 header p,header small{color:#c9b070 !important;}
 </style>
 <!-- ===== نهاية إضافة: تاج المعبد للهيدر v71.9 ===== -->
-<!-- ===== إضافة: عقد المصدر الواحد v72 | 2026-10-01 ===== -->
+<!-- ===== إضافة: عقد المصدر الواحد بالأرضية المتحركة v73 | 2026-10-01 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] single-source-v72: missing');return;}
-window.__EGB_CLOCK='v72';
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] single-source-v73: missing');return;}
+window.__EGB_CLOCK='v73';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
 var DONE={},LIVEI={};
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
@@ -3855,9 +3855,9 @@ return ch;
 }
 function markFT(m){
 if(m.__ftDone)return;m.__ftDone=true;
-m.statusCompleted=true;m.statusState='post';m.live=false;
+m.statusCompleted=true;m.statusState='post';m.live=false;m.__ftTs=Date.now();
 var k=null;try{k=matchKey(m);}catch(e){}
-if(k)DONE[k]={hs:m.__sumH!=null?m.__sumH:m.scoreHome,as:m.__sumA!=null?m.__sumA:m.scoreAway,ts:Date.now()};
+if(k)DONE[k]={hs:m.scoreHome,as:m.scoreAway,ts:Date.now()};
 setTimeout(function(){try{var rb=document.getElementById('refreshBtn');if(rb)rb.click();}catch(e){}},600);
 }
 function anchor(m){
@@ -3899,9 +3899,16 @@ try{
 (list||[]).forEach(function(m){
 var k=null;try{k=matchKey(m);}catch(e){return;}
 var dn=DONE[k];
-if(dn){m.statusCompleted=true;m.statusState='post';m.live=false;if(dn.hs!=null)m.scoreHome=dn.hs;if(dn.as!=null)m.scoreAway=dn.as;return;}
+if(dn){
+m.statusCompleted=true;m.statusState='post';m.live=false;
+var fh=(m.scoreHome!=null)?m.scoreHome:0, fa=(m.scoreAway!=null)?m.scoreAway:0;
+m.scoreHome=Math.max(fh,dn.hs||0);m.scoreAway=Math.max(fa,dn.as||0);
+if(m.scoreHome>(dn.hs||0))dn.hs=m.scoreHome;
+if(m.scoreAway>(dn.as||0))dn.as=m.scoreAway;
+return;
+}
 if(!m.statusCompleted){
-if(m.__sumH!=null){m.scoreHome=m.__sumH;m.scoreAway=m.__sumA;}
+if(m.__sumH!=null){m.scoreHome=Math.max(m.__sumH,m.scoreHome!=null?m.scoreHome:0);m.scoreAway=Math.max(m.__sumA,m.scoreAway!=null?m.scoreAway:0);}
 if(m.__sumP){m.live=true;m.statusState='in';
 var t=target(m);if(t){var d=dstr(t);var f=sfields(m);
 for(var i=0;i<f.length;i++){var v=m[f[i]];if(typeof v==='string')m[f[i]]=v.replace(MIN_RE,d);}}}
@@ -3928,11 +3935,13 @@ if(document.hidden||!window.state||!state.matches)return;
 if(busy){if(Date.now()-busySince<60000)return;busy=false;}
 var now=Date.now();var cand=[];
 for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
-if(!m||m.statusCompleted||m.statusState==='post')continue;
+if(!m)continue;
 var t0=0;try{t0=new Date(m.date).getTime();}catch(e){continue;}
-var el=now-t0;if(el< -5*60*1000||el>200*60*1000)continue;
-cand.push(m);}
-cand=cand.slice(0,8);if(!cand.length)return;
+var el=now-t0;if(el< -5*60*1000||el>230*60*1000)continue;
+if(!m.statusCompleted&&m.statusState!=='post'){cand.push(m);continue;}
+if((m.statusCompleted||m.statusState==='post')&&m.__ftTs&&(now-m.__ftTs)<30*60*1000){cand.push(m);}
+}
+cand=cand.slice(0,10);if(!cand.length)return;
 busy=true;busySince=now;var done=0,changed=false;
 function fin(){done++;if(done>=cand.length){busy=false;if(changed)renderKeep();}}
 cand.forEach(function(m){
@@ -3944,15 +3953,23 @@ var comp=(h.competitions&&h.competitions[0])||{};var cs=comp.competitors||[];
 var hs=null,as=null;
 cs.forEach(function(c){var sc=c.score!=null?Number(c.score):null;if(c.homeAway==='home')hs=sc;else if(c.homeAway==='away')as=sc;});
 var k=null;try{k=matchKey(m);}catch(e){}
+if(m.statusCompleted||m.statusState==='post'){
+var ch2=false;
+if(hs!=null&&hs>(m.scoreHome!=null?m.scoreHome:-1)){m.scoreHome=hs;if(m.__sumH!=null)m.__sumH=hs;ch2=true;}
+if(as!=null&&as>(m.scoreAway!=null?m.scoreAway:-1)){m.scoreAway=as;if(m.__sumA!=null)m.__sumA=as;ch2=true;}
+if(k&&DONE[k]){if(hs!=null&&hs>(DONE[k].hs||0))DONE[k].hs=hs;if(as!=null&&as>(DONE[k].as||0))DONE[k].as=as;}
+if(ch2)changed=true;
+fin();return;
+}
 if(ty.completed){
-m.statusCompleted=true;m.statusState='post';m.live=false;
+m.statusCompleted=true;m.statusState='post';m.live=false;m.__ftTs=Date.now();
 if(hs!=null){m.scoreHome=hs;m.__sumH=hs;}
 if(as!=null){m.scoreAway=as;m.__sumA=as;}
 if(k){DONE[k]={hs:m.scoreHome,as:m.scoreAway,ts:Date.now()};delete LIVEI[k];}
 changed=true;markFT(m);
 }else{
-if(hs!=null&&hs!==m.__sumH){m.__sumH=hs;m.scoreHome=hs;changed=true;}
-if(as!=null&&as!==m.__sumA){m.__sumA=as;m.scoreAway=as;changed=true;}
+if(hs!=null&&hs!==m.__sumH){m.__sumH=hs;m.scoreHome=Math.max(hs,m.scoreHome!=null?m.scoreHome:0);changed=true;}
+if(as!=null&&as!==m.__sumA){m.__sumA=as;m.scoreAway=Math.max(as,m.scoreAway!=null?m.scoreAway:0);changed=true;}
 var p=pmin(st.displayClock||'');
 if(p&&(!m.__sumP||p.main!==m.__sumP.main||p.plus!==m.__sumP.plus)){
 m.__sumP=p;m.__sumTs=Date.now();m.__lastUpd=Date.now();m.live=true;m.statusState='in';
@@ -3985,10 +4002,10 @@ if(ch)renderKeep();
 },10000);
 setInterval(function(){var cut=Date.now()-6*3600*1000;for(var k in DONE){if(DONE[k].ts<cut)delete DONE[k];}},300000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,2000);});
-console.info('[EgyptBet Addon] single-source-v72: ON');
-}catch(e){console.warn('[EgyptBet Addon] v72:',e);}})();
+console.info('[EgyptBet Addon] single-source-v73: ON (floor-lock)');
+}catch(e){console.warn('[EgyptBet Addon] v73:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: عقد المصدر الواحد v72 ===== -->
+<!-- ===== نهاية إضافة: عقد المصدر الواحد بالأرضية المتحركة v73 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
