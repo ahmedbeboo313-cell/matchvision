@@ -3729,11 +3729,11 @@ console.info('[EgyptBet Addon] sugg-bridge-v66: ON (order-based + event-flag)');
 }catch(e){console.warn('[EgyptBet Addon] v66:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: جسر الاقتراحات بالترتيب الثابت v66 ===== -->
-<!-- ===== إضافة: المزامنة الفورية المحصنة v69 | 2026-09-30 ===== -->
+<!-- ===== إضافة: المزامنة الفورية النهائية v70 | 2026-09-30 ===== -->
 <script>
 (function(){'use strict';try{
-if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] instant-v69: missing');return;}
-window.__EGB_CLOCK='v69';
+if(typeof window.matchKey!=='function'||typeof window.renderCurrent!=='function'){console.warn('[EgyptBet Addon] instant-v70: missing');return;}
+window.__EGB_CLOCK='v70';
 var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
 var DONE={},LIVEI={};
 function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
@@ -3773,10 +3773,18 @@ if(typeof val==='number'&&/clock|minute/i.test(k)&&!/score|goal|win|prob|conf/i.
 return ch;
 }
 function markFT(m){
+if(m.__ftDone)return;m.__ftDone=true;
 m.statusCompleted=true;m.statusState='post';m.live=false;
 var k=null;try{k=matchKey(m);}catch(e){}
 if(k)DONE[k]={hs:m.scoreHome,as:m.scoreAway,ts:Date.now()};
 setTimeout(function(){try{var rb=document.getElementById('refreshBtn');if(rb)rb.click();}catch(e){}},600);
+}
+function anchor(m){
+if(m.__sumP)return;
+var f=sfields(m);if(!f.length)return;
+var p=pmin(m[f[0]]);if(!p)return;
+m.__sumP=p;m.__sumTs=Date.now();
+if(!m.__lastUpd)m.__lastUpd=0;
 }
 function fixDeep(el,d,depth){var ch=false;if(depth>6)return ch;
 for(var i=0;i<el.childNodes.length;i++){var n=el.childNodes[i];
@@ -3835,7 +3843,7 @@ var now=Date.now();var cand=[];
 for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
 if(!m||m.statusCompleted||m.statusState==='post')continue;
 var t0=0;try{t0=new Date(m.date).getTime();}catch(e){continue;}
-var el=now-t0;if(el< -5*60*1000||el>150*60*1000)continue;
+var el=now-t0;if(el< -5*60*1000||el>200*60*1000)continue;
 cand.push(m);}
 cand=cand.slice(0,8);if(!cand.length)return;
 busy=true;busySince=now;var done=0,changed=false;
@@ -3853,8 +3861,7 @@ if(ty.completed){
 m.statusCompleted=true;m.statusState='post';m.live=false;
 if(hs!=null)m.scoreHome=hs;if(as!=null)m.scoreAway=as;
 if(k){DONE[k]={hs:hs,as:as,ts:Date.now()};delete LIVEI[k];}
-changed=true;
-setTimeout(function(){try{var rb=document.getElementById('refreshBtn');if(rb)rb.click();}catch(e){}},600);
+changed=true;markFT(m);
 }else{
 if(hs!=null&&hs!==m.scoreHome){m.scoreHome=hs;changed=true;}
 if(as!=null&&as!==m.scoreAway){m.scoreAway=as;changed=true;}
@@ -3870,12 +3877,17 @@ fin();
 setInterval(sync,45000);setTimeout(sync,6000);
 setInterval(function(){
 if(document.hidden||!window.state||!state.matches)return;
-var ch=false,ft=false;var now=Date.now();
+var ch=false;var now=Date.now();
 for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
-if(!m||m.statusCompleted)continue;
+if(!m||m.statusCompleted||m.statusState==='post')continue;
+var t0=0;try{t0=new Date(m.date).getTime();}catch(e){t0=0;}
+var el=t0?now-t0:0;
+if(!m.__sumP&&(m.live||((m.statusState||'')==='in')))anchor(m);
 if(m.__sumP){
 try{if(paint(m))ch=true;}catch(e){}
-if((m.__sumP.main>=90||m.__sumP.plus>0)&&m.__lastUpd&&(now-m.__lastUpd)>240000){markFT(m);ft=true;ch=true;}
+var silent=now-(m.__lastUpd||0);
+if((m.__sumP.main>=90||m.__sumP.plus>0)&&silent>240000){markFT(m);ch=true;continue;}
+if(el>200*60*1000&&silent>180000){markFT(m);ch=true;continue;}
 }
 }
 fixDOM();
@@ -3883,10 +3895,10 @@ if(ch)renderKeep();
 },10000);
 setInterval(function(){var cut=Date.now()-6*3600*1000;for(var k in DONE){if(DONE[k].ts<cut)delete DONE[k];}},300000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(sync,2000);});
-console.info('[EgyptBet Addon] instant-v69: ON (hardened)');
-}catch(e){console.warn('[EgyptBet Addon] v69:',e);}})();
+console.info('[EgyptBet Addon] instant-v70: ON (final)');
+}catch(e){console.warn('[EgyptBet Addon] v70:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: المزامنة الفورية المحصنة v69 ===== -->
+<!-- ===== نهاية إضافة: المزامنة الفورية النهائية v70 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
