@@ -4335,6 +4335,120 @@ console.info('[EgyptBet Addon] verify-v83: ON (no death without confirmation)');
 }catch(e){console.warn('[EgyptBet Addon] v83:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: صفارة التحقق والشفاء الذاتي v83 ===== -->
+<!-- ===== إضافة: بردية التوقعات الفرعونية v84 | 2026-10-02 ===== -->
+<style id="egb-pharaoh-predictions">
+.egbGCard{
+background:linear-gradient(170deg,#1b1509 0%,#151007 60%,#120d06 100%) !important;
+border:1px solid rgba(212,175,55,.35) !important;
+border-radius:18px !important;
+box-shadow:0 8px 24px rgba(0,0,0,.45), inset 0 1px 0 rgba(212,175,55,.10) !important;
+position:relative;overflow:hidden;
+}
+.egbGCard::after{
+content:'';position:absolute;left:-10px;bottom:-14px;width:110px;height:110px;opacity:.05;pointer-events:none;
+background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'><g fill='none' stroke='%23d4af37' stroke-width='4'><path d='M10 30 q40 -26 80 0 q-40 24 -80 0'/><circle cx='50' cy='30' r='10'/><path d='M50 40 v14 M64 42 q10 16 -5 24 M36 42 l-8 18'/></g></svg>") center/contain no-repeat;
+}
+.egbSafe{
+background:linear-gradient(160deg,#2a1f0d,#1a1408) !important;
+border:1.5px solid rgba(212,175,55,.55) !important;
+color:#f0d488 !important;
+box-shadow:0 0 14px rgba(212,175,55,.25), inset 0 1px 0 rgba(212,175,55,.22) !important;
+border-radius:999px !important;
+}
+.egbBar{
+background:#140f08 !important;
+border:1px solid rgba(212,175,55,.35) !important;
+box-shadow:inset 0 1px 0 rgba(212,175,55,.15), inset 0 -1px 0 rgba(212,175,55,.15) !important;
+border-radius:999px !important;
+overflow:hidden !important;
+}
+.egbBarFill,.egbBar>*{
+background:linear-gradient(90deg,#1e3a8a 0%,#0e7490 45%,#30c3b0 100%) !important;
+border-radius:999px !important;
+box-shadow:0 0 10px rgba(48,195,176,.45) !important;
+}
+.egbPredMain{
+color:#f0d488 !important;
+background:linear-gradient(180deg,rgba(212,175,55,.12),rgba(212,175,55,.03)) !important;
+border:1px dashed rgba(212,175,55,.40) !important;
+border-radius:12px !important;
+padding:8px 14px !important;
+text-shadow:0 1px 0 #000, 0 0 14px rgba(212,175,55,.35) !important;
+}
+.egbXChip{
+background:#171208 !important;
+border:1px solid rgba(212,175,55,.42) !important;
+border-radius:16px 5px 16px 5px !important;
+color:#e8d9a8 !important;
+box-shadow:inset 0 1px 0 rgba(212,175,55,.12) !important;
+}
+.egbXChip *{color:#f0d488 !important;font-weight:900 !important;}
+.egbTrust{
+background:linear-gradient(160deg,#241a08,#171106) !important;
+border:1px solid rgba(212,175,55,.5) !important;
+color:#f0d488 !important;
+border-radius:999px !important;
+}
+.egbTrust .ankOn{color:#f5d67b;text-shadow:0 0 8px rgba(212,175,55,.6);margin-inline-start:3px;}
+.egbTrust .ankOff{opacity:.22;margin-inline-start:3px;}
+.egbCup{
+background:linear-gradient(160deg,#3a2a10,#241a08) !important;
+border:1px solid rgba(212,175,55,.5) !important;
+color:#f0d488 !important;
+border-radius:999px !important;
+}
+.egbScoreBox{
+background:radial-gradient(circle at 50% 38%,#241a0c,#140f08 75%) !important;
+border:1.5px solid rgba(212,175,55,.42) !important;
+border-radius:16px !important;
+box-shadow:inset 0 0 18px rgba(212,175,55,.10) !important;
+}
+.egbScoreBox *{color:#f0d488 !important;}
+</style>
+<script>
+(function(){'use strict';try{
+function near(el,cls,up){var n=el;for(var i=0;i<up&&n;i++){if(n.classList&&n.classList.contains(cls))return n;n=n.parentElement;}return null;}
+function tag(){
+var els=document.querySelectorAll('div,span,p,b');
+for(var i=0;i<els.length;i++){var el=els[i];var t=(el.textContent||'').trim();
+if(!t||t.length>80)continue;
+if(t.indexOf('الأضمن')>=0&&t.length<30&&!el.classList.contains('egbSafe')){
+el.classList.add('egbSafe');
+var g=el.closest?el.closest('.card'):null;if(!g){g=el;for(var u=0;u<4&&g&&!(g.classList&&g.classList.contains('card'));u++)g=g.parentElement;}
+if(g)g.classList.add('egbGCard');
+var box=el.parentElement;
+for(var s=0;s<5&&box;s++){
+var kids=box.children;
+for(var k2=0;k2<kids.length;k2++){var bd=kids[k2];
+if(bd.offsetHeight>4&&bd.offsetHeight<=16&&bd.offsetWidth>90&&!bd.classList.contains('egbBar')){bd.classList.add('egbBar');}}
+box=box.parentElement;
+}
+continue;
+}
+if(/^(كأس)$/.test(t.replace(/🏆/g,'').trim())&&!el.classList.contains('egbCup')){el.classList.add('egbCup');continue;}
+if(t.indexOf('موثوق')===0&&t.length<22&&!el.dataset.egbT){
+var mm=t.match(/\((\d+)\s*\/\s*(\d+)\)/);var n=mm?parseInt(mm[1],10):0;var tot=mm?parseInt(mm[2],10):5;
+var html='موثوق ';for(var a=0;a<tot;a++){html+=a<n?'<span class="ankOn">☥</span>':'<span class="ankOff">☥</span>';}
+el.innerHTML=html;el.dataset.egbT='1';el.classList.add('egbTrust');continue;
+}
+if(/(X2|1X|12|هانديكاب|الشوط الأول|أقل من|أكثر من|تعادل أو فوز|فوز أو تعادل)/.test(t)&&t.indexOf('%')>=0&&t.length<60&&!el.classList.contains('egbXChip')){el.classList.add('egbXChip');continue;}
+if((t.indexOf('لم تبدأ')>=0||(t.indexOf('النتيجة')>=0&&t.length<30))&&!el.classList.contains('egbScoreBox')){el.classList.add('egbScoreBox');continue;}
+if(!el.classList.contains('egbPredMain')&&near(el,'egbGCard',5)){
+var fs=parseFloat(getComputedStyle(el).fontSize||'0');
+if(fs>=18&&t.length<45&&t.indexOf('الأضمن')<0&&t.indexOf('%')<0){el.classList.add('egbPredMain');}
+}
+}
+}
+tag();
+setInterval(tag,1500);
+try{
+var mo=new MutationObserver(function(){setTimeout(tag,120);});
+mo.observe(document.body||document.documentElement,{childList:true,subtree:true});
+}catch(e){}
+console.info('[EgyptBet Addon] papyrus-predictions-v84: ON');
+}catch(e){console.warn('[EgyptBet Addon] v84:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: بردية التوقعات الفرعونية v84 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
