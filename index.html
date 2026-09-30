@@ -4612,12 +4612,13 @@ console.info('[EgyptBet Addon] seal-rebase-v89: ON (re-stamp on 0-0 basis)');
 }catch(e){console.warn('[EgyptBet Addon] v89:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: إعادة الختم على أساس 0-0 v89 ===== -->
-<!-- ===== إضافة: القفل الذاتي للتوقعات v91 | 2026-10-02 ===== -->
+<!-- ===== إضافة: القفل الذاتي بمنظف الأشباح v92 | 2026-10-02 ===== -->
 <script>
 (function(){'use strict';try{
 var LOCKS={};try{LOCKS=JSON.parse(localStorage.getItem('egb_picklock_v90')||'{}')||{};}catch(e){LOCKS={};}
 var lockDirty=false;
 setInterval(function(){if(!lockDirty)return;lockDirty=false;try{localStorage.setItem('egb_picklock_v90',JSON.stringify(LOCKS));}catch(e){}},4000);
+function S(t){return (t||'').replace(/[\u200B\u200C\u200D\u200E\u200F\u202A\u202B\u202C\u202D\u202E\uFEFF\u061C\u00A0]/g,' ').replace(/\s+/g,' ').trim();}
 var DC_RE=/^(1X|X2|12)\s*\(/;
 var GOALS_RE=/(أكثر|أقل|Over|Under)\s?\d/;
 function sigOf(ct){
@@ -4636,10 +4637,7 @@ return (parseInt(m[1],10)||0)+(parseInt(m[2],10)||0);
 }
 function outerCard(el){
 var n=el;
-for(var i=0;i<7&&n;i++){
-if(n.classList&&n.classList.contains('card'))return n;
-n=n.parentElement;
-}
+for(var i=0;i<7&&n;i++){if(n.classList&&n.classList.contains('card'))return n;n=n.parentElement;}
 n=el;
 for(var j=0;j<7&&n;j++){if(n.offsetHeight>300)return n;n=n.parentElement;}
 return null;
@@ -4648,7 +4646,7 @@ function guard(){
 var pills=document.querySelectorAll('.egbSafe');
 if(!pills.length){
 var all=document.querySelectorAll('div,span,b');
-for(var z=0;z<all.length;z++){var t=(all[z].textContent||'').trim();
+for(var z=0;z<all.length;z++){var t=S(all[z].textContent);
 if(t.indexOf('الأضمن')>=0&&t.length<30&&!all[z].classList.contains('egbSafe'))all[z].classList.add('egbSafe');}
 pills=document.querySelectorAll('.egbSafe');
 }
@@ -4656,28 +4654,28 @@ for(var pi=0;pi<pills.length;pi++){
 var n=pills[pi],box=null;
 for(var u=0;u<5&&n;u++){n=n.parentElement;if(n&&n.offsetHeight>=140){box=n;break;}}
 if(!box)continue;
-var ct=box.textContent||'';
+var ct=S(box.textContent);
 var sig=sigOf(ct);if(!sig)continue;
 var pickEl=null,titleEl=null;
 var els=box.querySelectorAll('div,span,b,h3,h4');
-for(var e=0;e<els.length;e++){var el=els[e];var t2=(el.textContent||'').trim();
+for(var e=0;e<els.length;e++){var el=els[e];var t2=S(el.textContent);
 if(!pickEl&&t2.length<45&&(DC_RE.test(t2)||GOALS_RE.test(t2)))pickEl=el;
 if(!titleEl&&t2.length<20&&/^(فرصة مزدوجة|أهداف)/.test(t2))titleEl=el;
 }
 if(!pickEl)continue;
-var cur=(pickEl.textContent||'').trim();
+var cur=S(pickEl.textContent);
 var desired=LOCKS[sig]||null;
 if(!desired){
 if(GOALS_RE.test(cur)){desired=cur;LOCKS[sig]=desired;lockDirty=true;}
 else if(DC_RE.test(cur)){
 var oc=outerCard(box);
-var tot=oc?scoreOf(oc.textContent||''):0;
+var tot=oc?scoreOf(S(oc.textContent)):0;
 if(tot>=2){desired='أكثر من 1.5';LOCKS[sig]=desired;lockDirty=true;}
 }
 }
 if(desired&&cur!==desired){
 pickEl.textContent=desired;
-if(titleEl&&/فرصة مزدوجة/.test(titleEl.textContent||'')){
+if(titleEl&&/فرصة مزدوجة/.test(S(titleEl.textContent))){
 var num=(desired.match(/[\d.]+/)||['1.5'])[0];
 titleEl.textContent='أهداف '+num;
 }
@@ -4690,10 +4688,10 @@ if(typeof window.renderCurrent==='function'){
 var origRC=window.renderCurrent;
 window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{guard();}catch(e){}return r;};
 }
-console.info('[EgyptBet Addon] self-lock-v91: ON (zero dependencies)');
-}catch(e){console.warn('[EgyptBet Addon] v91:',e);}})();
+console.info('[EgyptBet Addon] self-lock-v92: ON (ghost-cleaned)');
+}catch(e){console.warn('[EgyptBet Addon] v92:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: القفل الذاتي للتوقعات v91 ===== -->
+<!-- ===== نهاية إضافة: القفل الذاتي بمنظف الأشباح v92 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
