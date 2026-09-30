@@ -4499,6 +4499,59 @@ console.info('[EgyptBet Addon] freeze-v85: ON (predictions sealed at kickoff)');
 }catch(e){console.warn('[EgyptBet Addon] v85:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: ختم البردية لتجميد التوقعات v85 ===== -->
+<!-- ===== إضافة: ختم الزوار الملكي v87 | 2026-10-02 ===== -->
+<style id="egb-visitors-seal">
+#egbRoyalPulse .rp-clock b{font-size:16px !important;line-height:1 !important;}
+#egbRoyalPulse .rp-clock i{font-style:normal !important;font-size:7.5px !important;color:#c9b070 !important;font-weight:800 !important;line-height:1 !important;margin-top:3px !important;}
+</style>
+<script>
+(function(){'use strict';try{
+var KEY='AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEw-u9TN-ek';
+var PROJ='egypt-bet-dab93';
+function pad(x){return ('0'+x).slice(-2);}
+function dayId(){var d=new Date();return 'day-'+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function docUrl(){return 'https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/daily_visits/'+dayId();}
+function show(n){var el=document.getElementById('egbVisN');if(el)el.textContent=n;}
+function mount(){var c=document.querySelector('#egbRoyalPulse .rp-clock');if(!c)return false;
+if(!document.getElementById('egbVisN')){c.innerHTML='<b id="egbVisN">--</b><i>زوار اليوم</i>';}
+return true;}
+function restoreClock(){var c=document.querySelector('#egbRoyalPulse .rp-clock');
+if(c&&!document.getElementById('rpTime')&&!document.getElementById('egbVisN'))c.innerHTML='<span id="rpTime"></span>';}
+function val(d){try{var f=d.fields.v;return parseInt(f.integerValue||f.stringValue,10);}catch(e){return null;}}
+function read(cb){
+fetch(docUrl()+'?key='+KEY,{cache:'no-store'})
+.then(function(r){if(!r.ok)throw 0;return r.json();})
+.then(function(j){cb(val(j));})
+.catch(function(){cb(null);});
+}
+function bump(){
+read(function(cur){
+if(cur==null){
+fetch('https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/daily_visits?documentId='+dayId()+'&key='+KEY,{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({fields:{v:{integerValue:'1'}}})
+}).then(function(r){if(r.ok){show(1);try{localStorage.setItem('egb_visit_day',dayId());}catch(e){}}else{restoreClock();}})
+.catch(function(){restoreClock();});
+}else{
+show(cur);
+var did='';try{did=localStorage.getItem('egb_visit_day')||'';}catch(e){}
+if(did===dayId())return;
+fetch(docUrl()+'?updateMask.fieldPaths=v&key='+KEY,{
+method:'PATCH',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({fields:{v:{integerValue:String(cur+1)}}})
+}).then(function(r){if(r.ok){try{localStorage.setItem('egb_visit_day',dayId());}catch(e){}show(cur+1);}})
+.catch(function(){});
+}
+});
+}
+var tries=0;
+function boot(){if(mount()){bump();}else if(tries++<10){setTimeout(boot,1500);}}
+boot();
+setInterval(function(){if(document.hidden)return;read(function(n){if(n!=null)show(n);});},60000);
+console.info('[EgyptBet Addon] visitors-seal-v87: ON');
+}catch(e){console.warn('[EgyptBet Addon] v87:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: ختم الزوار الملكي v87 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
