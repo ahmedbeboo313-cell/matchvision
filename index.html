@@ -4585,6 +4585,33 @@ console.info('[EgyptBet Addon] seal-shield-v88: ON (goals picks sealed everywher
 }catch(e){console.warn('[EgyptBet Addon] v88:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: درع الختم لتوقعات الأهداف v88 ===== -->
+<!-- ===== إضافة: إعادة الختم على أساس 0-0 v89 | 2026-10-02 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.getPrediction!=='function'){console.warn('[EgyptBet Addon] seal-rebase-v89: missing');return;}
+try{
+if(!localStorage.getItem('egb_purge89')){
+localStorage.removeItem('egb_pred_frozen_v85');
+localStorage.setItem('egb_purge89','1');
+}
+}catch(e){}
+var origP=window.getPrediction;
+function zeroClone(m){var mm={};for(var k in m)mm[k]=m[k];mm.scoreHome=0;mm.scoreAway=0;return mm;}
+window.getPrediction=function(m){
+try{
+if(m&&(m.scoreHome>0||m.scoreAway>0)){
+var st=String(m.statusState||'').toLowerCase();
+var live=(m.live===true)||/^(in|1h|2h|ht|halftime|et|progress|inprogress)$/.test(st);
+var finished=(m.statusCompleted===true)||st==='post';
+if(live||finished){return origP.call(this,zeroClone(m));}
+}
+}catch(e){}
+return origP.apply(this,arguments);
+};
+console.info('[EgyptBet Addon] seal-rebase-v89: ON (re-stamp on 0-0 basis)');
+}catch(e){console.warn('[EgyptBet Addon] v89:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: إعادة الختم على أساس 0-0 v89 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
