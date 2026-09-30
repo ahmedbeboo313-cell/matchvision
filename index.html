@@ -4612,7 +4612,7 @@ console.info('[EgyptBet Addon] seal-rebase-v89: ON (re-stamp on 0-0 basis)');
 }catch(e){console.warn('[EgyptBet Addon] v89:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: إعادة الختم على أساس 0-0 v89 ===== -->
-<!-- ===== إضافة: القفل الذاتي بمنظف الأشباح v92 | 2026-10-02 ===== -->
+<!-- ===== إضافة: القفل الذاتي الكامل v93 | 2026-10-02 ===== -->
 <script>
 (function(){'use strict';try{
 var LOCKS={};try{LOCKS=JSON.parse(localStorage.getItem('egb_picklock_v90')||'{}')||{};}catch(e){LOCKS={};}
@@ -4621,6 +4621,7 @@ setInterval(function(){if(!lockDirty)return;lockDirty=false;try{localStorage.set
 function S(t){return (t||'').replace(/[\u200B\u200C\u200D\u200E\u200F\u202A\u202B\u202C\u202D\u202E\uFEFF\u061C\u00A0]/g,' ').replace(/\s+/g,' ').trim();}
 var DC_RE=/^(1X|X2|12)\s*\(/;
 var GOALS_RE=/(أكثر|أقل|Over|Under)\s?\d/;
+var ALLSEL='div,span,b,h3,h4,p,h2,h1,strong,em,i,a,button,label';
 function sigOf(ct){
 var runs=ct.match(/[A-Za-z][A-Za-z\s.'&-]{2,}/g)||[];
 var out=[];
@@ -4645,7 +4646,7 @@ return null;
 function guard(){
 var pills=document.querySelectorAll('.egbSafe');
 if(!pills.length){
-var all=document.querySelectorAll('div,span,b');
+var all=document.querySelectorAll(ALLSEL);
 for(var z=0;z<all.length;z++){var t=S(all[z].textContent);
 if(t.indexOf('الأضمن')>=0&&t.length<30&&!all[z].classList.contains('egbSafe'))all[z].classList.add('egbSafe');}
 pills=document.querySelectorAll('.egbSafe');
@@ -4657,7 +4658,7 @@ if(!box)continue;
 var ct=S(box.textContent);
 var sig=sigOf(ct);if(!sig)continue;
 var pickEl=null,titleEl=null;
-var els=box.querySelectorAll('div,span,b,h3,h4');
+var els=box.querySelectorAll(ALLSEL);
 for(var e=0;e<els.length;e++){var el=els[e];var t2=S(el.textContent);
 if(!pickEl&&t2.length<45&&(DC_RE.test(t2)||GOALS_RE.test(t2)))pickEl=el;
 if(!titleEl&&t2.length<20&&/^(فرصة مزدوجة|أهداف)/.test(t2))titleEl=el;
@@ -4688,10 +4689,10 @@ if(typeof window.renderCurrent==='function'){
 var origRC=window.renderCurrent;
 window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{guard();}catch(e){}return r;};
 }
-console.info('[EgyptBet Addon] self-lock-v92: ON (ghost-cleaned)');
-}catch(e){console.warn('[EgyptBet Addon] v92:',e);}})();
+console.info('[EgyptBet Addon] self-lock-v93: ON (all tags)');
+}catch(e){console.warn('[EgyptBet Addon] v93:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: القفل الذاتي بمنظف الأشباح v92 ===== -->
+<!-- ===== نهاية إضافة: القفل الذاتي الكامل v93 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
