@@ -4562,6 +4562,29 @@ console.info('[EgyptBet Addon] visitors-seal-v87.1: ON (session counter)');
 }catch(e){console.warn('[EgyptBet Addon] v87.1:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: ختم الزوار الملكي بعدّاد الجلسات v87.1 ===== -->
+<!-- ===== إضافة: درع الختم لتوقعات الأهداف v88 | 2026-10-02 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.safeBlock!=='function'){console.warn('[EgyptBet Addon] seal-shield-v88: safeBlock missing');return;}
+var origSB=window.safeBlock;
+window.safeBlock=function(m,p,fin){
+var mm=m;
+try{
+if(m&&(m.scoreHome>0||m.scoreAway>0)){
+var st=String(m.statusState||'').toLowerCase();
+var isLive=(m.live===true)||st==='in'||st==='1h'||st==='2h'||st==='ht'||st==='halftime'||st==='et'||st==='inprogress'||st==='progress';
+if(isLive){
+mm={};for(var k in m)mm[k]=m[k];
+mm.scoreHome=0;mm.scoreAway=0;
+}
+}
+}catch(e){mm=m;}
+return origSB.call(this,mm,p,fin);
+};
+console.info('[EgyptBet Addon] seal-shield-v88: ON (goals picks sealed everywhere)');
+}catch(e){console.warn('[EgyptBet Addon] v88:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: درع الختم لتوقعات الأهداف v88 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
