@@ -4467,6 +4467,38 @@ console.info('[EgyptBet Addon] papyrus-predictions-v84.2: ON (zero-flicker)');
 }catch(e){console.warn('[EgyptBet Addon] v84.2:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: بردية التوقعات الفورية v84.2 ===== -->
+<!-- ===== إضافة: ختم البردية لتجميد التوقعات v85 | 2026-10-02 ===== -->
+<script>
+(function(){'use strict';try{
+if(typeof window.getPrediction!=='function'||typeof window.matchKey!=='function'){console.warn('[EgyptBet Addon] freeze-v85: missing');return;}
+var origP=window.getPrediction;
+var FROZ={};try{FROZ=JSON.parse(localStorage.getItem('egb_pred_frozen_v85')||'{}')||{};}catch(e){FROZ={};}
+var dirty=false;
+setInterval(function(){
+if(!dirty)return;dirty=false;
+var ks=Object.keys(FROZ);
+if(ks.length>400){ks.sort(function(a,b){return (FROZ[a].t||0)-(FROZ[b].t||0);});for(var i=0;i<ks.length-400;i++)delete FROZ[ks[i]];}
+try{localStorage.setItem('egb_pred_frozen_v85',JSON.stringify(FROZ));}catch(e){}
+},5000);
+function isLive(m){
+if(!m||m.statusCompleted||m.statusState==='post')return false;
+if(m.live)return true;
+var s=((m.statusState||'')+'').toLowerCase();
+return s==='in'||s==='1h'||s==='2h'||s==='ht'||s==='halftime'||s==='et'||s==='inprogress'||s==='progress';
+}
+function clone(o){try{return JSON.parse(JSON.stringify(o));}catch(e){return o;}}
+window.getPrediction=function(m){
+var k=null;try{k=matchKey(m);}catch(e){k=null;}
+if(!k)return origP.apply(this,arguments);
+if(FROZ[k])return clone(FROZ[k].p);
+var p=origP.apply(this,arguments);
+if(p&&isLive(m)){FROZ[k]={p:clone(p),t:Date.now()};dirty=true;}
+return p;
+};
+console.info('[EgyptBet Addon] freeze-v85: ON (predictions sealed at kickoff)');
+}catch(e){console.warn('[EgyptBet Addon] v85:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: ختم البردية لتجميد التوقعات v85 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
