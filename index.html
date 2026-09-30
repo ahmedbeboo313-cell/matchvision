@@ -4693,6 +4693,66 @@ console.info('[EgyptBet Addon] self-lock-v94: ON (sig from match card)');
 }catch(e){console.warn('[EgyptBet Addon] v94:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: القفل الذاتي بالبصمة الصحيحة v94 ===== -->
+<!-- ===== إضافة: الشخاص والمنفذ v95 | 2026-10-02 ===== -->
+<script>
+(function(){'use strict';try{
+var LOCKS={};try{LOCKS=JSON.parse(localStorage.getItem('egb_picklock_v90')||'{}')||{};}catch(e){LOCKS={};}
+var lockDirty=false;
+setInterval(function(){if(!lockDirty)return;lockDirty=false;try{localStorage.setItem('egb_picklock_v90',JSON.stringify(LOCKS));}catch(e){}},4000);
+function S(t){return (t||'').replace(/[\u200B\u200C\u200D\u200E\u200F\u202A\u202B\u202C\u202D\u202E\uFEFF\u061C\u00A0]/g,' ').replace(/\s+/g,' ').trim();}
+var DC_RE=/^(1X|X2|12)\s*\(/;
+var GOALS_RE=/(أكثر|أقل|Over|Under)\s?\d/;
+var st={run:0,pills:0,picks:0,dc:0,repl:0,err:''};
+function banner(){
+var b=document.getElementById('egbDiag');
+if(!b){b=document.createElement('div');b.id='egbDiag';
+b.style.cssText='position:fixed;bottom:118px;left:8px;right:8px;background:rgba(26,20,8,.95);color:#f0d488;border:1px solid #d4af37;border-radius:10px;padding:8px 10px;font-size:11px;z-index:999999;white-space:pre-line;pointer-events:none;font-family:monospace;';
+document.body.appendChild(b);}
+b.textContent='DIAG v95 | run:'+st.run+' pills:'+st.pills+' picks:'+st.picks+' dc:'+st.dc+' repl:'+st.repl+(st.err?' ERR:'+st.err:'');
+}
+function sigOf(ct){
+var runs=ct.match(/[A-Za-z][A-Za-z\s.'&-]{2,}/g)||[];
+var out=[];
+for(var i=0;i<runs.length&&out.length<2;i++){var r=runs[i].trim();if(r.length>=3&&out.indexOf(r)<0)out.push(r);}
+return out.length>=2?out.join('|'):null;
+}
+function scoreOf(ct){var m=ct.match(/(\d+)\s*-\s*(\d+)/);if(!m)return 0;return (parseInt(m[1],10)||0)+(parseInt(m[2],10)||0);}
+function cardOf(el){var n=el;for(var i=0;i<9&&n;i++){if(n.classList&&n.classList.contains('card'))return n;n=n.parentElement;}
+n=el;for(var j=0;j<9&&n;j++){if(n.offsetHeight>300)return n;n=n.parentElement;}return null;}
+function fixTitle(card,desired){
+if(!card)return;
+var els=card.querySelectorAll('div,span,b,p,h3,h4');
+for(var i=0;i<els.length;i++){var t=S(els[i].textContent);
+if(t.length<20&&/^فرصة مزدوجة/.test(t)){var num=(desired.match(/[\d.]+/)||['1.5'])[0];els[i].textContent='أهداف '+num;return;}}
+}
+function work(){
+st.run++;
+try{
+var picks=document.querySelectorAll('.egbPredMain');
+st.picks=picks.length;
+st.pills=document.querySelectorAll('.egbSafe').length;
+st.dc=0;
+for(var i=0;i<picks.length;i++){
+var el=picks[i];var t=S(el.textContent);
+if(!DC_RE.test(t))continue;
+st.dc++;
+var card=cardOf(el);
+var ct=card?S(card.textContent):t;
+var sig=sigOf(ct)||('x'+i);
+var tot=scoreOf(ct);
+var desired=LOCKS[sig]||null;
+if(!desired&&tot>=2){desired='أكثر من 1.5';LOCKS[sig]=desired;lockDirty=true;}
+if(desired&&t!==desired){el.textContent=desired;fixTitle(card,desired);st.repl++;}
+}
+}catch(e){st.err=String(e&&e.message||e).slice(0,40);}
+banner();
+}
+work();
+setInterval(work,2000);
+console.info('[EgyptBet Addon] diag-exec-v95: ON');
+}catch(e){console.warn('[EgyptBet Addon] v95:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: الشخاص والمنفذ v95 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
