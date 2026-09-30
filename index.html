@@ -4612,7 +4612,7 @@ console.info('[EgyptBet Addon] seal-rebase-v89: ON (re-stamp on 0-0 basis)');
 }catch(e){console.warn('[EgyptBet Addon] v89:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: إعادة الختم على أساس 0-0 v89 ===== -->
-<!-- ===== إضافة: قفل الشاشة الملكي للتوقعات v90 | 2026-10-02 ===== -->
+<!-- ===== إضافة: قفل الشاشة الملكي v90.1 | 2026-10-02 ===== -->
 <script>
 (function(){'use strict';try{
 var LOCKS={};try{LOCKS=JSON.parse(localStorage.getItem('egb_picklock_v90')||'{}')||{};}catch(e){LOCKS={};}
@@ -4620,7 +4620,11 @@ var lockDirty=false;
 setInterval(function(){if(!lockDirty)return;lockDirty=false;try{localStorage.setItem('egb_picklock_v90',JSON.stringify(LOCKS));}catch(e){}},4000);
 var DC_RE=/^(1X|X2|12)\s*\(/;
 var GOALS_RE=/(أكثر|أقل|Over|Under)\s?\d/;
-function key(m){try{return matchKey(m);}catch(e){return null;}}
+function tnames(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];
+if(typeof v==='string'&&v.length>=3&&v.length<=30&&!/(\d{1,2})(\+\d+)?\s*'/.test(v)&&!/مباشر|استراحة|الأضمن|موثوق|انتهت|لم تبدأ/.test(v))out.push(v);}
+return out.slice(0,2);}
+function keyOf(m,nm){try{var k=matchKey(m);if(k)return k;}catch(e){}
+return nm&&nm.length>=2?('nm|'+nm[0]+'|'+nm[1]):null;}
 function goalsLabelFrom(p){
 try{
 var arr=p&&p.topScores?p.topScores:[];
@@ -4635,11 +4639,11 @@ if(m2)return m2[1];
 }catch(e){}
 return null;
 }
-function matchOf(cardText){
+function matchOf(ct){
 if(!window.state||!state.matches)return null;
 for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
-var h=m.home&&m.home.name?m.home.name:'';var a=m.away&&m.away.name?m.away.name:'';
-if(h&&a&&cardText.indexOf(h)>=0&&cardText.indexOf(a)>=0)return m;}
+var nm=tnames(m);
+if(nm.length>=2&&ct.indexOf(nm[0])>=0&&ct.indexOf(nm[1])>=0)return m;}
 return null;
 }
 function guard(){
@@ -4656,7 +4660,8 @@ for(var u=0;u<5&&n;u++){n=n.parentElement;if(n&&n.offsetHeight>=140){box=n;break
 if(!box)continue;
 var ct=box.textContent||'';
 var m=matchOf(ct);if(!m)continue;
-var k=key(m);if(!k)continue;
+var nm=tnames(m);
+var k=keyOf(m,nm);if(!k)continue;
 var pickEl=null,titleEl=null;
 var els=box.querySelectorAll('div,span,b,h3,h4');
 for(var e=0;e<els.length;e++){var el=els[e];var t2=(el.textContent||'').trim();
@@ -4689,10 +4694,10 @@ if(typeof window.renderCurrent==='function'){
 var origRC=window.renderCurrent;
 window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{guard();}catch(e){}return r;};
 }
-console.info('[EgyptBet Addon] screen-lock-v90: ON');
-}catch(e){console.warn('[EgyptBet Addon] v90:',e);}})();
+console.info('[EgyptBet Addon] screen-lock-v90.1: ON (working eyes)');
+}catch(e){console.warn('[EgyptBet Addon] v90.1:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: قفل الشاشة الملكي للتوقعات v90 ===== -->
+<!-- ===== نهاية إضافة: قفل الشاشة الملكي v90.1 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
