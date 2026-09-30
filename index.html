@@ -4250,6 +4250,58 @@ console.info('[EgyptBet Addon] impossible-v81: ON');
 }catch(e){console.warn('[EgyptBet Addon] v81:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: حارس الاستحالة والاندماج المحافظ v81 ===== -->
+<!-- ===== إضافة: توسيط ختم الساعة v82 | 2026-10-02 ===== -->
+<style id="egb-seal-center">
+#egbRoyalPulse .rp-clock{
+display:flex !important;
+flex-direction:column !important;
+align-items:center !important;
+justify-content:center !important;
+text-align:center !important;
+line-height:1 !important;
+gap:2px !important;
+padding:0 !important;
+}
+#egbRoyalPulse .rp-clock b{
+font-size:15px !important;
+font-weight:900 !important;
+color:#f0d488 !important;
+letter-spacing:.5px !important;
+line-height:1 !important;
+}
+#egbRoyalPulse .rp-clock i{
+font-style:normal !important;
+font-size:8px !important;
+font-weight:700 !important;
+color:#c9b070 !important;
+line-height:1 !important;
+margin:0 !important;
+}
+</style>
+<script>
+(function(){'use strict';try{
+function structure(){
+var el=document.getElementById('rpTime');if(!el)return;
+if(el.querySelector('b'))return;
+var txt=(el.textContent||'').trim();if(!txt)return;
+var parts=txt.split(/\s+/);
+var hm=parts[0]||'';
+var ap=parts.slice(1).join(' ');
+el.innerHTML='<b>'+hm+'</b>'+(ap?'<i>'+ap+'</i>':'');
+}
+structure();
+setInterval(structure,1000);
+try{
+var mo=new MutationObserver(function(){setTimeout(structure,30);});
+var wait=setInterval(function(){
+var el=document.getElementById('rpTime');
+if(el){mo.observe(el,{childList:true,characterData:true,subtree:true});clearInterval(wait);}
+},500);
+}catch(e){}
+console.info('[EgyptBet Addon] seal-center-v82: ON');
+}catch(e){}})();
+</script>
+<!-- ===== نهاية إضافة: توسيط ختم الساعة v82 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
