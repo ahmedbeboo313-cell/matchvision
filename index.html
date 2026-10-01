@@ -5331,7 +5331,7 @@ try{console.info('[EgyptBet Addon] royal-core-v99A: ON');}catch(e){}
 })();
 </script>
 <!-- ===== نهاية إضافة: نواة المحرك الملكي أ v99A ===== -->
-<!-- ===== إضافة: كاشف السطر المذنب v100 | 2026-10-03 ===== -->
+<!-- ===== إضافة: مصيدة الرفض v101 | 2026-10-03 ===== -->
 <script>
 (function(){
 function show(msg){
@@ -5339,24 +5339,30 @@ var b=document.getElementById('egbErrBan');
 if(!b){
 b=document.createElement('div');
 b.id='egbErrBan';
-b.style.cssText='position:fixed;top:42px;left:8px;right:8px;background:rgba(42,15,15,.97);color:#fecaca;border:1px solid #ef4444;border-radius:10px;padding:8px 10px;font-size:11px;z-index:999999;font-family:monospace;white-space:pre-line;';
+b.style.cssText='position:fixed;top:42px;left:8px;right:8px;background:rgba(42,15,15,.97);color:#fecaca;border:1px solid #ef4444;border-radius:10px;padding:8px 10px;font-size:10px;z-index:999999;font-family:monospace;white-space:pre-line;max-height:40vh;overflow:hidden;';
 document.body.appendChild(b);
 }
 b.textContent=msg;
 }
+window.addEventListener('unhandledrejection',function(ev){
+try{
+var r=ev.reason||{};
+var msg=r.message||String(r);
+var stk=String(r.stack||'NO STACK');
+show('REJ: '+msg+'\nSTACK:\n'+stk.slice(0,400));
+}catch(e){}
+},true);
 window.addEventListener('error',function(ev){
 try{
-show('ERR: '+ev.message+'\nFILE: '+ev.filename+'\nLINE: '+ev.lineno+' COL: '+ev.colno);
+if(ev.message){show('ERR: '+ev.message+'\nLINE: '+ev.lineno+' FILE: '+ev.filename);}
 }catch(e){}
 },true);
 setTimeout(function(){
-if(!document.getElementById('egbErrBan')){
-show('DIAG v100: مفيش أي خطأ صيغة وصلني — المشكلة مش في الإضافات الحالية');
-}
-},5000);
+if(!document.getElementById('egbErrBan'))show('DIAG v101: مفيش رفض ولا خطأ وصل — الصفحة نظيفة');
+},6000);
 })();
 </script>
-<!-- ===== نهاية إضافة: كاشف السطر المذنب v100 ===== -->
+<!-- ===== نهاية إضافة: مصيدة الرفض v101 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
