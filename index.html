@@ -5033,6 +5033,97 @@ console.info('[EgyptBet Addon] periods-v97: ON (1H → HT → 2H → FT)');
 }catch(e){console.warn('[EgyptBet Addon] v97:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: آلة حالات الشوطين v97 ===== -->
+<!-- ===== إضافة: منفذ النهاية المستقل v98 | 2026-10-03 ===== -->
+<script>
+(function(){'use strict';try{
+var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;
+var DKEY='egb_done_v75';
+function loadDone(){try{return JSON.parse(localStorage.getItem(DKEY)||'{}')||{};}catch(e){return {};}}
+function saveDone(o){try{localStorage.setItem(DKEY,JSON.stringify(o));}catch(e){}}
+function pmin(s){var m=String(s).match(MIN_RE);if(!m)return null;return{main:parseInt(m[1],10),plus:m[2]?parseInt(m[2].replace('+',''),10):0};}
+function sfields(m){var out=[];for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];if(typeof v==='string'&&v.length<40&&MIN_RE.test(v))out.push(k);}return out;}
+function mkey(m){try{if(typeof window.matchKey==='function')return matchKey(m);}catch(e){}
+var h=(m.home&&(m.home.name||m.home))||'';var a=(m.away&&(m.away.name||m.away))||'';
+return (h&&a)?('nm|'+h+'|'+a):null;}
+function elapsed(m){var t0=0;try{t0=new Date(m.date).getTime();}catch(e){}return t0?Date.now()-t0:0;}
+function isLiveish(m){if(!m||m.statusCompleted||m.statusState==='post')return false;
+if(m.live)return true;var s=String(m.statusState||'').toLowerCase();
+return s==='in'||s==='1h'||s==='2h'||s==='ht'||s==='halftime'||s==='et'||s==='progress'||s==='inprogress';}
+function fetchSum(m,ms){
+return new Promise(function(res){
+var to=setTimeout(function(){res(null);},ms);
+var url='https://site.api.espn.com/apis/site/v2/sports/soccer/'+encodeURIComponent(m.leagueSlug||'')+'/summary?event='+encodeURIComponent(m.id);
+fetch(url,{cache:'no-store'}).then(function(r){clearTimeout(to);return r.ok?r.json():null;}).then(function(j){res(j);}).catch(function(){clearTimeout(to);res(null);});
+});
+}
+function doFT(m,hs,as){
+if(m.__w98ft)return;m.__w98ft=true;
+m.statusCompleted=true;m.statusState='post';m.live=false;
+if(hs!=null)m.scoreHome=hs;
+if(as!=null)m.scoreAway=as;
+var k=mkey(m);
+if(k){var D=loadDone();D[k]={hs:m.scoreHome,as:m.scoreAway,ts:Date.now()};saveDone(D);}
+window.__EGB_FINFORCE=Date.now();
+setTimeout(function(){try{var rb=document.getElementById('refreshBtn');if(rb)rb.click();}catch(e){}},600);
+setTimeout(function(){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}},1200);
+}
+function clampField(m,p){
+var d=(p.main>90||(p.main===90&&p.plus>10))?'90+10\'':null;
+if(!d)return false;
+var f=sfields(m),ch=false;
+for(var i=0;i<f.length;i++){var v=m[f[i]];if(typeof v!=='string')continue;
+var nv=v.replace(MIN_RE,d);if(nv!==v){m[f[i]]=nv;ch=true;}}
+return ch;
+}
+var busyPoll=false;
+function poll(){
+if(busyPoll||document.hidden||!window.state||!state.matches)return;
+var cand=[];
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
+if(isLiveish(m)&&elapsed(m)>100*60*1000)cand.push(m);}
+cand=cand.slice(0,6);
+if(!cand.length)return;
+busyPoll=true;
+var left=cand.length;
+function doneOne(){left--;if(left<=0)busyPoll=false;}
+cand.forEach(function(m){
+fetchSum(m,12000).then(function(d){
+if(d&&d.header){
+var st=d.header.status||{},ty=st.type||{};
+var comp=(d.header.competitions&&d.header.competitions[0])||{};var cs=comp.competitors||[];
+var hs=null,as=null;
+for(var c=0;c<cs.length;c++){var sc=cs[c].score!=null?Number(cs[c].score):null;
+if(cs[c].homeAway==='home')hs=sc;else if(cs[c].homeAway==='away')as=sc;}
+if(ty.completed){doFT(m,hs,as);doneOne();return;}
+}
+doneOne();
+}).catch(function(){doneOne();});
+});
+}
+function freezeTick(){
+if(document.hidden||!window.state||!state.matches)return;
+var ch=false;
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
+if(!isLiveish(m))continue;
+var f=sfields(m);if(!f.length)continue;
+var p=pmin(m[f[0]]);if(!p)continue;
+if(p.main>90||(p.main===90&&p.plus>10)){if(clampField(m,p))ch=true;}
+var el=elapsed(m);
+if(el>105*60*1000&&(p.main>=90||p.plus>=6)){
+if(m.__w98p&&m.__w98p.main===p.main&&m.__w98p.plus===p.plus){m.__w98same=(m.__w98same||0)+1;}
+else{m.__w98same=0;}
+m.__w98p={main:p.main,plus:p.plus};
+if((m.__w98same||0)>=4){doFT(m,null,null);ch=true;continue;}
+}else{m.__w98same=0;m.__w98p={main:p.main,plus:p.plus};}
+}
+if(ch){try{if(typeof window.renderCurrent==='function')renderCurrent();}catch(e){}}
+}
+setInterval(poll,60000);setTimeout(poll,8000);
+setInterval(freezeTick,60000);setTimeout(freezeTick,15000);
+console.info('[EgyptBet Addon] independent-ft-v98: ON');
+}catch(e){console.warn('[EgyptBet Addon] v98:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: منفذ النهاية المستقل v98 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
