@@ -5124,6 +5124,314 @@ console.info('[EgyptBet Addon] independent-ft-v98: ON');
 }catch(e){console.warn('[EgyptBet Addon] v98:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منفذ النهاية المستقل v98 ===== -->
+<!-- ===== إضافة: المحرك الملكي v2 الشامل v99 | 2026-10-03 ===== -->
+<style id="egb-royal-engine">
+.egbRoyalRow{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.egbBar1x2{display:flex;height:10px;border-radius:99px;overflow:hidden;border:1px solid rgba(212,175,55,.35);}
+.egbBar1x2 i{display:block;height:100%;}
+.egbSeg1{background:linear-gradient(90deg,#d4af37,#b8962e);}
+.egbSegX{background:#6b5a2a;}
+.egbSeg2{background:linear-gradient(90deg,#30c3b0,#0e7490);}
+.egbRChips{display:flex;flex-wrap:wrap;gap:6px;}
+.egbRChip{font-size:10px;font-weight:800;color:#e8d9a8;background:#171208;border:1px solid rgba(212,175,55,.4);border-radius:12px 4px 12px 4px;padding:3px 8px;}
+.egbReason{font-size:10px;color:#c9b070;line-height:1.7;}
+.egbStars{color:#f5d67b;font-size:12px;letter-spacing:2px;text-shadow:0 0 8px rgba(212,175,55,.5);}
+.egbPulse{font-size:10px;color:#fecaca;background:rgba(127,29,29,.3);border:1px solid rgba(239,68,68,.45);border-radius:99px;padding:2px 8px;display:inline-block;}
+.egbCertBtn{font-size:11px;font-weight:900;color:#1a1408;background:linear-gradient(160deg,#f5d67b,#d4af37);border:none;border-radius:999px;padding:6px 14px;box-shadow:0 4px 12px rgba(212,175,55,.35);}
+</style>
+<script>
+(function(){'use strict';
+var DB=null;
+function loadDB(){if(DB)return DB;try{DB=JSON.parse(localStorage.getItem('egb_engine_v99')||'null');}catch(e){DB=null;}
+if(!DB)DB={teams:{},h2h:{},mk:{},lg:{},params:{homeAdv:0.28,decay:0.93,updated:0},bt:{last:0,counted:{}},v:1};
+return DB;}
+function saveDB(){try{localStorage.setItem('egb_engine_v99',JSON.stringify(DB));}catch(e){}}
+setInterval(saveDB,10000);
+function dayMs(d){try{return new Date(d).getTime();}catch(e){return 0;}}
+function wOf(ts){var p=loadDB().params;var days=(Date.now()-ts)/86400000;if(days<0)days=0;return Math.pow(p.decay||0.93,days/30);}
+function tget(n){var D=loadDB();if(!D.teams[n])D.teams[n]={elo:1500,n:0,last:0,hg:0,hc:0,hn:0,ag:0,ac:0,an:0,dates:[]};return D.teams[n];}
+function namesOf(m){var h=(m.home&&(m.home.name||m.home))||'';var a=(m.away&&(m.away.name||m.away))||'';return [String(h),String(a)];}
+try{
+if(typeof window.fetchESPN==='function'){
+var origF=window.fetchESPN;
+window.fetchESPN=function(l,ds){
+return origF.apply(this,arguments).then(function(list){
+try{
+(list||[]).forEach(function(m){
+if(!m||!(m.statusCompleted||m.statusState==='post'))return;
+if(m.__learned99)return;m.__learned99=true;
+var hs=m.scoreHome,as=m.scoreAway;
+if(hs==null||as==null)return;
+var nm=namesOf(m);if(!nm[0]||!nm[1])return;
+var ts=dayMs(m.date)||Date.now();
+var w=wOf(ts);
+var H=tget(nm[0]),A=tget(nm[1]);
+var D=loadDB();
+var exp=1/(1+Math.pow(10,-(((H.elo-A.elo)+(D.params.homeAdv||0.28)*100))/400));
+var sc=hs>as?1:(hs===as?0.5:0);
+H.elo+=20*(sc-exp);A.elo+=20*((1-sc)-(1-exp));
+H.hg+=hs*w;H.hc+=as*w;H.hn+=w;
+A.ag+=as*w;A.ac+=hs*w;A.an+=w;
+H.n++;A.n++;H.last=ts;A.last=ts;
+H.dates.push(ts);if(H.dates.length>40)H.dates=H.dates.slice(-40);
+A.dates.push(ts);if(A.dates.length>40)A.dates=A.dates.slice(-40);
+var hk=nm[0]<nm[1]?nm[0]+'|'+nm[1]:nm[1]+'|'+nm[0];
+if(!D.h2h[hk])D.h2h[hk]={n:0,hw:0,aw:0,dr:0};
+var hh=D.h2h[hk];hh.n++;
+var homeFirst=(nm[0]<nm[1]);
+if(hs>as){if(homeFirst)hh.hw++;else hh.aw++;}
+else if(hs===as){hh.dr++;}
+else{if(homeFirst)hh.aw++;else hh.hw++;}
+saveDB();
+});
+}catch(e){}
+return list;
+});
+};
+}
+}catch(e){}
+function pois(l,k){var e=Math.exp(-l),f=1;for(var i=1;i<=k;i++)f*=l/i;return e/f;}
+function tau(h,a,l,mu){var rho=-0.04;
+if(h===0&&a===0)return 1-l*mu*rho;
+if(h===0&&a===1)return 1+l*rho;
+if(h===1&&a===0)return 1+mu*rho;
+if(h===1&&a===1)return 1-rho;
+return 1;}
+function fat(T){var d=T.dates;if(!d||d.length<2)return 1;var gap=(Date.now()-d[d.length-1])/86400000;
+if(gap<3)return 0.92;if(gap>21)return 0.97;return 1;}
+function royal(m){
+var nm=namesOf(m);var H=tget(nm[0]||'?'),A=tget(nm[1]||'?');
+var D=loadDB();var base=1.32;
+var attH=H.hn>0.5?(H.hg/H.hn)/base:1;
+var defA=A.an>0.5?(A.ac/A.an)/base:1;
+var attA=A.an>0.5?(A.ag/A.an)/base:1;
+var defH=H.hn>0.5?(H.hc/H.hn)/base:1;
+var eloD=(H.elo-A.elo)/400;
+var ha=D.params.homeAdv||0.28;
+var lamH=base*attH*defA*Math.pow(1.13,eloD)*(1+ha*0.3)*fat(H);
+var lamA=base*attA*defH*Math.pow(1.13,-eloD)*(1-ha*0.15)*fat(A);
+if(lamH<0.3)lamH=0.3;if(lamH>4.5)lamH=4.5;
+if(lamA<0.3)lamA=0.3;if(lamA>4.5)lamA=4.5;
+var pH=0,pX=0,pA=0,o15=0,o25=0,btts=0,combo=0;
+var scores=[];
+for(var h=0;h<=6;h++){for(var a=0;a<=6;a++){
+var pr=pois(lamH,h)*pois(lamA,a)*tau(h,a,lamH,lamA);
+scores.push({s:h+'-'+a,pr:pr});
+if(h>a)pH+=pr;else if(h===a)pX+=pr;else pA+=pr;
+if(h+a>=2)o15+=pr;
+if(h+a>=3)o25+=pr;
+if(h>0&&a>0)btts+=pr;
+if((h>a||h===a)&&h+a<=3)combo+=pr;
+}}
+scores.sort(function(x,y){return y.pr-x.pr;});
+var lH1=lamH*0.44,lA1=lamA*0.44;
+var htH=0,htX=0,htA=0,htO=0;
+for(var h2=0;h2<=4;h2++){for(var a2=0;a2<=4;a2++){
+var pr2=pois(lH1,h2)*pois(lA1,a2);
+if(h2>a2)htH+=pr2;else if(h2===a2)htX+=pr2;else htA+=pr2;
+if(h2+a2>=1)htO+=pr2;}}
+var hk=nm[0]<nm[1]?nm[0]+'|'+nm[1]:nm[1]+'|'+nm[0];
+var hh=D.h2h[hk]||null;
+if(hh&&hh.n>=2){var bias=(hh.hw-hh.aw)/hh.n*0.06;var sh=pH+pX+pA;
+pH=Math.max(0.03,pH+bias);pA=Math.max(0.03,pA-bias);var s2=pH+pX+pA;pH/=s2/sh;pX/=s2/sh;pA/=s2/sh;}
+var tH05=1-pois(lamH,0),tH15=1-pois(lamH,0)-pois(lamH,1);
+var tA05=1-pois(lamA,0),tA15=1-pois(lamA,0)-pois(lamA,1);
+var minN=Math.min(H.n||0,A.n||0);
+var lgAcc=null;try{var lg=D.lg[m.leagueSlug||''];if(lg&&lg.t>=5)lgAcc=lg.h/lg.t;}catch(e){}
+var stars=minN>=10?5:minN>=6?4:minN>=3?3:minN>=1?2:1;
+if(lgAcc!=null&&lgAcc<0.5)stars=Math.max(1,stars-1);
+var reasons=[];
+reasons.push('تفوق تصنيف: '+(eloD>=0?nm[0]:nm[1])+' بفارق '+Math.abs(Math.round(eloD*100)));
+reasons.push('هجوم '+nm[0]+' على أرضه '+Math.round(attH*100)+'% من متوسط الدوري');
+if(hh&&hh.n>=2)reasons.push('المواجهات المباشرة '+hh.hw+' فوز / '+hh.dr+' تعادل / '+hh.aw+'');
+else reasons.push('لا مواجهات مباشرة كافية — الاعتماد على التصنيف');
+return {lamH:lamH,lamA:lamA,pH:pH,pX:pX,pA:pA,o15:o15,o25:o25,u25:1-o25,btts:btts,combo:combo,
+top3:scores.slice(0,3),htH:htH,htX:htX,htA:htA,htO:htO,tH05:tH05,tH15:tH15,tA05:tA05,tA15:tA15,
+stars:stars,reasons:reasons,lgAcc:lgAcc};
+}
+try{
+if(typeof window.getPrediction==='function'){
+var origP=window.getPrediction;
+window.getPrediction=function(m){
+var p=origP.apply(this,arguments);
+try{
+if(m&&p&&!p.__royal){
+var R=royal(m);
+p.__royal=R;
+if(p.dc1&&p.dc1.prob!=null)p.dc1.prob=Math.round(0.5*p.dc1.prob+0.5*(R.pH+R.pX)*100);
+if(p.dc2&&p.dc2.prob!=null)p.dc2.prob=Math.round(0.5*p.dc2.prob+0.5*(R.pA+R.pX)*100);
+}
+}catch(e){}
+return p;
+};
+}
+}catch(e){}
+function backtest(){
+var D=loadDB();
+if(Date.now()-D.bt.last<6*3600*1000)return;
+D.bt.last=Date.now();
+try{
+var FROZ={};try{FROZ=JSON.parse(localStorage.getItem('egb_pred_frozen_v85')||'{}');}catch(e){}
+if(window.state&&state.matches){
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
+if(!m||!(m.statusCompleted||m.statusState==='post'))continue;
+var k=null;try{k=matchKey(m);}catch(e){continue;}
+if(!k||!FROZ[k]||D.bt.counted[k])continue;
+var hs=m.scoreHome,as=m.scoreAway;if(hs==null||as==null)continue;
+D.bt.counted[k]=1;
+var tot=hs+as;
+var lab='';try{lab=JSON.stringify((FROZ[k].p&&FROZ[k].p.topScores&&FROZ[k].p.topScores[0])||'');}catch(e){}
+var fam='oth';
+if(/أكثر من 1.5|Over 1.5/.test(lab))fam='o15';
+else if(/أكثر من 2.5|Over 2.5/.test(lab))fam='o25';
+else if(/أقل من 2.5|Under 2.5/.test(lab))fam='u25';
+else if(/1X/.test(lab))fam='1x';
+else if(/X2/.test(lab))fam='x2';
+var hit=false;
+if(fam==='o15')hit=tot>=2;
+else if(fam==='o25')hit=tot>=3;
+else if(fam==='u25')hit=tot<=2;
+else if(fam==='1x')hit=hs>=as;
+else if(fam==='x2')hit=as>=hs;
+else hit=tot>=1;
+if(!D.mk[fam])D.mk[fam]={h:0,t:0};
+D.mk[fam].t++;if(hit)D.mk[fam].h++;
+var lg=m.leagueSlug||'?';
+if(!D.lg[lg])D.lg[lg]={h:0,t:0};
+D.lg[lg].t++;if(hit)D.lg[lg].h++;
+var cnt=0,tot2=0;for(var f in D.mk){cnt+=D.mk[f].h;tot2+=D.mk[f].t;}
+if(tot2>=30){var acc=cnt/tot2;
+if(acc<0.62)D.params.homeAdv=Math.max(0.15,D.params.homeAdv-0.02);
+else if(acc>0.72)D.params.homeAdv=Math.min(0.4,D.params.homeAdv+0.01);
+D.params.updated=Date.now();}
+}
+saveDB();
+}catch(e){}
+}
+setTimeout(backtest,15000);setInterval(backtest,6*3600*1000);
+function pct(x){return Math.round(x*100)+'%';}
+function livePulse(m,R){
+try{
+var MIN_RE=/(\d{1,2})(\+\d+)?\s*'/;var min=0;
+for(var k in m){if(k.indexOf('__')===0)continue;var v=m[k];
+if(typeof v==='string'&&v.length<40&&MIN_RE.test(v)){var mm=v.match(MIN_RE);min=parseInt(mm[1],10);break;}}
+if(!min)return '';
+var rem=Math.max(0,90-min)/90;
+var lH=R.lamH*rem,lA=R.lamA*rem;
+var hs=m.scoreHome||0,as=m.scoreAway||0;
+var wH=0,wX=0,wA=0;
+for(var h=0;h<=4;h++){for(var a=0;a<=4;a++){
+var pr=pois(lH,h)*pois(lA,a);
+if(hs+h>as+a)wH+=pr;else if(hs+h===as+a)wX+=pr;else wA+=pr;}}
+return 'النبض: فوز '+pct(wH)+' • تعادل '+pct(wX)+' • خسارة '+pct(wA);
+}catch(e){return '';}}
+function pickLabel(p){
+try{var arr=p&&p.topScores?p.topScores:[];
+for(var i=0;i<arr.length;i++){var s=JSON.stringify(arr[i]||'');
+var m2=s.match(/(أكثر من [\d.]+|أقل من [\d.]+|1X \(|X2 \(|Over\s?[\d.]+|Under\s?[\d.]+)/);
+if(m2)return m2[1].replace(/ \($/,'');}
+}catch(e){}
+return 'أكثر من 1.5';}
+function cert(m,p,R){
+try{
+var nm=namesOf(m);
+var c=document.createElement('canvas');c.width=640;c.height=400;
+var x=c.getContext('2d');
+x.fillStyle='#140f08';x.fillRect(0,0,640,400);
+x.strokeStyle='#d4af37';x.lineWidth=6;x.strokeRect(14,14,612,372);
+x.strokeStyle='rgba(212,175,55,.35)';x.lineWidth=2;x.strokeRect(26,26,588,348);
+x.fillStyle='#f5d67b';x.font='bold 30px sans-serif';x.textAlign='center';
+x.fillText('Egypt Bet — شهادة توقع ملكية',320,80);
+x.fillStyle='#e8d9a8';x.font='bold 24px sans-serif';
+x.fillText(nm[0]+'  ضد  '+nm[1],320,140);
+x.fillStyle='#c9b070';x.font='16px sans-serif';
+x.fillText(String(m.leagueName||m.leagueSlug||''),320,172);
+x.fillStyle='#f0d488';x.font='bold 26px sans-serif';
+x.fillText('التوقع المختوم: '+pickLabel(p),320,230);
+x.fillStyle='#f5d67b';x.font='22px sans-serif';
+var st='';for(var i=0;i<5;i++)st+=i<R.stars?'★':'☆';
+x.fillText(st,320,270);
+x.fillStyle='#9c8a5e';x.font='14px sans-serif';
+x.fillText(new Date().toLocaleDateString('ar-EG')+' — محرك ملكي v2',320,330);
+var url=c.toDataURL('image/png');
+if(navigator.share&&navigator.canShare){
+fetch(url).then(function(r){return r.blob();}).then(function(b){
+var f=new File([b],'egyptbet-cert.png',{type:'image/png'});
+if(navigator.canShare({files:[f]}))return navigator.share({files:[f],title:'شهادة توقع'});
+var a=document.createElement('a');a.href=url;a.download='egyptbet-cert.png';a.click();
+}).catch(function(){var a=document.createElement('a');a.href=url;a.download='egyptbet-cert.png';a.click();});
+}else{var a2=document.createElement('a');a2.href=url;a2.download='egyptbet-cert.png';a2.click();}
+}catch(e){}}
+function enrich(){
+var pills=document.querySelectorAll('.egbSafe');
+for(var pi=0;pi<pills.length;pi++){
+var n=pills[pi],box=null;
+for(var u=0;u<5&&n;u++){n=n.parentElement;if(n&&n.offsetHeight>=140){box=n;break;}}
+if(!box||box.querySelector('.egbRoyalRow'))continue;
+var oc=box;for(var j=0;j<8&&oc;j++){if(oc.classList&&oc.classList.contains('card'))break;oc=oc.parentElement;}
+var ct=(oc?oc.textContent:box.textContent)||'';
+var runs=ct.match(/[A-Za-z][A-Za-z\s.'&-]{2,}/g)||[];
+var sig=[];for(var r=0;r<runs.length&&sig.length<2;r++){var rr=runs[r].trim();if(rr.length>=3&&sig.indexOf(rr)<0)sig.push(rr);}
+if(sig.length<2)continue;
+var m=null;
+if(window.state&&state.matches){
+for(var q=0;q<state.matches.length;q++){var nm=namesOf(state.matches[q]);
+if((nm[0]===sig[0]&&nm[1]===sig[1])||(nm[0]===sig[1]&&nm[1]===sig[0])){m=state.matches[q];break;}}}
+if(!m)continue;
+var p=null;try{p=window.getPrediction(m);}catch(e){continue;}
+var R=p&&p.__royal;if(!R)continue;
+var row=document.createElement('div');row.className='egbRoyalRow';
+var html='';
+html+='<div class="egbBar1x2"><i class="egbSeg1" style="width:'+Math.round(R.pH*100)+'%"></i><i class="egbSegX" style="width:'+Math.round(R.pX*100)+'%"></i><i class="egbSeg2" style="width:'+Math.round(R.pA*100)+'%"></i></div>';
+html+='<div class="egbRChips">';
+for(var t3=0;t3<R.top3.length;t3++)html+='<span class="egbRChip">نتيجة '+R.top3[t3].s+' • '+pct(R.top3[t3].pr)+'</span>';
+html+='<span class="egbRChip">الفريقان يسجلان: نعم '+pct(R.btts)+'</span>';
+html+='<span class="egbRChip">شوط أول: '+(R.htH>=R.htA&&R.htH>=R.htX?'فوز '+namesOf(m)[0]:(R.htA>=R.htH&&R.htA>=R.htX?'فوز '+namesOf(m)[1]:'تعادل'))+' '+pct(Math.max(R.htH,R.htX,R.htA))+'</span>';
+html+='<span class="egbRChip">كومبو آمن: فرصة مزدوجة 1 + تحت 3.5 • '+pct(R.combo)+'</span>';
+html+='<span class="egbRChip">'+namesOf(m)[0]+' يسجل +1.5 • '+pct(R.tH15)+'</span>';
+html+='</div>';
+var isLive=!(m.statusCompleted||m.statusState==='post');
+if(isLive)html+='<span class="egbPulse" data-pulse="1"></span>';
+html+='<div class="egbReason">ليه؟ '+R.reasons.join(' • ')+'</div>';
+var st='';for(var s5=0;s5<5;s5++)st+=s5<R.stars?'★':'☆';
+html+='<div style="display:flex;align-items:center;gap:10px;"><span class="egbStars">'+st+'</span><button class="egbCertBtn" type="button">📜 شارك الشهادة</button></div>';
+row.innerHTML=html;
+box.appendChild(row);
+var btn=row.querySelector('.egbCertBtn');
+if(btn)(function(mm,pp,RR){btn.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();cert(mm,pp,RR);});})(m,p,R);
+}
+var pulses=document.querySelectorAll('[data-pulse]');
+for(var pz=0;pz<pulses.length;pz++){
+var el=pulses[pz];
+var box2=el;for(var u2=0;u2<6&&box2;u2++){if(box2.classList&&box2.classList.contains('egbRoyalRow'))break;box2=box2.parentElement;}
+if(!box2)continue;
+if(!box2.__m99){
+var oc2=box2;for(var j2=0;j2<10&&oc2;j2++){if(oc2.classList&&oc2.classList.contains('card'))break;oc2=oc2.parentElement;}
+var ct2=(oc2?oc2.textContent:'')||'';
+var runs2=ct2.match(/[A-Za-z][A-Za-z\s.'&-]{2,}/g)||[];
+var sig2=[];for(var r2=0;r2<runs2.length&&sig2.length<2;r2++){var rr2=runs2[r].trim();if(rr2.length>=3&&sig2.indexOf(rr2)<0)sig2.push(rr2);}
+if(window.state&&state.matches){for(var q2=0;q2<state.matches.length;q2++){var nm2=namesOf(state.matches[q2]);
+if((nm2[0]===sig2[0]&&nm2[1]===sig2[1])||(nm2[0]===sig2[1]&&nm2[1]===sig2[0])){box2.__m99=state.matches[q2];break;}}}
+}
+if(box2.__m99){
+var p2=null;try{p2=window.getPrediction(box2.__m99);}catch(e){}
+var R2=p2&&p2.__royal;
+if(R2)el.textContent=livePulse(box2.__m99,R2);
+}
+}
+}
+enrich();
+setInterval(enrich,2500);
+try{
+if(typeof window.renderCurrent==='function'){
+var origRC=window.renderCurrent;
+window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{setTimeout(enrich,60);}catch(e){}return r;};
+}
+}catch(e){}
+try{console.info('[EgyptBet Addon] royal-engine-v99: ON (all 21 upgrades)');}catch(e){}
+})();
+</script>
+<!-- ===== نهاية إضافة: المحرك الملكي v2 الشامل v99 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
