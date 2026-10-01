@@ -4499,69 +4499,6 @@ console.info('[EgyptBet Addon] freeze-v85: ON (predictions sealed at kickoff)');
 }catch(e){console.warn('[EgyptBet Addon] v85:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: ختم البردية لتجميد التوقعات v85 ===== -->
-<!-- ===== إضافة: ختم الزوار الملكي بعدّاد الجلسات v87.1 | 2026-10-02 ===== -->
-<style id="egb-visitors-seal">
-#egbRoyalPulse .rp-clock b{font-size:16px !important;line-height:1 !important;}
-#egbRoyalPulse .rp-clock i{font-style:normal !important;font-size:7.5px !important;color:#c9b070 !important;font-weight:800 !important;line-height:1 !important;margin-top:3px !important;}
-</style>
-<script>
-(function(){'use strict';try{
-var KEY='AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEw-u9TN-ek';
-var PROJ='egypt-bet-dab93';
-function pad(x){return ('0'+x).slice(-2);}
-function dayId(){var d=new Date();return 'day-'+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-function docUrl(){return 'https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/daily_visits/'+dayId();}
-function show(n){var el=document.getElementById('egbVisN');if(el)el.textContent=n;}
-function mount(){var c=document.querySelector('#egbRoyalPulse .rp-clock');if(!c)return false;
-if(!document.getElementById('egbVisN')){c.innerHTML='<b id="egbVisN">--</b><i>زوار اليوم</i>';}
-return true;}
-function restoreClock(){var c=document.querySelector('#egbRoyalPulse .rp-clock');
-if(c&&!document.getElementById('rpTime')&&!document.getElementById('egbVisN'))c.innerHTML='<span id="rpTime"></span>';}
-function val(d){try{var f=d.fields.v;return parseInt(f.integerValue||f.stringValue,10);}catch(e){return null;}}
-function read(cb){
-fetch(docUrl()+'?key='+KEY,{cache:'no-store'})
-.then(function(r){if(!r.ok)throw 0;return r.json();})
-.then(function(j){cb(val(j));})
-.catch(function(){cb(null);});
-}
-function bump(){
-read(function(cur){
-if(cur==null){
-fetch('https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/daily_visits?documentId='+dayId()+'&key='+KEY,{
-method:'POST',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({fields:{v:{integerValue:'1'}}})
-}).then(function(r){if(r.ok){show(1);}else{restoreClock();}})
-.catch(function(){restoreClock();});
-}else{
-fetch(docUrl()+'?updateMask.fieldPaths=v&key='+KEY,{
-method:'PATCH',headers:{'Content-Type':'application/json'},
-body:JSON.stringify({fields:{v:{integerValue:String(cur+1)}}})
-}).then(function(r){if(r.ok){show(cur+1);}else{show(cur);}})
-.catch(function(){show(cur);});
-}
-});
-}
-var countedThisLoad=false,hiddenAt=0;
-var tries=0;
-function boot(){
-if(mount()){
-if(!countedThisLoad){countedThisLoad=true;bump();}
-}else if(tries++<10){setTimeout(boot,1500);}
-}
-boot();
-document.addEventListener('visibilitychange',function(){
-if(document.hidden){hiddenAt=Date.now();}
-else{
-if(hiddenAt&&(Date.now()-hiddenAt)>600000){bump();}
-hiddenAt=0;
-setTimeout(function(){read(function(n){if(n!=null)show(n);});},1500);
-}
-});
-setInterval(function(){if(document.hidden)return;read(function(n){if(n!=null)show(n);});},60000);
-console.info('[EgyptBet Addon] visitors-seal-v87.1: ON (session counter)');
-}catch(e){console.warn('[EgyptBet Addon] v87.1:',e);}})();
-</script>
-<!-- ===== نهاية إضافة: ختم الزوار الملكي بعدّاد الجلسات v87.1 ===== -->
 <!-- ===== إضافة: درع الختم لتوقعات الأهداف v88 | 2026-10-02 ===== -->
 <script>
 (function(){'use strict';try{
@@ -4753,6 +4690,71 @@ console.info('[EgyptBet Addon] diag-exec-v95: ON');
 }catch(e){console.warn('[EgyptBet Addon] v95:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: الشخاص والمنفذ v95 ===== -->
+<!-- ===== إضافة: ختم الزوار الأبدي v96 | 2026-10-03 ===== -->
+<style id="egb-visitors-total">
+#egbRoyalPulse .rp-clock b{font-size:16px !important;line-height:1 !important;}
+#egbRoyalPulse .rp-clock i{font-style:normal !important;font-size:7.5px !important;color:#c9b070 !important;font-weight:800 !important;line-height:1 !important;margin-top:3px !important;}
+</style>
+<script>
+(function(){'use strict';try{
+var KEY='AIzaSyAZLh5gvZptvg5ZaHGn8TbGOEw-u9TN-ek';
+var PROJ='egypt-bet-dab93';
+var BASE='https://firestore.googleapis.com/v1/projects/'+PROJ+'/databases/(default)/documents/';
+var TOT=BASE+'visit_counter/total';
+function show(n){var el=document.getElementById('egbVisN');if(el)el.textContent=n;}
+function mount(){var c=document.querySelector('#egbRoyalPulse .rp-clock');if(!c)return false;
+if(!document.getElementById('egbVisN')){c.innerHTML='<b id="egbVisN">--</b><i>إجمالي الزوار</i>';}
+else{var i=c.querySelector('i');if(i)i.textContent='إجمالي الزوار';}
+return true;}
+function restoreClock(){var c=document.querySelector('#egbRoyalPulse .rp-clock');
+if(c&&!document.getElementById('rpTime')&&!document.getElementById('egbVisN'))c.innerHTML='<span id="rpTime"></span>';}
+function val(d){try{var f=d.fields.v;return parseInt(f.integerValue||f.stringValue,10);}catch(e){return null;}}
+function read(cb){
+fetch(TOT+'?key='+KEY,{cache:'no-store'})
+.then(function(r){if(!r.ok)throw 0;return r.json();})
+.then(function(j){cb(val(j));})
+.catch(function(){cb(null);});
+}
+function migrateThenStart(){
+fetch(BASE+'daily_visits?key='+KEY,{cache:'no-store'})
+.then(function(r){return r.ok?r.json():{documents:[]};})
+.then(function(j){
+var sum=0;var docs=j.documents||[];
+for(var i=0;i<docs.length;i++){var v=val(docs[i]);if(v)sum+=v;}
+fetch(BASE+'visit_counter?documentId=total&key='+KEY,{
+method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({fields:{v:{integerValue:String(sum+1)}}})
+}).then(function(r){if(r.ok){show(sum+1);}else{restoreClock();}})
+.catch(function(){restoreClock();});
+})
+.catch(function(){restoreClock();});
+}
+function bump(){
+read(function(cur){
+if(cur==null){migrateThenStart();return;}
+fetch(TOT+'?updateMask.fieldPaths=v&key='+KEY,{
+method:'PATCH',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({fields:{v:{integerValue:String(cur+1)}}})
+}).then(function(r){if(r.ok){show(cur+1);}else{show(cur);}})
+.catch(function(){show(cur);});
+});
+}
+var countedThisLoad=false,hiddenAt=0,tries=0;
+function boot(){if(mount()){if(!countedThisLoad){countedThisLoad=true;bump();}}else if(tries++<10){setTimeout(boot,1500);}}
+boot();
+document.addEventListener('visibilitychange',function(){
+if(document.hidden){hiddenAt=Date.now();}
+else{
+if(hiddenAt&&(Date.now()-hiddenAt)>600000){bump();}
+hiddenAt=0;
+setTimeout(function(){read(function(n){if(n!=null)show(n);});},1500);
+}
+});
+setInterval(function(){if(document.hidden)return;read(function(n){if(n!=null)show(n);});},60000);
+console.info('[EgyptBet Addon] visitors-total-v96: ON (never resets)');
+}catch(e){console.warn('[EgyptBet Addon] v96:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: ختم الزوار الأبدي v96 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
