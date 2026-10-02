@@ -5124,6 +5124,128 @@ console.info('[EgyptBet Addon] independent-ft-v98: ON');
 }catch(e){console.warn('[EgyptBet Addon] v98:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منفذ النهاية المستقل v98 ===== -->
+<!-- ===== إضافة: المقيّم الملكي الصحيح v103 | 2026-10-03 ===== -->
+<script>
+(function(){'use strict';try{
+var KEY='egb_eval_v103';
+var DB=null;
+function load(){if(DB)return DB;try{DB=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){DB=null;}if(!DB)DB={days:{},done:{}};return DB;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+setInterval(save,8000);
+function frozen(){try{return JSON.parse(localStorage.getItem('eb_pred_frozen')||'{}')||{};}catch(e){return {};}}
+function safeLabel(f){
+if(!f)return null;
+if(f.safe&&f.safe.text)return f.safe.text;
+if(f.safeTicket&&f.safeTicket.text)return f.safeTicket.text;
+var s=JSON.stringify(f);
+var m=s.match(/(أكثر من [\d.]+|أقل من [\d.]+|1X \(|X2 \(|12 \(|فوز المضيف|فوز الضيف|تعادل|هدف في الشوط الأول)/);
+return m?m[1]:null;
+}
+function evalPick(label,m){
+if(!label||m.scoreHome==null||m.scoreAway==null)return null;
+var hs=m.scoreHome,as=m.scoreAway,tot=hs+as,mm;
+if((mm=label.match(/أكثر من ([\d.]+)/)))return tot>parseFloat(mm[1]);
+if((mm=label.match(/أقل من ([\d.]+)/)))return tot<parseFloat(mm[1]);
+if(label.indexOf('1X')===0)return hs>=as;
+if(label.indexOf('X2')===0)return as>=hs;
+if(label.indexOf('12')===0)return hs!==as;
+if(label.indexOf('فوز المضيف')===0)return hs>as;
+if(label.indexOf('فوز الضيف')===0)return as>hs;
+if(label.indexOf('تعادل')===0)return hs===as;
+if(label.indexOf('الشوط الأول')>=0){
+if(m.hasHalf&&m.fhHome!=null&&m.fhAway!=null)return (m.fhHome+m.fhAway)>=1;
+return null;
+}
+return null;
+}
+function dayKey(m){try{var d=new Date(m.date);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}catch(e){return '';}}
+function evaluate(m){
+load();
+var k=m.id;if(!k||DB.done[k])return;
+var f=frozen()[k];if(!f)return;
+var res=evalPick(safeLabel(f),m);
+if(res===null)return;
+DB.done[k]=res?1:0;
+var d=dayKey(m);if(!d)return;
+if(!DB.days[d])DB.days[d]={w:0,l:0};
+if(res)DB.days[d].w++;else DB.days[d].l++;
+save();
+}
+function scanFinished(){
+if(!window.state||!state.matches)return;
+for(var i=0;i<state.matches.length;i++){var m=state.matches[i];
+if(m&&(m.statusCompleted||m.statusState==='post'))evaluate(m);}
+}
+function fixPanel(){
+load();
+var els=document.querySelectorAll('div,span,b');
+for(var i=0;i<els.length;i++){
+var el=els[i];
+var t=(el.textContent||'').trim();
+if(!/^\d+\s*كسبان/.test(t))continue;
+var row=el;var date=null;
+for(var u=0;u<4&&row;u++){
+var rt=row.textContent||'';
+var dm=rt.match(/(20\d{2}-\d{2}-\d{2})/);
+if(dm){date=dm[1];break;}
+row=row.parentElement;
+}
+if(!date)continue;
+var d=DB.days[date];if(!d)continue;
+var tot=d.w+d.l;if(!tot)continue;
+el.textContent=d.w+' كسبان • '+d.l+' خسران';
+if(row){
+var ps=row.querySelectorAll('div,span,b');
+for(var q=0;q<ps.length;q++){
+var pt=(ps[q].textContent||'').trim();
+if(/^%\d+$|^\d+%$/.test(pt)&&pt.length<=4){ps[q].textContent=Math.round(d.w/tot*100)+'%';break;}
+}
+}
+}
+}
+function markCards(){
+load();
+var safes=document.querySelectorAll('.safe-val');
+for(var i=0;i<safes.length;i++){
+var el=safes[i];
+if(el.querySelector('.egbMark'))continue;
+var card=el;
+for(var u=0;u<8&&card;u++){if(card.classList&&card.classList.contains('card'))break;card=card.parentElement;}
+if(!card)continue;
+var ct=card.textContent||'';
+var runs=ct.match(/[A-Za-z][A-Za-z\s.'&-]{2,}/g)||[];
+var sig=[];for(var r=0;r<runs.length&&sig.length<2;r++){var rr=runs[r].trim();if(rr.length>=3&&sig.indexOf(rr)<0)sig.push(rr);}
+if(sig.length<2)continue;
+var m=null;
+if(window.state&&state.matches){
+for(var q=0;q<state.matches.length;q++){
+var nm=[String((state.matches[q].home&&(state.matches[q].home.name||state.matches[q].home))||''),String((state.matches[q].away&&(state.matches[q].away.name||state.matches[q].away))||'')];
+if((nm[0]===sig[0]&&nm[1]===sig[1])||(nm[0]===sig[1]&&nm[1]===sig[0])){m=state.matches[q];break;}
+}
+}
+if(!m||!(m.statusCompleted||m.statusState==='post'))continue;
+var res=load().done[m.id];
+if(res===undefined||res===null)continue;
+var s=document.createElement('span');
+s.className='egbMark';
+s.style.cssText='margin-inline-start:8px;font-size:14px;';
+s.textContent=res?'✅':'❌';
+el.appendChild(s);
+}
+}
+function run(){try{scanFinished();fixPanel();markCards();}catch(e){}}
+run();
+setInterval(run,4000);
+try{
+if(typeof window.renderCurrent==='function'){
+var origRC=window.renderCurrent;
+window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{setTimeout(run,80);}catch(e){}return r;};
+}
+}catch(e){}
+console.info('[EgyptBet Addon] true-evaluator-v103: ON');
+}catch(e){console.warn('[EgyptBet Addon] v103:',e);}})();
+</script>
+<!-- ===== نهاية إضافة: المقيّم الملكي الصحيح v103 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
