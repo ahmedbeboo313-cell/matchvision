@@ -5124,7 +5124,7 @@ console.info('[EgyptBet Addon] independent-ft-v98: ON');
 }catch(e){console.warn('[EgyptBet Addon] v98:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منفذ النهاية المستقل v98 ===== -->
-<!-- ===== إضافة: القاضي الأخير v107 | 2026-10-03 ===== -->
+<!-- ===== إضافة: القاضي الذري v108 | 2026-10-03 ===== -->
 <script>
 (function(){'use strict';try{
 var KEY='egb_eval_v103';
@@ -5138,7 +5138,7 @@ var b=document.getElementById('egbJudgeBadge');
 if(!b){b=document.createElement('div');b.id='egbJudgeBadge';
 b.style.cssText='position:fixed;bottom:160px;left:8px;z-index:60;background:rgba(26,20,8,.92);color:#f0d488;border:1px solid rgba(212,175,55,.5);border-radius:999px;padding:4px 10px;font-size:10px;font-weight:800;pointer-events:none;';
 document.body.appendChild(b);}
-b.textContent='⚖️ v107: '+count()+' rev:'+REV;
+b.textContent='⚖️ v108: '+count()+' rev:'+REV;
 }
 function cleanLabel(t){return (t||'').replace(/[✔✓✅❌✗]/g,'').replace(/\s+/g,' ').trim();}
 var PAT=/^(أكثر من [\d.]+|أقل من [\d.]+|1X \(|X2 \(|12 \(|فوز المضيف|فوز الضيف|تعادل)/;
@@ -5157,19 +5157,6 @@ return null;
 }
 function namesOf(m){var h=(m.home&&(m.home.name||m.home))||'';var a=(m.away&&(m.away.name||m.away))||'';return [String(h),String(a)];}
 function dayKey(m){try{var d=new Date(m.date);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}catch(e){return '';}}
-function fixEl(el,res,label){
-try{el.classList.remove('miss','hit','hot','warn','good');}catch(e){}
-var cur=el.textContent||'';
-var has=(cur.indexOf('✔')>=0||cur.indexOf('❌')>=0);
-var wrong=(res&&cur.indexOf('❌')>=0)||(!res&&cur.indexOf('✔')>=0);
-var touched=false;
-if(!has||wrong){el.textContent=label+' '+(res?'✔':'❌');touched=true;}
-var col=res?'#86efac':'#fca5a5';
-if(el.style.color!==col){el.style.color=col;el.style.textShadow='none';touched=true;}
-if(el.dataset.j107==='1'&&!has){REV++;}
-el.dataset.j107='1';
-return touched;
-}
 function run(){
 load();
 if(!window.state||!state.matches)return;
@@ -5187,18 +5174,31 @@ var nm=namesOf(state.matches[q]);
 if((nm[0]===sig[0]&&nm[1]===sig[1])||(nm[0]===sig[1]&&nm[1]===sig[0])){m=state.matches[q];break;}
 }
 if(!m||m.scoreHome==null||m.scoreAway==null)continue;
-var vals=card.querySelectorAll('.safe-val');
-var touched=false;var labelUsed=null;
-for(var v=0;v<vals.length;v++){
-var el=vals[v];
-var t=cleanLabel(el.textContent||'');
-if(t.indexOf('نعم —')===0||t.indexOf('لا —')===0)continue;
-if(t.length<4||t.length>40||t.indexOf('%')>=0)continue;
-if(!PAT.test(t))continue;
-var res=evalPick(t,m.scoreHome,m.scoreAway);
+var seen=[];var touched=false;var labelUsed=null;
+var walker=document.createTreeWalker(card,4,null);
+while(walker.nextNode()){
+var n=walker.currentNode;
+var raw=n.nodeValue||'';
+if(!raw.trim())continue;
+var parent=n.parentElement;
+if(!parent)continue;
+if(seen.indexOf(parent)>=0)continue;
+seen.push(parent);
+if(parent.closest&&parent.closest('.schip'))continue;
+var pt=cleanLabel(parent.textContent||'');
+if(pt.length<4||pt.length>40||pt.indexOf('%')>=0)continue;
+if(pt.indexOf('نعم —')===0||pt.indexOf('لا —')===0)continue;
+if(!PAT.test(pt))continue;
+var res=evalPick(pt,m.scoreHome,m.scoreAway);
 if(res===null)continue;
-labelUsed=t;
-if(fixEl(el,res,t))touched=true;
+labelUsed=pt;
+try{parent.classList.remove('miss','hit','hot','warn','good');}catch(e){}
+var cur=parent.textContent||'';
+var has=(cur.indexOf('✔')>=0||cur.indexOf('❌')>=0);
+var wrong=(res&&cur.indexOf('❌')>=0)||(!res&&cur.indexOf('✔')>=0);
+if(!has||wrong){parent.textContent=pt+' '+(res?'✔':'❌');touched=true;}
+var col=res?'#86efac':'#fca5a5';
+if(parent.style.color!==col){parent.style.color=col;parent.style.textShadow='none';touched=true;}
 }
 if(labelUsed!==null){
 var k=m.id;
@@ -5232,10 +5232,10 @@ var origRC=window.renderCurrent;
 window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{setTimeout(run,60);}catch(e){}return r;};
 }
 }catch(e){}
-console.info('[EgyptBet Addon] final-judge-v107: ON');
-}catch(e){console.warn('[EgyptBet Addon] v107:',e);}})();
+console.info('[EgyptBet Addon] atomic-judge-v108: ON');
+}catch(e){console.warn('[EgyptBet Addon] v108:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: القاضي الأخير v107 ===== -->
+<!-- ===== نهاية إضافة: القاضي الذري v108 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
