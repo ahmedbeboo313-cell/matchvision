@@ -5124,17 +5124,24 @@ console.info('[EgyptBet Addon] independent-ft-v98: ON');
 }catch(e){console.warn('[EgyptBet Addon] v98:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منفذ النهاية المستقل v98 ===== -->
-<!-- ===== إضافة: قاضي الحقيقة v104 | 2026-10-03 ===== -->
+<!-- ===== إضافة: القاضي المثبت v105 | 2026-10-03 ===== -->
 <script>
 (function(){'use strict';try{
 var KEY='egb_eval_v103';
-var DB=null;
+var DB=null;var FIXED=0;
 function load(){if(DB)return DB;try{DB=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){DB=null;}if(!DB)DB={days:{},done:{}};return DB;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
 setInterval(save,8000);
-function cleanLabel(t){return (t||'').replace(/[✔✓✅❌✗☒]/g,'').replace(/\s+/g,' ').trim();}
-function evalPick(label,hs,as,fh,fa,hasHalf){
-if(label==null||hs==null||as==null)return null;
+function beacon(){
+var b=document.getElementById('egbJudgeBadge');
+if(!b){b=document.createElement('div');b.id='egbJudgeBadge';
+b.style.cssText='position:fixed;bottom:118px;left:8px;z-index:60;background:rgba(26,20,8,.92);color:#f0d488;border:1px solid rgba(212,175,55,.5);border-radius:999px;padding:4px 10px;font-size:10px;font-weight:800;pointer-events:none;';
+document.body.appendChild(b);}
+b.textContent='⚖️ v105: '+FIXED;
+}
+function cleanLabel(t){return (t||'').replace(/[✔✓✅❌✗]/g,'').replace(/\s+/g,' ').trim();}
+function evalPick(label,hs,as){
+if(!label||hs==null||as==null)return null;
 var tot=hs+as,mm;
 if((mm=label.match(/أكثر من ([\d.]+)/)))return tot>parseFloat(mm[1]);
 if((mm=label.match(/أقل من ([\d.]+)/)))return tot<parseFloat(mm[1]);
@@ -5144,14 +5151,21 @@ if(label.indexOf('12')===0)return hs!==as;
 if(label.indexOf('فوز المضيف')===0)return hs>as;
 if(label.indexOf('فوز الضيف')===0)return as>hs;
 if(label.indexOf('تعادل')===0)return hs===as;
-if(label.indexOf('الشوط الأول')>=0){
-if(hasHalf&&fh!=null&&fa!=null)return (fh+fa)>=1;
-return null;
-}
 return null;
 }
 function namesOf(m){var h=(m.home&&(m.home.name||m.home))||'';var a=(m.away&&(m.away.name||m.away))||'';return [String(h),String(a)];}
 function dayKey(m){try{var d=new Date(m.date);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}catch(e){return '';}}
+function findSafeVal(card){
+var sv=card.querySelector('.safe-val');
+if(sv)return sv;
+var box=card.querySelector('.safe-box')||card;
+var els=box.querySelectorAll('div,span,b,p');
+for(var i=0;i<els.length;i++){
+var t=cleanLabel(els[i].textContent||'');
+if(t.length>3&&t.length<40&&/^(أكثر من|أقل من|1X|X2|12|فوز المضيف|فوز الضيف|تعادل)/.test(t)&&els[i].children.length===0)return els[i];
+}
+return null;
+}
 function run(){
 load();
 if(!window.state||!state.matches)return;
@@ -5160,7 +5174,7 @@ for(var c=0;c<cards.length;c++){
 var card=cards[c];
 var ct=card.textContent||'';
 if(ct.indexOf('انتهت')<0)continue;
-var sv=card.querySelector('.safe-val');
+var sv=findSafeVal(card);
 if(!sv)continue;
 var label=cleanLabel(sv.textContent);
 if(!label)continue;
@@ -5173,7 +5187,7 @@ var nm=namesOf(state.matches[q]);
 if((nm[0]===sig[0]&&nm[1]===sig[1])||(nm[0]===sig[1]&&nm[1]===sig[0])){m=state.matches[q];break;}
 }
 if(!m||m.scoreHome==null||m.scoreAway==null)continue;
-var res=evalPick(label,m.scoreHome,m.scoreAway,m.fhHome,m.fhAway,m.hasHalf);
+var res=evalPick(label,m.scoreHome,m.scoreAway);
 if(res===null)continue;
 var k=m.id;
 if(k&&DB.done[k]===undefined){
@@ -5182,56 +5196,29 @@ var d=dayKey(m);
 if(d){if(!DB.days[d])DB.days[d]={w:0,l:0};if(res)DB.days[d].w++;else DB.days[d].l++;}
 save();
 }
-var want=res?'✔':'❌';
-var cur=(sv.textContent||'');
-var hasMark=(cur.indexOf('✔')>=0||cur.indexOf('❌')>=0||cur.indexOf('✅')>=0||cur.indexOf('☑')>=0);
-var wrongMark=(res&&(cur.indexOf('❌')>=0||cur.indexOf('✗')>=0))||(!res&&(cur.indexOf('✔')>=0||cur.indexOf('✅')>=0));
-if(!hasMark||wrongMark){
-sv.textContent=label+' '+want;
-}
-sv.style.color=res?'#86efac':'#fca5a5';
+try{sv.classList.remove('miss','hit','hot','warn');}catch(e){}
+var cur=sv.textContent||'';
+var has=(cur.indexOf('✔')>=0||cur.indexOf('❌')>=0||cur.indexOf('✅')>=0);
+var wrong=(res&&cur.indexOf('❌')>=0)||(!res&&cur.indexOf('✔')>=0);
+if(!has||wrong){sv.textContent=label+' '+(res?'✔':'❌');FIXED++;}
+var col=res?'#86efac':'#fca5a5';
+if(sv.style.color!==col){sv.style.color=col;FIXED++;}
 sv.style.textShadow='none';
 }
-fixPanel();
-}
-function fixPanel(){
-var els=document.querySelectorAll('div,span,b');
-for(var i=0;i<els.length;i++){
-var el=els[i];
-var t=(el.textContent||'').trim();
-if(!/^\d+\s*كسبان/.test(t))continue;
-var row=el;var date=null;
-for(var u=0;u<4&&row;u++){
-var rt=row.textContent||'';
-var dm=rt.match(/(20\d{2}-\d{2}-\d{2})/);
-if(dm){date=dm[1];break;}
-row=row.parentElement;
-}
-if(!date)continue;
-var d=DB.days[date];if(!d)continue;
-var tot=d.w+d.l;if(!tot)continue;
-el.textContent=d.w+' كسبان • '+d.l+' خسران';
-if(row){
-var ps=row.querySelectorAll('div,span,b');
-for(var q=0;q<ps.length;q++){
-var pt=(ps[q].textContent||'').trim();
-if(/^\d+%$/.test(pt)&&pt.length<=4){ps[q].textContent=Math.round(d.w/tot*100)+'%';break;}
-}
-}
-}
+beacon();
 }
 run();
-setInterval(run,3000);
+setInterval(run,2500);
 try{
 if(typeof window.renderCurrent==='function'){
 var origRC=window.renderCurrent;
 window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{setTimeout(run,80);}catch(e){}return r;};
 }
 }catch(e){}
-console.info('[EgyptBet Addon] truth-judge-v104: ON');
-}catch(e){console.warn('[EgyptBet Addon] v104:',e);}})();
+console.info('[EgyptBet Addon] judge-proof-v105: ON');
+}catch(e){console.warn('[EgyptBet Addon] v105:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: قاضي الحقيقة v104 ===== -->
+<!-- ===== نهاية إضافة: القاضي المثبت v105 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
