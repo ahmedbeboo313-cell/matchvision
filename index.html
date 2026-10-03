@@ -5124,7 +5124,7 @@ console.info('[EgyptBet Addon] independent-ft-v98: ON');
 }catch(e){console.warn('[EgyptBet Addon] v98:',e);}})();
 </script>
 <!-- ===== نهاية إضافة: منفذ النهاية المستقل v98 ===== -->
-<!-- ===== إضافة: القاضي الهادي v105.1 | 2026-10-03 ===== -->
+<!-- ===== إضافة: القاضي الشامل v105.2 | 2026-10-03 ===== -->
 <script>
 (function(){'use strict';try{
 var KEY='egb_eval_v103';
@@ -5156,17 +5156,6 @@ return null;
 }
 function namesOf(m){var h=(m.home&&(m.home.name||m.home))||'';var a=(m.away&&(m.away.name||m.away))||'';return [String(h),String(a)];}
 function dayKey(m){try{var d=new Date(m.date);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}catch(e){return '';}}
-function findSafeVal(card){
-var sv=card.querySelector('.safe-val');
-if(sv)return sv;
-var box=card.querySelector('.safe-box')||card;
-var els=box.querySelectorAll('div,span,b,p');
-for(var i=0;i<els.length;i++){
-var t=cleanLabel(els[i].textContent||'');
-if(t.length>3&&t.length<40&&/^(أكثر من|أقل من|1X|X2|12|فوز المضيف|فوز الضيف|تعادل)/.test(t)&&els[i].children.length===0)return els[i];
-}
-return null;
-}
 function run(){
 load();
 if(!window.state||!state.matches)return;
@@ -5175,10 +5164,6 @@ for(var c=0;c<cards.length;c++){
 var card=cards[c];
 var ct=card.textContent||'';
 if(ct.indexOf('انتهت')<0)continue;
-var sv=findSafeVal(card);
-if(!sv)continue;
-var label=cleanLabel(sv.textContent);
-if(!label)continue;
 var runs=ct.match(/[A-Za-z][A-Za-z\s.'&-]{2,}/g)||[];
 var sig=[];for(var r=0;r<runs.length&&sig.length<2;r++){var rr=runs[r].trim();if(rr.length>=3&&sig.indexOf(rr)<0)sig.push(rr);}
 if(sig.length<2)continue;
@@ -5188,25 +5173,40 @@ var nm=namesOf(state.matches[q]);
 if((nm[0]===sig[0]&&nm[1]===sig[1])||(nm[0]===sig[1]&&nm[1]===sig[0])){m=state.matches[q];break;}
 }
 if(!m||m.scoreHome==null||m.scoreAway==null)continue;
-var res=evalPick(label,m.scoreHome,m.scoreAway);
+var els=card.querySelectorAll('div,span,b,p,h3,h4');
+var touched=false;var labelUsed=null;
+for(var i=0;i<els.length;i++){
+var el=els[i];
+if(el.children.length>0)continue;
+try{if(el.closest&&el.closest('.schip'))continue;}catch(e){}
+var t=cleanLabel(el.textContent||'');
+if(t.length<4||t.length>40)continue;
+if(t.indexOf('%')>=0)continue;
+if(!/^(أكثر من|أقل من|1X|X2|12|فوز المضيف|فوز الضيف|تعادل)/.test(t))continue;
+var res=evalPick(t,m.scoreHome,m.scoreAway);
 if(res===null)continue;
-var k=m.id;
-if(k&&DB.done[k]===undefined){
-DB.done[k]=res?1:0;
-var d=dayKey(m);
-if(d){if(!DB.days[d])DB.days[d]={w:0,l:0};if(res)DB.days[d].w++;else DB.days[d].l++;}
-save();
-}
-try{sv.classList.remove('miss','hit','hot','warn');}catch(e){}
-var cur=sv.textContent||'';
+labelUsed=t;
+try{el.classList.remove('miss','hit','hot','warn');}catch(e){}
+var cur=el.textContent||'';
 var has=(cur.indexOf('✔')>=0||cur.indexOf('❌')>=0||cur.indexOf('✅')>=0);
 var wrong=(res&&cur.indexOf('❌')>=0)||(!res&&cur.indexOf('✔')>=0);
-var touched=false;
-if(!has||wrong){sv.textContent=label+' '+(res?'✔':'❌');touched=true;}
+if(!has||wrong){el.textContent=t+' '+(res?'✔':'❌');touched=true;}
 var col=res?'#86efac':'#fca5a5';
-if(sv.style.color!==col){sv.style.color=col;touched=true;}
-sv.style.textShadow='none';
+if(el.style.color!==col){el.style.color=col;el.style.textShadow='none';touched=true;}
+}
+if(labelUsed!==null){
+var k=m.id;
+if(k&&DB.done[k]===undefined){
+var res2=evalPick(labelUsed,m.scoreHome,m.scoreAway);
+if(res2!==null){
+DB.done[k]=res2?1:0;
+var d=dayKey(m);
+if(d){if(!DB.days[d])DB.days[d]={w:0,l:0};if(res2)DB.days[d].w++;else DB.days[d].l++;}
+save();
+}
+}
 if(touched&&k&&!fixedIds[k])fixedIds[k]=1;
+}
 }
 beacon();
 }
@@ -5218,10 +5218,10 @@ var origRC=window.renderCurrent;
 window.renderCurrent=function(){var r=origRC.apply(this,arguments);try{setTimeout(run,80);}catch(e){}return r;};
 }
 }catch(e){}
-console.info('[EgyptBet Addon] judge-calm-v105.1: ON');
-}catch(e){console.warn('[EgyptBet Addon] v105.1:',e);}})();
+console.info('[EgyptBet Addon] judge-all-v105.2: ON');
+}catch(e){console.warn('[EgyptBet Addon] v105.2:',e);}})();
 </script>
-<!-- ===== نهاية إضافة: القاضي الهادي v105.1 ===== -->
+<!-- ===== نهاية إضافة: القاضي الشامل v105.2 ===== -->
 <!-- ===================== نهاية منطقة الإضافات ===================== -->
 </body>
 </html>
